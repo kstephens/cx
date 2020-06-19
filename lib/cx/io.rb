@@ -6,7 +6,6 @@
 require 'cx'
 require 'cx/pipe'
 require 'stringio'
-require 'open3'
 
 module CX
 # Base class for IO.

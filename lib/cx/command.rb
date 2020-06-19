@@ -76,12 +76,18 @@ module CX
     end
 
     ################################
-    
+
+    cmd :IOIn,  [ :in,  :r, :i ], 'read from a file   If unspecfied, use STDIN.'
+    cmd :IOOut, [ :out, :w, :o ], 'write to a file   If unspecfied, use STDOUT.'
+
     cmd :debug,
       'emits debug information during processing   If --table, dump input/output tables.'
 
-    cmd :'sql-',
-      'Generate INSERT INTO or CREATE TABLE SQL statements   '
+    cmd [ :"-header", :'-h' ],
+      'capture column header from first row  Typically used after "-csv".'
+    cmd [ :"header-", :'h-',],
+      'emit column names in first row   Typically used before "csv-".'
+
     cmd :grep,
       'emit rows matching specified column regexs'
     cmd [ :transpose, :xpose ],
@@ -90,43 +96,35 @@ module CX
       'emit regions of rows   E.g: "1" for first row, "-2" 2nd from last, "2..10".'
     cmd :cut,
       'emit specified columns   "@" represents all columns, columns can be reordered: "b,@", or deleted: "@,b-".'
-
     cmd :sort,
       'sort by specified columns   Columns specified with ":-" option will sort in reverse.'
-
     cmd :uniq,
       'emit unique rows   Specified rows delimit uniqness.'
 
     cmd :eval,
       'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns results in new columns.'
-
-    cmd [ :cmd,  :- ],
+    cmd [ :cmd, :- ],
       'pipe rows thru an external command.  Column references "%NAME%" are replaced with column index + 1.'
     
-    cmd [ :"-header", :'-h' ],
-      'capture column header from first row  Typically used after "-csv".'
-
-    cmd [ :"header-", :'h-',],
-      'emit column names in first row   Typically used before "csv-".'
-
-    cmd :DefineColumns, [ :"columns", :"cols=" ],
+    cmd [ :"columns", :"cols=" ],
       'Define columns   Specify/override column names and options.'
-
     cmd [ :"columns-", :"cols-" ],
       'emit header column attributes'
-
     cmd :types,
       'infer column types from values   Empty strings or nil values are considered inconclusive.'
-
     cmd :coerce,
       "coerce values into derived or specified types."
+    
     cmd [ :'tee', :t ],
       'duplicate input to one or more output pipelines.'
     cmd [ :'join', :j ],
       'Join on values between one or more pipelines.'
-    cmd :AsciiTableOut, [ :'txt-', :'t-', :ascii, :text ],
-      'emit formatted text table'
 
+    cmd :'-csv', 'parse CSV lines'
+    cmd :'csv-', 'emit CSV lines'
+
+    cmd [ :'txt-', :'t-', :ascii, :text ],
+      'emit formatted text table'
     cmd [ :'markdown-' , :'md-'],
       'emit Markdown table'
     cmd [ :'html-', :html ],
@@ -139,24 +137,12 @@ module CX
       '--body-foot=' => 'Raw HTML placed at bottom of <body>.',
     }
 
-    cmd :'-json',
-      'parse JSON'
-    cmd [ :'json-', :json ],
-      'emit JSON'
+    cmd :'-json',            'parse JSON'
+    cmd [ :'json-', :json ], 'emit JSON'
     cmd [ :'edn-', :edn, :clj, :'clj-' ],
       'emit EDN   EDN is native to Clojure.'
-    cmd [ :cmd, :- ],
-      'pipe rows thru an external command.  Column references "%NAME%" are replaced with column index + 1.'
-
-    cmd :'-csv',
-      'parse CSV lines'
-    cmd :'csv-',
-      'emit CSV rows'
-    cmd :IOIn, [ :in, :r, :i ],
-      'read from a file   If unspecfied, use STDIN.'
-    cmd :IOOut, [ :out, :w, :o ],
-      'write to a file   If unspecfied, use STDOUT.'
-
+    cmd :'sql-',
+      'Generate INSERT INTO or CREATE TABLE SQL statements   '
     # binding.pry
   end
 end

@@ -10,10 +10,6 @@ require 'json'
 module CX
 class JsonIn < Pipe
   include Pipe::Parse
-  def init_more!
-    require 'json'
-    super
-  end
   def call input, env
     stream = input.rows * '' # EXPENSIVE: See deleted RowReader for a broken alternative
     pp(stream: stream) if debug?
