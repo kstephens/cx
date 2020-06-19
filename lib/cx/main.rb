@@ -11,15 +11,14 @@
 require 'cx'
 require 'cx/logging'
 require 'cx/util'
+require 'cx/csv_safe'
+require 'cx/pipe'
+require 'cx/io'
 require 'set'
-require 'csv'
-require 'fileutils'
 require 'shellwords'
 require 'tempfile'
 require 'cgi/util'
-require 'stringio'
 require 'thread'
-require 'open3'
 require 'pp'
 
 ######################################
@@ -338,94 +337,6 @@ END
 end
 
 ######################################
-
-# Base class for standard Pipe applications.
-# Initialization protocol is defined in Main::make_cmd.
-class Pipe
-  include Enumerable, Logging, PPSafe
-  extend Logging
-  
-  attr_accessor :app, :args, :opts, :identifier, :block
-
-  def initialize app = nil, args = nil, opts = nil, &block
-    @app   = app  || lambda{|input, env| input}
-    @args  = args || [ ]
-    @opts  = opts || { }
-    @block = block
-    init_more!
-    self
-  end
-  def init_more! ; self ; end
-  
-  #################################
-
-  def run! env
-    call(new_table, env)
-  end
-
-  def new_table input = Table, *args
-    input.new(*args).tap{|t| t.identifier = "#{inspect :shallow}"}
-  end
-  
-  def call input, env
-    raise_ "call : unimplemented"
-  end
-
-  #################################
-
-  def inspect mode = nil
-    oid = identifier || "#{'%x' % object_id}"
-    x = inspect_pipe(mode).strip
-    x &&= " #{x.strip}"
-    case mode
-    when :basic, nil
-      "#<#{self.class.name} #{oid}#{x} app=#{app && app.inspect}>"
-    when :shallow
-      "#<#{self.class.name} #{oid}#{x} #{app && "..."}>"
-    else
-      raise "invalid inspect mode : #{mode.inspect}"
-    end
-  end
-  def inspect_pipe mode = nil
-    ""
-  end
-
-  #################################
-  
-  def self.factory name
-    FACTORY[name] or raise_ "command #{name.inspect} is unregistered"
-  end
-  FACTORY = { }
-  def self.register! name_and_aliases, synopsis = "", options = { }
-    name, *aliases = name_and_aliases
-    COMMANDS[name] = { class: self, name: name, aliases: aliases, synopsis: synopsis, options: options}
-    ([ name ] + aliases).each{|n| FACTORY[n] = self}
-    self
-  end
-  COMMANDS = { }
-
-  module In       ; end
-  module Out      ; end
-  module Parse    ; end
-  module Format ; end
-  module Process ; end
-  module Diagnostic ; end
-  module NeedsHeader ; end
-  module Pipeline ; end
-
-  module ColumnsFromArgs
-    attr_accessor :columns
-    def init_more!
-      super
-      if String === (cols = opts[:C] || opts[:columns])
-        cols = [ cols ]
-      else
-        cols = args
-      end
-      @columns = Header.parse_column_args(cols)
-    end
-  end
-end
 
 ################################
 
@@ -824,86 +735,6 @@ end
 
 ############################################
 
-# Fall-back for non-compliant CSV formats.
-module CSVSafe
-  extend self
-
-  def init_more!
-    super
-    @encoding ||= "utf-8"
-    @csv_parse_options    = { encoding: @encoding, external_encoding: @encoding} # ??? Others
-    @csv_generate_options = { encoding: @encoding, quote_empty: false }
-  end
-  
-  def csv_parse_line line, ri = nil
-    row = nil
-    begin
-      # line = remove_BOM(line)
-      # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
-      # ::CSV.parse_line(line, @csv_parse_options)
-      row = ::CSV.parse_line(line)
-    rescue ::CSV::MalformedCSVError => exc
-      $stderr.puts "  # cx : WARN: Removing \" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
-      line = line.gsub('"', '')
-      begin
-        # ::CSV.parse_line(line, @csv_parse_options)
-        row = ::CSV.parse_line(line)
-      rescue ::CSV::MalformedCSVError
-        $stderr.puts "  # cx : WARN: Falling back to split on \",\" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
-        row = line.split(',', -1)
-      end
-    end
-    row.map!{|s| csv_unescape_value(s)}
-  end
-
-  def csv_generate_line row, ri = nil
-    begin
-      # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
-      # ::CSV.generate_line(row, @csv_generate_options)
-      row_ = row.map{|s| csv_escape_value s}
-      ::CSV.generate_line(row_)
-    rescue => exc
-      raise exc.class, "#{ri.inspect} : #{row.inspect} : #{exc.inspect}", exc.backtrace
-    end
-  end
-
-  def remove_BOM line, encoding = nil
-    encoding ||= line.encoding
-    binary = line.dup.force_encoding("binary")
-    if binary.gsub!("\xEF\xBB\xBF", '')
-      line = binary.force_encoding(encoding, :invalid => :replace, :undef => :replace, :replace => "")
-    end
-    line
-  end
-
-  def csv_unescape_value s
-    case s
-    when String
-      s.gsub(/(\\.)/){CSV_UNESCAPE[$1]}
-    else
-      s
-    end
-  end
-  CSV_UNESCAPE = Hash.new{|h,k| h[k] = (eval("\"#{k}\"") rescue nil) || k}
-
-  def csv_escape_value s
-    case s
-    when String
-      s.gsub(/([\r\n\\])/){CSV_ESCAPE[$1] ||= $1}
-    else
-      s
-    end
-  end
-  CSV_ESCAPE = {
-    "\\" => "\\\\",
-    "\n" => "\\n",
-    "\r" => "\\r",
-  }
-  CSV_ESCAPE_R = CSV_ESCAPE.invert
-
-  extend self
-end
-
 class CSVIn < Pipe
   include Pipe::Parse
   include CSVSafe
@@ -934,94 +765,6 @@ class CSVOut < Pipe
 end
 
 ############################################
-
-# Base class for IO.
-class IOPipe < Pipe
-  def open arg
-    io = nil
-    reraise do
-      case arg
-      when String, File
-        io = File.open(arg.to_s, io_mode)
-      when IO, StringIO
-        io = arg
-      else
-        raise_ "Invalid IO argument: #{arg.inspect}"
-      end
-    end
-    yield io
-  ensure
-    io.close if close?(io)
-  end
-  
-  def with_io arg
-    @lineno = 0
-    @line = nil
-    open(arg) do | io |
-      begin
-        yield io
-      rescue => exc
-        raise_ "line #{@lineno.inspect} : #{@line.inspect} : #{@io_.inspect}", exc
-      end
-    end
-  end
-
-  def close? io
-    io && io.respond_to?(:close) && 
-      ! [ $stdin, $stdout, $stderr,
-          STDIN,  STDOUT,  STDERR ]
-        .map(&:fileno).include?(io.fileno)
-  end
-end
-
-class IOIn < IOPipe
-  include In
-  register! [ :in, :r, :i ],
-            'read from a file   If unspecfied, use STDIN.'
-  def io_mode ; "r" ; end
-  def call input, env
-    debugQ = debug?
-    output = new_table(input)
-    args.each do | arg |
-      with_io(arg) do | io |
-        until io.eof?
-          @lineno += 1
-          @line = io.readline
-          pp(self: self, line: @line) if debugQ
-          output << @line
-        end
-      end
-    end
-    app.call(output, env)
-  end
-end
-
-class IOOut < IOPipe
-  include Out
-  register! [ :out, :w, :o ],
-            'write to a file   If unspecfied, use STDOUT.'
-  def init_more!
-    super
-    raise_ "requires one output argument : #{args.inspect}" unless args.size == 1
-  end
-  def io_mode ; "w" ; end
-  def call input, env
-    with_io(args.first) do | io |
-      pp(input: input) if debug?
-      input.each_shift do |e|
-        @lineno += 1
-        @line = e
-        io.write e
-      end
-    end
-    app && app.call(input, env)
-  end
-  def write x
-    io.write x.to_s
-    self
-  end
-  alias :<< :write
-end
 
 ############################################
 

@@ -1,4 +1,6 @@
 require 'cx'
+require 'cx'
+require 'fileutils'
 
 module CX
   class HelpAndTest
