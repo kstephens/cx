@@ -7,4 +7,4 @@ begin
   needs_pry = %w(--verbose --debug ---pry--- ---test--- ---break---)
   require 'pry' unless Set.new(needs_pry).intersection(ARGV).empty?
 end
-exit Main.new(ARGV).run!.exit_code
+exit CX::Main.new(ARGV).run!.exit_code

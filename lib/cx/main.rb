@@ -9,7 +9,8 @@
 # "cx ---test---" to execute tests.
 
 require 'cx'
-require 'rubygems'
+require 'cx/logging'
+require 'cx/util'
 require 'set'
 require 'csv'
 require 'fileutils'
@@ -19,15 +20,11 @@ require 'cgi/util'
 require 'stringio'
 require 'thread'
 require 'open3'
-require 'logger'
 require 'pp'
-
-module PPSafe ; end
-module Logging ; end
-module NumericBool ; end
 
 ######################################
 
+module CX
 # Main command line driver.
 class Main
   include Logging
@@ -62,7 +59,7 @@ class Main
     
     @verbose = opts[:verbose]
     @debug = @opts[:debug]
-    Logging.debug = @debug
+    CX::Logging.debug = @debug
     log.level = Logger::INFO  if @verbose
     log.level = Logger::DEBUG if @debug
     
@@ -210,8 +207,9 @@ class Main
   end
 
   def test!
+    require 'cx/help_and_test'
     unit_test!
-    ::HelpExamplesAndTest.test!(opts)
+    CX::HelpAndTest.test!(opts)
     exit 0
   end
   
@@ -281,6 +279,7 @@ END
   end
   
   def help!
+    require 'cx/help_and_test'
     cmds = Pipe::COMMANDS.values
     cls_section = {
       IOPipe => "I/O",
@@ -2454,304 +2453,14 @@ end
 class Table
   include DestructiveEach
 end
-
-######################################
-
-module PPSafe
-  extend self
-  def pp *args
-    M.synchronize do
-      $stderr.write "#{Module === self ? self : self.class} #{'%x' % self.object_id} : "
-      PP.pp(*args, $stderr)
-    end
-  end
-  def pps *args
-    PP.pp(*args, String.new).chomp
-  end
-  def ppss expr
-    pps(expr).strip
-  end
-  def puts *args
-    M.synchronize { $stderr.puts(*args) }
-  end
-  M = Mutex.new
 end
 
 ######################################
 
-class ThreadSafe < BasicObject
-  def initialize p
-    @p = p
-    @m = ::Mutex.new
-  end
-  def method_missing sel, *args, &blk
-    # puts " ### Log #{sel.inspect} #{args.inspect}"
-    if @m.owned?
-      @p.send(sel, *args, &blk)
-    else
-      @m.synchronize do
-        @p.send(sel, *args, &blk)
-      end
-    end
-  end
-end
-
-module NumericBool
-  extend self
-  def bool x
-    case x
-    when Numeric
-      x
-    when true
-      1
-    when false
-      0
-    else
-      x.to_i
-    end
-  end
-end
-
-module Logging
-  include PPSafe
-  def self.log
-    @@log ||= ThreadSafe.new(::Logger.new($stderr))
-  end
-  @@log = nil
-  def log
-    Logging.log # @_log ||= PrefixedLog.new(self, Logging.log)
-  end
-  
-  class PrefixedLog < Object
-    def initialize cntx, log
-      @cntx, @log = cntx, log
-    end
-    [ :debug, :info, :warn, :error, :fatal ].each do | m |
-      define_method(m) do | msg, *args, &blk |
-        @log.send(m, "#{prefix} : #{msg}", *args, &blk)
-      end
-    end
-    def prefix ; @cntx.inspect ; end
-    def method_missing sel, *args, &blk
-      @log.send(sel, *args, &blk)
-    end
-  end
-  
-  def puts *args
-    $stderr.puts(*args)
-    nil
-  end
-  def raise_ msg_ = nil, exc = nil
-    msg = String.new
-    msg << "#{inspect}"
-    msg << " : " << msg_ if msg_
-    msg << " : #{exc.inspect}" if exc
-    if debug?
-      pp(exc: exc, msg: msg, backtrace: exc && exc.backtrace.reverse)
-      binding.pry
-    end
-    if exc
-      raise raise_cls, msg, exc.backtrace
-    else
-      raise raise_cls, msg
-    end
-  end
-  def reraise
-    yield
-  rescue raise_cls
-    raise
-  rescue => exc
-    raise_ nil, exc
-  end
-  def raise_cls
-    @@raise_cls || StandardError
-  end
-  def self.raise_cls= x
-    @@raise_cls = x
-  end
-  class << self
-    attr_accessor :debug
-  end
-  attr_accessor :debug
-  def debug?
-    @debug || Logging.debug
-  end
-end
-
-module Cx
-  class Error < StandardError ; end
+module CX
   Logging.raise_cls = Error
 end
 
-######################################
-
-begin
-  RubyVM::InstructionSequence.compile_option =
-    {
-      tailcall_optimization: true,
-      trace_instruction: false,
-    }
-rescue
-end
-
 ##################################
-
-class HelpExamplesAndTest
-  def self.examples
-    @@examples ||=
-      begin
-        d = File.read(CX.base_dir + "/lib/cx/examples.txt")
-        d.freeze
-      end
-  end
-  def self.test! opts = { }
-    exit! new.run!(opts)
-  end
-  
-  def run! opts = {}
-    progname = 'cx2'
-    ENV["CX_OPTS"] = '--verbose'
-    ENV["SHELL"]   = '/bin/bash' # ??? does not affect #system
-    # Macports
-    ENV['PATH'] = ['/opt/local/libexec/gnubin', ENV['PATH']] * ':'
- 
-    test_dir = "tmp/cx.test"
-    FileUtils.mkdir_p test_dir or raise
-    Dir.chdir test_dir or raise
-
-    examples = self.class.examples
-
-    File.write(help_expect = "cx.examples.expect", examples)
-    help_output = "cx.examples.output"
-    help_out = File.open(help_output, "w")
-
-    groups = examples.
-               gsub(/(\n\n+)(\s+[\$\#])/){|m| $1 + "\001" + $2}.
-               split("\001", -1).
-               map{ |g| g.split("\n", -1).
-                      each{ |l| l << "\n" }}
-    results = [ ]    
-    i = -1
-    while group = @group = groups.shift
-      group_ = group.map(&:dup)
-      i += 1
-      output_file = "test.#{i}.output"
-      expect_file = "test.#{i}.expect"
-      diff_file   = "test.#{i}.diff"
-      input_file  = nil
-      group << "\n"
-      comments = [ ]
-      while head = group.shift
-        help_out << head
-        case head
-        when /^\s*$/
-        when /^\s+\#/
-          comments << head
-        when %r{^\s+\$\s+cat\s+\<\<END\s+\>\s*(\S+)$}
-          input_file = $1.strip
-          input = take_until("END\n") * ''
-          File.write(input_file, input)
-          input += take_until(nil) * '' 
-          help_out << (help = String.new << input)
-        when %r{^((\s+\$\s+)(.*))$}
-          line, prefix, cmd = $1 + "\n", $2, $3
-          group.pop == "\n" or raise
-          group.pop == "\n" or raise
-          expect = take_until(nil)
-          expect.pop
-          expect = [ *comments, line, *expect ]
-          expect = expect * ''
-          File.write(expect_file, expect)
-
-          name = "\##{i} : #{cmd}"
-          puts "  --  #{name}"
-          system "(#{cmd}) > '#{output_file}' 2>&1"
-          output = File.readlines(output_file)
-          
-          output = [ *comments, line, output ] * ''
-          File.write(output_file, output)
-
-          help_out << (help = output)
-
-          status = diff! name, expect_file, output_file, diff_file
-          results << [name, status]
-
-          comments = [ ]
-          $stdout.puts "  => #{status} "
-          unless status == :OK
-            pp(group: group_)
-            if opts[:_break___]
-              binding.pry
-              exit!
-            end
-          end
-        else
-          raise "unexpected line #{head.inspect}"
-        end
-      end
-    end
-
-    help_out.close
-
-    errors = results.select{|x| x[1] != :OK}.map(&:first)
-
-    pp(results: results)
-    pp(errors: errors)
-    errors.size
-  rescue => exc
-    pp(exc: exc, bt: exc.backtrace)
-    raise
-  ensure
-    help_out.close rescue nil
-  end
-
-  def diff! name, expect_file, output_file, diff_file
-    diff_cmd = "diff -u '#{expect_file}' '#{output_file}' > '#{diff_file}' 2>&1" 
-    system diff_cmd
-
-    diff_result = File.read(diff_file)
-
-    status = diff_result.empty? ? :OK : :FAILED
-    return status if status == :OK
-    puts <<"END"
-#############
-  name:   #{name}
-  status: #{status}
-  diff:   #{diff_cmd}
-  expect:
-  =========
-#{File.read(expect_file)}  =========
-  output: 
-  =========
-#{File.read(output_file)}  =========
-  diff:
-  =========
-#{diff_result}=========
-#############
-END
-    status
-  end
-  
-  def take_until p, lines = @group
-    p = pred(p)
-    result = []
-    while line = lines.first and ! p.call(line)
-      line = lines.shift
-      result << line
-    end
-    result
-  end
-  def pred p
-    case p
-    when Proc
-      p
-    when Symbol
-      lambda{ |x| x.send(p) } 
-    when Regexp
-      lambda{|x| p.match(x)}
-    else
-      lambda{ |x| p == x }
-    end
-  end
-end
+# EOF
 
