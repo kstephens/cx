@@ -8,11 +8,9 @@ require 'cx/pipe'
 require 'cx/csv_safe'
 
 module CX
-  class CSVIn < Pipe
+  class CsvIn < Pipe
   include Pipe::Parse
   include CSVSafe
-  register! :'-csv',
-  'parse CSV lines'
   # TODO: Potentially refactor into a IOLines base class.
   def call input, env
     i = 0
@@ -25,10 +23,8 @@ module CX
   end
 end
 
-class CSVOut < Pipe
+class CsvOut < Pipe
   include CSVSafe, Pipe::Format
-  register! :'csv-',
-  'emit CSV rows'
   # TODO: Potentially refactor into a IOLines base class.
   def call input, env
     i = -1

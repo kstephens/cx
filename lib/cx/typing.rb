@@ -157,8 +157,8 @@ module Typing
 
     def col_type! v
       col_width! v
-      v_type = ::Typing.col_type(v)
-      new_type = ::Typing.type_ge(v_type, @type) ? v_type : @type
+      v_type = Typing.col_type(v)
+      new_type = Typing.type_ge(v_type, @type) ? v_type : @type
       if debug?
         pp(col_type!: self,
            v: v, v_cls: v.class, v_type: v_type,

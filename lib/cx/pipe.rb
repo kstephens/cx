@@ -57,20 +57,7 @@ class Pipe
     ""
   end
 
-  #################################
-  
-  def self.factory name
-    FACTORY[name] or raise_ "command #{name.inspect} is unregistered"
-  end
-  FACTORY = { }
-  def self.register! name_and_aliases, synopsis = "", options = { }
-    name, *aliases = name_and_aliases
-    COMMANDS[name] = { class: self, name: name, aliases: aliases, synopsis: synopsis, options: options}
-    ([ name ] + aliases).each{|n| FACTORY[n] = self}
-    self
-  end
-  COMMANDS = { }
-
+  # Pipe types:
   module In       ; end
   module Out      ; end
   module Parse    ; end

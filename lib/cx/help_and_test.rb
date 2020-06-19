@@ -74,7 +74,7 @@ END
   class HelpAndTest
     def self.help!
           
-    cmds = Pipe::COMMANDS.values
+    cmds = CX::Command::COMMANDS.values
     cls_section = {
       IOPipe => "I/O",
       Pipe::Parse => "Parsing",
@@ -143,7 +143,9 @@ END
   end
   
   def run! opts = {}
-    progname = 'cx2'
+    progname = File.basename($0)
+    progname_abs = File.expand_path($0, Dir.pwd)
+    
     ENV["CX_OPTS"] = '--verbose'
     ENV["SHELL"]   = '/bin/bash' # ??? does not affect #system
     # Macports
@@ -159,13 +161,16 @@ END
     help_output = "cx.examples.output"
     help_out = File.open(help_output, "w")
 
-    groups = examples.
-               gsub(/(\n\n+)(\s+[\$\#])/){|m| $1 + "\001" + $2}.
-               split("\001", -1).
-               map{ |g| g.split("\n", -1).
-                      each{ |l| l << "\n" }}
+    groups =
+      examples.
+      gsub(/(\n\n+)(\s+[\$\#])/){|m| $1 + "\001" + $2}.
+      split("\001", -1).
+      map{ |g| g.split("\n", -1).
+        each{ |l| l << "\n" }}
+    
     results = [ ]    
     i = -1
+
     while group = @group = groups.shift
       group_ = group.map(&:dup)
       i += 1
@@ -199,7 +204,10 @@ END
 
           name = "\##{i} : #{cmd}"
           puts "  --  #{name}"
-          system "(#{cmd}) > '#{output_file}' 2>&1"
+          
+          cmd_line = "(#{cmd}) > '#{output_file}' 2>&1"
+          cmd_line = cmd_line.sub(/\bcx\b/, progname_abs)
+          system cmd_line
           output = File.readlines(output_file)
           
           output = [ *comments, line, output ] * ''

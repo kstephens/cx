@@ -50,8 +50,6 @@ end
 
 class IOIn < IOPipe
   include In
-  register! [ :in, :r, :i ],
-            'read from a file   If unspecfied, use STDIN.'
   def io_mode ; "r" ; end
   def call input, env
     debugQ = debug?
@@ -72,8 +70,6 @@ end
 
 class IOOut < IOPipe
   include Out
-  register! [ :out, :w, :o ],
-            'write to a file   If unspecfied, use STDOUT.'
   def init_more!
     super
     raise_ "requires one output argument : #{args.inspect}" unless args.size == 1

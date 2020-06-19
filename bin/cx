@@ -9,10 +9,11 @@
 
 require 'bundler/setup'
 $:.unshift(File.expand_path('../lib', __FILE__))
-require 'cx/main'
 begin
   require 'set'
   needs_pry = %w(--verbose --debug ---pry--- ---test--- ---break---)
   require 'pry' unless Set.new(needs_pry).intersection(ARGV).empty?
 end
+
+require 'cx/main'
 exit CX::Main.new(ARGV).run!.exit_code

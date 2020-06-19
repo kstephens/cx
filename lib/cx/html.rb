@@ -10,18 +10,9 @@ require 'cx/pipe'
 require 'cx/csv_safe'
 
 module CX
-  class HTMLOut < Pipe
+  class HtmlOut < Pipe
   include Pipe::NeedsHeader
   include Pipe::Format
-  register! [ :'html-', :html ],
-  'emit HTML table document.', {
-    '--title=' => 'Specify a <title>.',
-    '--filtering' => 'Add a full-text filtering field.',
-    '--raw=' => 'A list of columns that contain raw HTML.',
-    '--head=' => 'Raw HTML placed at bottom of <head>.',
-    '--body-head=' => 'Raw HTML placed at the top of <body>.',
-    '--body-foot=' => 'Raw HTML placed at bottom of <body>.',
-  }
   def init_more!
     super
     @raw_columns = Set.new((opts[:raw] || '')

@@ -8,13 +8,12 @@
 require 'cx'
 require 'cx/logging'
 require 'cx/util'
+require 'cx/command'
 require 'cx/table'
 require 'cx/header'
+require 'cx/typing'
 require 'cx/pipe'
 require 'cx/io'
-require 'cx/csv'
-require 'cx/html'
-require 'cx/sql'
 require 'set'
 require 'shellwords'
 require 'tempfile'
@@ -178,10 +177,10 @@ class Main
   # If input/output applications are unspecified,
   # STDIN and STDOUT are wrapped the pipeline.
   def make_pipeline pipeline
-    unless Pipe.factory(pipeline[0][0])  <= Pipe::In
+    unless Command.factory(pipeline[0][0])  <= Pipe::In
       pipeline.unshift([:in, [$stdin]])
     end
-    unless Pipe.factory(pipeline[-1][0]) <= Pipe::Out
+    unless Command.factory(pipeline[-1][0]) <= Pipe::Out
       pipeline.push([:out, [$stdout]])
     end
     pp(pipeline: pipeline) if @debug
@@ -201,7 +200,7 @@ class Main
     args.map! do |arg|
       Pipe::Pipeline === arg ? reduce_pipeline(nil, arg) : arg
     end
-    new_app = Pipe.factory(name).new(app, args, opts)
+    new_app = Command.factory(name).new(app, args, opts)
     new_app = HeaderIn.new(new_app) if Pipe::NeedsHeader === new_app
     new_app = Debug.new(new_app) if @debug
     new_app
@@ -228,8 +227,6 @@ end
 
 class Debug < Pipe
   include Pipe::Diagnostic
-  register! :debug,
-            'emits debug information during processing   If --table, dump input/output tables.'
   def call input, env
     app.reraise do
       dump!("<<< input", input, env)
@@ -259,8 +256,6 @@ end
 ## ??? NEEDS TEST
 class Grep < Pipe
   include Pipe::Process
-  register! :grep,
-            'emit rows matching specified column regexs'
   # TODO: support regex negation: e.g. "grep cola:v some.*thing colb other."
   def call input, env
     cols = []; rxs = []; a = args.dup;
@@ -278,8 +273,6 @@ end
 
 class Transpose < Pipe
   include Pipe::Process
-  register! [ :transpose, :xpose ],
-            'transpose table'
   def call input, env
     if input.header
       input.unshift input.header.map(&:to_s)
@@ -298,8 +291,6 @@ end
 
 class Region < Pipe
   include Pipe::Process
-  register! [ :range, :region ],
-            'emit regions of rows   E.g: "1" for first row, "-2" 2nd from last, "2..10".'
   def call input, env
     regions = args.flat_map do|arg|
       arg.strip.split(/\s+|\s*,\s*/)
@@ -334,8 +325,6 @@ end
 class Cut < Pipe
   include Pipe::Process, Pipe::ColumnsFromArgs
   include Pipe::NeedsHeader
-  register! :cut,
-            'emit specified columns   "@" represents all columns, columns can be reordered: "b,@", or deleted: "@,b-".'
   def call input, env
     header = input.header!
     columns = self.columns || [ ]
@@ -371,8 +360,6 @@ end
 class Sort < Pipe
   include Pipe::Process, ColumnsFromArgs
   include Pipe::NeedsHeader
-  register! :sort,
-            'sort by specified columns   Columns specified with ":-" option will sort in reverse.'
   def call input, env
     header = input.header!
     sort_cols =
@@ -426,8 +413,6 @@ end
 
 class Uniq < Pipe
   include Pipe::Process, Pipe::ColumnsFromArgs
-  register! :uniq,
-            'emit unique rows   Specified rows delimit uniqness.'
   def call input, env
     if header = input.header
       cols = (columns || []).empty? ? header.cols : header.col(columns.map(&:first))
@@ -447,8 +432,6 @@ end
 
 class Eval < Pipe
   include Pipe::Process
-  register! :eval,
-            'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns results in new columns.'
   def call input, env
     fn = "Proc.new do \n " + args.join(" ;\n") + "\nend\n"
     fn = eval(fn)
@@ -519,8 +502,6 @@ end
 
 class HeaderIn < Pipe
   include Pipe::Parse, Pipe::ColumnsFromArgs
-  register! [ :'-h', :"-header" ],
-  'capture column header from first row   Typically used after "-csv".'
   def call input, env
     case
     when columns && ! columns.empty?
@@ -536,8 +517,6 @@ end
 
 class HeaderOut < Pipe
   include Pipe::Format
-  register! [ :'h-', :"header-" ],
-  'emit column names in first row   Typically used before "csv-".'
   def call input, env
     if input.header
       input.unshift input.header.map(&:to_s)
@@ -548,8 +527,6 @@ end
 
 class DefineColumns < Pipe
   include Pipe::Diagnostic, Pipe::NeedsHeader
-  register! [ :"columns", :"cols=" ],
-  'Define columns   Specify/override column names and options.'
   def call input, env
     col_opts = Header.parse_column_args(args)
     header = input.header ||= Header.new
@@ -563,8 +540,7 @@ end
 
 class ColumnsOut < Pipe
   include Pipe::Diagnostic, Pipe::NeedsHeader
-  register! [ :"columns-", :"cols-" ],
-  'emit header column attributes'
+  
   def call input, env
     cols = [:name, :ind, :type, :min_width, :max_width, :justify]
     header = Header.new(cols)
@@ -580,8 +556,6 @@ end
 
 class Types < Pipe
   include Pipe::Process, Pipe::NeedsHeader
-  register! :types,
-            'infer column types from values   Empty strings or nil values are considered inconclusive.'
   def call input, env
     header = input.header
     unless header
@@ -604,8 +578,6 @@ end
 
 class Coerce < Pipe
   include Pipe::Process, Pipe::NeedsHeader
-  register! :coerce,
-            "coerce values into derived or specified types."
   def call input, env
     header = input.header!
     input.map! do | r |
@@ -622,8 +594,6 @@ end
 ############################################
 
 class Tee < Pipe
-  register! [ :'tee', :t ],
-  'duplicate input to one or more output pipelines.'
   attr_reader :outputs
   def init_more!
     super
@@ -646,9 +616,6 @@ end
 ############################################
 
 class Join < Pipe
-  register! [ :'join', :j ],
-  'Join on values between one or more pipelines.'
-
   def call input, env
     left = input
     a = args.dup
@@ -747,8 +714,6 @@ end
 
 class AsciiTableOut < Pipe
   include Pipe::Format
-  register! [ :'txt-', :'t-', :ascii, :text ],
-  'emit formatted text table'
   def init_more!
     require 'terminal-table'
     super
@@ -781,8 +746,6 @@ end
 
 class MarkdownOut < Pipe
   include Pipe::Format
-  register! [ :'md-', :'markdown-' ],
-  'emit Markdown table'
   def call input, env
     header = input.header
 
@@ -889,10 +852,8 @@ class StructuredOut < Pipe
   end
 end
 
-class JSONIn < Pipe
+class JsonIn < Pipe
   include Pipe::Parse
-  register! :'-json',
-  'parse JSON'
   def init_more!
     require 'json'
     super
@@ -930,9 +891,7 @@ class JSONIn < Pipe
   end
 end
 
-class JSONOut < StructuredOut
-  register! [ :'json-', :json ],
-  'emit JSON'
+class JsonOut < StructuredOut
   def init_more!
     require 'json'
     super
@@ -948,9 +907,7 @@ end
 
 ####################################
 
-class ClojureOut < StructuredOut
-  register! [ :'edn-', :edn, :clj, :'clj-' ],
-  'emit EDN   EDN is native to Clojure.'
+class EdnOut < StructuredOut
   # TODO: use a supported EDN library?
   def sep ; "" ; end
   def line row, row_delim
@@ -1012,10 +969,8 @@ end
 
 ######################################
 
-class CommandPipe < Pipe
+class Cmd < Pipe
   include Pipe::Process
-  register! [ :cmd,  :- ],
-            'pipe rows thru an external command.  Column references "%NAME%" are replaced with column index + 1.'
   attr_accessor :command
 
   def init_more!

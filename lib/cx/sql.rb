@@ -7,11 +7,9 @@ require 'cx'
 require 'cx/pipe'
 
 module CX
-class SQLOut < Pipe
+class SqlOut < Pipe
   include Pipe::Format
   attr_reader :input, :header, :output, :table
-  register! :'sql-',
-            'Generate INSERT INTO or CREATE TABLE SQL statements   '
   def table
     @table ||= opts[:table] || @header.name or raise_ "unspecifed table name"
   end
