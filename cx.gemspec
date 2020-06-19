@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Kurt Stephens"]
   spec.email         = ["git@kurtstephens.com"]
 
-  spec.summary       = %q{Command-line columlar data transforms}
+  spec.summary       = %q{Transforms and processes data as CSV, JSON, EDN, etc.}
   spec.description   = spec.summary
   spec.homepage      = "http://github.com/kstephens/cx"
   spec.license       = "MIT"

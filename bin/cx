@@ -634,7 +634,7 @@ END
     puts <<END
 cx - process columnar data in a pipelie
 
-Transforms and process data as CSV, JSON, EDN, etc.
+Transforms and processes data as CSV, JSON, EDN, etc.
 
 Examples:
 
