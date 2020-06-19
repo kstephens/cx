@@ -5,9 +5,6 @@
 
 # cx: Copyright 2020, Kurt Stephens
 
-# "cx --help" for documentation.
-# "cx ---test---" to execute tests.
-
 require 'cx'
 require 'cx/logging'
 require 'cx/util'
@@ -214,67 +211,6 @@ class Main
     exit 0
   end
   
-  def unit_test!
-    [
-      # {"" => []},
-      {"in" =>
-       [[:in, [], {}]]},
-      {"in foo" =>
-       [[:in, ["foo"], {}]]},
-      {"in --a=1 --b baz" =>
-       [[:in, ["baz"], {a: "1", b: 1}]]},
-      {"in --a=1 foo // out bar" =>
-       [[:in,  ["foo"], {a: "1"}],
-        [:out, ["bar"], {}]]},
-      {"in foo {{ a // b }}" =>
-       [[:in, ["foo", [
-                 [:a, [], {}],
-                 [:b, [], {}]]
-              ], {}]]},
-      {"in --a foo {{ a --b=2 // b --c }} // out bar" =>
-       [[:in, ["foo", [
-                 [:a, [], {b: "2"}],
-                 [:b, [], {c: 1}]]],
-         {a: 1}],
-        [:out, ["bar"], {}]]},
-    ].each do | x |
-      cmd_line, expected = x.keys.first, x.values.first
-      cmd_args = Shellwords.split(cmd_line)
-      # pp(cmd_line: cmd_line, cmd_args: cmd_args); binding.pry
-      actual = parse_pipeline! cmd_args
-      assert_eq! expected, actual        , cmd_line
-      assert_eq! 0,        cmd_args.size , cmd_line
-    end
-    
-    result = make_cmd :app, [:in, ["arg1"], {opt: "opt"}]
-    assert_eq!(IOIn,          result.class)
-    assert_eq!(:app,          result.app)
-    assert_eq!(["arg1"],      result.args)
-    assert_eq!({opt: "opt"},  result.opts)
-
-    self
-  end
-
-  def assert_eq! expected, actual, msg = nil
-    line = caller[0].sub(/:in.*/, '')
-    result = expected == actual
-    
-    msg = <<"END"
-#{msg} :
-  expected: #{expected.inspect}
-  actual:   #{actual.inspect}
-  line:     #{line}"
-END
-    msg = (result ? "OK:    " : "FAIL: ") + msg
-    if ! result && opts[:break]
-      puts msg + "\n"
-      binding.pry
-    end
-    raise_ msg unless result
-    puts   msg
-    result
-  end
-
   def inspect
     "#<#{self.class} #{args.inspect}>"
   end
