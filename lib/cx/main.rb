@@ -21,7 +21,6 @@ require 'thread'
 require 'open3'
 require 'logger'
 require 'pp'
-require 'pry'
 
 module PPSafe ; end
 module Logging ; end
