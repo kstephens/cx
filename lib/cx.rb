@@ -1,6 +1,7 @@
 require "cx/version"
 
-module Cx
+module CX
   class Error < StandardError; end
-  # Your code goes here...
+  def self.base_dir ; BASE_DIR ; end
+  BASE_DIR = File.expand_path('../..', __FILE__)
 end

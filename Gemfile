@@ -4,3 +4,5 @@ source "https://rubygems.org"
 gemspec
 
 gem "terminal-table", "~> 1.8"
+
+gem "pry-byebug", "~> 3.9"
