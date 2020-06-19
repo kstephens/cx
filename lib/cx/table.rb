@@ -4,10 +4,13 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/util'
 
 module CX
   module EnumerableTable
-  include Enumerable
+    include Enumerable
+    include DestructiveEach
+
   def header!
     @header or raise_ "does not have a header"
   end

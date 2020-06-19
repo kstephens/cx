@@ -59,4 +59,19 @@ module NumericBool
   end
 end
 
+######################################
+
+module DestructiveEach
+  def each_shift
+    yield shift until empty?
+  end
+  def each_pop
+    yield pop until empty?
+  end
+end
+
+end
+
+class ::Array
+  include CX::DestructiveEach
 end

@@ -27,6 +27,8 @@ module CX
 class Main
   include Logging
   extend Logging
+  Logging.raise_cls = Error
+
   attr_accessor :progname, :args, :opts, :env, :pipeline, :exit_code
   
   def initialize args
@@ -1516,30 +1518,6 @@ class CommandPipe < Pipe
     end
   end
 end
-
-######################################
-
-module DestructiveEach
-  def each_shift
-    yield shift until empty?
-  end
-  def each_pop
-    yield pop until empty?
-  end
-end
-
-class Array
-  include DestructiveEach
-end
-class Table
-  include DestructiveEach
-end
-end
-
-######################################
-
-module CX
-  Logging.raise_cls = Error
 end
 
 ##################################
