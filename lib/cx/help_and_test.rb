@@ -72,6 +72,65 @@ END
     
 
   class HelpAndTest
+    def self.help!
+          
+    cmds = Pipe::COMMANDS.values
+    cls_section = {
+      IOPipe => "I/O",
+      Pipe::Parse => "Parsing",
+      Pipe::Format => "Format",
+      Pipe::Process => "Processing",
+      Pipe::Diagnostic => "Diagnostic",
+      Object => "Other",
+    }
+    cmd_order = cls_section.keys
+    cmds.each{|cmd| cmd[:type] = Typing.first_superclass(cmd_order, cmd[:class])[0]}
+    cmd_metric = lambda{|cmd| Typing.first_superclass(cmd_order, cmd[:class])[1]}
+    cmd_cmp = lambda {|a, b| (cmd_metric[a] <=> cmd_metric[b]).nonzero? || a[:name] <=> b[:name] }
+    cmd_cmp_ = cmd_cmp
+    
+    cmds.sort!(&cmd_cmp)
+
+    w = cmds.map{|c| c[:name].to_s.size}.max + 1
+    cmds.each do |c|
+      syn = c[:synopsis].split(/   |\n/, -1).map(&:strip)
+      aliases = c[:aliases].empty? ? "" : "aka: #{c[:aliases].map(&:to_s).map(&:inspect) * ', '}"
+      rest = [ *syn[1..-1], aliases ].reject(&:empty?)
+      c[:doc] =
+        (
+          [ "%-#{w}s - %s" % [c[:name].to_s, syn[0]] ] +
+          rest.map{|s| "%#{w}s     %s" % ["", s]}
+        ) * "\n"
+      c[:section] = cls_section[c[:type]]
+    end
+    sections = cmds.group_by{|cmd| cmd[:section]}
+    cmd_doc = sections.map do |sec, cmds|
+      "\n     #{sec}:\n\n#{cmds.map{|c| c[:doc]} * "\n"}"
+    end * "\n"
+    
+    help = <<"END"
+#{progname} : Manipulate CSVs and other tablular data.
+
+  COMMANDS:
+  --------
+#{cmd_doc}
+
+  EXAMPLES:
+  --------
+
+#{::HelpExamplesAndTest.examples.sub(/\n+\Z/, '')}
+
+  ATTRIBUTION:
+  -----------
+
+Copyright 2020, Kurt Stephens, https://github.com/kstephens
+
+END
+    puts help
+  end
+
+    #######################################
+    
   def self.examples
     @@examples ||=
       begin
