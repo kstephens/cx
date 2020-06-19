@@ -92,6 +92,7 @@ module CX
       end
       h << HTML_FOOT
     end
+    env[:content_type] = 'text/html'
     app.call(output, env)
   end
 

@@ -7,6 +7,7 @@ require 'cx'
 require 'cx/logging'
 
 module CX
+  # Registry of commands
   module Command
     extend self
     include Logging

@@ -22,6 +22,7 @@ class SqlOut < Pipe
         send(:"#{action}!")
       end
     end
+    env[:content_type] = 'text/plain' # application/x-sql ?
     app.call(output, env)
   end
 

@@ -31,6 +31,7 @@ class TxtOut < Pipe
     end
     
     output << (tt.to_s + "\n")
+    env[:content_type] = 'text/plain'
     app.call(output, env)
   end
 end

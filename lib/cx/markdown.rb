@@ -48,6 +48,7 @@ module CX
       input.unshift format_row[header.map{|_| '---'}, '-']
       input.unshift format_row[header.map(&:to_s), :header]
     end
+    env[:content_type] = 'text/markdown' # 2016 RFC7763 at IETF
     app.call(input, env)
   end
 end

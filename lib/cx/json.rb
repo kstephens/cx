@@ -44,10 +44,7 @@ class JsonIn < Pipe
 end
 
 class JsonOut < StructuredOut
-  def init_more!
-    require 'json'
-    super
-  end
+  def content_type ; 'application/json' ; end
   def line row, row_delim
     # TODO: handle alternate row_delim
     JSON.dump(row)

@@ -9,6 +9,8 @@ require 'cx/structured'
 
 module CX
   class EdnOut < StructuredOut
+    def content_type ; 'application/edn' ; end
+
   # TODO: use a supported EDN library?
   def sep ; "" ; end
   def line row, row_delim

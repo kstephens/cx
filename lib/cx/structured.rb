@@ -47,8 +47,12 @@ class StructuredOut < Pipe
       row_sep = self.row_sep
     end
     output << ("\n" + seq_delim[1] + "\n")
+    if x = content_type
+      env[:content_type] = x
+    end
     app.call(output, env)
   end
+  def content_type ; nil ; end
   def line row
     raise
   end

@@ -29,6 +29,7 @@ class CsvOut < Pipe
   def call input, env
     i = -1
     input.map!{ |e| csv_generate_line(e, (i += 1)) }
+    env[:content_type] = 'application/csv'
     app.call(input, env)
   end
 end
