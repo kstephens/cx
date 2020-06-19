@@ -1,3 +1,8 @@
+# coding: utf-8
+# frozen_string_literal: true
+# encoding: UTF-8
+# -*- coding: utf-8 -*-
+
 module CX
   module PPSafe
   extend self
