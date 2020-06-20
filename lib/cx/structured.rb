@@ -7,6 +7,27 @@ require 'cx'
 require 'json'
 
 module CX
+  class StructuredIn < Pipe
+    include Pipe::Parse
+    
+    def call input, env
+      cols = { }
+      inds = Hash.new{|h,k| h[k] = (0..k).to_a}
+      rows = parse(input, env).map do | row |
+        cols.update(Hash[row.keys.zip(inds[row.size])])
+        row.values_at(*cols.keys)
+      end
+      header = Header.new(cols.keys)
+      width = cols.keys.size
+      rows.each do | row |
+        row[width - 1] = nil unless row.size == width
+      end
+      output = new_table(Table, header)
+      output.rows = rows
+      app.call(output, env)
+    end
+  end
+
 class StructuredOut < Pipe
   include Pipe::Format
   def init_more!
