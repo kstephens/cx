@@ -204,6 +204,24 @@ x,y,z
 {:a 2 :b "12" :c 11 :d "abc"}
 ]
 
+ # edn: EDN formatting: row mode
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row
+[
+[1 "ab" 3 "foo"]
+[24 "44" 6 "bar"]
+[134 "5" 9 "baz"]
+[2 "12" 11 "abc"]
+]
+
+ # edn: EDN formatting: row mode, no delim
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row --row-delim=''
+[
+1 "ab" 3 "foo"
+24 "44" 6 "bar"
+134 "5" 9 "baz"
+2 "12" 11 "abc"
+]
+
  # md: Markdown:
  $ cx in SOME.csv // -csv // -h // md-
 | a    | b    | c    | d    |

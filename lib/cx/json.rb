@@ -17,13 +17,22 @@ end
 
 class JsonOut < StructuredOut
   def content_type ; 'application/json' ; end
-  def line row, row_delim
+  def init_more!
+    super
+    opts[:seq_delim] ||= '[]'
+    if row_mode?
+      opts[:row_delim] ||= '[]'
+    else
+      opts[:row_delim] ||= '{}'
+    end
+  end
+
+  def line row
     # TODO: handle alternate row_delim
     JSON.dump(row)
   end
-  def row_sep
-    super || ','
-  end
+  
+  def row_sep ; super || ',' ; end
 end
 
 end

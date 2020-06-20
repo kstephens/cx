@@ -10,30 +10,38 @@ require 'cx/structured'
 module CX
   class EdnOut < StructuredOut
     def content_type ; 'application/edn' ; end
-
-  # TODO: use a supported EDN library?
-  def sep ; "" ; end
-  def line row, row_delim
-    case row
-    when Hash
-      clj_map(row, row_delim)
-    else
-      clj_vec(row, row_delim)
+    def init_more!
+      super
+      opts[:seq_delim] ||= '[]'
+      if row_mode?
+        opts[:row_delim] ||= '[]'
+      else
+        opts[:row_delim] ||= '{}'
+      end
     end
-  end
 
-  def clj_map row, row_delim
-    (row_delim[0] || '{') +
+    def line row
+      case row
+      when Hash
+        clj_map(row, row_delim)
+      else
+        # pp(row: row)
+        clj_vec(row, row_delim)
+      end
+    end
+
+  def clj_map row, delim
+    delim[0].to_s +
     row.map do| (k, v) |
       key_xform(k) + ' ' << val_xform(v)
     end * ' ' +
-    + (row_delim[1] || '}')
+    delim[1].to_s
   end
 
-  def clj_vec row, row_delim
-    (row_delim[0] || '[') +
-    row.map{|v| val_xform(v)} * ' '
-    + (row_delim[1] || ']')
+  def clj_vec row, delim
+    delim[0].to_s +
+    row.map{|v| val_xform(v)} * ' ' +
+    delim[1].to_s
   end
   
   def key_xform k
@@ -60,9 +68,9 @@ module CX
 
   def val_xform v
     case v
-    when Symbol then ":#{v}"
-    when String then v.inspect # kinda close?
-    when nil    then "nil"
+    when Symbol     then ":#{v}"
+    when String     then v.inspect # kinda close?
+    when nil        then "nil"
     when Hash       then clj_map(v, @map_delim ||= ['{', '}'])
     when Enumerable then clj_vec(v, @vec_delim ||= ['[', ']'])
     else             v.to_s
