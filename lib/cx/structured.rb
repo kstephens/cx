@@ -53,26 +53,17 @@ class StructuredOut < Pipe
   def row_mode? ; opts[:mode] == 'row' ; end
 
   def row_fn input
-    if input.header && ! row_mode?
+    fn = Proc.new{|row| row}
+    if input.header
       cols = input.header.cols
       col_names  = cols.map(&:to_sym)
-      have_types = cols.any?(&:type)
-      if have_types
-        lambda do | row |
-          row = cols.map do |c|
-            v = row[c.to_i];
-            c.type ? Typing.coerce(v, c.type) : v 
-          end
-          Hash[col_names.zip(row)]
-        end
-      else
-        lambda do | row |
+      unless row_mode?
+        fn = lambda do | row |
           Hash[col_names.zip(row)]
         end
       end
-    else
-      lambda {|row| row}
     end
+    fn
   end
   
   def content_type ; nil ; end

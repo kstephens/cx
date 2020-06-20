@@ -13,11 +13,7 @@ module CX
     def init_more!
       super
       opts[:seq_delim] ||= '[]'
-      if row_mode?
-        opts[:row_delim] ||= '[]'
-      else
-        opts[:row_delim] ||= '{}'
-      end
+      opts[:row_delim] ||= (row_mode? ? '[]' :  '{}')
     end
 
     def line row

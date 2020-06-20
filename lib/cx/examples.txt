@@ -195,33 +195,6 @@ x,y,z
 | max_width | 3       | 2      | 2       | 3      |
 | justify   | right   |        | right   |        |
 
- # edn: EDN formatting:
- $ cx in SOME.csv // -csv // -h // types // coerce // edn-
-[
-{:a 1 :b "ab" :c 3 :d "foo"}
-{:a 24 :b "44" :c 6 :d "bar"}
-{:a 134 :b "5" :c 9 :d "baz"}
-{:a 2 :b "12" :c 11 :d "abc"}
-]
-
- # edn: EDN formatting: row mode
- $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row
-[
-[1 "ab" 3 "foo"]
-[24 "44" 6 "bar"]
-[134 "5" 9 "baz"]
-[2 "12" 11 "abc"]
-]
-
- # edn: EDN formatting: row mode, no delim
- $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row --row-delim=''
-[
-1 "ab" 3 "foo"
-24 "44" 6 "bar"
-134 "5" 9 "baz"
-2 "12" 11 "abc"
-]
-
  # md: Markdown:
  $ cx in SOME.csv // -csv // -h // md-
 | a    | b    | c    | d    |
@@ -259,12 +232,48 @@ x,y,z
 |    2 | 12   |      11 | abc  |
 
  # json-: JSON output:
- $ cx in SOME.csv // -csv // -h // types // json-
+ $ cx in SOME.csv // -csv // -h // types // coerce // json-
 [
 {"a":1,"b":"ab","c":3,"d":"foo"},
 {"a":24,"b":"44","c":6,"d":"bar"},
 {"a":134,"b":"5","c":9,"d":"baz"},
 {"a":2,"b":"12","c":11,"d":"abc"}
+]
+
+ # json-: JSON output: row mode
+ $ cx in SOME.csv // -csv // -h // types // coerce // json- --mode=row
+[
+[1,"ab",3,"foo"],
+[24,"44",6,"bar"],
+[134,"5",9,"baz"],
+[2,"12",11,"abc"]
+]
+
+ # edn: EDN formatting:
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn-
+[
+{:a 1 :b "ab" :c 3 :d "foo"}
+{:a 24 :b "44" :c 6 :d "bar"}
+{:a 134 :b "5" :c 9 :d "baz"}
+{:a 2 :b "12" :c 11 :d "abc"}
+]
+
+ # edn: EDN formatting: row mode
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row
+[
+[1 "ab" 3 "foo"]
+[24 "44" 6 "bar"]
+[134 "5" 9 "baz"]
+[2 "12" 11 "abc"]
+]
+
+ # edn: EDN formatting: row mode, no delim
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn- --mode=row --row-delim=''
+[
+1 "ab" 3 "foo"
+24 "44" 6 "bar"
+134 "5" 9 "baz"
+2 "12" 11 "abc"
 ]
 
  # yaml-: YAML output:
