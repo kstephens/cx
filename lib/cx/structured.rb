@@ -13,10 +13,13 @@ module CX
     def call input, env
       cols = { }
       inds = Hash.new{|h,k| h[k] = (0..k).to_a}
+      # EXPENSIVE: See deleted RowReader for a broken alternative
+      input = input.to_a * ''
       rows = parse(input, env).map do | row |
         cols.update(Hash[row.keys.zip(inds[row.size])])
         row.values_at(*cols.keys)
       end
+      input = nil
       header = Header.new(cols.keys)
       width = cols.keys.size
       rows.each do | row |

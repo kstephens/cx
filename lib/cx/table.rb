@@ -92,6 +92,7 @@ class Table
     x
   end
 
+  alias :to_a :rows
   def as_hash_array header = self.header
     rows.map{|row| header.row_as_hash(row)}
   end

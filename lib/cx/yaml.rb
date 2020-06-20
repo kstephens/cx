@@ -11,8 +11,7 @@ module CX
   class YamlIn < StructuredIn
     include Pipe::Parse
     def parse input, env
-      # EXPENSIVE: See deleted RowReader for a broken alternative
-      YAML.load(input.rows * '')
+      YAML.load(input)
     end
   end
   
@@ -23,5 +22,4 @@ module CX
       app.call([YAML.dump(input.as_hash_array)], env)
     end
   end
-
 end

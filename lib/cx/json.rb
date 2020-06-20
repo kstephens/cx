@@ -11,8 +11,7 @@ module CX
 class JsonIn < StructuredIn
   include Pipe::Parse
   def parse input, env
-    # EXPENSIVE: See deleted RowReader for a broken alternative
-    JSON.load(input.rows * '' )
+    JSON.load(input)
   end
 end
 

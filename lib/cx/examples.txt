@@ -187,7 +187,7 @@ x,y,z
 |   1 | ab |  3 | foo |
 
  # transpose: transpose columns and rows
- $ cx --verbose in SOME.csv // -csv / -h // types // columns- // xpose // txt-
+ $ cx in SOME.csv // -csv / -h // types // columns- // xpose // txt-
 | name      | a       | b      | c       | d      |
 | ind       | 0       | 1      | 2       | 3      |
 | type      | Integer | String | Integer | String |
@@ -268,6 +268,13 @@ x,y,z
   :b: '12'
   :c: 11
   :d: abc
+
+ # -yaml: YAML input:
+ $ cx in SOME.csv // -csv // -h // types // coerce // yaml- // -yaml // csv-
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
 
  # html-: Generate HTML table:
  $ cx in SOME.csv // -csv // -h // cut d,b // html- --title="SOME TABLE" > SOME.html ; w3m -dump SOME.html
@@ -393,7 +400,7 @@ a,b,c,d,e
 | a   | b  | c  | d   |
 
  # SQL: CREATE TABLE and INSERT INTO:
- $ cx --verbose in SOME.csv // -csv // -h // types // coerce // sql- --table=TheTable --create --insert | tee TheTable.sql
+ $ cx in SOME.csv // -csv // -h // types // coerce // sql- --table=TheTable --create --insert | tee TheTable.sql
 CREATE TABLE TheTable
 (
   a INT,
