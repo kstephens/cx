@@ -1,39 +1,469 @@
-# Cx
+# CX
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cx`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Transforms and processes columnar data as CSV, JSON, EDN, etc.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'cx'
+```
+gem install cx
 ```
 
-And then execute:
+## Examples
 
-    $ bundle
+```
+ # Sample CSV data:
+ $ cat <<END >SOME.csv
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+END
 
-Or install it yourself as:
+ # -header: (-h) capture first row as header:
+ $ cx in SOME.csv // -csv // -h // csv-
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
 
-    $ gem install cx
+ # header: (h-) emit header as first row:
+ $ cx in SOME.csv // -csv // -h // h- // csv-
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
 
-## Usage
+ # cut: Emit specific columns:
+ $ cx in SOME.csv // -csv // -h // cut a,d // h- // csv-
+a,d
+1,foo
+24,bar
+134,baz
+2,abc
 
-TODO: Write usage instructions here
+ # cut: Reorder columns using "@" as a wildcard:
+ $ cx in SOME.csv // -csv // -h // cut d,@ // h- // csv-
+d,a,b,c
+foo,1,ab,3
+bar,24,44,6
+baz,134,5,9
+abc,2,12,11
 
-## Development
+ # cut: Reorder columns using "@" as a wildcard:
+ $ cx in SOME.csv // -csv // -h // cut @,b,a // h- // csv-
+c,d,b,a
+3,foo,ab,1
+6,bar,44,24
+9,baz,5,134
+11,abc,12,2
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+ # cut: Delete columns using "C:-":
+ $ cx in SOME.csv // -csv // -h // cut @,b:- // h- // csv-
+a,c,d
+1,3,foo
+24,6,bar
+134,9,baz
+2,11,abc
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+ # sort: Sort by specific columns:
+ $ cx in SOME.csv // -csv // -h // sort d // h- // csv-
+a,b,c,d
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
+1,ab,3,foo
 
-## Contributing
+ # columns-: Column types and widths can be inferred:
+ $ cx in SOME.csv // -csv // columns- // h- // csv-
+name,ind,type,min_width,max_width,justify
+a,0,,,,
+b,1,,,,
+c,2,,,,
+d,3,,,,
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kstephens/cx.
+ # types: Infer column attributes:
+ $ cx in SOME.csv // -csv // types // columns- // h- // csv-
+name,ind,type,min_width,max_width,justify
+a,0,Integer,1,3,right
+b,1,String,1,2,
+c,2,Integer,1,2,right
+d,3,String,3,3,
 
-## License
+ # sort: Without types: sorts lexically:
+ $ cx in SOME.csv // -csv // sort a // h- // csv-
+a,b,c,d
+1,ab,3,foo
+134,5,9,baz
+2,12,11,abc
+24,44,6,bar
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+ # sort: With types: numeric values are sorted naturally:
+ $ cx in SOME.csv // -csv // types // sort a // h- // csv-
+a,b,c,d
+1,ab,3,foo
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
+
+ # cut: Types propagate:
+ $ cx in SOME.csv // -csv // types // cut a,d // columns- // h- // csv-
+name,ind,type,min_width,max_width,justify
+a,0,Integer,1,3,right
+d,1,String,3,3,
+
+ # coerce: Coerce values to inferred types:
+ $ cx in SOME.csv // -csv // -h // types // coerce // json-
+[
+{"a":1,"b":"ab","c":3,"d":"foo"},
+{"a":24,"b":"44","c":6,"d":"bar"},
+{"a":134,"b":"5","c":9,"d":"baz"},
+{"a":2,"b":"12","c":11,"d":"abc"}
+]
+
+ # uniq: File with duplicate rows:
+ $ cat <<END >DUPLICATES.csv
+x,y,z
+1,2,3
+4,5,6
+1,2,3
+5,5,3
+END
+
+ # uniq: Remove duplicates:
+ $ cx in DUPLICATES.csv // -csv // -h // uniq // h- // csv-
+x,y,z
+1,2,3
+4,5,6
+5,5,3
+
+ # uniq: remove rows with duplicate column values:
+ $ cx in DUPLICATES.csv // -csv // -h // uniq z // h- // csv-
+x,y,z
+1,2,3
+4,5,6
+
+ # txt-: Generate an ASCII table:
+ $ cx in SOME.csv // -csv // cut a,d // sort d // txt-
+| a   | d   |
++-----+-----+
+| 2   | abc |
+| 24  | bar |
+| 134 | baz |
+| 1   | foo |
+
+ # txt-: Optional title:
+ $ cx in SOME.csv // -csv // -h // txt- --title="Title"
+|        Title        |
++-----+----+----+-----+
+| a   | b  | c  | d   |
++-----+----+----+-----+
+| 1   | ab | 3  | foo |
+| 24  | 44 | 6  | bar |
+| 134 | 5  | 9  | baz |
+| 2   | 12 | 11 | abc |
+
+ # txt-: Without head-, header columns are considered rows:
+ $ cx in SOME.csv // -csv // txt-
+| a   | b  | c  | d   |
+| 1   | ab | 3  | foo |
+| 24  | 44 | 6  | bar |
+| 134 | 5  | 9  | baz |
+| 2   | 12 | 11 | abc |
+
+ # header-: (-h) Format will output columns as headers:
+ $ cx in SOME.csv // -csv // -h // txt-
+| a   | b  | c  | d   |
++-----+----+----+-----+
+| 1   | ab | 3  | foo |
+| 24  | 44 | 6  | bar |
+| 134 | 5  | 9  | baz |
+| 2   | 12 | 11 | abc |
+
+ # region: Output regions of rows:
+ $ cx in SOME.csv // -csv // -h // types // region 2..4,1 // txt-
+| a   | b  | c  | d   |
++-----+----+----+-----+
+|  24 | 44 |  6 | bar |
+| 134 | 5  |  9 | baz |
+|   2 | 12 | 11 | abc |
+|   1 | ab |  3 | foo |
+
+ # region: Backwards regions:
+ $ cx in SOME.csv // -csv // -h // types // region -1..1 // txt-
+| a   | b  | c  | d   |
++-----+----+----+-----+
+|   2 | 12 | 11 | abc |
+| 134 | 5  |  9 | baz |
+|  24 | 44 |  6 | bar |
+|   1 | ab |  3 | foo |
+
+ # transpose: transpose columns and rows
+ $ cx in SOME.csv // -csv / -h // types // columns- // xpose // txt-
+| name      | a       | b      | c       | d      |
+| ind       | 0       | 1      | 2       | 3      |
+| type      | Integer | String | Integer | String |
+| min_width | 1       | 1      | 1       | 3      |
+| max_width | 3       | 2      | 2       | 3      |
+| justify   | right   |        | right   |        |
+
+ # edn: EDN formatting:
+ $ cx in SOME.csv // -csv // -h // types // coerce // edn-
+[
+{:a 1 :b "ab" :c 3 :d "foo"}
+{:a 24 :b "44" :c 6 :d "bar"}
+{:a 134 :b "5" :c 9 :d "baz"}
+{:a 2 :b "12" :c 11 :d "abc"}
+]
+
+ # md: Markdown:
+ $ cx in SOME.csv // -csv // -h // md-
+| a    | b    | c    | d    |
+| ---- | ---- | ---- | ---- |
+| 1    | ab   | 3    | foo  |
+| 24   | 44   | 6    | bar  |
+| 134  | 5    | 9    | baz  |
+| 2    | 12   | 11   | abc  |
+
+ # md: Markdown w/ types:
+ $ cx in SOME.csv // -csv // -h // types // md-
+| a    | b    | c    | d    |
+| ---: | ---- | ---: | ---- |
+|    1 | ab   |    3 | foo  |
+|   24 | 44   |    6 | bar  |
+|  134 | 5    |    9 | baz  |
+|    2 | 12   |   11 | abc  |
+
+ # columns: Define columns or override attributes:
+ $ cx in SOME.csv // -csv // -h // types // columns b:justify=right:max_width=12 // md-
+| a    | b            | c    | d    |
+| ---: | -----------: | ---: | ---- |
+|    1 |           ab |    3 | foo  |
+|   24 |           44 |    6 | bar  |
+|  134 |            5 |    9 | baz  |
+|    2 |           12 |   11 | abc  |
+
+ # columns: Rename columns:
+ $ cx in SOME.csv // -csv // -h // types // columns c:name=NEWNAME // md-
+| a    | b    | NEWNAME | d    |
+| ---: | ---- | ------: | ---- |
+|    1 | ab   |       3 | foo  |
+|   24 | 44   |       6 | bar  |
+|  134 | 5    |       9 | baz  |
+|    2 | 12   |      11 | abc  |
+
+ # json-: JSON output:
+ $ cx in SOME.csv // -csv // -h // types // json-
+[
+{"a":1,"b":"ab","c":3,"d":"foo"},
+{"a":24,"b":"44","c":6,"d":"bar"},
+{"a":134,"b":"5","c":9,"d":"baz"},
+{"a":2,"b":"12","c":11,"d":"abc"}
+]
+
+ # yaml-: YAML output:
+ $ cx in SOME.csv // -csv // -h // types // coerce // yaml-
+---
+- :a: 1
+  :b: ab
+  :c: 3
+  :d: foo
+- :a: 24
+  :b: '44'
+  :c: 6
+  :d: bar
+- :a: 134
+  :b: '5'
+  :c: 9
+  :d: baz
+- :a: 2
+  :b: '12'
+  :c: 11
+  :d: abc
+
+ # yaml-: YAML output: row mode
+ $ cx in SOME.csv // -csv // -h // types // coerce // h- // yaml- --mode=row
+---
+- - a
+  - b
+  - c
+  - d
+- - 1
+  - ab
+  - 3
+  - foo
+- - 24
+  - '44'
+  - 6
+  - bar
+- - 134
+  - '5'
+  - 9
+  - baz
+- - 2
+  - '12'
+  - 11
+  - abc
+
+ # -yaml: YAML input:
+ $ cx in SOME.csv // -csv // -h // types // coerce // yaml- // -yaml // csv-
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+
+ # html-: Generate HTML table:
+ $ cx in SOME.csv // -csv // -h // cut d,b // html- --title="SOME TABLE" > SOME.html ; w3m -dump SOME.html
+SOME TABLE
+
+#  d   b
+1 foo  ab
+2 bar  44
+3 baz  5
+4 abc  12
+
+
+ # tee: Duplicate input to mulitple output pipelines:
+ $ cx in SOME.csv // -csv // -h // tee {{ types // sort // txt- // out SOME.txt }} // cut a,b // h- // csv-
+a,b
+1,ab
+24,44
+134,5
+2,12
+
+ # tee: Other output:
+ $ cat SOME.txt
+| a   | b  | c  | d   |
++-----+----+----+-----+
+|   1 | ab |  3 | foo |
+|   2 | 12 | 11 | abc |
+|  24 | 44 |  6 | bar |
+| 134 | 5  |  9 | baz |
+
+ # join: Join two or more pipelines
+ $ cat SOME.csv
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+
+ $ cat <<END > OTHER.csv
+x,y
+1,2
+2,3
+5,9
+END
+
+ # join: inner join:
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+| a | b  | c  | d   | x | y |
++---+----+----+-----+---+---+
+| 1 | ab | 3  | foo | 1 | 2 |
+| 2 | 12 | 11 | abc | 2 | 3 |
+
+ # join: left outer
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+| a   | b  | c  | d   | x | y |
++-----+----+----+-----+---+---+
+| 1   | ab | 3  | foo | 1 | 2 |
+| 24  | 44 | 6  | bar |   |   |
+| 134 | 5  | 9  | baz |   |   |
+| 2   | 12 | 11 | abc | 2 | 3 |
+
+ # join: right outer
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+| a | b  | c  | d   | x | y |
++---+----+----+-----+---+---+
+| 1 | ab | 3  | foo | 1 | 2 |
+| 2 | 12 | 11 | abc | 2 | 3 |
+|   |    |    |     | 5 | 9 |
+
+ # join: full outer
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+| a   | b  | c  | d   | x | y |
++-----+----+----+-----+---+---+
+| 1   | ab | 3  | foo | 1 | 2 |
+| 24  | 44 | 6  | bar |   |   |
+| 134 | 5  | 9  | baz |   |   |
+| 2   | 12 | 11 | abc | 2 | 3 |
+|     |    |    |     | 5 | 9 |
+
+ # -json, json- : Can roundtrip.
+ $ cx in SOME.csv // -csv // -h // types // coerce // json- > SOME.json
+
+ $ cx in SOME.json // -json // types // coerce // sort a // h- // csv-
+a,b,c,d
+1,ab,3,foo
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
+
+ # cmd: Pipe through other programs: ("tac" reverses lines)
+ $ cx in SOME.csv // -csv // -h // csv- // cmd tac // -csv // h- // csv-
+a,b,c,d
+2,12,11,abc
+134,5,9,baz
+24,44,6,bar
+1,ab,3,foo
+
+ # cmd: Replace '%COLUMN-NAME%' with column index + 1.
+ $ cx in SOME.csv // -csv // -h // cmd echo %a%,%c%,%q%
+1,3,%q%
+
+ # eval: Evaluate Ruby expressions.  Assignments will create new columns:
+ $ cx in SOME.csv // -csv // -h // types // coerce // eval 'self.e = a * 2' // h- // csv-
+a,b,c,d,e
+1,ab,3,foo,2
+24,44,6,bar,48
+134,5,9,baz,268
+2,12,11,abc,4
+
+ # in: Concatenates multiple files:
+ $ tac SOME.csv > EMOS.csv
+
+ $ cx in SOME.csv EMOS.csv // -csv // -h // types // txt-
+| a   | b  | c  | d   |
++-----+----+----+-----+
+| 1   | ab | 3  | foo |
+| 24  | 44 | 6  | bar |
+| 134 | 5  | 9  | baz |
+| 2   | 12 | 11 | abc |
+| 2   | 12 | 11 | abc |
+| 134 | 5  | 9  | baz |
+| 24  | 44 | 6  | bar |
+| 1   | ab | 3  | foo |
+| a   | b  | c  | d   |
+
+ # SQL: CREATE TABLE and INSERT INTO:
+ $ cx in SOME.csv // -csv // -h // types // coerce // sql- --table=TheTable --create --insert | tee TheTable.sql
+CREATE TABLE TheTable
+(
+  a INT,
+  b VARCHAR(2),
+  c INT,
+  d VARCHAR(3)
+);
+INSERT INTO TheTable
+  (a, b, c, d)
+VALUES
+  (1, 'ab', 3, 'foo'),
+  (24, '44', 6, 'bar'),
+  (134, '5', 9, 'baz'),
+  (2, '12', 11, 'abc');
+
+ $ rm -f TheDB.db3; sqlite3 TheDB.db3 < TheTable.sql ; sqlite3 TheDB.db3 '.schema' 'SELECT * FROM TheTable'
+CREATE TABLE TheTable
+(
+  a INT,
+  b VARCHAR(2),
+  c INT,
+  d VARCHAR(3)
+);
+1|ab|3|foo
+24|44|6|bar
+134|5|9|baz
+2|12|11|abc
+
+```
