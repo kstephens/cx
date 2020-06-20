@@ -269,6 +269,30 @@ x,y,z
   :c: 11
   :d: abc
 
+ # yaml-: YAML output: row mode
+ $ cx in SOME.csv // -csv // -h // types // coerce // h- // yaml- --mode=row
+---
+- - a
+  - b
+  - c
+  - d
+- - 1
+  - ab
+  - 3
+  - foo
+- - 24
+  - '44'
+  - 6
+  - bar
+- - 134
+  - '5'
+  - 9
+  - baz
+- - 2
+  - '12'
+  - 11
+  - abc
+
  # -yaml: YAML input:
  $ cx in SOME.csv // -csv // -h // types // coerce // yaml- // -yaml // csv-
 1,ab,3,foo

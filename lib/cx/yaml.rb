@@ -15,11 +15,11 @@ module CX
     end
   end
   
-  class YamlOut < Pipe
+  class YamlOut < StructuredOut
     def content_type ; 'application/json' ; end
     def call input, env
       env[:content_type] = 'application/yaml'
-      app.call([YAML.dump(input.as_hash_array)], env)
+      app.call([YAML.dump(input.map(&row_fn(input)))], env)
     end
   end
 end

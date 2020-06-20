@@ -66,7 +66,6 @@ module CX
   end
   
   def _col_! col
-    @cols << nil while @cols.size <= col.ind
     @cols[col.ind]         = col
     @name_to_col[col.name] = col
     @ind_to_col[col.ind]   = col

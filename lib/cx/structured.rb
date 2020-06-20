@@ -39,35 +39,16 @@ class StructuredOut < Pipe
     @row_delim = '{}'
     @row_sep   = ','
   end
+  
   def call input, env
     output = new_table(input)
     row_delim = self.row_delim
-    array_mode = opts[:mode] == 'row'
-    row_sep = cols = nil
-    if input.header
-      cols = input.header.cols
-      have_types = cols.any?(&:type)
-      col_names = cols.map(&:to_sym)
-    else
-      array_mode = true
-    end
+    row_sep = nil
     output << seq_delim[0]
+    fn = row_fn input
     input.each_shift do | row |
       output << row_sep.to_s << "\n"
-      data = if array_mode 
-               row
-             else
-               if have_types
-                 row = cols.map do |c|
-                   v = row[c.to_i];
-                   v = Typing.coerce(v, c.type) if c.type
-                   v
-                 end
-               end
-               Hash[col_names.zip(row)]
-             end
-      pp(row: row, data: data) if debug?
-      output << line(data, row_delim)
+      output << line(fn.call(row), row_delim)
       row_sep = self.row_sep
     end
     output << ("\n" + seq_delim[1] + "\n")
@@ -76,6 +57,30 @@ class StructuredOut < Pipe
     end
     app.call(output, env)
   end
+  
+  def row_fn input
+    if input.header && opts[:mode] != 'row'
+      cols = input.header.cols
+      have_types = cols.any?(&:type)
+      col_names = cols.map(&:to_sym)
+      if have_types
+        lambda do | row |
+          row = cols.map do |c|
+            v = row[c.to_i];
+            c.type ? Typing.coerce(v, c.type) : v 
+          end
+          Hash[col_names.zip(row)]
+        end
+      else
+        lambda do | row |
+          Hash[col_names.zip(row)]
+        end
+      end
+    else
+      lambda {|row| row}
+    end
+  end
+  
   def content_type ; nil ; end
   def line row
     raise
