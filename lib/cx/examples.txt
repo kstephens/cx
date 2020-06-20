@@ -249,6 +249,26 @@ x,y,z
 {"a":2,"b":"12","c":11,"d":"abc"}
 ]
 
+ # yaml-: YAML output:
+ $ cx in SOME.csv // -csv // -h // types // coerce // yaml-
+---
+- :a: 1
+  :b: ab
+  :c: 3
+  :d: foo
+- :a: 24
+  :b: '44'
+  :c: 6
+  :d: bar
+- :a: 134
+  :b: '5'
+  :c: 9
+  :d: baz
+- :a: 2
+  :b: '12'
+  :c: 11
+  :d: abc
+
  # html-: Generate HTML table:
  $ cx in SOME.csv // -csv // -h // cut d,b // html- --title="SOME TABLE" > SOME.html ; w3m -dump SOME.html
 SOME TABLE

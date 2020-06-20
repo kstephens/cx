@@ -85,20 +85,15 @@ class Table
     @header = header
     @rows = rows || [ ]
   end
-=begin
-  def identifier= x
-    @identifier = x
-    ObjectSpace.define_finalizer(self, self.class.finalize_proc("#{'%x' % object_id} creator: #{@identifier}"))
-  end
-  def self.finalize_proc id
-    proc { puts "  ### finalized #{self} #{id}" }
-  end
-=end
-  
+
   def new header = nil, rows = nil
     x = self.class.new(header, rows)
     x.header ||= @header
     x
+  end
+
+  def as_hash_array header = self.header
+    rows.map{|row| header.row_as_hash(row)}
   end
   
   def _rows     ; @rows ; end

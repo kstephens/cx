@@ -142,6 +142,8 @@ module CX
     cmd [ :'json-', :json ], 'emit JSON'
     cmd [ :'edn-', :edn, :clj, :'clj-' ],
       'emit EDN   EDN is native to Clojure.'
+    cmd :'-yaml',            'parse YAML'
+    cmd [ :'yaml-', :yaml ], 'emit YAML'
     cmd :'sql-',
       'Generate INSERT INTO or CREATE TABLE SQL statements   '
     # binding.pry

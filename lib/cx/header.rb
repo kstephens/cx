@@ -112,6 +112,9 @@ module CX
   def row_hash r, cols = nil
     Hash[col_row(r, cols)]
   end
+  def row_as_hash r, cols = nil
+    Hash[(cols || self.cols).map(&:to_sym).zip(row_fn(cols).call(r))]
+  end
   def row_arry r, cols = nil
     row_fn(cols).call(r)
   end
