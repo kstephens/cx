@@ -42,42 +42,41 @@ module CX
     end
 
     join_rows = lambda do | blk |
-      j_index.each do | j_k, (l_rows, r_rows) |
+      j_index.each do | j_k, (ls, rs) |
         begin
-          l_rows, r_rows = blk.call(l_rows, r_rows)
-          l_rows.each do | l_row |
-            r_rows.each do | r_row |
-              j_row = (l_row || l.empty) + (r_row || r.empty)
+          ls, rs = blk.call(ls, rs)
+          ls.each do | l |
+            rs.each do | r |
+              j_row = (l || l.empty) + (r || r.empty)
               j_table << j_row
             end
           end
         rescue => exc
-          raise exc.class, "#{exc.inspect} : in join #{pps(j_k: j_k, l_rows: l_rows.size, r_rows: r_rows.size)}", exc.backtrace
+          raise exc.class, "#{exc.inspect} : in join #{pps(j_k: j_k, ls: ls.size, rs: rs.size)}", exc.backtrace
         end
       end
     end
     
-    l_empty_r, r_empty_r = [ l.empty ], [ r.empty ]
+    le, re = [ l.empty ], [ r.empty ]
     case op
     when nil, 'inner', "="
-      join_rows.call(lambda { | l_rows, r_rows |
-                       [ l_rows,
-                         r_rows ]
+      join_rows.call(lambda { | l, r |
+                       [ l, r ]
                      })
     when 'left-outer', 'lo', '/='
-      join_rows.call(lambda { | l_rows, r_rows |
-                       [ l_rows,
-                         r_rows.empty? ? r_empty_r : r_rows ]
+      join_rows.call(lambda { | l, r |
+                       [ l,
+                         r.empty? ? re : r ]
                      })
     when 'right-outer', 'ro', '=/'
-      join_rows.call(lambda {| l_rows, r_rows |
-                       [ l_rows.empty? ? l_empty_r : l_rows,
-                         r_rows ]
+      join_rows.call(lambda {| l, r |
+                       [ l.empty? ? le : l,
+                         r ]
                      })
     when 'outer', 'full-outer', 'fo', 'o', '/=/'
-      join_rows.call(lambda { | l_rows, r_rows |
-                       [ l_rows.empty? ? l_empty_r : l_rows,
-                         r_rows.empty? ? r_empty_r : r_rows ]
+      join_rows.call(lambda { | l, r |
+                       [ l.empty? ? le : l,
+                         r.empty? ? re : r ]
                      })
     else
       raise_ "invalid join op #{op}"
