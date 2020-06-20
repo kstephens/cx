@@ -249,6 +249,16 @@ x,y,z
 [2,"12",11,"abc"]
 ]
 
+ # -json, json- : Can roundtrip.
+ $ cx in SOME.csv // -csv // -h // types // coerce // json- > SOME.json
+
+ $ cx in SOME.json // -json // types // coerce // sort a // h- // csv-
+a,b,c,d
+1,ab,3,foo
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
+
  # edn: EDN formatting:
  $ cx in SOME.csv // -csv // -h // types // coerce // edn-
 [
@@ -403,16 +413,6 @@ END
 | 134 | 5  | 9  | baz |   |   |
 | 2   | 12 | 11 | abc | 2 | 3 |
 |     |    |    |     | 5 | 9 |
-
- # -json, json- : Can roundtrip.
- $ cx in SOME.csv // -csv // -h // types // coerce // json- > SOME.json
-
- $ cx in SOME.json // -json // types // coerce // sort a // h- // csv-
-a,b,c,d
-1,ab,3,foo
-2,12,11,abc
-24,44,6,bar
-134,5,9,baz
 
  # cmd: Pipe through other programs: ("tac" reverses lines)
  $ cx in SOME.csv // -csv // -h // csv- // cmd tac // -csv // h- // csv-
