@@ -453,7 +453,9 @@ VALUES
   (134, '5', 9, 'baz'),
   (2, '12', 11, 'abc');
 
- $ rm -f TheDB.db3; sqlite3 TheDB.db3 < TheTable.sql ; sqlite3 TheDB.db3 '.schema' 'SELECT * FROM TheTable'
+ $ rm -f TheDB.db3; sqlite3 TheDB.db3 < TheTable.sql
+
+ $ sqlite3 TheDB.db3 '.schema' 'SELECT * FROM TheTable'
 CREATE TABLE TheTable
 (
   a INT,
