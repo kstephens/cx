@@ -73,8 +73,9 @@ END
 
   class HelpAndTest
     def self.help!
-          
+          progname = "cx"
     cmds = CX::Command::COMMANDS.values
+    cmds.each{ |spec| CX::Command::_factory(spec) }
     cls_section = {
       IOPipe => "I/O",
       Pipe::Parse => "Parsing",
@@ -118,7 +119,7 @@ END
   EXAMPLES:
   --------
 
-#{::HelpExamplesAndTest.examples.sub(/\n+\Z/, '')}
+#{HelpAndTest.examples.sub(/\n+\Z/, '')}
 
   ATTRIBUTION:
   -----------
@@ -168,7 +169,7 @@ END
       map{ |g| g.split("\n", -1).
         each{ |l| l << "\n" }}
     
-    results = [ ]    
+    results = [ ]
     i = -1
 
     while group = @group = groups.shift

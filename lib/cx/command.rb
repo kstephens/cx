@@ -62,8 +62,7 @@ module CX
       COMMANDS[name.to_sym] or raise_ "unknown command: #{name.inspect} : run 'cx --help'"
     end
     
-    def factory name
-      s = spec(name)
+    def _factory s
       unless f = s[:class]
         begin
           log.debug "Loading #{s[:path].inspect}"
@@ -75,7 +74,11 @@ module CX
       end
       f
     end
-
+    
+    def factory name
+      _factory(spec(name))
+    end
+    
     ################################
 
     cmd :IOIn,  [ :in,  :r, :i ], 'read from a file   If unspecfied, use STDIN.'

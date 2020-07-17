@@ -216,7 +216,7 @@ class Main
   
   def help!
     require 'cx/help_and_test'
-    HelpAndTest.help!
+    CX::HelpAndTest.help!
   end
   
   def inspect
