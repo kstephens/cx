@@ -13,7 +13,9 @@ module CX
     include Logging
     extend Logging
     
-    COMMANDS = { }
+    COMMANDS = [ ]
+    COMMAND_BY_NAME = {  }
+    
     def cmd *args
       name, *aliases = args[0]
       
@@ -52,14 +54,15 @@ module CX
         class: nil,
         path: path,
         }
+      COMMANDS << spec
       [name, *aliases].each do | n |
-        COMMANDS[n.to_sym] = spec
+        COMMAND_BY_NAME[n.to_sym] = spec
       end
       # CX.autoload class_name, path
     end
     
     def spec name
-      COMMANDS[name.to_sym] or raise_ "unknown command: #{name.inspect} : run 'cx --help'"
+      COMMAND_BY_NAME[name.to_sym] or raise_ "unknown command: #{name.inspect} : run 'cx --help'"
     end
     
     def _factory s

@@ -74,7 +74,7 @@ END
   class HelpAndTest
     def self.help!
           progname = "cx"
-    cmds = CX::Command::COMMANDS.values
+    cmds = CX::Command::COMMANDS
     cmds.each{ |spec| CX::Command::_factory(spec) }
     cls_section = {
       IOPipe => "I/O",
