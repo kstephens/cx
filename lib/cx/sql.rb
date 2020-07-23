@@ -87,7 +87,13 @@ END
     when nil
       "NULL"
     when String, Symbol
-      "'" + v.to_s + "'" # ??? good enough?
+      # ??? good enough?
+      v = v.to_s.
+        inspect.
+        gsub(/^"|"$/, '').
+        gsub(/\\"/, '"').
+        gsub(/'/, "''")
+      "'" + v + "'"
     else
       v.to_s
     end
