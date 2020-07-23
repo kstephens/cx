@@ -21,7 +21,7 @@ module CSVSafe
   def csv_parse_line line, ri = nil
     row = nil
     begin
-      # line = remove_BOM(line)
+      line = remove_BOM(line)
       # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
       # ::CSV.parse_line(line, @csv_parse_options)
       row = ::CSV.parse_line(line)
@@ -50,14 +50,15 @@ module CSVSafe
     end
   end
 
+  # https://stackoverflow.com/questions/5011504/is-there-a-way-to-remove-the-bom-from-a-utf-8-encoded-file
+  # THANKS, EXCEL!
   def remove_BOM line, encoding = nil
     encoding ||= line.encoding
-    binary = line.dup.force_encoding("binary")
-    if binary.gsub!("\xEF\xBB\xBF", '')
-      line = binary.force_encoding(encoding, :invalid => :replace, :undef => :replace, :replace => "")
-    end
-    line
+    binary = line.dup.force_encoding("UTF-8")
+    binary.gsub!(BOM, '')
+    binary
   end
+  BOM = "\xEF\xBB\xBF".dup.force_encoding("UTF-8").freeze
 
   def csv_unescape_value s
     case s
