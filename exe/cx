@@ -7,8 +7,9 @@
 # "cx --help" for documentation.
 # "cx ---test---" to execute integration tests.
 
-require 'bundler/setup'
-$:.unshift(File.expand_path('../lib', __FILE__))
+require 'bundler/setup' unless ARGV.delete('---no-bundler---')
+$:.unshift(File.expand_path('../../lib', __FILE__))
+
 begin
   require 'set'
   needs_pry = %w(--verbose --debug ---pry--- ---test--- ---break---)
