@@ -109,9 +109,12 @@ module CX
       'emit unique rows   Specified rows delimit uniqness.'
 
     cmd :eval,
-      'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns results in new columns.'
+      'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns creates new columns.'
     cmd [ :cmd, :- ],
-      'pipe rows thru an external command.  Column references "%NAME%" are replaced with column index + 1.'
+      'pipe rows thru an external command   Column references "%NAME%" are replaced with column index + 1.',
+      {
+        '--column-offset=' => 'Use column offset instead of default 1.'
+      }
     
     cmd [ :"columns", :"cols=" ],
       'Define columns   Specify/override column names and options.'
@@ -131,7 +134,10 @@ module CX
     cmd :'csv-', 'emit CSV lines'
 
     cmd [ :'txt-', :'t-', :ascii, :text ],
-      'emit formatted text table'
+      'emit formatted text table',
+      {
+        '--title=' => 'Generates a title',
+      }
     cmd [ :'markdown-' , :'md-'],
       'emit Markdown table'
     cmd [ :'html-', :html ],
@@ -151,7 +157,13 @@ module CX
     cmd :'-yaml',            'parse YAML'
     cmd [ :'yaml-', :yaml ], 'emit YAML'
     cmd :'sql-',
-      'Generate INSERT INTO or CREATE TABLE SQL statements   '
+      'Generate INSERT INTO or CREATE TABLE SQL statements   ',
+      {
+        '--table=' => 'Table name.',
+        '--create' => 'Generate CREATE TABLE statement.',
+        '--insert' => 'Generate INSERT INTO statement.',
+        '--many-inserts' => 'Generate INSERT INTO for each row.',
+      }
     # binding.pry
   end
 end

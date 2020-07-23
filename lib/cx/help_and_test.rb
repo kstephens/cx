@@ -79,7 +79,7 @@ END
     cls_section = {
       IOPipe => "I/O",
       Pipe::Parse => "Parsing",
-      Pipe::Format => "Format",
+      Pipe::Format => "Formatting",
       Pipe::Process => "Processing",
       Pipe::Diagnostic => "Diagnostic",
       Object => "Other",
