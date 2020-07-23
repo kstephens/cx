@@ -102,8 +102,7 @@ class Main
   end
 
   # TODO: use an option parse library?
-  def parse_opts! args
-    opts = { }
+  def parse_opts! args, opts = { }
     while arg = args.first
       case arg
       when /^--([^=]+)=(.*)$/
@@ -119,9 +118,9 @@ class Main
         break 
       end
       k = k.gsub('-', '_').to_sym
-      if Numeric === v
+      if Integer === v
         x = (opts[k] || 0) + v
-        v = false if v <= 0
+        v = x > 0
       end
       opts[k] = v
       args.shift

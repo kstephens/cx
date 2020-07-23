@@ -57,6 +57,21 @@ class Pipe
     ""
   end
 
+  def to_bool x, v = TO_BOOL_UNSPECIFED
+    v_ = v != TO_BOOL_UNSPECIFED
+    case x
+    when nil
+      v_ ? v : nil
+    when false, true
+      x
+    when Integer
+      x > 0 ? (v_ ? v : true) : false
+    else
+      x
+    end
+  end
+  TO_BOOL_UNSPECIFED = Object.new
+  
   # Pipe types:
   module In       ; end
   module Out      ; end
