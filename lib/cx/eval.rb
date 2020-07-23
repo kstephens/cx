@@ -66,11 +66,15 @@ module CX
     def method_missing sel, *args, &blk
       sel = sel.to_sym
       fn = __col_fn(sel)
-      _define_singleton_method(sel, &fn)
+      __define_singleton_method(sel, &fn)
       fn.call(*args, &blk)
     end
-    
-    define_method(:_define_singleton_method, ::Object.instance_method(:define_singleton_method))
+
+    def __define_singleton_method sel, &blk
+      m = ::Object.instance_method(:define_singleton_method)
+      m.bind(self).call(sel, &blk) # use #bind_call?
+      self
+    end
   end
 end
 
