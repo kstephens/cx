@@ -17,15 +17,47 @@ class SqlOut < Pipe
     @header = input.header!
     @input = input
     @output = new_table(input)
-    [:create, :insert].each do |action|
-      if opts[action]
-        send(:"#{action}!")
-      end
-    end
+    do_actions!
     env[:content_type] = 'text/plain' # application/x-sql ?
     app.call(output, env)
   end
 
+  def do_actions!
+    actions = [:transaction, :create, :insert]
+      .select{|action| to_bool(opts[action])}
+      .compact
+    if actions.include?(:transaction)
+      case
+      when to_bool(opts[:rollback]) && ! to_bool(opts[:commit], false)
+        actions << :rollback
+      when to_bool(opts[:commit], true)
+        actions << :commit
+      end
+    end
+    actions.each do |action|
+      send(:"#{action}!")
+      output << "\n"
+    end
+  end
+
+  def transaction!
+    output <<<<"END"
+START TRANSACTION;
+END
+  end
+
+  def commit!
+    output <<<<"END"
+COMMIT;
+END
+  end
+
+  def rollback!
+    output <<<<"END"
+ROLLBACK;
+END
+  end
+  
   def create!
     output <<<<"END"
 CREATE #{opts[:temp] && "TEMPORARY "}TABLE #{sql_identifer(table)}
@@ -34,9 +66,11 @@ CREATE #{opts[:temp] && "TEMPORARY "}TABLE #{sql_identifer(table)}
 );
 END
   end
+  
   def sql_column_def col
     "#{col.name} #{type_to_sql_type col}"
   end
+
   def type_to_sql_type col
     type = col.type
     type = String if type == Symbol
@@ -62,7 +96,7 @@ END
       output << sql_insert_into
       output << sep << sql_row(r)
       if opts[:many_inserts]
-        output << ";\n"
+        output << ";\n\n"
       else
         sql_insert_into = nil
         sep = ",\n  "
@@ -70,18 +104,23 @@ END
     end
     output << ";\n" unless opts[:many_inserts]
   end
+
   def sql_columns cols
     sql_list cols.map{|c| sql_identifer(c)} # ??? may require quoting
   end
+
   def sql_identifer name
     name.to_s # TODO: proper escape
   end
+
   def sql_row row
     sql_list @header.map{|c| sql_val(row[c.to_i])}
   end
+
   def sql_list arr
     String.new << '(' << (arr.map(&:to_s) * ', ') << ')'
   end
+
   def sql_val v # TODO: proper string escape.
     case v
     when nil

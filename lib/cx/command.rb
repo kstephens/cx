@@ -163,6 +163,9 @@ module CX
         '--create' => 'Generate CREATE TABLE statement.',
         '--insert' => 'Generate INSERT INTO statement.',
         '--many-inserts' => 'Generate INSERT INTO for each row.',
+        '--transaction' => 'BEGIN TRANSACTION',
+        '--commit' => 'COMMIT.  Defaults to true for --transaction.',
+        '--rollback' => 'ROLLBACK transaction, for testing purposes.',
       }
     # binding.pry
   end
