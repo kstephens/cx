@@ -91,8 +91,8 @@ END
       v = v.to_s.
         inspect.
         gsub(/^"|"$/, '').
-        gsub(/\\"/, '"').
-        gsub(/'/, "''")
+        gsub("\\\"", '"').
+        gsub("'", "''")
       "'" + v + "'"
     else
       v.to_s
