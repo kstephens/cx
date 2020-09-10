@@ -81,7 +81,7 @@ module Typing
       end
     when [Boolean, TrueClass, FalseClass].include?(t1)
       case
-      when [Boolean, TrueClass, FalseClass, NilClass, nil].include(t2)
+      when [Boolean, TrueClass, FalseClass, NilClass, nil].include?(t2)
         true
       else
         false
