@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'fileutils'
+require 'terminal-table'
 
 module CX
   class Main
@@ -97,11 +98,23 @@ END
       syn = c[:synopsis].split(/   |\n/, -1).map(&:strip)
       aliases = c[:aliases].empty? ? "" : "aka: #{c[:aliases].map(&:to_s).map(&:inspect) * ', '}"
       rest = [ *syn[1..-1], aliases ].reject(&:empty?)
+      options = c[:options].to_a
+      unless options.empty?
+        options = Terminal::Table.new(
+          style: {border_x: '', border_y: '', border_i: ''},
+          rows: options).
+          to_s.
+          split("\n").
+          reject(&:empty?).
+          map{|s| "%-#{w}s    %s" % ["", s]}
+      end
       c[:doc] =
         (
           [ "%-#{w}s - %s" % [c[:name].to_s, syn[0]] ] +
-          rest.map{|s| "%#{w}s     %s" % ["", s]}
+            rest.map{|s| "%#{w}s     %s" % ["", s]} +
+            options
         ) * "\n"
+      # binding.pry unless options.empty?
       c[:section] = cls_section[c[:type]]
     end
     sections = cmds.group_by{|cmd| cmd[:section]}
