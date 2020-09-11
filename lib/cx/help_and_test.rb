@@ -17,7 +17,7 @@ module CX
       {"in foo" =>
        [[:in, ["foo"], {}]]},
       {"in --a=1 --b baz" =>
-       [[:in, ["baz"], {a: "1", b: 1}]]},
+       [[:in, ["baz"], {a: "1", b: true}]]},
       {"in --a=1 foo // out bar" =>
        [[:in,  ["foo"], {a: "1"}],
         [:out, ["bar"], {}]]},
@@ -29,8 +29,8 @@ module CX
       {"in --a foo {{ a --b=2 // b --c }} // out bar" =>
        [[:in, ["foo", [
                  [:a, [], {b: "2"}],
-                 [:b, [], {c: 1}]]],
-         {a: 1}],
+                 [:b, [], {c: true}]]],
+         {a: true}],
         [:out, ["bar"], {}]]},
     ].each do | x |
       cmd_line, expected = x.keys.first, x.values.first
