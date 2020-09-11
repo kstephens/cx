@@ -156,25 +156,30 @@ module CX
     when Enumerable
       x.map{|x| col(x)}
     else
-      self[x] or raise "Unknown column : #{x.inspect} in #{to_h.inspect}"
+      self[x] or raise "Unknown column : #{x.inspect} in #{@ind_to_col.inspect}"
     end
   end
 
-  def self.parse_column_args args
-    cols = args.flat_map do |c|
-      c.strip.split(/\s+|\s*,\s*/, -1).map(&:strip)
+  def self.parse_column_args args, strip_and_split = true
+    cols = args.dup
+    if strip_and_split
+      cols = cols.flat_map do |c|
+        c.strip.split(/\s+|\s*,\s*/, -1).map(&:strip)
+      end
     end
     cols.reject!(&:empty?)
-    cols.map! do | name |
-      if name =~ /^([^:]+)(:(.*))?$/
+    cols.map! do | c |
+      if c =~ /^([^:]+)(:(.*))?$/
         name, opts = $1, $3 || ''
         case name
-        when /^\d+$/
-          name = name.to_i
+        when /^#?(\d+)$/
+          i = $1.to_i
+          raise "invalid numeric column specification #{c.inspect}}" unless i > 0
+          name = i - 1
         end
         [ name, opts ]
       else
-        raise_ "invalid column specifcation #{args.inspect}"
+        raise_ "invalid column specifcation #{c.inspect}"
       end
     end
     cols.map! do | (name, opts) |

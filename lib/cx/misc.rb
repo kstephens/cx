@@ -107,16 +107,30 @@ end
 
 class Grep < Pipe
   include Pipe::Process
-  # TODO: support regex negation: e.g. "grep cola:v some.*thing colb other."
   def call input, env
-    cols = []; rxs = []; a = args.dup;
-    until a.empty? ; cols << a.shift; rxs << a.shift; end
-    cols = input.header!.col(cols)
-    rxs.map!{|s| Regexp.new(s)}
+    col_opts = []; a = args.dup
+    until a.empty?
+      x = Header.parse_column_args([a.shift], false)
+      rx = a.shift or raise "grep: missing pattern"
+      col_opts << [ x[0], rx ]
+    end
+    fns = col_opts.map do |((c, opts), rx)|
+      rx = Regexp.new(rx)
+      if opts[:v] || opts[:-]
+        lambda do | str |
+          ! rx.match?(str)
+        end
+      else
+        lambda do | str |
+          rx.match?(str)
+        end
+      end
+    end
+    cols = input.header!.col(col_opts.map(&:first).map(&:first))
     row_fn = input.header.row_fn(cols)
     input.select! do | r |
       r = row_fn.call(r)
-      r.zip(rxs).all?{|(v,rx)| rx.match?(v.to_s)}
+      r.zip(fns).all?{|(v,fn)| fn.call(v.to_s)}
     end
     app.call(input, env)
   end

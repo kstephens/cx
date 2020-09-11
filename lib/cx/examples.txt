@@ -131,6 +131,23 @@ x,y,z
 1,2,3
 4,5,6
 
+ # grep: match columns
+ $ cx in SOME.csv // -csv // -h // grep d b // h- // csv-
+a,b,c,d
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+
+ # grep: match columns : negated
+ $ cx in SOME.csv // -csv // -h // grep d:- b // h- // csv-
+a,b,c,d
+1,ab,3,foo
+
+ # grep: match multiple columns
+ $ cx in SOME.csv // -csv // -h // grep a:- '4$' d b // h- // csv-
+a,b,c,d
+2,12,11,abc
+
  # txt-: Generate an ASCII table:
  $ cx in SOME.csv // -csv // cut a,d // sort d // txt-
 | a   | d   |
