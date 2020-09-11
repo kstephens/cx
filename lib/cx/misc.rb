@@ -60,7 +60,51 @@ end
 
 ################################
 
-## ??? NEEDS TEST
+class Rowid < Pipe
+  include Pipe::Process
+  def call input, env
+    col_name = (opts[:name] || :__rowid__).to_sym
+    type = (opts[:type] || "integer").to_s
+    header = input.header!
+    row_fn = header.row_fn
+    cols = [ col_name ] + header.cols
+    header.cols = cols
+    col = header[col_name]
+
+    case type
+    when 'uuid'
+      # require 'uuid'
+      # ??? UUID.state_file = false; UUID.generator.next_sequence
+      # uuid = UUID.new
+      # gen = lambda { || uuid.generate }
+
+      require 'securerandom'
+      gen = lambda { || SecureRandom.uuid }
+      
+      col.type = String
+      col.min_width = col.max_width = gen.call.size
+    else
+      i = (opts[:start] || 1).to_i
+      i -= 1
+      gen = lambda { || i += 1 }
+      col.type = Integer
+      # + 1 to handle negative start
+      max_i = i + input.rows.size
+      col.min_width = i.to_s.size
+      col.max_width = (Math.log10(max_i) + 1).to_i + 1 + 1
+    end
+
+    input.map! do | r |
+      r = row_fn.call(r)
+      r.unshift(gen.call())
+    end
+
+    app.call(input, env)
+  end
+end
+
+################################
+
 class Grep < Pipe
   include Pipe::Process
   # TODO: support regex negation: e.g. "grep cola:v some.*thing colb other."

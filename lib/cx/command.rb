@@ -95,8 +95,8 @@ module CX
     cmd [ :"header-", :'h-',],
       'emit column names in first row   Typically used before "csv-".'
 
-    cmd :grep,
-      'emit rows matching specified column regexs'
+    cmd [ :grep, :g ]
+      'emit rows matching specified column regexs   [column pattern] ...'
     cmd [ :transpose, :xpose ],
       'transpose table'
     cmd [ :region, :range ],
@@ -115,7 +115,14 @@ module CX
       {
         '--column-offset=' => 'Use column offset instead of default 1.'
       }
-    
+
+    cmd [ :"rowid" ],
+      'Add __rowid__ column',
+      {
+        '--name='  => 'Default: "__rowid__".',
+        '--type='  => '"integer" or "uuid"  Default: "integer"',
+        '--start=' => 'Default: 1'
+      }
     cmd [ :"columns", :"cols=" ],
       'Define columns   Specify/override column names and options.'
     cmd [ :"columns-", :"cols-" ],

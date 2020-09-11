@@ -186,6 +186,15 @@ x,y,z
 |  24 | 44 |  6 | bar |
 |   1 | ab |  3 | foo |
 
+ # rowid: add sequential row number column:
+ $ cx in SOME.csv // -csv // -h // types // rowid --name=id // txt-
+| id | a   | b  | c  | d   |
++----+-----+----+----+-----+
+|  1 |   1 | ab |  3 | foo |
+|  2 |  24 | 44 |  6 | bar |
+|  3 | 134 | 5  |  9 | baz |
+|  4 |   2 | 12 | 11 | abc |
+
  # transpose: transpose columns and rows
  $ cx in SOME.csv // -csv / -h // types // columns- // xpose // txt-
 | name      | a       | b      | c       | d      |
