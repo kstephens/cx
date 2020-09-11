@@ -210,6 +210,9 @@ END
           cmd_line = cmd_line.sub(/\bcx\b/, progname_abs)
           system cmd_line
           output = File.readlines(output_file)
+          while tail = output[-1] and tail.chomp =~ /^\s*$/
+            output.pop
+          end
           
           output = [ *comments, line, output ] * ''
           File.write(output_file, output)

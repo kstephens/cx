@@ -373,7 +373,6 @@ SOME TABLE
 3 baz  5
 4 abc  12
 
-
  # tee: Duplicate input to mulitple output pipelines:
  $ cx in SOME.csv // -csv // -h // tee {{ types // sort // txt- // out SOME.txt }} // cut a,b // h- // csv-
 a,b
@@ -485,6 +484,7 @@ CREATE TABLE TheTable
   c INT,
   d VARCHAR(3)
 );
+
 INSERT INTO TheTable
   (a, b, c, d)
 VALUES
@@ -495,7 +495,7 @@ VALUES
 
  $ rm -f TheDB.db3; sqlite3 TheDB.db3 < TheTable.sql
 
- $ sqlite3 TheDB.db3 '.schema' 'SELECT * FROM TheTable'
+ $ sqlite3 -batch -header -list -separator , TheDB.db3 '.schema' 'SELECT * FROM TheTable ORDER BY a'
 CREATE TABLE TheTable
 (
   a INT,
@@ -503,8 +503,9 @@ CREATE TABLE TheTable
   c INT,
   d VARCHAR(3)
 );
-1|ab|3|foo
-24|44|6|bar
-134|5|9|baz
-2|12|11|abc
+a,b,c,d
+1,ab,3,foo
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
 
