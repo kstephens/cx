@@ -4,7 +4,7 @@ require "cx/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "cx"
-  spec.version       = Cx::VERSION
+  spec.version       = CX::VERSION
   spec.authors       = ["Kurt Stephens"]
   spec.email         = ["git@kurtstephens.com"]
 

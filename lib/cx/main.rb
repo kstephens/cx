@@ -68,6 +68,9 @@ class Main
     when opts[:help]
       help!
       exit 0
+    when opts[:version]
+      puts CX::VERSION
+      exit 0
     when opts[:_test___]
       test!
     when opts[:_pry___]

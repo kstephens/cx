@@ -1,3 +1,3 @@
-module Cx
-  VERSION = "0.1.2"
+module CX
+  VERSION = "0.1.3"
 end
