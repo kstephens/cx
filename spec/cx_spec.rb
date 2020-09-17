@@ -1,9 +1,5 @@
-RSpec.describe Cx do
+RSpec.describe CX do
   it "has a version number" do
-    expect(Cx::VERSION).not_to be nil
-  end
-
-  it "does something useful" do
-    expect(false).to eq(true)
+    expect(CX::VERSION).not_to be nil
   end
 end
