@@ -6,6 +6,7 @@
 # cx: Copyright 2020, Kurt Stephens
 
 require 'cx'
+require 'cx/version'
 require 'cx/logging'
 require 'cx/util'
 require 'cx/command'
