@@ -30,7 +30,7 @@ module CX
     h = HTML.new(output)
     h.html do
       h.head do
-        x = opts[:title] and h.title(x)
+        x = opts[:title] || env[:in_file] and h.title(x)
         h << HTML_HEAD
         x = opts[:head]  and h.raw!(x)
       end

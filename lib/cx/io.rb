@@ -13,9 +13,11 @@ class IOPipe < Pipe
   def open arg
     io = nil
     reraise do
+      @file_name = nil
       case arg
       when String, File
-        io = File.open(arg.to_s, io_mode)
+        @file_name = arg.to_s
+        io = File.open(@file_name, io_mode)
       when IO, StringIO
         io = arg
       else
@@ -55,6 +57,7 @@ class IOIn < IOPipe
     output = new_table(input)
     args.each do | arg |
       with_io(arg) do | io |
+        env[:in_file] ||= @file_name
         until io.eof?
           @lineno += 1
           @line = io.readline
