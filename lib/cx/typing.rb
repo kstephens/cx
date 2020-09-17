@@ -34,6 +34,10 @@ module Typing
         BigDecimal
       when (Float(v) rescue nil)
         Float
+    # when (Rational(v) rescue nil)
+        # Rational("123/345").to_s == "41/115"
+        # This could be very confusing when roundtripping:
+    #   Rational
       else
         String
       end
