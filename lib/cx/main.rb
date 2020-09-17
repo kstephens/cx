@@ -159,7 +159,7 @@ class Main
     cmd = [ name, cmd_args = [ ], opts ]
     while arg = args.shift
       case arg
-      when '//'
+      when '//', '/'
         break
       when '{{'
         cmd_args << parse_pipeline!(args)

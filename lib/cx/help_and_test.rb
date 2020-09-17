@@ -21,6 +21,9 @@ module CX
       {"in --a=1 foo // out bar" =>
        [[:in,  ["foo"], {a: "1"}],
         [:out, ["bar"], {}]]},
+      {"in --a=1 foo / out bar" =>
+       [[:in,  ["foo"], {a: "1"}],
+        [:out, ["bar"], {}]]},
       {"in foo {{ a // b }}" =>
        [[:in, ["foo", [
                  [:a, [], {}],
