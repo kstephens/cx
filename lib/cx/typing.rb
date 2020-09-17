@@ -5,6 +5,8 @@
 
 require 'cx'
 require 'cx/table'
+require 'rational'
+require 'bigdecimal'
 
 module CX
 module Typing
@@ -27,10 +29,9 @@ module Typing
         Boolean
       when (Integer(v) rescue nil)
         Integer
-      when (Rational(v) rescue nil)
-        Rational
-      # when (BigDecimal(v) rescue nil)
-      # ???
+      when (BigDecimal(v) rescue nil)
+        # Prefer BigDecimal over Float... it is more likely to roundtrip.
+        BigDecimal
       when (Float(v) rescue nil)
         Float
       else
@@ -68,6 +69,9 @@ module Typing
       true
     when t1 <= Numeric && ! (t2 <= Numeric)
       false
+    when t1 <= BigDecimal
+      # Prefer BigDecimal over Float... it is more likely to roundtrip.
+      true
     when t1 <= Float
       true
     when t1 <= Rational
@@ -98,13 +102,22 @@ module Typing
   def self.type_coercer type
     TYPE_COERCER[type] ||= TYPE_COERCER[nil]
   end
+
   TYPE_COERCER = {
+    BigDecimal  => Proc.new{|x| BigDecimal(x.to_s) },
     Float    => Proc.new{|x| x.to_f},
     Rational => Proc.new{|x| x.to_r},
     Integer  => Proc.new{|x| x.to_i},
     Symbol   => Proc.new{|x| x.to_s.to_sym},
     Boolean  => Proc.new{|x| x =~ /t/i ? true : false},
-    String   => Proc.new{|x| x.to_s},
+    String   => Proc.new{|x|
+      case x
+      when Float, BigDecimal
+        "%g" % x
+      else
+        x.to_s
+      end
+    },
     nil      => Proc.new{|x| x},
   }
   TYPE_COERCER[TrueClass] = TYPE_COERCER[FalseClass] = TYPE_COERCER[Boolean]
