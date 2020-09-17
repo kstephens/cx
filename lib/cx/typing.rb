@@ -200,7 +200,7 @@ module Typing
     end
 
     def col_width! v
-      width = v.to_s.size
+      width = Typing.coerce(v, String).size
       @min_width = width if (@min_width ||= 99999) > width  
       @max_width = width if (@max_width ||=    -1) < width  
       self

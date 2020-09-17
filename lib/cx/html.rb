@@ -141,7 +141,7 @@ module CX
     def raw! x ; @out.write x.to_s ; self ; end
     alias :<< :raw!
     def text x
-      raw! ::CGI::escapeHTML(x.to_s)
+      raw! ::CGI::escapeHTML(Typing.coerce(x, String))
     end
 
     def method_missing sel, *args, &blk

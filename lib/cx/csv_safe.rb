@@ -4,6 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/typing'
 require 'csv'
 
 module CX
@@ -43,7 +44,7 @@ module CSVSafe
     begin
       # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
       # ::CSV.generate_line(row, @csv_generate_options)
-      row_ = row.map{|s| csv_escape_value s}
+      row_ = row.map{|x| csv_escape_value x}
       ::CSV.generate_line(row_)
     rescue => exc
       raise exc.class, "#{ri.inspect} : #{row.inspect} : #{exc.inspect}", exc.backtrace
@@ -70,12 +71,13 @@ module CSVSafe
   end
   CSV_UNESCAPE = Hash.new{|h,k| h[k] = (eval("\"#{k}\"") rescue nil) || k}
 
-  def csv_escape_value s
-    case s
+  def csv_escape_value x
+    case x
+    when nil
     when String
-      s.gsub(/([\r\n\\])/){CSV_ESCAPE[$1] ||= $1}
+      x.gsub(/([\r\n\\])/){CSV_ESCAPE[$1] ||= $1}
     else
-      s
+      Typing.coerce(x, String)
     end
   end
   CSV_ESCAPE = {
