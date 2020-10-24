@@ -64,14 +64,18 @@ cat > "$tmp"
 # Read first "FILE:LINE:" line:
 IFS=':' read file_1 _ < <(head -1 "$tmp")
 
-# Handle zgrep, etc:
-cat_cmd=cat
-egrep -q -E '^[^:]+\.(gz|bz2|zip|z):' "$file_1" && cat_cmd=zcat
-
 # Extract header from first line of first matching file.
 filter_header=''
 if [[ -z "$header" ]]
 then
+  # Handle zgrep, etc:
+  cat_cmd=cat
+  case "$file_1"
+  in
+  *.gz|*.bz2|*.zip|*.z)
+    cat_cmd="zcat"
+    ;;
+  esac
   header="$("$cat_cmd" "$file_1" | head -1)"
   filter_header="-e /^([^:]+):1:/d"
 fi
