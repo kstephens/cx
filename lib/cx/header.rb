@@ -56,12 +56,12 @@ module CX
   end
 
   def _add_col! col
+    col.ind = @cols.size;
     if @name_to_col[col.name]
       col.name = :"#{col.name}__#{@cols.size}"
-      log.warn "duplicate column #{col.to_s.inspect} will be named #{col.name.to_s.inspect}"
+      log.warn "duplicate column #{col.to_s.inspect} #{col.ind} will be named #{col.name.to_s.inspect}"
     end
     col.header = self
-    col.ind = @cols.size;
     _col_! col
   end
   
