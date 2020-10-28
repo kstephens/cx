@@ -105,6 +105,40 @@ end
 
 ################################
 
+class Strip < Pipe
+  include Pipe::Process
+  def call input, env
+    input.each do | row |
+      row.each do |v|
+        next unless v
+        v.strip!
+        if opts[:ansi]
+          v.gsub!(/\e\[[^m]*m/, '')
+        end
+      end
+    end
+    app.call(input, env)
+  end
+end
+
+class Awesome < Pipe
+  include Pipe::Process
+  def call input, env
+    require 'awesome_print'
+    output = new_table
+
+    # awesome_print-1.8.0/lib/awesome_print/inspector.rb:63: warning: Capturing the given block using Proc.new is deprecated; use `&block` instead
+    _VERBOSE = $VERBOSE
+    begin
+      $VERBOSE = nil
+      output.push(input.rows.ai)
+    ensure
+      $VERBOSE = _VERBOSE
+    end
+    app.call(output, env)
+  end
+end
+
 class Grep < Pipe
   include Pipe::Process
   def call input, env

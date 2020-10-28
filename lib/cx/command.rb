@@ -95,6 +95,8 @@ module CX
     cmd [ :"header-", :'h-',],
       'emit column names in first row   Typically used before "csv-".'
 
+    cmd [ :strip, :trim ],
+      'strip leading/trailing whitespace'
     cmd [ :grep, :g ]
       'emit rows matching specified column regexs   [column pattern] ...'
     cmd [ :transpose, :xpose ],
@@ -175,5 +177,8 @@ module CX
         '--rollback' => 'ROLLBACK transaction, for testing purposes.',
       }
     # binding.pry
+
+    cmd [ :awesome, :'awesome-' ], 'emit AwesomePrint'
+
   end
 end
