@@ -129,14 +129,8 @@ class Awesome < Pipe
     require 'awesome_print'
     output = new_table
 
-    # awesome_print-1.8.0/lib/awesome_print/inspector.rb:63: warning: Capturing the given block using Proc.new is deprecated; use `&block` instead
-    _VERBOSE = $VERBOSE
-    begin
-      $VERBOSE = nil
-      output.push(input.rows.ai)
-    ensure
-      $VERBOSE = _VERBOSE
-    end
+    # awesome_print-1.8.0/lib/awesome_print/inspector.rb:63: warning: Capturing the given block using Proc.new is deprecated; use `&block` instead    
+    output.push(CX.supress_warnings {|| input.rows.ai })
     app.call(output, env)
   end
 end

@@ -4,6 +4,15 @@ module CX
   class Error < StandardError; end
   def self.base_dir ; BASE_DIR ; end
   BASE_DIR = File.expand_path('../..', __FILE__)
+  def self.supress_warnings new_flags = nil
+    _VERBOSE = $VERBOSE
+    begin
+      $VERBOSE = new_flags
+      yield
+    ensure
+      $VERBOSE = _VERBOSE
+    end
+  end
 end
 
 begin
