@@ -80,11 +80,6 @@ class Rowid < Pipe
 
     case type
     when 'uuid'
-      # require 'uuid'
-      # ??? UUID.state_file = false; UUID.generator.next_sequence
-      # uuid = UUID.new
-      # gen = lambda { || uuid.generate }
-
       require 'securerandom'
       gen = lambda { || SecureRandom.uuid }
       
