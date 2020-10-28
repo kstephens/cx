@@ -44,13 +44,14 @@ module CX
     case k
     when String, Symbol
       @styles ||= (opts[:key_style] || 'keyword').split(/,/, -1)
-      @styles.inject(k.to_s){|k, style| send(:"key_#{style}!", k)}
+      @styles_sel ||= @styles.map {|style| :"key_#{style}!" }
+      @styles_sel.inject(k.to_s) {|k, style| send(style, k) }
     else
       val_xform k
     end
   end
   def key_keyword! k
-    ":#{k}"
+    ":#{k.gsub(/\s+/, '-')}"
   end
   def key_uncamel! k
     k.gsub(/([a-z])([A-Z])/){|| $1 + '-' + $2}
