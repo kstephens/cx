@@ -89,6 +89,8 @@ module CX
 
     cmd :debug,
       'emits debug information during processing   If --table, dump input/output tables.'
+    cmd [:noop, :nop, :null],
+      'does nothing: passes input to output   '
 
     cmd [ :"-header", :'-h' ],
       'capture column header from first row  Typically used after "-csv".'

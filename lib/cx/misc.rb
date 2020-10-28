@@ -58,6 +58,13 @@ class Debug < Pipe
   @@indent = 0
 end
 
+class Noop < Pipe
+  include Pipe::Diagnostic
+  def call input, env
+    app.call(input, env)
+  end
+end
+
 ################################
 
 class Rowid < Pipe
