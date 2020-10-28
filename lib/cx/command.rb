@@ -98,7 +98,10 @@ module CX
       'emit column names in first row   Typically used before "csv-".'
 
     cmd [ :strip, :trim ],
-      'strip leading/trailing whitespace'
+      'strip leading/trailing whitespace',
+      {
+        '--ansi' => 'Removes ANSI terminal control sequences: \\e[^m]*m.',
+      }
     cmd [ :grep, :g ]
       'emit rows matching specified column regexs   [column pattern] ...'
     cmd [ :transpose, :xpose ],

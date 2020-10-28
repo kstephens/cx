@@ -112,10 +112,12 @@ class Strip < Pipe
   def call input, env
     input.each do | row |
       row.each do |v|
-        next unless v
-        v.strip!
-        if opts[:ansi]
-          v.gsub!(/\e\[[^m]*m/, '')
+        case v
+        when String
+          v.strip!
+          if opts[:ansi]
+            v.gsub!(/\e\[[^m]*m/, '')
+          end
         end
       end
     end
