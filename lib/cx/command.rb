@@ -110,7 +110,10 @@ module CX
     cmd :sort,
       'sort by specified columns   Columns specified with ":-" option will sort in reverse.'
     cmd :uniq,
-      'emit unique rows   Specified rows delimit uniqness.'
+      'emit unique rows   Specified rows delimit uniqness.',
+      {
+        '--count=' => 'Appends a column of rows (e.g. UNIX uniq -n) defaults to "__uniq_count__".'
+      }
 
     cmd :eval,
       'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns creates new columns.'

@@ -321,12 +321,39 @@ class Uniq < Pipe
     else
       row_fn = Proc.new{|x| x}
     end
-    seen = Set.new
-    input.select! do | e |
-      e = row_fn.call(e)
-      seen << e unless seen.include?(e)
+    if count = opts[:count] and header
+      count = String === count ? count.to_sym : :__uniq_count__
+      
+      counts = Hash.new {|h,k| h[k] = 0}
+      input.select! do | e |
+        e = row_fn.call(e)
+        if (counts[e] += 1) == 1
+          e
+        end
+      end
+      
+      header.cols = header.cols + [ count ]
+      count = header[count]
+      count.type = Integer
+      # count.default_justify!
+      # TODO: col.min_width = col.max_width = ???
+      count_i = count.to_i
+      # pp(count: count); binding.pry
+
+      input.each do | r |
+        # NOTE: direct assignment is save because count col is at the end:
+        r[count_i] = counts[r]
+      end
+      counts = nil # GC
+    else
+      seen = Set.new
+      input.select! do | e |
+        e = row_fn.call(e)
+        seen << e unless seen.include?(e)
+      end
+      seen = nil # GC
     end
-    row_fn = seen = nil # GC
+    row_fn = nil # GC
     app.call(input, env)
   end
 end
