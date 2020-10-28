@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# set -x
+
+help() {
+  cat <<EOF >&2
+$*
+
+SYNOPSIS:
+
+  Transform lines prefixed with "FILE:LINE:..." into "FILE,LINE,"
+and extracts header from first FILE.
+
+USAGE:
+
+  GREP-COMMAND -Hn ... | cx-file-line [--header HEADER] [--prefix FILE,LINE]
+
+OPTIONS:
+
+  --header HEADER
+
+Uses HEADER.  If HEADER is not specified, get the header from the first line of the first file matched.  The first line of all matched files are not displayed.
+
+  --prefix FILE,LINE
+
+Defaults to '_FILE_,_LINE_'.
+
+EOF
+}
+
+
+header=""
+prefix="_FILE_,_LINE_"
+
+while [[ $# -gt 0 ]]
+do
+  case "$1"
+  in
+  --help)
+    help "cx-file-line"
+    exit 0
+    ;;
+  --header)
+    header="$2"
+    shift 2
+    ;;
+  --prefix)
+    prefix="$2"
+    shift 2
+    ;;
+  *)
+    break
+    ;;
+  esac
+done
+
+tmp="${TMPDIR:-/tmp}/cx-file-line.$$"
+trap "rm -f '$tmp'" EXIT
+cat > "$tmp"
+
+[[ -s "$tmp" ]] || exit 0
+
+# cat "$tmp"
+
+# Read first "FILE:LINE:" line:
+IFS=':' read file_1 _ < <(head -1 "$tmp")
+
+# Handle zgrep, etc:
+cat_cmd=cat
+egrep -q -E '^[^:]+\.(gz|bz2|zip|z):' "$file_1" && cat_cmd=zcat
+
+# Extract header from first line of first matching file.
+filter_header=''
+if [[ -z "$header" ]]
+then
+  header="$("$cat_cmd" "$file_1" | head -1)"
+  filter_header="-e /^([^:]+):1:/d"
+fi
+
+echo "$prefix,$header"
+sed -E $filter_header -e 's@^([^:]+):([0-9]+):@\1,\2,@' "$tmp"
+
+exit 0
