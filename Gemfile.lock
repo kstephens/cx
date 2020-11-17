@@ -1,11 +1,12 @@
 PATH
   remote: .
   specs:
-    cx (0.1.3)
+    cx (0.1.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    awesome_print (1.8.0)
     byebug (11.1.3)
     coderay (1.1.3)
     diff-lcs (1.3)
@@ -38,6 +39,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print (~> 1.8)
   bundler (~> 2.0)
   cx!
   pry-byebug (~> 3.9)

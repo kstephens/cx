@@ -3,17 +3,19 @@
 # encoding: UTF-8
 # -*- coding: utf-8 -*-
 
+require 'pp'
+
 module CX
   module PPSafe
   extend self
   def pp *args
     M.synchronize do
       $stderr.write "#{Module === self ? self : self.class} #{'%x' % self.object_id} : "
-      PP.pp(*args, $stderr)
+      ::PP.pp(*args, $stderr)
     end
   end
   def pps *args
-    PP.pp(*args, String.new).chomp
+    ::PP.pp(*args, String.new).chomp
   end
   def ppss expr
     pps(expr).strip

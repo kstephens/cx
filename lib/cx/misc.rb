@@ -31,6 +31,12 @@ class HeaderOut < Pipe
   end
 end
 
+class NoHeader < Pipe
+  def call input, env
+    input.header = nil
+    app.call(input, env)
+  end
+end
 
 class Debug < Pipe
   include Pipe::Diagnostic
@@ -58,6 +64,13 @@ class Debug < Pipe
   @@indent = 0
 end
 
+class Noop < Pipe
+  include Pipe::Diagnostic
+  def call input, env
+    app.call(input, env)
+  end
+end
+
 ################################
 
 class Rowid < Pipe
@@ -73,11 +86,6 @@ class Rowid < Pipe
 
     case type
     when 'uuid'
-      # require 'uuid'
-      # ??? UUID.state_file = false; UUID.generator.next_sequence
-      # uuid = UUID.new
-      # gen = lambda { || uuid.generate }
-
       require 'securerandom'
       gen = lambda { || SecureRandom.uuid }
       
@@ -104,6 +112,38 @@ class Rowid < Pipe
 end
 
 ################################
+
+class Strip < Pipe
+  include Pipe::Process
+  def call input, env
+    input.each do | row |
+      row.each do |v|
+        case v
+        when String
+          v.strip!
+          if opts[:ansi]
+            v.gsub!(/\e\[[^m]*m/, '')
+          end
+        end
+      end
+    end
+    app.call(input, env)
+  end
+end
+
+################################
+
+class Awesome < Pipe
+  include Pipe::Process
+  def call input, env
+    require 'awesome_print'
+    output = new_table
+
+    # awesome_print-1.8.0/lib/awesome_print/inspector.rb:63: warning: Capturing the given block using Proc.new is deprecated; use `&block` instead    
+    output.push(CX.supress_warnings {|| input.rows.ai })
+    app.call(output, env)
+  end
+end
 
 class Grep < Pipe
   include Pipe::Process
@@ -190,7 +230,12 @@ end
 class Cut < Pipe
   include Pipe::Process, Pipe::ColumnsFromArgs
   include Pipe::NeedsHeader
+  
   def call input, env
+    cut_columns(app, input, env, select_columns(input))
+  end
+
+  def select_columns input
     header = input.header!
     columns = self.columns || [ ]
     pp(columns: columns) if debug?
@@ -212,13 +257,20 @@ class Cut < Pipe
         end
       end
     end
+    cols
+  end
+  
+  def cut_columns app, input, env, cols
     pp(cols: cols) if debug?
+    header = input.header!
     row_fn = header.row_fn(cols)
     input.map!(&row_fn)
     input.header = Header.new(cols.map(&:dup_deep))
     app.call(input, env)
   end
 end
+
+################################
 
 # Sort rows.
 # Specific columns can be specified.
@@ -285,12 +337,39 @@ class Uniq < Pipe
     else
       row_fn = Proc.new{|x| x}
     end
-    seen = Set.new
-    input.select! do | e |
-      e = row_fn.call(e)
-      seen << e unless seen.include?(e)
+    if count = opts[:count] and header
+      count = String === count ? count.to_sym : :__uniq_count__
+      
+      counts = Hash.new {|h,k| h[k] = 0}
+      input.select! do | e |
+        e = row_fn.call(e)
+        if (counts[e] += 1) == 1
+          e
+        end
+      end
+      
+      header.cols = header.cols + [ count ]
+      count = header[count]
+      count.type = Integer
+      # count.default_justify!
+      # TODO: col.min_width = col.max_width = ???
+      count_i = count.to_i
+      # pp(count: count); binding.pry
+
+      input.each do | r |
+        # NOTE: direct assignment is save because count col is at the end:
+        r[count_i] = counts[r]
+      end
+      counts = nil # GC
+    else
+      seen = Set.new
+      input.select! do | e |
+        e = row_fn.call(e)
+        seen << e unless seen.include?(e)
+      end
+      seen = nil # GC
     end
-    row_fn = seen = nil # GC
+    row_fn = nil # GC
     app.call(input, env)
   end
 end
