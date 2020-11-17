@@ -10,7 +10,7 @@ module CX
   # Registry of commands
   module Command
     extend self
-    include Logging
+    include Logging, PPSafe
     extend Logging
     
     COMMANDS = [ ]
@@ -24,14 +24,17 @@ module CX
         class_name = args.shift
         name, *aliases = args.shift
       end
-      
+
       case name
       when /^-(.*)$/
-        class_name ||= name[1].upcase + name[2 .. -1] + "In"
+        default_path = $1
+        class_name ||= camelize($1) + "In"
       when /^(.*)-$/
-        class_name ||= name[0].upcase + name[1 .. -2] + "Out"
+        default_path = $1
+        class_name ||= camelize($1) + "Out"
       else
-        class_name ||= name[0].upcase + name[1 .. -1]
+        default_path = name
+        class_name ||= camelize(name)
       end
 
       class_name = class_name.to_sym
@@ -40,10 +43,10 @@ module CX
       synopsis  ||= ""
       options   ||= {}
       
-      path ||= name.to_s.gsub(/\W/, '')
+      path ||= default_path.to_s.gsub(/-/, '_')
       path =  "cx/#{path}"
-      spec =
-        {
+      # pp(name: name, path: path)
+      spec = {
         name: name,
         aliases: aliases,
         synopsis: synopsis,
@@ -53,12 +56,22 @@ module CX
         class_name: class_name,
         class: nil,
         path: path,
-        }
+      }
       COMMANDS << spec
       [name, *aliases].each do | n |
         COMMAND_BY_NAME[n.to_sym] = spec
       end
       # CX.autoload class_name, path
+      spec
+    end
+
+    # Based on: https://api.rubyonrails.org/classes/ActiveSupport/Inflector.html#method-i-camelize
+    def camelize(term)
+      string = term.to_s
+      string = string.sub(/^[a-z\d]*/) { |match| match.capitalize } 
+      string.gsub!(/(?:[-_]|(\/))([a-z\d]*)/i) { "#{$1}#{$2.capitalize}" }
+      string.gsub!("/", "::")
+      string
     end
     
     def spec name
@@ -68,6 +81,7 @@ module CX
     def _factory s
       unless f = s[:class]
         begin
+          # pp(factory_s: s)
           log.debug "Loading #{s[:path].inspect}"
           require s[:path]
         rescue LoadError
@@ -96,12 +110,17 @@ module CX
       'capture column header from first row  Typically used after "-csv".'
     cmd [ :"header-", :'h-',],
       'emit column names in first row   Typically used before "csv-".'
+    cmd [ :"no-header", :'h--',],
+      'undefine header   .'
 
     cmd [ :strip, :trim ],
       'strip leading/trailing whitespace',
       {
         '--ansi' => 'Removes ANSI terminal control sequences: \\e[^m]*m.',
       }
+    cmd [ :'remove-unused' ],
+      'remove unused columns   '
+    
     cmd [ :grep, :g ]
       'emit rows matching specified column regexs   [column pattern] ...'
     cmd [ :transpose, :xpose ],
@@ -150,11 +169,16 @@ module CX
     cmd :'-csv', 'parse CSV lines'
     cmd :'csv-', 'emit CSV lines'
 
-    cmd [ :'txt-', :'t-', :ascii, :text ],
+    cmd [ :'text-', :text, :'ascii' ],
+      'emit ASCII text',
+      {
+      }
+
+    cmd [ :'table-', :'t-' ],
       'emit formatted text table',
       {
         '--title=' => 'Generates a title',
-      }
+      }, 'txt'
     cmd [ :'markdown-' , :'md-'],
       'emit Markdown table'
     cmd [ :'html-', :html ],
@@ -184,8 +208,6 @@ module CX
         '--commit' => 'COMMIT.  Defaults to true for --transaction.',
         '--rollback' => 'ROLLBACK transaction, for testing purposes.',
       }
-    # binding.pry
-
     cmd [ :awesome, :'awesome-' ], 'emit AwesomePrint'
 
   end

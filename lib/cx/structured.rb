@@ -39,11 +39,11 @@ class StructuredOut < Pipe
     output << seq_delim[0].to_s
     fn = row_fn input
     input.each_shift do | row |
-      output << row_sep.to_s << "\n"
+      output << row_sep.to_s << newline
       output << line(fn.call(row))
       row_sep = self.row_sep
     end
-    output << ("\n" + seq_delim[1].to_s + "\n")
+    output << (newline + seq_delim[1].to_s + newline)
     if x = content_type
       env[:content_type] = x
     end
@@ -52,6 +52,10 @@ class StructuredOut < Pipe
 
   def row_mode? ; opts[:mode] == 'row' ; end
 
+  def newline
+    "\n"
+  end
+  
   def row_fn input
     fn = Proc.new{|row| row}
     if input.header

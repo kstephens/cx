@@ -31,6 +31,12 @@ class HeaderOut < Pipe
   end
 end
 
+class NoHeader < Pipe
+  def call input, env
+    input.header = nil
+    app.call(input, env)
+  end
+end
 
 class Debug < Pipe
   include Pipe::Diagnostic
@@ -124,6 +130,8 @@ class Strip < Pipe
     app.call(input, env)
   end
 end
+
+################################
 
 class Awesome < Pipe
   include Pipe::Process
@@ -222,7 +230,12 @@ end
 class Cut < Pipe
   include Pipe::Process, Pipe::ColumnsFromArgs
   include Pipe::NeedsHeader
+  
   def call input, env
+    cut_columns(app, input, env, select_columns(input))
+  end
+
+  def select_columns input
     header = input.header!
     columns = self.columns || [ ]
     pp(columns: columns) if debug?
@@ -244,13 +257,20 @@ class Cut < Pipe
         end
       end
     end
+    cols
+  end
+  
+  def cut_columns app, input, env, cols
     pp(cols: cols) if debug?
+    header = input.header!
     row_fn = header.row_fn(cols)
     input.map!(&row_fn)
     input.header = Header.new(cols.map(&:dup_deep))
     app.call(input, env)
   end
 end
+
+################################
 
 # Sort rows.
 # Specific columns can be specified.

@@ -20,6 +20,7 @@ module CX
   end
   attr_reader :cols, :name_to_col, :ind_to_col
   attr_accessor :name, :opts
+  alias :to_a :cols
 
   def << c
     self.cols = [ *cols, c ]

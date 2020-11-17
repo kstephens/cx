@@ -7,7 +7,7 @@ require 'cx'
 require 'terminal-table'
 
 module CX
-class TxtOut < Pipe
+class TableOut < Pipe
   include Pipe::Format
   def call input, env
     # NOTE: Terminal::Table cannot stream from Enumerable or to IO.

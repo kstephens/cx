@@ -7,6 +7,15 @@ a,b,c,d
 2,12,11,abc
 END
 
+ # Sample CSV data with unused columns:
+ $ cat <<END >HAS-UNUSED-COLUMNS.csv
+e,f,g,h
+1,ab,,foo
+24,,,bar
+,5,,baz
+,12,,abc
+END
+
  # -header: (-h) capture first row as header:
  $ cx in SOME.csv // -csv // -h // csv-
 1,ab,3,foo
@@ -109,6 +118,14 @@ d,1,String,3,3,
 {"a":2,"b":"12","c":11,"d":"abc"}
 ]
 
+ # remove-unused: Delete unused (blank) columns:
+ $ cx in HAS-UNUSED-COLUMNS.csv // -csv // -h // types // remove-unused // h- // csv-
+e,f,h
+1,ab,foo
+24,,bar
+,5,baz
+,12,abc
+
  # uniq: File with duplicate rows:
  $ cat <<END >DUPLICATES.csv
 x,y,z
@@ -148,8 +165,8 @@ a,b,c,d
 a,b,c,d
 2,12,11,abc
 
- # txt-: Generate an ASCII table:
- $ cx in SOME.csv // -csv // cut a,d // sort d // txt-
+ # table-: Generate an ASCII table:
+ $ cx in SOME.csv // -csv // cut a,d // sort d // table-
 | a   | d   |
 +-----+-----+
 | 2   | abc |
@@ -157,8 +174,8 @@ a,b,c,d
 | 134 | baz |
 | 1   | foo |
 
- # txt-: Optional title:
- $ cx in SOME.csv // -csv // -h // txt- --title="Title"
+ # table-: Optional title:
+ $ cx in SOME.csv // -csv // -h // table- --title="Title"
 |        Title        |
 +-----+----+----+-----+
 | a   | b  | c  | d   |
@@ -168,8 +185,8 @@ a,b,c,d
 | 134 | 5  | 9  | baz |
 | 2   | 12 | 11 | abc |
 
- # txt-: Without head-, header columns are considered rows:
- $ cx in SOME.csv // -csv // txt-
+ # table-: Without head-, header columns are considered rows:
+ $ cx in SOME.csv // -csv // table-
 | a   | b  | c  | d   |
 | 1   | ab | 3  | foo |
 | 24  | 44 | 6  | bar |
@@ -177,7 +194,7 @@ a,b,c,d
 | 2   | 12 | 11 | abc |
 
  # header-: (-h) Format will output columns as headers:
- $ cx in SOME.csv // -csv // -h // txt-
+ $ cx in SOME.csv // -csv // -h // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 | 1   | ab | 3  | foo |
@@ -186,7 +203,7 @@ a,b,c,d
 | 2   | 12 | 11 | abc |
 
  # region: Output regions of rows:
- $ cx in SOME.csv // -csv // -h // types // region 2..4,1 // txt-
+ $ cx in SOME.csv // -csv // -h // types // region 2..4,1 // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 |  24 | 44 |  6 | bar |
@@ -195,7 +212,7 @@ a,b,c,d
 |   1 | ab |  3 | foo |
 
  # region: Backwards regions:
- $ cx in SOME.csv // -csv // -h // types // region -1..1 // txt-
+ $ cx in SOME.csv // -csv // -h // types // region -1..1 // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 |   2 | 12 | 11 | abc |
@@ -204,7 +221,7 @@ a,b,c,d
 |   1 | ab |  3 | foo |
 
  # rowid: add sequential row number column:
- $ cx in SOME.csv // -csv // -h // types // rowid --name=id // txt-
+ $ cx in SOME.csv // -csv // -h // types // rowid --name=id // table-
 | id | a   | b  | c  | d   |
 +----+-----+----+----+-----+
 |  1 |   1 | ab |  3 | foo |
@@ -213,7 +230,7 @@ a,b,c,d
 |  4 |   2 | 12 | 11 | abc |
 
  # transpose: transpose columns and rows
- $ cx in SOME.csv // -csv / -h // types // columns- // xpose // txt-
+ $ cx in SOME.csv // -csv / -h // types // columns- // xpose // table-
 | name      | a       | b      | c       | d      |
 | ind       | 0       | 1      | 2       | 3      |
 | type      | Integer | String | Integer | String |
@@ -374,7 +391,7 @@ SOME TABLE
 4 abc  12
 
  # tee: Duplicate input to mulitple output pipelines:
- $ cx in SOME.csv // -csv // -h // tee {{ types // sort // txt- // out SOME.txt }} // cut a,b // h- // csv-
+ $ cx in SOME.csv // -csv // -h // tee {{ types // sort // table- // out SOME.txt }} // cut a,b // h- // csv-
 a,b
 1,ab
 24,44
@@ -406,14 +423,14 @@ x,y
 END
 
  # join: inner join:
- $ cx in SOME.csv // -csv // -h // join '' @ a  =  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =  x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a | b  | c  | d   | x | y |
 +---+----+----+-----+---+---+
 | 1 | ab | 3  | foo | 1 | 2 |
 | 2 | 12 | 11 | abc | 2 | 3 |
 
  # join: left outer
- $ cx in SOME.csv // -csv // -h // join '' @ a /=  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=  x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a   | b  | c  | d   | x | y |
 +-----+----+----+-----+---+---+
 | 1   | ab | 3  | foo | 1 | 2 |
@@ -422,7 +439,7 @@ END
 | 2   | 12 | 11 | abc | 2 | 3 |
 
  # join: right outer
- $ cx in SOME.csv // -csv // -h // join '' @ a  =/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =/ x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a | b  | c  | d   | x | y |
 +---+----+----+-----+---+---+
 | 1 | ab | 3  | foo | 1 | 2 |
@@ -430,7 +447,7 @@ END
 |   |    |    |     | 5 | 9 |
 
  # join: full outer
- $ cx in SOME.csv // -csv // -h // join '' @ a /=/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=/ x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a   | b  | c  | d   | x | y |
 +-----+----+----+-----+---+---+
 | 1   | ab | 3  | foo | 1 | 2 |
@@ -462,7 +479,7 @@ a,b,c,d,e
  # in: Concatenates multiple files:
  $ tac SOME.csv > EMOS.csv
 
- $ cx in SOME.csv EMOS.csv // -csv // -h // types // txt-
+ $ cx in SOME.csv EMOS.csv // -csv // -h // types // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 | 1   | ab | 3  | foo |
