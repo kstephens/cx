@@ -179,7 +179,7 @@ class Main
   
   # Applications are right folded.
   # If input/output applications are unspecified,
-  # STDIN and STDOUT are wrapped the pipeline.
+  # STDIN and STDOUT are wrapped around the pipeline.
   def make_pipeline pipeline
     unless Command.factory(pipeline[0][0])  <= Pipe::In
       pipeline.unshift([:in, [$stdin]])

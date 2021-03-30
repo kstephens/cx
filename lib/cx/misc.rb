@@ -87,17 +87,16 @@ class Rowid < Pipe
     case type
     when 'uuid'
       require 'securerandom'
-      gen = lambda { || SecureRandom.uuid }
-      
+      gen = lambda { || generate_uuid }
       col.type = String
       col.min_width = col.max_width = gen.call.size
     else
       i = (opts[:start] || 1).to_i
       i -= 1
-      gen = lambda { || i += 1 }
-      col.type = Integer
       # + 1 to handle negative start
       max_i = i + input.rows.size
+      gen = lambda { || i += 1 }
+      col.type = Integer
       col.min_width = i.to_s.size
       col.max_width = (Math.log10(max_i) + 1).to_i + 1 + 1
     end
@@ -108,6 +107,10 @@ class Rowid < Pipe
     end
 
     app.call(input, env)
+  end
+
+  def generate_uuid
+    SecureRandom.uuid
   end
 end
 
@@ -138,12 +141,13 @@ class Awesome < Pipe
   def call input, env
     require 'awesome_print'
     output = new_table
-
     # awesome_print-1.8.0/lib/awesome_print/inspector.rb:63: warning: Capturing the given block using Proc.new is deprecated; use `&block` instead    
     output.push(CX.supress_warnings {|| input.rows.ai })
     app.call(output, env)
   end
 end
+
+################################
 
 class Grep < Pipe
   include Pipe::Process
