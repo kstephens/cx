@@ -17,6 +17,16 @@ module CSVSafe
     @encoding ||= "utf-8"
     @csv_parse_options    = { encoding: @encoding, external_encoding: @encoding} # ??? Others
     @csv_generate_options = { encoding: @encoding, quote_empty: false }
+    if v = (opts[:separator] || opts[:d])
+      case v
+      when /^\\x([0-9a-f]+)$/i
+        @sep = $1.to_i(16).chr
+      when /^\\(0[0-7]+)$/
+        @sep = $1.to_i(8).chr
+      else
+        @sep = v
+      end
+    end
   end
   
   def csv_parse_line line, ri = nil
@@ -25,7 +35,11 @@ module CSVSafe
       line = remove_BOM(line)
       # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
       # ::CSV.parse_line(line, @csv_parse_options)
-      row = ::CSV.parse_line(line)
+      if @sep
+        row = line.chomp.split(@sep, 9999)
+      else
+        row = ::CSV.parse_line(line)
+      end
     rescue ::CSV::MalformedCSVError => exc
       $stderr.puts "  # cx : WARN: Removing \" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
       line = line.gsub('"', '')
@@ -42,10 +56,14 @@ module CSVSafe
 
   def csv_generate_line row, ri = nil
     begin
-      # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
-      # ::CSV.generate_line(row, @csv_generate_options)
-      row_ = row.map{|x| csv_escape_value x}
-      ::CSV.generate_line(row_)
+      if @sep
+        row.join(@sep) << "\n"
+      else
+        # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
+        # ::CSV.generate_line(row, @csv_generate_options)
+        row_ = row.map{|x| csv_escape_value x}
+        ::CSV.generate_line(row_)
+      end
     rescue => exc
       raise exc.class, "#{ri.inspect} : #{row.inspect} : #{exc.inspect}", exc.backtrace
     end

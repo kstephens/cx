@@ -166,8 +166,11 @@ module CX
     cmd [ :'join', :j ],
       'Join on values between one or more pipelines.'
 
-    cmd :'-csv', 'parse CSV lines'
-    cmd :'csv-', 'emit CSV lines'
+    csv_opts = {
+      '--separator=' => 'field separator for rows.  Defaults to CSV standard parsing/generation.',
+    }
+    cmd :'-csv', 'parse CSV lines', csv_opts
+    cmd :'csv-', 'emit CSV lines', csv_opts
 
     cmd [ :'text-', :text, :'ascii' ],
       'emit ASCII text',
