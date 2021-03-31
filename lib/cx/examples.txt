@@ -31,8 +31,8 @@ a,b,c,d
 134,5,9,baz
 2,12,11,abc
 
- # csv --separator: emit using separator:
- $ cx in SOME.csv // -csv // csv- --separator="\011"
+ # csv --separator: emit using TAB separator:
+ $ cx in SOME.csv // -csv // csv- --separator="\x09"
 a	b	c	d
 1	ab	3	foo
 24	44	6	bar

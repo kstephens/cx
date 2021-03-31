@@ -9,8 +9,7 @@ require 'cx/csv_safe'
 
 module CX
   class CsvIn < Pipe
-    include Pipe::Parse
-    include CSVSafe
+    include CSVSafe, Pipe::Parse
     # TODO: Potentially refactor into a IOLines base class.
     def call input, env
       i = 0

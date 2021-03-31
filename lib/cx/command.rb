@@ -172,6 +172,9 @@ module CX
     cmd :'-csv', 'parse CSV lines', csv_opts
     cmd :'csv-', 'emit CSV lines', csv_opts
 
+    cmd :'-tsv', 'parse tab-separated: equivalent to: -csv --separator="\x09"'
+    cmd :'tsv-', 'emit tab-separated: equivalent to: csv- --separator="\x09"'
+
     cmd [ :'text-', :text, :'ascii' ],
       'emit ASCII text',
       {
