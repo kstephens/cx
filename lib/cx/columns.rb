@@ -24,7 +24,7 @@ class ColumnsOut < Pipe
   include Pipe::Diagnostic, Pipe::NeedsHeader
   
   def call input, env
-    cols = [:name, :ind, :type, :min_width, :max_width, :justify]
+    cols = [:name, :ind, :type, :min_width, :max_width, :justify, :n_values, :n_blanks, :n_nulls, :min, :max]
     header = Header.new(cols)
     output = new_table(Table, header)
     output.rows = input.header.map do | c |
