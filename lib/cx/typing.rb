@@ -108,7 +108,9 @@ module Typing
   end
 
   TYPE_COERCER = {
-    BigDecimal  => Proc.new{|x| BigDecimal(x.to_s) },
+    BigDecimal  => Proc.new do |x|
+      x.nil? || (x = x.to_s).empty? ? 0 : BigDecimal(x)
+    end,
     Float    => Proc.new{|x| x.to_f},
     Rational => Proc.new{|x| x.to_r},
     Integer  => Proc.new{|x| x.to_i},
