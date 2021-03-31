@@ -149,6 +149,16 @@ end
 
 ################################
 
+class Reverse < Pipe
+  include Pipe::Process
+  def call input, env
+    input.reverse!
+    app.call(input, env)
+  end
+end
+
+################################
+
 class Grep < Pipe
   include Pipe::Process
   def call input, env

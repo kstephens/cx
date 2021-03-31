@@ -111,6 +111,14 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 
+ # sort: reverse sort order:
+ $ cx in SOME.csv // -csv // types // sort a:- // h- // csv-
+a,b,c,d
+134,5,9,baz
+24,44,6,bar
+2,12,11,abc
+1,ab,3,foo
+
  # cut: Types propagate:
  $ cx in SOME.csv // -csv // types // cut a,d // columns- // h- // csv-
 name,ind,type,min_width,max_width,justify

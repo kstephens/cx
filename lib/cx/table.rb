@@ -35,6 +35,7 @@ module CX
   def compact! &b  ; _rows_cow.compact! &b  ; self ; end
   def select!  &b  ; _rows_cow.select! &b   ; self ; end
   def compact!     ; _rows_cow.compact!     ; self ; end
+  def reverse!     ; _rows_cow.reverse!     ; self ; end
   # def []= i, v  ## NOT NEEDED
   def concat enum
     enum = enum._rows if EnumerableTable === enum

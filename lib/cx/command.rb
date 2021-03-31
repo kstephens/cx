@@ -136,6 +136,8 @@ module CX
       {
         '--count=' => 'Appends a column of rows (e.g. UNIX uniq -n) defaults to "__uniq_count__".'
       }
+    cmd :reverse,
+      'reverse all rows.'
 
     cmd :eval,
       'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns creates new columns.'
