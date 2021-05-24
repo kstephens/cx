@@ -8,7 +8,7 @@ $*
 SYNOPSIS:
 
   Transform lines prefixed with "FILE:LINE:..." into "FILE,LINE,"
-and extracts header from first FILE.
+and extract CSV header from first FILE.
 
 USAGE:
 
