@@ -108,7 +108,9 @@ module Typing
   end
 
   TYPE_COERCER = {
-    BigDecimal  => Proc.new{|x| BigDecimal(x.to_s) },
+    BigDecimal  => Proc.new do |x|
+      x.nil? || (x = x.to_s).empty? ? 0 : BigDecimal(x)
+    end,
     Float    => Proc.new{|x| x.to_f},
     Rational => Proc.new{|x| x.to_r},
     Integer  => Proc.new{|x| x.to_i},
@@ -171,9 +173,11 @@ module Typing
     def max_width= x ; opts[:max_width]  = x.to_i           ; end
     def justify      ; opts[:justify]   || @justify         ; end
     def justify= x   ; opts[:justify]    = x && x.to_sym    ; end
+    attr_reader :n_values, :n_blanks, :n_nulls, :min, :max
 
     def col_type! v
       col_width! v
+      col_min_max! v
       v_type = Typing.col_type(v)
       new_type = Typing.type_ge(v_type, @type) ? v_type : @type
       if debug?
@@ -187,7 +191,7 @@ module Typing
     end
     
     def clear_type!
-      @type = @min_width = @max_width = nil
+      @type = @min_width = @max_width = @n_values = @n_blanks = @n_nulls = @min = @max = nil
       self
     end
     def default_type!
@@ -195,12 +199,38 @@ module Typing
       default_justify!
     end
     def default_justify!
+      @n_values ||= 0
+      @n_blanks ||= 0
+      @n_nulls  ||= 0
       @justify = type && type <= Numeric ? :right : nil
       self
     end
 
+    def clear_min_max!
+      @min = @max = nil
+      self
+    end
+
+    def col_min_max! v
+      unless v.nil?
+        @min = v if @min.nil? || @min > v 
+        @max = v if @max.nil? || @max < v
+      end
+      self
+    rescue
+      self
+    end
+
     def col_width! v
-      width = Typing.coerce(v, String).size
+      @n_values ||= 0; @n_values += 1
+      if v.nil?
+        @n_nulls ||= 0; @n_nulls += 1
+      end
+      str = Typing.coerce(v, String)
+      if str.empty?
+        @n_blanks ||= 0; @n_blanks += 1
+      end
+      width = str.size
       @min_width = width if (@min_width ||= 99999) > width  
       @max_width = width if (@max_width ||=    -1) < width  
       self

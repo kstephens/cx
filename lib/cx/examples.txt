@@ -31,6 +31,14 @@ a,b,c,d
 134,5,9,baz
 2,12,11,abc
 
+ # csv --separator: emit using TAB separator:
+ $ cx in SOME.csv // -csv // csv- --separator="\x09"
+a	b	c	d
+1	ab	3	foo
+24	44	6	bar
+134	5	9	baz
+2	12	11	abc
+
  # cut: Emit specific columns:
  $ cx in SOME.csv // -csv // -h // cut a,d // h- // csv-
 a,d
@@ -102,6 +110,14 @@ a,b,c,d
 2,12,11,abc
 24,44,6,bar
 134,5,9,baz
+
+ # sort: reverse sort order:
+ $ cx in SOME.csv // -csv // types // sort a:- // h- // csv-
+a,b,c,d
+134,5,9,baz
+24,44,6,bar
+2,12,11,abc
+1,ab,3,foo
 
  # cut: Types propagate:
  $ cx in SOME.csv // -csv // types // cut a,d // columns- // h- // csv-

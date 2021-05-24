@@ -58,9 +58,15 @@ module CX
 
   def _add_col! col
     col.ind = @cols.size;
-    if @name_to_col[col.name]
-      col.name = :"#{col.name}__#{@cols.size}"
-      log.warn "duplicate column #{col.to_s.inspect} #{col.ind} will be named #{col.name.to_s.inspect}"
+    if other = @name_to_col[col.name]
+      base_name = col.name.to_s
+      i = other.name.to_s =~ /__(\d+)/ ? $i.to_i : 1;
+      ew_name = nil
+      while @name_to_col[new_name = :"#{base_name}__#{i += 1}"]
+        # try next
+      end
+      log.warn "duplicate column #{col.to_s.inspect} #{col.ind} will be named #{new_name.to_s.inspect} : conflicts with other column #{other.to_s.inspect} #{other.ind}"
+      col.name = new_name
     end
     col.header = self
     _col_! col

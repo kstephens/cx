@@ -136,6 +136,8 @@ module CX
       {
         '--count=' => 'Appends a column of rows (e.g. UNIX uniq -n) defaults to "__uniq_count__".'
       }
+    cmd :reverse,
+      'reverse all rows.'
 
     cmd :eval,
       'evaluate Ruby expression for each row   Assignments to "self" (or "_") update values.  Assignments to non-existant header columns creates new columns.'
@@ -166,8 +168,14 @@ module CX
     cmd [ :'join', :j ],
       'Join on values between one or more pipelines.'
 
-    cmd :'-csv', 'parse CSV lines'
-    cmd :'csv-', 'emit CSV lines'
+    csv_opts = {
+      '--separator=' => 'field separator for rows.  Defaults to CSV standard parsing/generation.',
+    }
+    cmd :'-csv', 'parse CSV lines', csv_opts
+    cmd :'csv-', 'emit CSV lines', csv_opts
+
+    cmd :'-tsv', 'parse tab-separated: equivalent to: -csv --separator="\x09"'
+    cmd :'tsv-', 'emit tab-separated: equivalent to: csv- --separator="\x09"'
 
     cmd [ :'text-', :text, :'ascii' ],
       'emit ASCII text',
