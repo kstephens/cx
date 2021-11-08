@@ -20,6 +20,8 @@ require 'time'
 require 'bigdecimal'
 require 'csv'
 require 'awesome_print'
+require 'set'
+require 'pry'
 
 class Column
   attr_reader :name, :index, :order, :meta, :header, :to_s
@@ -303,6 +305,7 @@ class Table
     end
     self
   end
+  alias :header! :header=
 
   def [] i
     @rows[i]
@@ -474,10 +477,9 @@ class Row
 
   def write out = nil
     out ||= $stdout
-    out.write(to_a.map(&:to_s) * '')
+    each{|v| out.write(v.to_s)}
     nil
   end
-
 end
 
 ##############################
@@ -504,7 +506,7 @@ class Meta
   attr_accessor *ATTRS.map(&:first)
 
   def initialize
-    @types = Set.new
+    clear!
   end
 
   def deepen!
@@ -518,7 +520,7 @@ class Meta
   
   def clear!
     @types = Set.new
-    @type_inferred = nil
+    @type_inferred = @align_inferred = nil
     @min_width = @max_width = @min_value = @max_value = nil
     @blanks = @nulls = 0
     self
@@ -710,13 +712,13 @@ class Type < Struct.new(:mod, :coerer, :format)
 
   [
     [::BigDecimal,
-      Proc.new{|v| v.to_bd},
+      Proc.new{|v| BigDecimal(v) rescue nil},
     ],
     [::Float,
-      Proc.new{|v| v.to_f},
+      Proc.new{|v| Float(v) rescue nil},
     ],
     [::Integer,
-      Proc.new{|v| v.to_i},
+      Proc.new{|v| Integer(v) rescue nil},
     ],
     [::Time,
       Proc.new do |v|
@@ -766,7 +768,97 @@ class Type < Struct.new(:mod, :coerer, :format)
   end
 end
 
+module Pipe
+  attr_accessor :opts
+  
+  def initialize *args
+    @opts = {}
+    @apps = [ ]
+  end
+  def debug? ; false ; end
+
+  def >> app
+    Pipeline.new >> app
+  end
+
+  def inspect mode = nil
+    case mode
+    when :super
+      super()
+    else
+      "#<#{self.class} #{object_id}#{inspect_content}>"
+    end
+  end
+  
+  def inspect_content
+    ''
+  end
+end
+
+class Pipeline
+  include Pipe
+  
+  attr_accessor :apps
+  def initialize *args
+    @apps = [ ]
+    super
+  end
+  
+  def >> app
+    app = app.new if app.respond_to?(:new)
+    @apps << app
+    self
+  end
+
+  def call table, env
+    @apps.inject(table) do |table, app|
+      app.call(table, env)
+    end
+  end
+
+  def inspect_content
+    " (#{@apps.map(&:inspect) * ' >> '})"
+  end
+end
+
+module Pipe::Format
+  include Pipe
+end
+
+module Pipe::LineOut
+  include Pipe::Format
+  
+  attr_accessor :col_sep, :row_sep, :multi_sep
+  
+  def initialize *args
+    @col_sep = ','
+    @row_sep = "\n"
+    @multi_sep = ';'
+    super
+  end
+  
+  def output
+    @output ||=
+      Table.new.header! Header.new << Column.new(:_LINE_).tap{|c| c.meta.type = ::String}
+  end
+  
+  def format_value v
+    case v
+    when nil
+      nil
+    when Enumerable
+      v.map{|e| format_value(e).to_s} * multi_sep
+    else
+      v.to_s
+    end
+  end
+end
+
+###################################
+
 class TypeInference
+  include Pipe
+  
   def initialize
     @formatter ||= Formatter::DEFAULT
     @parse_string = true
@@ -828,6 +920,8 @@ end
 ######################################################
 
 class CalculateMeta
+  include Pipe
+  
   def initialize
     @ti = TypeInference.new
   end
@@ -859,7 +953,7 @@ class CalculateMeta
 
     input.header.each do | c |
       m = c.meta
-      if m.type_inferred < Numeric || m.types.any?{|t| t < Numeric}
+      if m.type_inferred && m.type_inferred < Numeric
         m.align_inferred = :right
       end
     end
@@ -872,7 +966,6 @@ class CalculateMeta
     r_blanks = r_nulls = 0
     header.each do | c |
       v = r[c]
-      # ap(c: c, v: v)
       m.type!(v.class)
       case process_value!(r, c, v)
       when :blank
@@ -880,7 +973,6 @@ class CalculateMeta
       when :null
         r_nulls += 1
       end
-      # ap(c_meta: c.meta)
     end
     m.blanks += 1 if r_blanks == header.size
     m.nulls  += 1 if r_nulls  == header.size
@@ -910,6 +1002,7 @@ end
 ######################################################
 
 class MetaTable
+  include Pipe
   def call input, env
     output = input.header.meta.table
     output << input.header.meta.to_h
@@ -922,56 +1015,8 @@ end
 
 #######################################
 
-class Pipe
-  attr_accessor :opts
-  
-  def initialize *args
-    @opts = {}
-    @apps = [ ]
-  end
-  def debug? ; false ; end
-end
-
-module Pipe::Format
-end
-
-module Pipe::LineOut
-  include Pipe::Format
-  def output
-    @output ||=
-      Table.new.tap do |t|
-        t.header = Header.new << Column.new(:_LINE_).tap{|c| c.meta.type = ::String}
-      end
-  end
-end
-
-
-class Pipeline
-  attr_accessor :apps
-  def initialize *args
-    @apps = [ ]
-  end
-  
-  def << app
-    @apps << app
-    self
-  end
-
-  def call table, env
-    @apps.inject(table) do |t, app|
-      app.call(table, env)
-    end
-  end
-end
-
-class CSVOut < Pipe
+class CSVOut
   include Pipe::LineOut
-  attr_accessor :col_sep, :multi_sep
-  
-  def initialize *args
-    self.multi_sep ||= ';'
-  end
-  
   def call input, env
     output << line(input.header.map(&:to_s))
     input.each do | r |
@@ -982,17 +1027,22 @@ class CSVOut < Pipe
   end
   
   def line r
-    [ CSV.generate_line(r.to_a.map{|v| format(v)}) ]
+    [ CSV.generate_line(r.to_a.map{|v| format_value(v)}) ]
+  end
+end
+
+class IOOut
+  include Pipe
+  def initialize *args
+    @io = $stdout
+    super
   end
   
-  def format v
-    case v
-    when nil
-      nil
-    when Enumerable
-      v.map{|e| format(e).to_s} * multi_sep
-    else
-      v.to_s
+  def call input, env
+    input.each do | r |
+      r.each do | v |
+        @io.write(v)
+      end
     end
   end
 end
@@ -1000,13 +1050,7 @@ end
 ######################################################
 # Refactored from MarkdownOut
 
-class Align < Pipe
-  include Pipe::Format
-  
-  def call input, env
-    raise "TODO"
-  end
-
+module Align
   def header! header, min_width = 5
     @header = header
     @c_mw = header.map do |c|
@@ -1020,13 +1064,13 @@ class Align < Pipe
     self
   end
 
-  def format_row row, fill = nil
+  def align_row row, fill = nil
     @header.map do |c|
-      format_col row[c.to_i].to_s, c, fill
+      align_col row[c.to_i].to_s, c, fill
     end
   end
   
-  def format_col v, c, fill
+  def align_col v, c, fill
     mw = @c_mw[c.to_i]
     case fill
     when String
@@ -1045,25 +1089,24 @@ class Align < Pipe
   end
 end
 
-class MarkdownOut < Pipe
-  include Pipe::LineOut
+class MarkdownOut
+  include Pipe::LineOut, Align
   
   def call input, env
     title = opts[:title]
-    header = input.header
-    
-    @align = Align.new.header!(header)
-    
-    output << format_row(header.map(&:to_s), :header)
-    output << format_row(header.map{|_| '---'}, '-')
+    header!(input.header)
+    output << format_row(input.header.map(&:to_s), :header)
+    output << format_row(input.header.map{|_| '---'}, '-')
     input.each do | row |
       output << format_row(row)
     end
+    env[:content_type] = 'text/markdown' # 2016 RFC7763 at IETF
     output
   end
 
   def format_row row, fill = nil
-    row = @align.format_row(row, fill)
+    row = row.map{|v| format_value(v)} 
+    row = align_row(row, fill)
     [ '| '.dup << (row * ' | ') << " |\n" ]
   end
 end
@@ -1118,28 +1161,18 @@ class Main
     end
     
     env = { }
-    t = table
+    #################################
 
-    csv = CSVOut.new.call(t, env)
-    # ap(t: t.map(&:to_a))
-    csv.write
+    (Pipeline.new >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(table, env)
+    pp(env: env)
 
-    cm = CalculateMeta.new.call(t, env)
-    # ap(cm: cm)
-
-    # ap(t.header.map{|c| c.meta})
-    mt = MetaTable.new.call(t, env)
-    # ap(mt: mt)
+    (Pipeline.new >> CalculateMeta >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
+    pp(env: env)
     
-    csv = CSVOut.new.call(mt, env)
-    # ap(t: t.map(&:to_a))
-    csv.write
+    (Pipeline.new >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
+    pp(env: env)
 
-    csv_2 = CSVOut.new.call(csv, env)
-    # ap(t: t.map(&:to_a))
-    csv_2.write
-
-    MarkdownOut.new.call(t, env).write
+    #################################
     
     formatter = Formatter::DEFAULT
     v1 = "123412.234"

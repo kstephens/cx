@@ -47,16 +47,21 @@ module CX
   alias :<< :write
 
   def inspect mode = nil
-    id = @identifier || "#{'%x' % object_id}"
-    str = "#<#{self.class.name} #{id} #{size} #{(@header && @header.cols).inspect}>"
     case mode
     when :rows
-      str = String.new << str << "\n"
+      str = String.new << _inspect_basic << "\n"
       str << "#{size} vvvvvvvvvvvvvvvvvvvv\n"
       each{|e| str << e.inspect << "\n"}
       str << "#{size} ^^^^^^^^^^^^^^^^^^^^\n"
+    when :super
+      super()
+    else
+      _inspect_basic
     end
-    str
+  end
+  
+  def _inspect_basic
+    str = "#<#{self.class.name} #{@identifier || "#{'%x' % object_id}"} #{size} #{(@header && @header.cols).inspect}>"
   end
 end
 
