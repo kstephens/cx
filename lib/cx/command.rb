@@ -79,17 +79,31 @@ module CX
     end
     
     def _factory s
-      unless f = s[:class]
+      unless c = s[:class]
+        log.debug "_factory : spec : #{s.inspect}"
         begin
-          # pp(factory_s: s)
-          log.debug "Loading #{s[:path].inspect}"
-          require s[:path]
-        rescue LoadError
-          # Assume it's in main.rb
+          c = CX.const_get(s[:class_name])
+        rescue NameError
         end
-        f = s[:class] = CX.const_get(s[:class_name])
+
+        unless c
+          begin
+            # pp(factory_s: s)
+            log.debug "_factory : load #{s[:path].inspect}"
+            require s[:path]
+            c = CX.const_get(s[:class_name])
+          rescue LoadError => exc
+            # Assume misc.rb?
+            log.debug "_factory : load #{s[:path].inspect} : ERROR : #{exc.inspect}"
+            # binding.pry
+            # raise exc
+          end
+        end
+        
+        log.debug "Resolved #{s[:name]} => #{c.inspect}"
+        s[:class] = c
       end
-      f
+      c
     end
     
     def factory name
@@ -104,7 +118,7 @@ module CX
     cmd :debug,
       'emits debug information during processing   If --table, dump input/output tables.'
     cmd [:noop, :nop, :null],
-      'does nothing: passes input to output   '
+      'does nothing: ignores arguments, passes input to output   '
 
     cmd [ :"-header", :'-h' ],
       'capture column header from first row  Typically used after "-csv".'
@@ -132,7 +146,7 @@ module CX
     cmd :sort,
       'sort by specified columns   Columns specified with ":-" option will sort in reverse.'
     cmd :uniq,
-      'emit unique rows   Specified rows delimit uniqness.',
+      'emit unique rows   Specified columns delimit uniqness.',
       {
         '--count=' => 'Appends a column of rows (e.g. UNIX uniq -n) defaults to "__uniq_count__".'
       }
@@ -158,6 +172,9 @@ module CX
       'Define columns   Specify/override column names and options.'
     cmd [ :"columns-", :"cols-" ],
       'emit header column attributes'
+    cmd [ :"normalize-columns", :"cols!" ],
+      'Normalize column names  '
+
     cmd :types,
       'infer column types from values   Empty strings or nil values are considered inconclusive.'
     cmd :coerce,
