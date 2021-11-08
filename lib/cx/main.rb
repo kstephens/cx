@@ -92,7 +92,7 @@ class Main
     self
   rescue => exc
     log.error "#{progname} : #{exc.inspect}"
-    log.info { (["backtrace:::"] + exc.backtrace.reverse + [":::"]).join("\n") }
+    log.error { (["backtrace:::"] + exc.backtrace.reverse + [":::"]).join("\n") }
     @exit_code = 1
     self
   ensure
