@@ -104,10 +104,6 @@ module CX
   end
   alias :cols= :set_cols!
   
-  def self.clean_col_name c
-    c && c.to_s.gsub(/^%|%$/, '').gsub(/[\{\}\[\]\(\)]/, '').gsub(/[^-_\w]/, '_').to_sym
-  end
-
   # Transform row.
   def row r, cols = nll
     row_fn(cols).call(r)
@@ -167,11 +163,11 @@ module CX
     end
   end
 
-  def self.parse_column_args args, strip_and_split = true
+  def self.parse_column_args args, split_and_strip = true
     cols = args.dup
-    if strip_and_split
+    if split_and_strip
       cols = cols.flat_map do |c|
-        c.strip.split(/\s+|\s*,\s*/, -1).map(&:strip)
+        c.strip.split(/\s*,\s*/, -1).map(&:strip)
       end
     end
     cols.reject!(&:empty?)
@@ -205,7 +201,7 @@ module CX
   class Column
     include Logging
     attr_accessor :header, :name, :ind, :opts
-    attr_reader :to_s
+    attr_reader :to_s, :clean_name
     alias :to_i   :ind
     alias :to_sym :name
     
@@ -222,7 +218,16 @@ module CX
     def name= name
       @name = name.to_sym
       @to_s = name.to_s.freeze
+      @clean_name = Column.clean_name(name).to_sym
       @header && @header._col_!(self)
+    end
+
+    def self.clean_name name
+      name.to_s.
+        gsub(/^%|%$/, '').
+        gsub(/[\{\}\[\]\(\)]/, '').
+        gsub(/[^-_\w]/, '_').
+        downcase
     end
 
     def opts= opts
@@ -236,6 +241,7 @@ module CX
       end
       self
     end
+    
     def copy_to! other
       other.ind  ||= @ind
       other.opts = opts.merge(other.opts)
