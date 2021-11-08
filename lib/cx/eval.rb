@@ -43,7 +43,8 @@ module CX
         end
       when /^(\w+)$/.match(sel.to_s)
         col_i = __col($1).to_i
-        ::Kernel.lambda do ||
+        ::Kernel.lambda do |*_args|
+          # ::Kernel.puts({_args: _args}.inspect) unless _args.empty?
           @row[col_i]
         end
       when /^(\w+)=$/.match(sel.to_s)
