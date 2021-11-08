@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
-require 'cx/types'
+require 'cx/command/types'
 
 module CX
   class Columns < Pipe

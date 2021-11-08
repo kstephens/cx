@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
-require 'cx/misc' # Sort
+require 'cx/command/misc' # Sort
 
 module CX
   class RemoveUnused < Pipe

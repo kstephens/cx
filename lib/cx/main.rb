@@ -14,8 +14,8 @@ require 'cx/table'
 require 'cx/header'
 require 'cx/typing'
 require 'cx/pipe'
-require 'cx/io'
-require 'cx/misc' # AUTOLOAD!
+require 'cx/command/io'
+require 'cx/command/misc' # AUTOLOAD!
 require 'set'
 require 'shellwords'
 require 'tempfile'

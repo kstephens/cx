@@ -44,7 +44,7 @@ module CX
       options   ||= {}
       
       path ||= default_path.to_s.gsub(/-/, '_')
-      path =  "cx/#{path}"
+      path =  "cx/command/#{path}"
       # pp(name: name, path: path)
       spec = {
         name: name,
@@ -95,6 +95,7 @@ module CX
           rescue LoadError => exc
             # Assume misc.rb?
             log.debug "_factory : load #{s[:path].inspect} : ERROR : #{exc.inspect}"
+            log.info  "Cannot load #{s[:class_name]} from #{s[:path].inspect}"
             # binding.pry
             # raise exc
           end

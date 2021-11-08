@@ -4,7 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
-require 'cx/structured'
+require 'cx/command/structured'
 require 'yaml'
 
 module CX
