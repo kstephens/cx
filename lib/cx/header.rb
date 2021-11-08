@@ -163,11 +163,11 @@ module CX
     end
   end
 
-  def self.parse_column_args args, strip_and_split = true
+  def self.parse_column_args args, split_and_strip = true
     cols = args.dup
-    if strip_and_split
+    if split_and_strip
       cols = cols.flat_map do |c|
-        c.strip.split(/\s+|\s*,\s*/, -1).map(&:strip)
+        c.strip.split(/\s*,\s*/, -1).map(&:strip)
       end
     end
     cols.reject!(&:empty?)
