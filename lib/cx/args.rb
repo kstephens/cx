@@ -9,25 +9,32 @@ module CX
   class Args
     attr_accessor :argv, :args, :opts
 
+    def self.[] argv
+      # binding.pry
+      new.parse!(argv)
+    end
+    
     def parse! argv
       @argv = argv.map(&:dup)
-      @args = @argv.map(&:dup)
+      @args = [ ]
       @opts = { }
-      while arg = args.first
+      x = argv.dup
+      while arg = x.shift
+        # pp(arg: arg, x: x)
         case arg
-        when /^--([-_a-z0-9]+)/i
+        when /^--([-_a-z0-9]+)$/i
           set_opt! $1, true
-          args.shift
-        when /^--([-_a-z0-9]+)=(.*)/i
+        when /^--([-_a-z0-9]+)=(.*)$/i
           set_opt! $1, $2
-          args.shift
         when '--'
+          self.args += x
           break
         else
-          break
+          self.args << arg
         end
+        
       end
-      {argv: argv, args: args, opts: opts}
+      self
     end
 
     alias :call :parse!

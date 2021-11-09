@@ -4,5 +4,21 @@ source "https://rubygems.org"
 gemspec
 
 gem "terminal-table", "~> 1.8"
+gem "awesome_print", "~> 1.9"
 
-gem "awesome_print", "~> 1.8"
+group :development, :test do
+  gem "rake", "~> 13.0"
+  gem "rspec", "~> 3.10"
+  gem "rubocop", "~> 0.80"
+  gem "guard-rspec", "~> 4.7"
+  gem "simplecov", "~> 0.21.2"
+  # gem "awesome_print", "~> 1.9"
+  gem "pry-byebug", "~> 3.8"
+  gem 'rspec-mocks'
+  # gem 'webmock'
+  # gem 'log4r'
+  gem 'multi_json'
+  # gem 'faraday'
+  # gem 'faraday_middleware'
+end
+
