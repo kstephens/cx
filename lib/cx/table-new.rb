@@ -24,7 +24,8 @@ require 'set'
 require 'pry'
 
 class Column
-  attr_reader :name, :index, :order, :meta, :header, :to_s
+  attr_reader :name, :index, :order, :meta, :header
+  attr_reader :to_s, :name_ # Derived
   alias :to_sym :name
   alias :to_i   :index
 
@@ -50,8 +51,19 @@ class Column
   def _name= n
     @name = n
     @to_s = @name.to_s.freeze
+    @name_ = Column.simple_name(@name).to_sym
   end
   
+  ##################################
+
+  def self.simple_name name
+    name.to_s.
+      gsub(/^%|%$/, '').
+      gsub(/[\{\}\[\]\(\)]/, '').
+      gsub(/[^-_\w]/, '_').
+      downcase
+  end
+
   ##################################
 
   def index= i
@@ -93,12 +105,13 @@ end
 
 class Header
   include Enumerable
-  attr_reader :columns, :meta
+  attr_reader :columns, :meta, :aliases
 
   def initialize cols = nil
     @version = 0
     @columns = [ ]
     @to_column = { }
+    @aliases = { }
     @meta = Meta.new
     case cols
     when nil
@@ -118,7 +131,7 @@ class Header
     when Integer
       @columns[k]
     when Symbol, String
-      @to_column[k.to_sym]
+      @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
     else
       raise TypError
     end
@@ -130,6 +143,7 @@ class Header
   def new ; dup.deepen! ; end
   def deepen!
     @to_column = { }
+    @aliases = @aliases.dup
     @columns = @columns.map do |c|
       @to_column[c.to_sym] = c = c.dup
       c._header = self
@@ -159,7 +173,7 @@ class Header
   alias :<< :push
 
   def alias! c, name
-    @to_column[name] = c
+    @aliases[name] = c.name
     self
   end
   
@@ -207,9 +221,13 @@ class Header
     raise ArgumentError if @to_column[name]
     raise ArgumentError unless @columns.include?(c)
     @to_column.delete(c.name)
+    @aliases.keys do | (a, n) |
+      @aliases.delete(a) if n == c.name
+    end
     new_name = available_name(c, name)
     c._name = new_name
     @to_column[new_name] = c
+    alias! c, c.name_
     @version += 1
     new_name
   end
@@ -245,9 +263,7 @@ class Header
     case x
     when Row
       x
-    when Hash
-      Row.new(x, self)
-    when Array
+    when Hash, Array
       Row.new(x, self)
     else
       raise TypeError
@@ -325,6 +341,16 @@ class Table
   end
   alias :<< :push
 
+  def unshift r
+    r = Row[r]
+    r._header = @header
+    @rows.unshift r
+    self
+  end
+  
+  def pop   ; @rows.pop   ; end
+  def shift ; @rows.shift ; end
+  
   def size; @rows.size; end
 
   def each_row_col
@@ -385,6 +411,7 @@ class Row
   def new ; dup.deepen! ; end
   def deepen!
     @data = @data.dup
+    @meta = @meta && @meta.dup
     self
   end
   
@@ -395,13 +422,7 @@ class Row
   
   def each &blk
     @header.each do |c|
-      yield _get(c)
-    end
-  end
-  
-  def each_with_col &blk
-    @header.each do |c|
-      yield _get(c), c
+      yield c, _get(c)
     end
   end
   
@@ -484,10 +505,19 @@ end
 
 ##############################
 
+module Boolean
+  ::TrueClass.include self
+  ::FalseClass.include self
+end  
+
+##############################
+
 class Meta
   ATTRS =
     [
       [:name,       type: String],
+      [:name_,      type: String],
+      [:visible,    type: Boolean],
       [:order,      type: Integer],
       [:index,      type: Integer],
       [:type,       type: String],
@@ -506,6 +536,7 @@ class Meta
   attr_accessor *ATTRS.map(&:first)
 
   def initialize
+    self.visible = true
     clear!
   end
 
@@ -687,66 +718,138 @@ end
 
 ###########################################
 
-module Boolean
-  ::TrueClass.include self
-  ::FalseClass.include self
-end  
+class Type < Struct.new(:mod, :converter, :coercer, :matches, :format, :name)
+  def initialize *args
+    super
+    self.name = mod.name.to_sym
+  end
+  
+  def convert v
+    case v
+    when mod, nil
+      v
+    else
+      converter.call(self, v) rescue nil
+    end
+  end
 
-class Type < Struct.new(:mod, :coerer, :format)
   def coerce v
     case v
     when mod, nil
       v
     else
-      coercer.call(v)
+      if (vc = (converter.call(self, v) rescue nil)).nil?
+        vc = matches.call(self, v)
+        vc &&= converter.call(self, coercer.call(self, vc)) rescue nil
+#        binding.pry if v.to_s =~ /^[a-z]{3}$/
+      end
+      vc
     end
-  rescue
+  end
+
+  def parse v
+    case v
+    when mod, nil
+      v
+    when String
+      if vp = matches.call(self, v)
+        # binding.pry if v =~ /^0\./
+        vp = converter.call(self, vp) rescue nil
+      end
+      vp
+    else
+      nil
+    end
+  end
+  
+  def self.try_parse! v
+    return v if v.nil?
+    return v unless String === v
+    @@types.each do | t |
+      # binding.pry if v.to_s =~ /%$/
+      cv = t.parse(v)
+      # pp(v: v, t: t.mod, cv: cv) if cv
+      return cv unless cv.nil?
+    end
     nil
   end
 
+  @@types = [ ]
+  @@types_by_module = { }
+  @@types_by_name = { }
+
+  def self.[] x
+    case x
+    when Module
+      @@types_by_module[x]
+    when Symbol, String
+      @@types_by_name[x.to_sym]
+    end or raise ArgumentError, "unknown Type #{x.inspect}"
+  end
+  
   def self.add! *args
-    @@types << new(*args)
+    type = new(*args)
+    @@types << type
+    @@types_by_module[type.mod] = type
+    @@types_by_name[type.name] = type
     self
   end
-  @@types = [ ]
 
+  ANY  = Proc.new {|t, v| v}
+  NONE = Proc.new {|t, v| nil}
+  def self.matches rx
+    lambda do | t, v |
+      String === v && rx.match(v) ? $1 : nil
+    end
+  end
+  
+  FLOAT_RX = /^([-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?)$/i
   [
+    [::Integer,
+      Proc.new{|t, v| Integer(v)},
+      Proc.new{|t, v| v.to_i },
+      matches(/^([-+]?\d+)$/),
+    ],
+    [::Rational,
+      Proc.new{|t, v| Rational(v)},
+      Proc.new{|t, v| v.to_r },
+      matches(%r{^([-+]?\d+/\d+)$}),
+    ],
     [::BigDecimal,
-      Proc.new{|v| BigDecimal(v) rescue nil},
+      Proc.new{|t, v| BigDecimal(v) },
+      Proc.new{|t, v| v.to_s },
+      matches(FLOAT_RX),
     ],
     [::Float,
-      Proc.new{|v| Float(v) rescue nil},
-    ],
-    [::Integer,
-      Proc.new{|v| Integer(v) rescue nil},
+      Proc.new{|t, v| Float(v) },
+      Proc.new{|t, v| v.to_f },
+      matches(FLOAT_RX),
     ],
     [::Time,
-      Proc.new do |v|
+      Proc.new do |t, v|
         case v
         when Numeric          
-          Time.at(v.to_f) rescue nil
+          Time.at(v.to_f)
         else
           (format.parse(v) rescue nil) or
             (Time.parse(v) rescue nil)
         end
       end,
+      Proc.new {|t, v| v.to_i },
+      matches(/^(\d\d\d\d-\d\d-\d\d[-T ]\d\d:\d\d:\d\d(\.\d+)?)$/i),
     ],
     [::Date,
-      Proc.new do |v|
+      Proc.new do |t, v|
         case v
         when Numeric          
-          Time.at(v.to_f).to_date rescue nil
+          Time.at(v.to_f).to_date
         else
           (format.parse(v) rescue nil) or
             (Date.parse(v) rescue nil)
         end
-      end
-    ],
-    [::Symbol,
-      Proc.new{|v| v.to_sym},
-    ],
-    [::String,
-      Proc.new{|v| v.to_s},
+      end,
+      Proc.new{|t, v| v.to_s },
+      matches(/^(\d\d\d\d-\d\d-\d\d)$/),
     ],
     [::Boolean,
       Proc.new do | v |
@@ -756,25 +859,79 @@ class Type < Struct.new(:mod, :coerer, :format)
         when Numeric
           ! v.zero?
         when String
-          v =~ /t/i ? true : false
+          v =~ /^[t1-9]/i ? true : false
         end
-      end
+      end,
+      Proc.new{|t, v| v.to_s },
+      matches(/^(true|false)$/i),
+    ],
+    [::String,
+      Proc.new{|t, v| v.to_s },
+      Proc.new{|t, v| v.to_s },
+      ANY,
+    ],
+    [::Symbol,
+      Proc.new{|t, v| v.to_sym },
+      Proc.new{|t, v| v.to_s },
+      NONE,
     ],
     [::Object,
-      Proc.new{|v| v},
+      Proc.new{|t, v| v },
+      Proc.new{|t, v| v },
+      ANY,
     ],
   ].each do | args |
     add!(*args)
   end
 end
 
-module Pipe
-  attr_accessor :opts
+class ArgvParser
+  attr_accessor :argv, :args, :opts
   
-  def initialize *args
-    @opts = {}
-    @apps = [ ]
+  def call argv
+    @argv = argv.map(&:dup)
+    @args = @argv.map(&:dup)
+    @opts = { }
+    while arg = args.first
+      case arg
+      when /^--([-_a-z0-9]+)/
+        set_opt! $1, true
+        args.shift
+      when /^--([-_a-z0-9]+)=(.*)/
+        set_opt! $1, $2
+        args.shift
+      when '--'
+        break
+      else
+        break
+      end
+    end
+    {argv: argv, args: args, opts: opts}
   end
+  
+  def set_opt! key, val
+    opts[key.gsub(/-/, '_').to_sym] = val
+  end
+end
+
+module Transform
+  attr_accessor :argv, :args, :opts
+  
+  def initialize *argv
+    @argv = argv.map(&:dup)
+    # @apps = [ ]
+    initialize!
+  end
+
+  def initialize!
+    parser = ArgvParser.new
+    result = parser.call(argv)
+    @argv = result.argv
+    @args = result.args
+    @opts = result.opts
+    self
+  end
+
   def debug? ; false ; end
 
   def >> app
@@ -796,7 +953,7 @@ module Pipe
 end
 
 class Pipeline
-  include Pipe
+  include Transform
   
   attr_accessor :apps
   def initialize *args
@@ -821,12 +978,57 @@ class Pipeline
   end
 end
 
-module Pipe::Format
-  include Pipe
+module Transform::Format
+  include Transform
 end
 
-module Pipe::LineOut
-  include Pipe::Format
+module Transform::SelectColumns
+  include Transform
+  def initialize!
+  end
+end
+
+class Strip
+  include Transform
+  
+  def call input, env
+    input.each_row_col_val do | r, c, v |
+      if String === v
+        r[c] = v.strip
+      end
+    end
+    input
+  end
+end
+
+class Quote
+  include Transform
+  
+  def call input, env
+    input.each_row_col_val do | r, c, v |
+      if String === v and q = v.inspect and q.gsub(/^"|"$/, '').strip != v
+        r[c] = q
+      end
+    end
+    input
+  end
+end
+
+class EmptyToNull
+  include Transform
+  
+  def call input, env
+    input.each_row_col_val do | r, c, v |
+      if String === v && v.empty?
+        r[c] = nil
+      end
+    end
+    input
+  end
+end
+
+module Transform::LineOut
+  include Transform::Format
   
   attr_accessor :col_sep, :row_sep, :multi_sep
   
@@ -857,7 +1059,7 @@ end
 ###################################
 
 class TypeInference
-  include Pipe
+  include Transform
   
   def initialize
     @formatter ||= Formatter::DEFAULT
@@ -865,20 +1067,30 @@ class TypeInference
   end
   
   def call input, env
+    #  binding.pry
     input.each_row_col_val do | r, c, v |
-      process_value!(r, c, v)
+      vc, vt = infer_type(r, c, v)
+      m = c.meta
+      m.type_inferred = gcd_ignore_nil(m.type_inferred, vt)
     end
     input
   end
 
-  def process_value! r, c, v
-    unless (parsed = infer_string_value(v, c)).nil?
-      v_t = parsed.class
-      r[c] = parsed if @parse_string && v_t != v.class
+  def infer_type r, c, v
+    #    binding.pry
+    vc = v
+    case
+    when v.nil?
+      vt = nil
+    when ! (vc = Type.try_parse!(v)).nil?
+      vt = vc.class
+    #when ! (parsed = infer_string_value(v, c)).nil?
+    #  vt = parsed.class
+    #  vc = parsed if @parse_string && vt != v.class
     else
-      v_t = v.class
+      vt = v.class
     end
-    c.type = c.type_gcd_ignore_null(c.type, vt)
+    [vc, vt]
   end
 
   def infer_string_value v, c
@@ -920,7 +1132,7 @@ end
 ######################################################
 
 class CalculateMeta
-  include Pipe
+  include Transform
   
   def initialize
     @ti = TypeInference.new
@@ -939,6 +1151,7 @@ class CalculateMeta
       m = c.meta
       m.clear!
       m.name = c.name
+      m.name_ = c.name_
       m.index = c.index
       m.order = c.order
     end
@@ -981,8 +1194,9 @@ class CalculateMeta
   
   def process_value! r, c, v
     m = c.meta
-    m.type!(v.class)
-    m.type_inferred = @ti.gcd_ignore_nil(m.type_inferred, v.class)
+    v, vt = @ti.infer_type r, c, v
+    m.type!(vt || v.class)
+    m.type_inferred = @ti.gcd_ignore_nil(m.type_inferred, vt)  
     case v
     when nil
       m.nulls += 1
@@ -1002,10 +1216,10 @@ end
 ######################################################
 
 class MetaTable
-  include Pipe
+  include Transform
   def call input, env
     output = input.header.meta.table
-    output << input.header.meta.to_h
+    # output << input.header.meta.to_h
     input.header.each do | c |
       output << c.meta.to_h
     end
@@ -1013,10 +1227,24 @@ class MetaTable
   end
 end
 
+######################################################
+
+class HeaderOut
+  include Transform
+  def call input, env
+    output = Table.new(input.header.dup)
+    output << input.header.columns
+    input.each do | row |
+      output << row.dup
+    end
+    output
+  end
+end
+
 #######################################
 
 class CSVOut
-  include Pipe::LineOut
+  include Transform::LineOut
   def call input, env
     output << line(input.header.map(&:to_s))
     input.each do | r |
@@ -1032,17 +1260,34 @@ class CSVOut
 end
 
 class IOOut
-  include Pipe
+  include Transform
+  
   def initialize *args
-    @io = $stdout
+    @io = args[0] || $stdout
     super
   end
   
   def call input, env
-    input.each do | r |
-      r.each do | v |
-        @io.write(v)
+    open(@io, "w") do | io |
+      input.each do | r |
+        r.each do | _c, v |
+          io.write(v)
+        end
       end
+    end
+    input
+  end
+
+  def open io, mode
+    case io
+    when IO
+      yield io
+    when String
+      File.open(io.to_s, mode) do | io |
+        yield io
+      end
+    else
+      raise TypeError
     end
   end
 end
@@ -1057,10 +1302,11 @@ module Align
       m = c.meta
       [
         m.max_size || 0,
-        m.name.to_s.size,
+        c.name.size,
         min_width
       ].max
     end
+    @c_fmt = Hash.new{|h,i| h[i] = "%#{i}s"}
     self
   end
 
@@ -1073,24 +1319,24 @@ module Align
   def align_col v, c, fill
     mw = @c_mw[c.to_i]
     case fill
+    when :header
+      mw = - mw
+      v = @c_fmt[mw] % v
     when String
       center = (align = c.meta.align_) == :center
       v = fill * mw
       v[0]  = ':' if center || align == :left
       v[-1] = ':' if center || align == :right
-    when :header
-      mw = - mw
-      v = "%#{mw}s" % v
     else
       mw = c.meta.align_ == :right ? mw : - mw
-      v = "%#{mw}s" % v
+      v = @c_fmt[mw] % v
     end
     v
   end
 end
 
 class MarkdownOut
-  include Pipe::LineOut, Align
+  include Transform::LineOut, Align
   
   def call input, env
     title = opts[:title]
@@ -1105,7 +1351,7 @@ class MarkdownOut
   end
 
   def format_row row, fill = nil
-    row = row.map{|v| format_value(v)} 
+    row = row.map{|c, v| format_value(v)} unless fill == :header
     row = align_row(row, fill)
     [ '| '.dup << (row * ' | ') << " |\n" ]
   end
@@ -1120,7 +1366,7 @@ class Format
     
     input.each do | r |
       new_r = { }
-      r.each_col_val do | c, v |
+      r.each do | c, v |
         v = c.format(v)
         new_r[c] = v.nil? ? nil : v.to_s
       end
@@ -1137,17 +1383,19 @@ class Main
   def run! argv
     ints = (-100  .. 100).to_a
     strs = ("aaa" .. "zzz").to_a
+    vals = (1 .. 200).map{|x| "#{x}%"}
 
-    header = Header.new([:a, :b, :b])
+    header = Header.new([:a, :b, :b, :"X %"])
     table = Table.new([], header)
     10.times do | i |
       table << [
         ints.sample,
-        strs.sample,
+        (i % 3).zero? ? strs.sample + " " : strs.sample,
         (i % 2).zero? ? nil : i / 10.0,
-      ]
+        vals.sample,
+      ].map(&:to_s)
     end
-    table << [ nil, nil, nil ]
+    # table << header.map{|_c, _v| nil}
     
     ap(header: header)
     ap(table: table)
@@ -1161,13 +1409,25 @@ class Main
     end
     
     env = { }
+
+    (Pipeline.new >> CSVOut >> IOOut).call(table, env)
+    
+    (Pipeline.new >> Quote >> EmptyToNull >> CalculateMeta >> MarkdownOut >> IOOut).call(table, env)
+
+    table = (Pipeline.new >> Strip >> EmptyToNull).call(table, env)
+    
     #################################
 
-    (Pipeline.new >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(table, env)
-    pp(env: env)
+    (Pipeline.new >> CSVOut >> IOOut).call(table, env)
+    # pp(env: env)
 
-    (Pipeline.new >> CalculateMeta >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
-    pp(env: env)
+    (Pipeline.new >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(table, env)
+    # pp(env: env)
+
+    (Pipeline.new >> CalculateMeta >> MarkdownOut >> IOOut.new("tmp/table.md") >> IOOut).call(table, env)
+
+    (Pipeline.new >> CalculateMeta >> MetaTable >> MarkdownOut >> IOOut.new("tmp/metatable.md") >> IOOut).call(table, env)
+    # pp(env: env)
     
     (Pipeline.new >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
     pp(env: env)
@@ -1178,7 +1438,7 @@ class Main
     v1 = "123412.234"
     v2 = formatter.parse(v1)
     ap(v1: v1, v2: v2, v2_class: v2.class)
-    binding.pry
+    # binding.pry
     exit!
   end
 end
