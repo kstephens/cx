@@ -4,8 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
-require 'cgi/util'
-
+require 'cx/xml_writer'
 require 'cx/pipe'
 require 'cx/csv_safe'
 
@@ -27,12 +26,15 @@ module CX
     colspan = 1 + cols.size
     right = {style: 'text-align: right;'}
     output = new_table(input)
-    h = HTML.new(output)
+    h = XMLWriter.new(
+      output,
+      coerce_to_string: proc{|x| Typing.coerce(x, String)}
+    )
     h.html do
       h.head do
         x = opts[:title] || env[:in_file] and h.title(x)
         h << HTML_HEAD
-        x = opts[:head]  and h.raw!(x)
+        x = opts[:head] and h.raw!(x)
       end
       h.body do
         x = opts[:body_head] and h.html(x)
@@ -101,54 +103,6 @@ module CX
     search: "🔍",
   }
 
-  class HTML < Object # BasicObject
-    def initialize out
-      @out = out
-      @html_sep   = ::Hash[%w(span td th title meta).map{|t| [t.to_sym, ""]}]
-      @html_open  = ::Hash.new{|h, tag| h[tag.to_sym] = "<#{tag}>".freeze}
-      @html_close = ::Hash.new{|h, tag| h[tag.to_sym] = "</#{tag}>".freeze}
-    end
-    
-    def _tag tag, attrs = nil, content = nil, &blk
-      tag = tag.to_sym
-      case
-      when ::Hash === attrs
-        attrs = attrs.map{|k,v| v.nil? || " #{k}='#{v}'"}.compact
-        attrs = attrs.empty? ? nil : attrs.join(' ')
-      when ::String === attrs && ! content
-        content = attrs
-        attrs = nil
-      end
-      ws = @html_sep[tag] ||= "\n"
-
-      self << (attrs ? "<#{tag} #{attrs}>" : @html_open[tag]) << ws
-
-      case
-      when content
-        close = true
-        text(content)
-      when blk
-        close = true
-        yield self
-      else
-        close = false
-      end
-      
-      self << @html_close[tag] << "\n" if close
-      nil
-    end
-    
-    def raw! x ; @out.write x.to_s ; self ; end
-    alias :<< :raw!
-    def text x
-      raw! ::CGI::escapeHTML(Typing.coerce(x, String))
-    end
-
-    def method_missing sel, *args, &blk
-      _tag(sel, *args, &blk)
-    end
-  end
-  
   HTML_HEAD = <<END
 <style type="text/css">
 body {
