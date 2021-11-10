@@ -20,6 +20,15 @@ a,b,c,d
 2,12,11,abc
 END
 
+ # Sample CSV data with unused columns:
+ $ cat <<END >HAS-UNUSED-COLUMNS.csv
+e,f,g,h
+1,ab,,foo
+24,,,bar
+,5,,baz
+,12,,abc
+END
+
  # -header: (-h) capture first row as header:
  $ cx in SOME.csv // -csv // -h // csv-
 1,ab,3,foo
@@ -34,6 +43,14 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+
+ # csv --separator: emit using TAB separator:
+ $ cx in SOME.csv // -csv // csv- --separator="\x09"
+a	b	c	d
+1	ab	3	foo
+24	44	6	bar
+134	5	9	baz
+2	12	11	abc
 
  # cut: Emit specific columns:
  $ cx in SOME.csv // -csv // -h // cut a,d // h- // csv-
@@ -77,19 +94,19 @@ a,b,c,d
 
  # columns-: Column types and widths can be inferred:
  $ cx in SOME.csv // -csv // columns- // h- // csv-
-name,ind,type,min_width,max_width,justify
-a,0,,,,
-b,1,,,,
-c,2,,,,
-d,3,,,,
+name,ind,type,min_width,max_width,justify,n_values,n_blanks,n_nulls,min,max
+a,0,,,,,,,,,
+b,1,,,,,,,,,
+c,2,,,,,,,,,
+d,3,,,,,,,,,
 
  # types: Infer column attributes:
  $ cx in SOME.csv // -csv // types // columns- // h- // csv-
-name,ind,type,min_width,max_width,justify
-a,0,Integer,1,3,right
-b,1,String,1,2,
-c,2,Integer,1,2,right
-d,3,String,3,3,
+name,ind,type,min_width,max_width,justify,n_values,n_blanks,n_nulls,min,max
+a,0,Integer,1,3,right,4,0,0,1,24
+b,1,String,1,2,,4,0,0,12,ab
+c,2,Integer,1,2,right,4,0,0,11,9
+d,3,String,3,3,,4,0,0,abc,foo
 
  # sort: Without types: sorts lexically:
  $ cx in SOME.csv // -csv // sort a // h- // csv-
@@ -107,11 +124,19 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 
+ # sort: reverse sort order:
+ $ cx in SOME.csv // -csv // types // sort a:- // h- // csv-
+a,b,c,d
+134,5,9,baz
+24,44,6,bar
+2,12,11,abc
+1,ab,3,foo
+
  # cut: Types propagate:
  $ cx in SOME.csv // -csv // types // cut a,d // columns- // h- // csv-
-name,ind,type,min_width,max_width,justify
-a,0,Integer,1,3,right
-d,1,String,3,3,
+name,ind,type,min_width,max_width,justify,n_values,n_blanks,n_nulls,min,max
+a,0,Integer,1,3,right,4,0,0,1,24
+d,1,String,3,3,,4,0,0,abc,foo
 
  # coerce: Coerce values to inferred types:
  $ cx in SOME.csv // -csv // -h // types // coerce // json-
@@ -121,6 +146,14 @@ d,1,String,3,3,
 {"a":134,"b":"5","c":9,"d":"baz"},
 {"a":2,"b":"12","c":11,"d":"abc"}
 ]
+
+ # remove-unused: Delete unused (blank) columns:
+ $ cx in HAS-UNUSED-COLUMNS.csv // -csv // -h // types // remove-unused // h- // csv-
+e,f,h
+1,ab,foo
+24,,bar
+,5,baz
+,12,abc
 
  # uniq: File with duplicate rows:
  $ cat <<END >DUPLICATES.csv
@@ -144,8 +177,25 @@ x,y,z
 1,2,3
 4,5,6
 
- # txt-: Generate an ASCII table:
- $ cx in SOME.csv // -csv // cut a,d // sort d // txt-
+ # grep: match columns
+ $ cx in SOME.csv // -csv // -h // grep d b // h- // csv-
+a,b,c,d
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+
+ # grep: match columns : negated
+ $ cx in SOME.csv // -csv // -h // grep d:- b // h- // csv-
+a,b,c,d
+1,ab,3,foo
+
+ # grep: match multiple columns
+ $ cx in SOME.csv // -csv // -h // grep a:- '4$' d b // h- // csv-
+a,b,c,d
+2,12,11,abc
+
+ # table-: Generate an ASCII table:
+ $ cx in SOME.csv // -csv // cut a,d // sort d // table-
 | a   | d   |
 +-----+-----+
 | 2   | abc |
@@ -153,8 +203,8 @@ x,y,z
 | 134 | baz |
 | 1   | foo |
 
- # txt-: Optional title:
- $ cx in SOME.csv // -csv // -h // txt- --title="Title"
+ # table-: Optional title:
+ $ cx in SOME.csv // -csv // -h // table- --title="Title"
 |        Title        |
 +-----+----+----+-----+
 | a   | b  | c  | d   |
@@ -164,8 +214,8 @@ x,y,z
 | 134 | 5  | 9  | baz |
 | 2   | 12 | 11 | abc |
 
- # txt-: Without head-, header columns are considered rows:
- $ cx in SOME.csv // -csv // txt-
+ # table-: Without head-, header columns are considered rows:
+ $ cx in SOME.csv // -csv // table-
 | a   | b  | c  | d   |
 | 1   | ab | 3  | foo |
 | 24  | 44 | 6  | bar |
@@ -173,7 +223,7 @@ x,y,z
 | 2   | 12 | 11 | abc |
 
  # header-: (-h) Format will output columns as headers:
- $ cx in SOME.csv // -csv // -h // txt-
+ $ cx in SOME.csv // -csv // -h // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 | 1   | ab | 3  | foo |
@@ -182,7 +232,7 @@ x,y,z
 | 2   | 12 | 11 | abc |
 
  # region: Output regions of rows:
- $ cx in SOME.csv // -csv // -h // types // region 2..4,1 // txt-
+ $ cx in SOME.csv // -csv // -h // types // region 2..4,1 // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 |  24 | 44 |  6 | bar |
@@ -191,7 +241,7 @@ x,y,z
 |   1 | ab |  3 | foo |
 
  # region: Backwards regions:
- $ cx in SOME.csv // -csv // -h // types // region -1..1 // txt-
+ $ cx in SOME.csv // -csv // -h // types // region -1..1 // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 |   2 | 12 | 11 | abc |
@@ -199,14 +249,28 @@ x,y,z
 |  24 | 44 |  6 | bar |
 |   1 | ab |  3 | foo |
 
+ # rowid: add sequential row number column:
+ $ cx in SOME.csv // -csv // -h // types // rowid --name=id // table-
+| id | a   | b  | c  | d   |
++----+-----+----+----+-----+
+|  1 |   1 | ab |  3 | foo |
+|  2 |  24 | 44 |  6 | bar |
+|  3 | 134 | 5  |  9 | baz |
+|  4 |   2 | 12 | 11 | abc |
+
  # transpose: transpose columns and rows
- $ cx in SOME.csv // -csv / -h // types // columns- // xpose // txt-
+ $ cx in SOME.csv // -csv / -h // types // columns- // xpose // table-
 | name      | a       | b      | c       | d      |
 | ind       | 0       | 1      | 2       | 3      |
 | type      | Integer | String | Integer | String |
 | min_width | 1       | 1      | 1       | 3      |
 | max_width | 3       | 2      | 2       | 3      |
 | justify   | right   |        | right   |        |
+| n_values  | 4       | 4      | 4       | 4      |
+| n_blanks  | 0       | 0      | 0       | 0      |
+| n_nulls   | 0       | 0      | 0       | 0      |
+| min       | 1       | 12     | 11      | abc    |
+| max       | 24      | ab     | 9       | foo    |
 
  # md: Markdown:
  $ cx in SOME.csv // -csv // -h // md-
@@ -360,9 +424,8 @@ SOME TABLE
 3 baz  5
 4 abc  12
 
-
  # tee: Duplicate input to mulitple output pipelines:
- $ cx in SOME.csv // -csv // -h // tee {{ types // sort // txt- // out SOME.txt }} // cut a,b // h- // csv-
+ $ cx in SOME.csv // -csv // -h // tee {{ types // sort // table- // out SOME.txt }} // cut a,b // h- // csv-
 a,b
 1,ab
 24,44
@@ -394,14 +457,14 @@ x,y
 END
 
  # join: inner join:
- $ cx in SOME.csv // -csv // -h // join '' @ a  =  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =  x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a | b  | c  | d   | x | y |
 +---+----+----+-----+---+---+
 | 1 | ab | 3  | foo | 1 | 2 |
 | 2 | 12 | 11 | abc | 2 | 3 |
 
  # join: left outer
- $ cx in SOME.csv // -csv // -h // join '' @ a /=  x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=  x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a   | b  | c  | d   | x | y |
 +-----+----+----+-----+---+---+
 | 1   | ab | 3  | foo | 1 | 2 |
@@ -410,7 +473,7 @@ END
 | 2   | 12 | 11 | abc | 2 | 3 |
 
  # join: right outer
- $ cx in SOME.csv // -csv // -h // join '' @ a  =/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a  =/ x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a | b  | c  | d   | x | y |
 +---+----+----+-----+---+---+
 | 1 | ab | 3  | foo | 1 | 2 |
@@ -418,7 +481,7 @@ END
 |   |    |    |     | 5 | 9 |
 
  # join: full outer
- $ cx in SOME.csv // -csv // -h // join '' @ a /=/ x @ '' {{ in OTHER.csv // -csv // -h }} // txt-
+ $ cx in SOME.csv // -csv // -h // join '' @ a /=/ x @ '' {{ in OTHER.csv // -csv // -h }} // table-
 | a   | b  | c  | d   | x | y |
 +-----+----+----+-----+---+---+
 | 1   | ab | 3  | foo | 1 | 2 |
@@ -450,7 +513,7 @@ a,b,c,d,e
  # in: Concatenates multiple files:
  $ tac SOME.csv > EMOS.csv
 
- $ cx in SOME.csv EMOS.csv // -csv // -h // types // txt-
+ $ cx in SOME.csv EMOS.csv // -csv // -h // types // table-
 | a   | b  | c  | d   |
 +-----+----+----+-----+
 | 1   | ab | 3  | foo |
@@ -472,6 +535,7 @@ CREATE TABLE TheTable
   c INT,
   d VARCHAR(3)
 );
+
 INSERT INTO TheTable
   (a, b, c, d)
 VALUES
@@ -482,7 +546,7 @@ VALUES
 
  $ rm -f TheDB.db3; sqlite3 TheDB.db3 < TheTable.sql
 
- $ sqlite3 TheDB.db3 '.schema' 'SELECT * FROM TheTable'
+ $ sqlite3 -batch -header -list -separator , TheDB.db3 '.schema' 'SELECT * FROM TheTable ORDER BY a'
 CREATE TABLE TheTable
 (
   a INT,
@@ -490,10 +554,11 @@ CREATE TABLE TheTable
   c INT,
   d VARCHAR(3)
 );
-1|ab|3|foo
-24|44|6|bar
-134|5|9|baz
-2|12|11|abc
+a,b,c,d
+1,ab,3,foo
+2,12,11,abc
+24,44,6,bar
+134,5,9,baz
 
 
 ```
