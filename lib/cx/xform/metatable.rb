@@ -10,6 +10,14 @@ module CX
   module Xform
     class MetaTable
       include Xform
+      # :COMMAND:
+      # MarkdownOut:
+      #   name: metatable-
+      #   aliases: meta-, columns
+      #   synopsis: Generate a table of column metadata.
+      #   args: []
+      #   opts: {}
+
       def call input, env
         output = input.header.meta.table
         # output << input.header.meta.to_h

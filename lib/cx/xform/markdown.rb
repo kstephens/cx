@@ -11,6 +11,13 @@ module CX
   module Xform
     class MarkdownOut
       include LineOut, Xform
+      # :COMMAND:
+      # MarkdownOut:
+      #   name: markdown-
+      #   aliases: md, markdown
+      #   synopsis: Generate Markdown table line.
+      #   args: []
+      #   opts: {}
       
       def call input, env
         title = opts[:title]

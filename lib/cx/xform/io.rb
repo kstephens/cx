@@ -11,6 +11,13 @@ module CX
     class IOOut
       include Xform
       
+      # :COMMAND:
+      # IOOut:
+      #   name: out
+      #   aliases: o
+      #   synopsis: Emit lines to a file
+      #   args: [ filename, ... ]
+      #   opts: {}
       def initialize!
         super
         binding.pry unless args

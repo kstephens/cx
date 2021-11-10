@@ -11,6 +11,13 @@ module CX
   module Xform
     class TypeInference
       include Xform
+      # :COMMAND:
+      # TypeInference:
+      #   name: types
+      #   aliases: 
+      #   synopsis: Infer types from field strings.
+      #   args: []
+      #   opts: {}
 
       def initialize!
         @parse_string = true

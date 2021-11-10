@@ -1,0 +1,81 @@
+Align:
+  name: align
+  aliases: o
+  synopsis: Aligns fields based on column max_size.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/align.rb"
+  path: "cx/xform/align"
+CalculateMeta:
+  name: meta
+  aliases: 
+  synopsis: Calculates various column metadata.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/calculate_meta.rb"
+  path: "cx/xform/calculate_meta"
+CSVOut:
+  name: csv-out
+  aliases: csv-
+  synopsis: Generates CSV lines.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/csv.rb"
+  path: "cx/xform/csv"
+EmptyToNull:
+  name: empty-null
+  aliases: 
+  synopsis: Empty fields are converted to NULL.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/empty_to_null.rb"
+  path: "cx/xform/empty_to_null"
+IOOut:
+  name: out
+  aliases: o
+  synopsis: Emit lines to a file
+  args: [ filename, ... ]
+  opts: {}
+  file: "lib/cx/xform/io.rb"
+  path: "cx/xform/io"
+MarkdownOut:
+  name: markdown-
+  aliases: md, markdown
+  synopsis: Generate Markdown table line.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/markdown.rb"
+  path: "cx/xform/markdown"
+MarkdownOut:
+  name: metatable-
+  aliases: meta-, columns
+  synopsis: Generate a table of column metadata.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/metatable.rb"
+  path: "cx/xform/metatable"
+Quote:
+  name: quote
+  aliases: q
+  synopsis: Quote fields that would not be printable..
+  args: []
+  opts: {}
+  file: "lib/cx/xform/quote.rb"
+  path: "cx/xform/quote"
+Strip:
+  name: strip
+  aliases: 
+  synopsis: Strip leading and trailing whitespace.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/strip.rb"
+  path: "cx/xform/strip"
+TypeInference:
+  name: types
+  aliases: 
+  synopsis: Infer types from field strings.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/type_inference.rb"
+  path: "cx/xform/type_inference"
+

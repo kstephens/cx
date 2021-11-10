@@ -10,6 +10,13 @@ module CX
   module Xform
     class Quote
       include Xform
+      # :COMMAND:
+      # Quote:
+      #   name: quote
+      #   aliases: q
+      #   synopsis: Quote fields that would not be printable..
+      #   args: []
+      #   opts: {}
       def call input, env
         input.each_row_col_val do | r, c, v |
           if String === v and q = v.inspect and q.gsub(/^"|"$/, '').strip != v

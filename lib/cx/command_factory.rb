@@ -1,0 +1,110 @@
+require 'cx'
+require 'yaml'
+
+module CX
+  class CommandFactory
+    def initialize
+      @by_name = {}
+    end
+
+    def new argv
+      argv = argv.dup
+      cmd_name = argv.shift.to_sym
+      cmd = @by_name[cmd_name]
+      cls = cmd.cls
+      obj = cls.new(argv)
+      binding.pry
+      obj
+    end
+
+    def load! contents = nil
+      # pp(contents: contents)
+      contents ||= File.read(COMMANDS_YML)
+      data = YAML.load(contents, symbolize_names: true)
+      # pp(load!: data)
+      data.each do | cls, info |
+        info[:class_name] = cls
+        vals = info.values_at(*CommandDesc.members)
+        desc = CommandDesc.new(*vals)
+        # puts desc
+        @by_name[desc.name] = desc
+        desc.aliases.each{|a| @by_name[a] = desc}
+      end
+      self
+    end
+
+    COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
+
+    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :arguments, :options, :file, :path)
+      def initialize *args
+        super
+        self.class_name = class_name.to_sym
+        self.aliases ||= ""
+        self.synopsis ||= "NO-SYNOPSIS"
+        self.description ||= "NO-DESCRIPTION"
+        self.arguments ||= ['...']
+        self.options ||= { }
+        self.file or raise
+        self.path or raise
+        self.aliases = self.aliases.strip.split(/\s*,\s*/, -1).map(&:to_sym)
+        pp(initialiize: self)
+        self
+      end
+      
+      def cls
+        unless @cls
+          require path
+          @cls = CX::Xform.const_get(class_name)
+        end
+        @cls
+      end
+    end
+    
+    class YamlGenerator
+      def run!
+        yaml = [ ]
+        Dir.glob('lib/cx/xform/**.rb').sort.each do |file|
+          yaml += scan!(file)
+        end
+        yaml = yaml * "\n" + "\n\n"
+        puts "yaml ::::"
+        puts yaml
+        puts "::::"
+        CommandFactory.new.load!(yaml) # Verify before write.
+        File.write(COMMANDS_YML, yaml)
+      end
+      
+      def scan! file
+        puts file
+        block = lines = nil
+        emit_block = lambda do | |
+          if block
+            # pp(block: block)
+            lines = (lines || []) + block
+            lines << "  file: #{file.inspect}"
+            lines << "  path: #{file.gsub(%r{^lib/|\.rb$}, '').inspect}"
+          end
+        end
+        File.readlines(file).each do | line |
+          case line
+          when /^\s*# :COMMAND:/
+            # pp(line: line, state: :start)
+            emit_block[]
+            block = [ ]
+          when /^\s*# (.*)/
+            # pp(line: line, state: :block) if block
+            block << $1 if block
+          else
+            # pp(line: line, state: :end) if block
+            emit_block[]
+            block = nil
+          end
+        end
+        emit_block[]
+        lines ||= []
+        # pp(lines: lines)
+        lines
+      end
+    end
+  end
+end

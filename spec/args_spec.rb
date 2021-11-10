@@ -2,7 +2,7 @@ require 'cx/args'
 
 module CX
   RSpec.describe Args do
-    subject() { Args[argv] }
+    subject() { Args.new.parse!(argv) }
     let(:argv) { "--flag --option=abc124 a -- b --not-an-option".split(' ') }
     it "parses" do
       expect(subject.argv) .to eq argv

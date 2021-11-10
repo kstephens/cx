@@ -12,6 +12,13 @@ module CX
   module Xform
     class CSVOut
       include LineOut, Xform
+      # :COMMAND:
+      # CSVOut:
+      #   name: csv-out
+      #   aliases: csv-
+      #   synopsis: Generates CSV lines.
+      #   args: []
+      #   opts: {}
       
       def initialize!
         super

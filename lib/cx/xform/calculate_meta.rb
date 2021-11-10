@@ -11,6 +11,13 @@ module CX
   module Xform
     class CalculateMeta
       include Xform
+      # :COMMAND:
+      # CalculateMeta:
+      #   name: meta
+      #   aliases: 
+      #   synopsis: Calculates various column metadata.
+      #   args: []
+      #   opts: {}
 
       def initialize!
         @ti = TypeInference.new

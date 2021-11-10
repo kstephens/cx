@@ -8,10 +8,15 @@ require 'cx/xform'
 
 module CX
   module Xform
-    # Refactored from MarkdownOut
     class Align
       include Xform
-
+      # :COMMAND:
+      # Align:
+      #   name: align
+      #   aliases: o
+      #   synopsis: Aligns fields based on column max_size.
+      #   args: []
+      #   opts: {}
       def call input, env
         header! input.header
         input.each do | row |

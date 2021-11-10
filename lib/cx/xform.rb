@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'cx/inspect'
+require 'cx/args'
 
 module CX
   module Xform
