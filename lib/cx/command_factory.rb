@@ -13,20 +13,16 @@ module CX
       cmd = @by_name[cmd_name]
       cls = cmd.cls
       obj = cls.new(argv)
-      binding.pry
       obj
     end
 
     def load! contents = nil
-      # pp(contents: contents)
       contents ||= File.read(COMMANDS_YML)
       data = YAML.load(contents, symbolize_names: true)
-      # pp(load!: data)
       data.each do | cls, info |
         info[:class_name] = cls
         vals = info.values_at(*CommandDesc.members)
         desc = CommandDesc.new(*vals)
-        # puts desc
         @by_name[desc.name] = desc
         desc.aliases.each{|a| @by_name[a] = desc}
       end
@@ -47,7 +43,6 @@ module CX
         self.file or raise
         self.path or raise
         self.aliases = self.aliases.strip.split(/\s*,\s*/, -1).map(&:to_sym)
-        pp(initialiize: self)
         self
       end
       
@@ -67,19 +62,17 @@ module CX
           yaml += scan!(file)
         end
         yaml = yaml * "\n" + "\n\n"
-        puts "yaml ::::"
-        puts yaml
-        puts "::::"
+        #puts "yaml ::::"
+        #puts yaml
+        #puts "::::"
         CommandFactory.new.load!(yaml) # Verify before write.
         File.write(COMMANDS_YML, yaml)
       end
       
       def scan! file
-        puts file
         block = lines = nil
         emit_block = lambda do | |
           if block
-            # pp(block: block)
             lines = (lines || []) + block
             lines << "  file: #{file.inspect}"
             lines << "  path: #{file.gsub(%r{^lib/|\.rb$}, '').inspect}"
@@ -88,22 +81,17 @@ module CX
         File.readlines(file).each do | line |
           case line
           when /^\s*# :COMMAND:/
-            # pp(line: line, state: :start)
             emit_block[]
             block = [ ]
           when /^\s*# (.*)/
-            # pp(line: line, state: :block) if block
             block << $1 if block
           else
-            # pp(line: line, state: :end) if block
             emit_block[]
             block = nil
           end
         end
         emit_block[]
-        lines ||= []
-        # pp(lines: lines)
-        lines
+        lines || []
       end
     end
   end
