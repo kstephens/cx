@@ -11,10 +11,10 @@ module CX
     class MetaTable
       include Xform
       # :COMMAND:
-      # MarkdownOut:
-      #   name: metatable-
-      #   aliases: meta-, columns
-      #   synopsis: Generate a table of column metadata.
+      # MetaTable:
+      #   name: metatable
+      #   aliases: meta-, meta, columns
+      #   synopsis: Generate a table of table metadata.
       #   args: []
       #   opts: {}
 

@@ -46,10 +46,10 @@ MarkdownOut:
   opts: {}
   file: "lib/cx/xform/markdown.rb"
   path: "cx/xform/markdown"
-MarkdownOut:
-  name: metatable-
-  aliases: meta-, columns
-  synopsis: Generate a table of column metadata.
+MetaTable:
+  name: metatable
+  aliases: meta-, meta, columns
+  synopsis: Generate a table of table metadata.
   args: []
   opts: {}
   file: "lib/cx/xform/metatable.rb"
