@@ -9,8 +9,8 @@ require 'cx/xform/pipeline'
 
 module CX
   class PipelineBuilder
-    attr_accessor :argv, :commands, :global, :pipeline
-    
+    attr_accessor :argv, :commands, :global, :pipeline, :factory
+
     def parse! _argv
       @argv = _argv.map(&:dup)
 
@@ -29,16 +29,20 @@ module CX
           command << arg
         end
       end
-      
+      self
+    end
+    
+    def build_pipeline
+      @factory ||= CommandFactory.new.load!
       @pipeline = Xform::Pipeline.new
       commands.each do | args |
-        @pipeline >> build_command(args)
+        @pipeline >> build_xform(args)
       end
       self
     end
     
-    def build_command args
-      nil
+    def build_xform argv
+      @factory.call(argv)
     end
   end
 end

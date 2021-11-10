@@ -41,7 +41,7 @@ IOOut:
 MarkdownOut:
   name: markdown-
   aliases: md, markdown
-  synopsis: Generate Markdown table line.
+  synopsis: Generate Markdown table lines.
   args: []
   opts: {}
   file: "lib/cx/xform/markdown.rb"

@@ -7,7 +7,7 @@ module CX
       @by_name = {}
     end
 
-    def new argv
+    def call argv
       argv = argv.dup
       cmd_name = argv.shift.to_sym
       cmd = @by_name[cmd_name]
@@ -15,6 +15,7 @@ module CX
       obj = cls.new(argv)
       obj
     end
+    alias :new :call
 
     def load! contents = nil
       contents ||= File.read(COMMANDS_YML)

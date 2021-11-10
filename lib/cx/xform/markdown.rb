@@ -15,12 +15,12 @@ module CX
       # MarkdownOut:
       #   name: markdown-
       #   aliases: md, markdown
-      #   synopsis: Generate Markdown table line.
+      #   synopsis: Generate Markdown table lines.
       #   args: []
       #   opts: {}
       
       def call input, env
-        title = opts[:title]
+        title = opts[:title] # TODO
         align = Align.new
         align.header!(input.header)
         output << format_row(align, input.header.map(&:to_s), :header)
