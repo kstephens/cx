@@ -54,6 +54,14 @@ MetaTable:
   opts: {}
   file: "lib/cx/xform/metatable.rb"
   path: "cx/xform/metatable"
+Nop:
+  name: nop
+  aliases: noop
+  synopsis: Does nothing output is same as input.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/nop.rb"
+  path: "cx/xform/nop"
 Quote:
   name: quote
   aliases: q
