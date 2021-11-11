@@ -674,8 +674,8 @@ class Main
       raise e
     end
   end
-  
-  def _run! argv
+
+  def make_table size = 100
     ints = (-100  .. 100).to_a
     strs = ("aaa" .. "zzz").to_a
     vals = (1 .. 200).map{|x| "#{x}%"}
@@ -702,42 +702,42 @@ class Main
       ap(table[0].to_h)
       ap(table.map(&:to_a))
     end
-    
-    env = { }
+    table
+  end
 
-    (Pipeline.new >> CSVOut >> IOOut).call(table, env)
+  def _run! argv
+    (Pipeline.new >> CSVOut >> IOOut).call(make_table, env = {})
     
-    (Pipeline.new >> Quote >> EmptyToNull >> CalculateMeta >> MarkdownOut >> IOOut).call(table, env)
+    (Pipeline.new >> Quote >> EmptyToNull >> CalculateMeta >> MarkdownOut >> IOOut).call(make_table, env = { })
 
-    table = (Pipeline.new >> Strip >> EmptyToNull).call(table, env)
-    
     #################################
 
-    (Pipeline.new >> CSVOut >> IOOut).call(table, env)
+    (Pipeline.new >> CSVOut >> IOOut).call(make_table, env = {})
     # pp(env: env)
 
-    (Pipeline.new >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(table, env)
+    (Pipeline.new >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(make_table, env = {})
     # pp(env: env)
 
-    (Pipeline.new >> CalculateMeta >> MarkdownOut >> IOOut.new(["tmp/table.md"]) >> IOOut).call(table, env)
+    (Pipeline.new >> CalculateMeta >> MarkdownOut >> IOOut.new(["tmp/table.md"]) >> IOOut).call(make_table, env = {})
 
     ################################################
     
-    table2 = (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta).call(table, env)
-    
-    (Pipeline.new >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).
-      call(table2, env)
-    # pp(env: env)
-    
-    (Pipeline.new >> HTMLOut >> IOOut.new(["tmp/table.html"])).
-      call(table2, env)
+    (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> HTMLOut >> IOOut.new(["tmp/table.html"])).
+      call(make_table, env = {})
 
-    (Pipeline.new >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metatable.html"])).
-      call(table2, env)
+    (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metatable.html"])).
+      call(make_table, env = {})
+    
+    (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> MetaTable >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metametatable.html"])).
+      call(make_table, env = {})
     
     ################################################
 
-    (Pipeline.new >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
+    (Pipeline.new >> Strip >> EmptyToNull >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).
+      call(make_table, env = {})
+    # pp(env: env)
+    
+    (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(make_table, env = {})
     pp(env: env)
 
     #################################
