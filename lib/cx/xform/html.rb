@@ -6,6 +6,7 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xml_writer'
+require 'cx/io_buffer'
 
 module CX
   module Xform
@@ -18,7 +19,12 @@ module CX
       #   synopsis: Emits HTML.
       #   args: []
       #   opts:
-      #     raw: list of columns that contain raw HTML.
+      #     raw:        Columns that contain raw HTML.
+      #     filtering:  Adds a filtering input box.
+      #     title:      Sets the <title>.
+      #     head:       Additional raw HTML for <head>.
+      #     body-head:  Additional raw HTML at head of <body>.
+      #     body-foot:  Additional raw HTML at foot of <body>.
       def initialize!
         super
         @raw_columns = Set.new((opts[:raw] || '')
@@ -30,13 +36,8 @@ module CX
       end
 
       def call input, env
-        out = StringIO.new
+        out = IOBuffer.new(proc{|line| output << [ line ]})
         call_(input, env, out)
-        binding.pry
-        # TODO: Table#concat
-        out.string.split("\n").each do | line |
-          output << [ line << "\n" ]
-        end
         output
       end
       
