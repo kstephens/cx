@@ -25,7 +25,7 @@ module CX
       end
 
       def call input, env
-        open(@io, "w") do | io |
+        open(@io, "w", env) do | io |
           input.each do | r |
             r.each do | _c, v |
               io.write(v)
@@ -35,13 +35,14 @@ module CX
         input
       end
 
-      def open io, mode
+      def open io, mode, env
         case io
         when IO
           yield io
         when String
-          File.open(io.to_s, mode) do | io |
-            yield io
+          File.open(io.to_s, mode) do | o |
+            env[:in_file] = io.to_s
+            yield o
           end
         else
          raise TypeError
