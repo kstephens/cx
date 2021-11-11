@@ -664,8 +664,18 @@ end
 
 class Main
   include Xform
-  
+
   def run! argv
+    begin
+      _run! argv
+    rescue SystemStackError => e
+      puts e.backtrace.join("\n\t")
+        .sub("\n\t", ": #{e}#{e.class ? " (#{e.class})" : ''}\n\t")
+      raise e
+    end
+  end
+  
+  def _run! argv
     ints = (-100  .. 100).to_a
     strs = ("aaa" .. "zzz").to_a
     vals = (1 .. 200).map{|x| "#{x}%"}

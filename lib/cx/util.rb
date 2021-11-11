@@ -77,3 +77,22 @@ end
 class ::Array
   include CX::DestructiveEach
 end
+
+class RecurLimit
+  def initialize
+    @recur_level = 0
+    @recur_limit ||= 1000
+  end
+  
+  def call max = 1000
+    raise ArgumentError unless block_given?
+    @recur_level ||= 0
+    begin
+      @recur_level += 1
+      binding.pry if @recur_level > (max || @recur_limit)
+      yield
+    ensure
+      @recur_level -= 1
+    end
+  end
+end
