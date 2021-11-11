@@ -55,6 +55,13 @@ module CX
         right = {style: 'text-align: right;'}
         # @h = XMLWriter.new(out, indent: opts[:indent])
         @h = HtmlMarkup.new(target: out, indent: opts[:indent])
+        col_data = Hash.new{|h, k| h[k] = {}}
+
+        cols.each do | c |
+          data = col_data[c]
+          data[:style] = "text-align: right;" if c.meta.align_ == :right
+        end
+
         h.html do
           h.head do
             x = opts[:title] || env[:in_file] and h.title(x)
@@ -90,16 +97,14 @@ module CX
                     a = {class: 'cx-column-header'}
                     h.th(a.merge("data-sort-method" => :number), "#")
                     cols.each do | c |
-                      a = a.merge("data-sort-method" => :number) if c.meta.align == :right
+                      a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+                      a = a.merge(title: "type: #{c.meta.type_ || :UNKNOWN}")
                       h.th(a, c)
                     end
                   end
                 end
                 size = input.size
                 h.tbody({id: "cx-table-tbody"}) do
-                  td_attrs = cols.map{|c| c.meta.align == :right ? right : {} }
-                  raw_cols = cols.map{|c| @raw_columns.include?(c.name)}
-                  inds = cols.map(&:to_i)
                   ri = 0
                   input.each do | r |
                     ri += 1
@@ -107,13 +112,14 @@ module CX
                     # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
                     h.tr(title: row_tooltip) do
                       h.td(right, ri)
-                      inds.each_with_index do | ci, i |
+                      cols.each do | c |
+                        data = col_data[c]
                         h.indent!(false) do
-                          h.td(td_attrs[i].merge(title: "#{row_tooltip} - #{cols[i].name}")) do
-                            if raw_cols[i]
-                              raw!(r[ci])
+                          h.td(title: "#{row_tooltip} - #{c.name}", style:  data[:style]) do
+                            if @raw_columns.include?(c.name)
+                              raw!(r[c])
                             else
-                              text!(r[ci])
+                              text!(r[c])
                             end
                           end
                         end

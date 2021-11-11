@@ -86,14 +86,28 @@ module CX
     def table
       header = Header.new
       ATTRS.each do | (name, opts) |
-        opts[:align] ||= :right if opts[:type] <= ::Numeric
-        header << Column.new(name).tap{|c| c.meta.update(opts)}
+        opts[:align_inferred] ||= align_for_type(opts[:type_inferred] || opts[:type])
+        opts[:align] ||= align_for_type(opts[:type])
+        col = Column.new(name).tap{|c| c.meta.update(opts)}
+        col.meta.type = opts[:type]
+        header << col
       end
       header[:min_value].meta.type =
         header[:max_value].meta.type =
        self.type
      Table.new([], header)
-   end
- end
+    end
+    
+    def align_for_type type
+      type && type <= ::Numeric ? :right : nil
+    end
+
+    def type_
+      self.type  || self.type_inferred
+    end
+    def align_
+      self.align || self.align_inferred || align_for_type(type_)
+    end
+  end
 end
 
