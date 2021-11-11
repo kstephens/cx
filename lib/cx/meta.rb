@@ -86,6 +86,7 @@ module CX
     def table
       header = Header.new
       ATTRS.each do | (name, opts) |
+        opts[:align] ||= :right if opts[:type] <= ::Numeric
         header << Column.new(name).tap{|c| c.meta.update(opts)}
       end
       header[:min_value].meta.type =
