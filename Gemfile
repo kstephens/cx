@@ -5,6 +5,7 @@ gemspec
 
 gem "terminal-table", "~> 1.8"
 gem "awesome_print", "~> 1.9"
+gem "builder", "~> 3.2" # XML
 
 group :development, :test do
   gem "rake", "~> 13.0"

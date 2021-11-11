@@ -5,7 +5,7 @@
 
 require 'cx'
 require 'cx/xform'
-require 'cx/xml_writer'
+require 'builder' # XML https://github.com/jimweirich/builder
 require 'cx/io_buffer'
 
 module CX
@@ -33,7 +33,8 @@ module CX
           .uniq)
         self
         opts[:filtering] = true; # ???
-        opts[:indent] = '  '
+        opts[:indent] = 2
+        @coerce = opts[:coerce_to_string] || proc{|x| x}
       end
 
       def call input, env
@@ -44,87 +45,119 @@ module CX
         call_(input, env, out)
         output
       end
+
+      attr_reader :h
       
       def call_ input, env, out
         header = input.header
         cols = header.columns
         colspan = 1 + cols.size
         right = {style: 'text-align: right;'}
-        h = XMLWriter.new(out,
-          indent: opts[:indent])
+        # @h = XMLWriter.new(out, indent: opts[:indent])
+        @h = HtmlMarkup.new(target: out, indent: opts[:indent])
         h.html do
-         h.head do
-           x = opts[:title] || env[:in_file] and h.title(x)
-           h << read_content('cx.css')
-           h << read_content('header.html')
-           x = opts[:head] and h.raw!(x)
-         end
-         h.body do
-           x = opts[:body_head] and h.html(x)
-           h.div(id: 'cx-content', class: 'cx-content') do
-           x = opts[:title] and h.div({id: 'cx-title', class: 'cx-title'}, x)
-           h.table(id: 'cx-table', class: 'cx-table') do
-             h.thead do
-               if opts[:filtering]
-                 h.tr(class: 'cx-filter') do
-                   h.th(class: 'cx-filter', colspan: colspan) do
-                     h.span(class: 'cx-filter') do
-                       h.input({type: "text",
-                         id: 'cx-filter',
-                         class: "cx-filter",
-                         onkeyup: "cx_filter_rows()",
-                         placeholder: "#{UNICODE[:search]} Filter..."})
-                     end
-                   end
-                 end
-               end
-               h.tr do
-                 a = {class: 'cx-column-header'}
-                 h.th(a.merge("data-sort-method" => :number), "#")
-                 cols.each do | c |
-                   a = a.merge("data-sort-method" => :number) if c.meta.align == :right
-                   h.th(a, c)
-                 end
-               end
-             end
-             size = input.size
-             h.tbody({id: "cx-table-tbody"}) do
-               td_attrs = cols.map{|c| c.meta.align == :right ? right : nil}
-               raw_cols = cols.map{|c| @raw_columns.include?(c.name)}
-               inds = cols.map(&:to_i)
-               ri = 0
-               input.each do | r |
-                 ri += 1
-                 row_tooltip = "Row #{ri} / #{size}"
-                 # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
-                 h.tr(title: row_tooltip) do
-                   h.td(right, ri)
-                   inds.each_with_index do | ci, i |
-                     h.td(td_attrs[i]) do
-                       if raw_cols[i]
-                         h.raw!(r[ci])
-                       else
-                         h.text(r[ci])
-                       end
-                     end
-                   end
-                 end
-               end
-             end
-           end
-           x = opts[:body_foot] and h.raw!(x)
-         end
-         
-         h.js(read_content_once("tablesort.js"))
-         h.js(read_content_once("filter.js"))
-         h.js("new Tablesort(document.getElementById('cx-table'));")
-         h << read_content('footer.html')
-         end
+          h.head do
+            x = opts[:title] || env[:in_file] and h.title(x)
+            css read_content('cx.css')
+            h.raw! read_content('header.html')
+            x = opts[:head] and h.raw!(x)
+          end
+          h.body do
+            x = opts[:body_head] and h.html(x)
+            h.div(id: 'cx-content', class: 'cx-content') do
+              x = opts[:title] and h.div({id: 'cx-title', class: 'cx-title'}, x)
+              h.table(id: 'cx-table', class: 'cx-table') do
+                h.thead do
+                  if opts[:filtering]
+                    h.tr(id: 'cx-filter', class: 'cx-filter') do
+                      h.th(class: 'cx-filter', colspan: colspan) do
+                        h.span(class: 'cx-filter') do
+                          h.input({type: "text",
+                            id: 'cx-filter-input',
+                            class: "cx-filter-input",
+                            onkeyup: "cx_filter_rows()",
+                            placeholder: "#{UNICODE[:search]} Filter..."})
+                        end
+                        h.span(class: 'cx-row-count') do
+                          h.span({id: 'cx-matched-row-count'}, input.size.to_s)
+                          h.text!('/')
+                          h.span({id: 'cx-row-count'}, input.size.to_s)
+                        end
+                      end
+                    end
+                  end
+                  h.tr do
+                    a = {class: 'cx-column-header'}
+                    h.th(a.merge("data-sort-method" => :number), "#")
+                    cols.each do | c |
+                      a = a.merge("data-sort-method" => :number) if c.meta.align == :right
+                      h.th(a, c)
+                    end
+                  end
+                end
+                size = input.size
+                h.tbody({id: "cx-table-tbody"}) do
+                  td_attrs = cols.map{|c| c.meta.align == :right ? right : {} }
+                  raw_cols = cols.map{|c| @raw_columns.include?(c.name)}
+                  inds = cols.map(&:to_i)
+                  ri = 0
+                  input.each do | r |
+                    ri += 1
+                    row_tooltip = "#{ri}/#{size}"
+                    # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
+                    h.tr(title: row_tooltip) do
+                      h.td(right, ri)
+                      inds.each_with_index do | ci, i |
+                        h.indent!(false) do
+                          h.td(td_attrs[i].merge(title: "#{row_tooltip} - #{cols[i].name}")) do
+                            if raw_cols[i]
+                              raw!(r[ci])
+                            else
+                              text!(r[ci])
+                            end
+                          end
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+              x = opts[:body_foot] and raw!(x)
+            end
+          end
+          js read_content_once("tablesort.js")
+          js read_content_once("filter.js")
+          js "new Tablesort(document.getElementById('cx-table'));"
+          raw! read_content('footer.html')
         end
+        @h = 0
         env[:content_type] = 'text/html'
         output
       end
 
+      def raw! x
+        h.raw! x.to_s
+      end
+      def text! x
+        raw! @coerce.call(x).to_s
+      end
+      
+      def css content
+        if content
+          h.style(type: "text/css") do
+            raw! content
+          end
+        end
+      end
+
+      def js content
+        if content
+          h.script(type: "text/javascript") do
+            h.raw! content
+          end
+        end
+      end
+      
       def read_content name
         File.read(File.expand_path("../html/#{name}", __FILE__))
       end
@@ -144,3 +177,37 @@ module CX
   end
 end
 
+require 'cgi/util'
+module CX
+  class HtmlMarkup < Builder::XmlMarkup
+    def initialize *args
+      super
+      @indent_enabled = true
+    end
+    
+    def raw! s
+      @target << s
+    end
+    def text! s
+      raw! ::CGI::escapeHTML(s.to_s)
+    end
+    
+    def indent! state = true
+      save = @indent_enabled
+      @indent_enabled = state
+      begin
+        yield
+      ensure
+        @indent_enabled = save
+      end
+    end
+    
+    def _indent
+      # binding.pry unless @indent_enabled
+      super if @indent_enabled
+    end
+    def _newline
+      super if @indent_enabled
+    end
+  end
+end

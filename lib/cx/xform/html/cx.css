@@ -56,7 +56,11 @@ th.cx-filter {
   position: sticky;
   left: 0;
 }
-input.cx-filter {
+input.cx-filter-input {
   width: 15em;
   float: left;
+}
+
+.cx-row-count-span {
+  float: right;
 }
