@@ -9,15 +9,26 @@ require 'cgi/util'
 module CX
   # Could probably reuse some library, this was not hard to write.
   class XMLWriter < Object # BasicObject
+    attr_reader :open_indent
+    
     def initialize out, opts = { }
       @out, @opts = out, opts
       @coerce = opts[:coerce_to_string] || proc{|x| x}
+      @indent = opts[:indent]
+      @level = 0
+      @indent_cache = { }
+      @open_indent  = opts[:open_indent]
+      @open_indent  = ::Hash[%w(span th td pre title meta).map{|t| [t.to_sym, ""]}]
+      @tag_close_sep  = { } # ::Hash[%w(span th td).map{|t| [t.to_sym, ""]}]
+      @tag_open  = ::Hash.new{|h, tag| h[tag.to_sym] = "<#{tag}>".freeze}
+      @tag_close = ::Hash.new{|h, tag| h[tag.to_sym] = "</#{tag}>".freeze}
+      @indent_sep = ''
+      @tag_stack = [ ]
     end
-    @@tag_sep   = ::Hash[%w(span td th title meta).map{|t| [t.to_sym, ""]}]
-    @@tag_open  = ::Hash.new{|h, tag| h[tag.to_sym] = "<#{tag}>".freeze}
-    @@tag_close = ::Hash.new{|h, tag| h[tag.to_sym] = "</#{tag}>".freeze}
     
     def _tag tag, attrs = nil, content = nil, &blk
+      last_tag = @last_tag_
+      
       tag = tag.to_sym
       case
       when ::Hash === attrs
