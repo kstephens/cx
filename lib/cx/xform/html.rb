@@ -33,10 +33,14 @@ module CX
           .uniq)
         self
         opts[:filtering] = true; # ???
+        opts[:indent] = '  '
       end
 
       def call input, env
-        out = IOBuffer.new(proc{|line| output << [ line ]})
+        @resource = env[:html] ||= {resource: { }}
+        @once = (@resource[:once] ||= {})
+        this = self
+        out = IOBuffer.new(lambda{|line| this << line})
         call_(input, env, out)
         output
       end
@@ -46,10 +50,12 @@ module CX
         cols = header.columns
         colspan = 1 + cols.size
         right = {style: 'text-align: right;'}
-        h = XMLWriter.new(out)
+        h = XMLWriter.new(out,
+          indent: opts[:indent])
         h.html do
          h.head do
            x = opts[:title] || env[:in_file] and h.title(x)
+           h << read_content('cx.css')
            h << read_content('header.html')
            x = opts[:head] and h.raw!(x)
          end
@@ -61,13 +67,13 @@ module CX
              h.thead do
                if opts[:filtering]
                  h.tr(class: 'cx-filter') do
-                   h.span(class: 'cx-filter') do
-                     h.th(class: 'cx-filter', colspan: colspan) do
+                   h.th(class: 'cx-filter', colspan: colspan) do
+                     h.span(class: 'cx-filter') do
                        h.input({type: "text",
-                                id: 'cx-filter',
-                                class: "cx-filter",
-                                onkeyup: "cx_filter_rows()",
-                                placeholder: "#{UNICODE[:search]} Filter..."})
+                         id: 'cx-filter',
+                         class: "cx-filter",
+                         onkeyup: "cx_filter_rows()",
+                         placeholder: "#{UNICODE[:search]} Filter..."})
                      end
                    end
                  end
