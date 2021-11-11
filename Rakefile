@@ -27,11 +27,13 @@ END
 
 end
 
+desc "Generate lib/cx/commands.yml"
 task :generate_commands_yml do
   require 'cx/command_factory'
   CX::CommandFactory::YamlGenerator.new.run!
 end
 
+desc "Create a new lib/cx/xform/*.rb file"
 task :new_class do
   file = ENV['file']
   raise if File.exist? file

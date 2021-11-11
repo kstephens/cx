@@ -15,14 +15,14 @@ module CX
       # :COMMAND:
       # HtmlOut:
       #   name: html-
-      #   aliases: html-
+      #   aliases: html
       #   synopsis: Emits HTML.
       #   args: []
       #   opts:
       #     raw:        Columns that contain raw HTML.
       #     filtering:  Adds a filtering input box.
       #     title:      Sets the <title>.
-      #     head:       Additional raw HTML for <head>.
+      #     head:       Additional raw HTML at foot of <head>.
       #     body-head:  Additional raw HTML at head of <body>.
       #     body-foot:  Additional raw HTML at foot of <body>.
       def initialize!

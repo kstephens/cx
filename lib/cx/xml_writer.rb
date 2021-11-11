@@ -10,8 +10,7 @@ module CX
   # Could probably reuse some library, this was not hard to write.
   class XMLWriter < Object # BasicObject
     def initialize out, opts = { }
-      @out = out
-      @opts = opts.dup
+      @out, @opts = out, opts
       @coerce = opts[:coerce_to_string] || proc{|x| x}
     end
     @@tag_sep   = ::Hash[%w(span td th title meta).map{|t| [t.to_sym, ""]}]
