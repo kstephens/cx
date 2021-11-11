@@ -85,8 +85,9 @@ module CX
     def self.add! *args
       type = new(*args)
       @@types << type
-      @@types_by_module[type.mod] = type
-      @@types_by_name[type.name] = type
+      @@types_by_module[type.mod] =
+        @@types_by_name[type.name.to_sym] =
+        @@types_by_name[type.name.downcase.to_sym] = type
       self
     end
 
@@ -99,6 +100,7 @@ module CX
     end
 
     FLOAT_RX = /^([-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?)$/i
+    # These are in a specific order:
     [
       [::Integer,
         Proc.new{|t, v| Integer(v)},
@@ -124,23 +126,21 @@ module CX
         Proc.new do |t, v|
           case v
           when Numeric          
-            Time.at(v.to_f)
+            Time.at(v.to_f) rescue nil
           else
-            (format.parse(v) rescue nil) or
-              (Time.parse(v) rescue nil)
+            Time.parse(v) rescue nil
           end
         end,
-        Proc.new {|t, v| v.to_i },
+        Proc.new {|t, v| v.to_s },
         matches(/^(\d\d\d\d-\d\d-\d\d[-T ]\d\d:\d\d:\d\d(\.\d+)?)$/i),
       ],
       [::Date,
         Proc.new do |t, v|
           case v
           when Numeric          
-            Time.at(v.to_f).to_date
+            Time.at(v.to_f).to_date rescue nil
           else
-            (format.parse(v) rescue nil) or
-              (Date.parse(v) rescue nil)
+            Date.parse(v) rescue nil
           end
         end,
         Proc.new{|t, v| v.to_s },
