@@ -21,6 +21,7 @@ require 'cx/xform/io'
 require 'cx/xform/align'
 require 'cx/xform/csv'
 require 'cx/xform/markdown'
+require 'cx/xform/html'
 
 require 'awesome_print'
 require 'pry'
@@ -140,7 +141,7 @@ class Header
     when Symbol, String
       @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
     else
-      raise TypError
+      raise TypeError
     end
   end
 
@@ -713,6 +714,8 @@ class Main
     (Pipeline.new >> CalculateMeta >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).call(table, env)
     # pp(env: env)
     
+    (Pipeline.new >> CalculateMeta >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metatable.html"])).call(table, env)
+
     (Pipeline.new >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
     pp(env: env)
 

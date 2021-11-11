@@ -50,7 +50,7 @@ module CX
     def raw! x ; @out.write x.to_s ; self ; end
     alias :<< :raw!
     def text x
-      raw! ::CGI::escapeHTML(@coerce.call(x))
+      raw! ::CGI::escapeHTML(@coerce.call(x).to_s)
     end
 
     def method_missing sel, *args, &blk
