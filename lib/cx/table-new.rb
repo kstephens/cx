@@ -682,7 +682,7 @@ class Main
 
     header = Header.new([:a, :b, :b, :"X %"])
     table = Table.new([], header)
-    10.times do | i |
+    100.times do | i |
       table << [
         ints.sample,
         (i % 3).zero? ? strs.sample + " " : strs.sample,
@@ -721,10 +721,21 @@ class Main
 
     (Pipeline.new >> CalculateMeta >> MarkdownOut >> IOOut.new(["tmp/table.md"]) >> IOOut).call(table, env)
 
-    (Pipeline.new >> CalculateMeta >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).call(table, env)
+    ################################################
+    
+    table2 = (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta).call(table, env)
+    
+    (Pipeline.new >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).
+      call(table2, env)
     # pp(env: env)
     
-    (Pipeline.new >> CalculateMeta >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metatable.html"])).call(table, env)
+    (Pipeline.new >> HTMLOut >> IOOut.new(["tmp/table.html"])).
+      call(table2, env)
+
+    (Pipeline.new >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metatable.html"])).
+      call(table2, env)
+    
+    ################################################
 
     (Pipeline.new >> CalculateMeta >> MetaTable >> MetaTable >> MetaTable >> MarkdownOut >> IOOut).call(table, env)
     pp(env: env)

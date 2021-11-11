@@ -62,5 +62,7 @@ input.cx-filter-input {
 }
 
 .cx-row-count-span {
-  float: right;
+    /* float: right; */
+    vertical-align: middle;
+    font-size: 80%;
 }

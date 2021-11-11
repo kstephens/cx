@@ -78,7 +78,7 @@ module CX
                             onkeyup: "cx_filter_rows()",
                             placeholder: "#{UNICODE[:search]} Filter..."})
                         end
-                        h.span(class: 'cx-row-count') do
+                        h.span(class: 'cx-row-count-span') do
                           h.span({id: 'cx-matched-row-count'}, input.size.to_s)
                           h.text!('/')
                           h.span({id: 'cx-row-count'}, input.size.to_s)
