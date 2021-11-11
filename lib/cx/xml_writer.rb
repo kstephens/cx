@@ -27,33 +27,71 @@ module CX
         content = attrs
         attrs = nil
       end
-      ws = @@tag_sep[tag] ||= "\n"
 
-      self << (attrs ? "<#{tag} #{attrs}>" : @@tag_open[tag]) << ws
+      # parent_tag = @tag_stack[-1]
+      self << (attrs ? "<#{tag} #{attrs}>" : @tag_open[tag])
+      @tag_stack.push tag
+      @level += 1
+      indent_sep = indent_sep(@open_indent[@last_tag] || "\n")
+      self << indent_sep
 
+      close_tag =
       case
       when content
-        close = true
         text(content)
+        true
       when blk
-        close = true
         yield self
-      else
-        close = false
+        true
       end
-      
-      self << @@tag_close[tag] << "\n" if close
+
+      @level -= 1
+      if close_tag
+        indent_sep = indent_sep(@open_indent[@last_tag] || "\n")
+        self << indent_sep
+        self << @tag_close[tag]
+      end
+      @last_tag = tag
       nil
     end
     
     def raw! x ; @out.write x.to_s ; self ; end
-    alias :<< :raw!
+    def << x   ; raw! x            ; self ; end
+
+    def indent_sep sep
+      if @indent
+        sep.sub(/\n/m) do |m|
+          "\n" + (@indent_cache[@level] ||= @indent * @level)
+        end
+        # pp(level: @level, sep: sep)
+      else
+        sep
+      end
+    end
+    
     def text x
       raw! ::CGI::escapeHTML(@coerce.call(x).to_s)
+    end
+
+    def css content
+      if content
+        self.style(type: "text/css") do
+          raw! content
+        end
+      end
+    end
+
+    def js content
+      if content
+        script(type: "text/javascript") do
+          raw! content
+        end
+      end
     end
 
     def method_missing sel, *args, &blk
       _tag(sel, *args, &blk)
     end
+    
   end
 end

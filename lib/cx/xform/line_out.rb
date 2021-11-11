@@ -23,6 +23,10 @@ module CX
           Table.new.header! Header.new << Column.new(:_LINE_).tap{|c| c.meta.type = ::String}
       end
 
+      def << line
+        output << [ line ]
+      end
+
       def format_value v
         case v
         when nil

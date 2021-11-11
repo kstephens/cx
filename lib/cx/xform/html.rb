@@ -106,17 +106,28 @@ module CX
                end
              end
            end
-           end
            x = opts[:body_foot] and h.raw!(x)
          end
+         
+         h.js(read_content_once("tablesort.js"))
+         h.js(read_content_once("filter.js"))
+         h.js("new Tablesort(document.getElementById('cx-table'));")
          h << read_content('footer.html')
-       end
-       env[:content_type] = 'text/html'
-       output
-     end
+         end
+        end
+        env[:content_type] = 'text/html'
+        output
+      end
 
       def read_content name
         File.read(File.expand_path("../html/#{name}", __FILE__))
+      end
+
+      def read_content_once name
+        unless @once[name]
+          @once[name] = true
+          read_content(name)
+        end
       end
       
      UNICODE = {
