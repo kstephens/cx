@@ -73,6 +73,7 @@ class Header
     end
   end
 
+  def size  ; @columns.size  ; end
   def first ; @columns.first ; end
   def last  ; @columns.last  ; end
   
