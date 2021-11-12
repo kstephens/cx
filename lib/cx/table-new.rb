@@ -210,14 +210,16 @@ class Main
     strs = ("aaa" .. "zzz").to_a
     vals = (1 .. 200).map{|x| "#{x}%"}
 
-    header = Header.new([:row_id, :a, :b, :b, :"X %"])
+    header = Header.new([:id, :a, :b, :b, :"X %"])
     table = Table.new([], header)
+    header[:id].meta.type = ::Integer
+    header[:"X %"].meta.type = ::Numeric
     100.times do | i |
       table << [
-        i + 1,
+        i + 1001,
         ints.sample,
         (i % 3).zero? ? strs.sample + " " : strs.sample,
-        (i % 5).zero? ? nil : i / 10.0,
+        (i % 5).zero? ? nil : i / 2.5,
         vals.sample,
       ].map(&:to_s)
     end
@@ -225,7 +227,9 @@ class Main
   end
 
   def _run! argv
-    (Pipeline.new >> Region.new(["11..23"]) >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> MetaTable >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(make_table, env = {})
     # exit!
     
     (Pipeline.new >> CSVOut >> IOOut).call(make_table, env = {})
