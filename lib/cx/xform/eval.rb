@@ -65,14 +65,12 @@ module CX
           end
         when /^(\w+)$/.match(sel.to_s)
           col = __col($1)
-          ::PP::pp(get_col: col, sel: sel)
           ::Kernel.lambda do |*_args|
             # ::Kernel.puts({_args: _args}.inspect) unless _args.empty?
             @row[col]
           end
         when /^(\w+)=$/.match(sel.to_s)
           col = __col($1)
-          ::PP::pp(set_col: col, sel: sel)
           ::Kernel.lambda do |v|
             # col.col_type!(v)
             @row[col] = v
