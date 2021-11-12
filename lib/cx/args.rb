@@ -9,24 +9,31 @@ module CX
   class Args
     attr_accessor :argv, :args, :opts
 
-    def parse! argv, o = { }
-      @argv = argv.map(&:dup)
+    def initialize
+      @argv = [ ]
       @args = [ ]
       @opts = { }
+    end
+    
+    def parse! argv, o = { }
+      argv = argv.map(&:dup) # .map(&:freeze)
+      @argv.concat(argv)
       x = argv.dup
       while arg = x.shift
         case arg
+        when /^--no-([-_a-z0-9]+)$/i
+          set_opt! $1, false
         when /^--([-_a-z0-9]+)$/i
           set_opt! $1, true
         when /^--([-_a-z0-9]+)=(.*)$/i
           set_opt! $1, $2
         when '--'
-          self.args += x
+          @args.concat(x)
           break
         else
-          self.args << arg
+          @args << arg
           if o[:no_args]
-            self.args += x
+            @args.concat(x)
             break
           end
         end
@@ -37,14 +44,14 @@ module CX
     alias :call :parse!
 
     def set_opt! key, val
-      opts[key.gsub(/-/, '_').to_sym] = val
+      @opts[key.gsub(/-/, '_').to_sym] = val
     end
 
     def to_h
       {
-        argv: argv,
-        args: args,
-        opts: opts,
+        argv: @argv,
+        args: @args,
+        opts: @opts,
       }
     end
 

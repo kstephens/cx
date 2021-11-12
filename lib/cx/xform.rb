@@ -11,23 +11,30 @@ require 'cx/logging'
 module CX
   module Xform
     include Inspect, Logging
-    attr_accessor :argv, :args, :opts
 
-    def initialize argv = []
-      @argv = argv.map(&:dup)
-      # @apps = [ ]
+    def initialize _argv = []
+      @_argv = _argv && _argv.map(&:dup) # .map(&:freeze)
+      @_args = Args.new
       initialize!
     end
 
     def initialize!
-      args = Args.new
-      args.parse!(argv)
-      @argv = args.argv
-      @args = args.args
-      @opts = args.opts
+      @_args.parse!(@_argv) if @_argv
       self
     end
 
+    def argv ; @_args.argv ; end
+    def args ; @_args.args ; end
+    def opts ; @_args.opts ; end
+    
+    def parse_args! argv = nil
+      arg=v ||= @_argv
+      @_args.parse!(argv) if argv
+      @argv = @_args.argv
+      @args = @_args.args
+      @opts = @_args.opts
+    end
+    
     def debug? ; false ; end
 
     def >> app

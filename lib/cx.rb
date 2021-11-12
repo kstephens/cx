@@ -1,4 +1,5 @@
 require "cx/version"
+require "cx/default"
 
 module CX
   class Error < StandardError; end
@@ -13,6 +14,9 @@ module CX
       $VERBOSE = _VERBOSE
     end
   end
+  Empty_Hash   = { }.freeze
+  Empty_Array  = [].freeze
+  Empty_String = "".freeze
 end
 
 begin
