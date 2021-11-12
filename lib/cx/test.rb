@@ -20,7 +20,7 @@ module CX
       table = Table.new([], header)
       header[:id].meta.type = ::Integer
       header[:"X %"].meta.type = ::Numeric
-      100.times do | i |
+      size.times do | i |
         table << [
           i + 1001,
           ints.sample(random: rand),
@@ -34,16 +34,29 @@ module CX
     
     def run_pipeline pipeline, opts = {}
       opts[:env] ||= {}
-      opts[:table] ||= make_table
+      opts[:table] ||= make_table(opts[:size] || 10)
       out = StringIO.new
-      pipeline = Xform::Pipeline.new | Xform::CalculateMeta | pipeline | Xform::HeaderOut | Xform::CSVOut | Xform::IOOut.new([out]) | Xform::IOOut.new(["tmp/last-pipeline"])
+      format = opts[:format] || (Xform::Pipeline.new | Xform::HeaderOut | Xform::CSVOut)
+      pipeline =
+        Xform::Pipeline.new |
+        Xform::CalculateMeta |
+        (pipeline || Xform::Pipeline.new) |
+        format |
+        Xform::IOOut.new([out])
       pipeline.call(opts[:table], opts[:env])
-      out.string
+      out.string.
+        sub(/\A/, '|').
+        gsub(/\n/, "|\n|").
+        sub(/\|\Z/, '')
     end
     
     def assert_pipeline pipeline, expected, opts = {}
-        expect(run_pipeline(pipeline, opts))
-          .to eq(expected)
+      expected = expected.gsub(/ *$/, '')
+      actual = run_pipeline(pipeline, opts)
+      if actual != expected
+        File.write("spec/last-pipeline.txt", actual)
+      end
+      expect(actual) .to eq(expected)
     end
     
     extend self
