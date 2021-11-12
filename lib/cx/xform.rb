@@ -6,10 +6,11 @@
 require 'cx'
 require 'cx/inspect'
 require 'cx/args'
+require 'cx/logging'
 
 module CX
   module Xform
-    include Inspect
+    include Inspect, Logging
     attr_accessor :argv, :args, :opts
 
     def initialize argv = []
