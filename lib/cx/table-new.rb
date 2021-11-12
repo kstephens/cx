@@ -13,6 +13,7 @@ require 'cx/inspect'
 require 'cx/column'
 require 'cx/header'
 require 'cx/row'
+require 'cx/formatter'
 require 'cx/xform/metatable'
 require 'cx/xform/pipeline'
 require 'cx/xform/strip'
@@ -26,6 +27,7 @@ require 'cx/xform/csv'
 require 'cx/xform/markdown'
 require 'cx/xform/html'
 require 'cx/xform/eval'
+require 'cx/xform/region'
 
 require 'awesome_print'
 require 'pry'
@@ -46,7 +48,7 @@ module CX
 
 class Table
   include Enumerable
-  attr_reader :rows, :header
+  attr_reader :rows, :header, :meta
 
   def inspect mode = nil
     case mode
@@ -59,14 +61,18 @@ class Table
     end
   end
 
-  def initialize rows = nil, header = nil
-    @meta ||= Meta.new
-    @rows ||= [ ]
+  def initialize rows = nil, header = nil, meta = nil
+    @meta ||= meta || Meta.new
+    @rows ||= rows || [ ]
     @header = nil
     self.header = header
   end
 
   def new ; dup.deepen! ; end
+  def new_empty
+    self.class.new(nil, @header.dup, @meta.dup)
+  end
+  
   def deepen!
     @meta = @meta.dup.deepen!
     @rows = @rows.map(&:dup)
@@ -86,6 +92,8 @@ class Table
   def [] i
     @rows[i]
   end
+
+  def size; @rows.size; end
   
   def each &blk
     @rows.each(&blk)
@@ -93,30 +101,36 @@ class Table
   end
 
   def push r
-    r = Row[r]
-    r._header = @header
-    # puts r.inspect(:super)
-    @rows.push r
+    @rows.push make_row(r)
     self
   end
   alias :<< :push
 
   def unshift r
+    @rows.unshift make_row(r)
+    self
+  end
+
+  def make_row r
     r = Row[r]
     r._header = @header
-    @rows.unshift r
-    self
+    # puts r.inspect(:super)
+    r
   end
   
   def pop   ; @rows.pop   ; end
   def shift ; @rows.shift ; end
+  def concat rows
+    rows = rows.map{|r| make_row(r)}
+    @rows.concat(rows)
+    self
+  end
+  
   def select! &blk
     @rows.select!(&blk)
     self
   end
   
-  def size; @rows.size; end
-
   def each_row_col
     @rows.each do | r |
       @header.each do | c |
@@ -142,123 +156,6 @@ class Table
   end
 end
 
-
-
-##############################
-
-class Format < Struct.new(:mod, :parser, :formatter, :coerce, :name)
-  def initialize *args
-    super
-    self.name ||= mod.name.to_sym
-    self.formatter ||= DEFAULT_FORMATTER
-  end
-  
-  def parse v, fmt = nil
-    case v
-    when mod, nil
-      v
-    else
-      parser.call(v, fmt)
-    end
-  rescue
-    nil
-  end
-  
-  def format v, fmt = nil
-    formatter.call(v, fmt)
-  end
-
-  DEFAULT_FORMATTER = Proc.new do | v, fmt |
-    fmt ? (fmt % v) : v.to_s
-  end
-end
-
-class Formatter
-  attr_reader :formats
-  
-  def initialize
-    @format_for = { }
-    @formats = [ ]
-  end
-
-  def [] x
-    @format_for[x] or raise ArgumentError
-  end
-  
-  def add! format
-    @format_for[format.mod] = @format_for[format.name] = format
-    @formats << format
-    self
-  end
-
-  def parse v, fmt = nil
-    @formats.each do | f |
-      # ap(v: v, f: f)
-      begin
-        case v
-        when f.mod
-          return v
-        else
-          parsed = f.parse(v, fmt) and return parsed
-        end
-      rescue => e
-        ap(e: e, backtrace: e.backtrace)
-        nil
-      end
-    end
-    nil
-  end
-
-  DEFAULT = Formatter.new
-  [
-    [::Integer,
-      Proc.new {|v, fmt| Integer(v)}
-    ],
-    [::BigDecimal,
-      Proc.new {|v, fmt| BigDecimal(v)},
-    ],
-    [::Rational,
-      Proc.new do |v, fmt|
-        ((v =~ %r{^[-+]?\d+/\d+} && Rational(v)) rescue nil) or
-          (Float(v) rescue nil)
-      end,
-    ],
-    [::Float,
-      Proc.new {|v, fmt| Float(v)}
-    ],
-    [::Time,
-      Proc.new do |v, fmt|
-        case v
-        when Numeric
-          Time.at(v)
-        else
-          Time.parse(v)
-        end
-      end,
-      Proc.new do |v, fmt|
-        fmt ? v.strftime(fmt) : v.to_s
-      end,
-    ],
-    [::Date,
-      Proc.new do |v, fmt|
-        (Date.parse(v) rescue nil) or
-          Format[::Time].parse(v, fmt).to_date
-      end,
-      Proc.new do |v, fmt|
-        fmt ? v.to_time.strftime(fmt) : v.to_s
-      end,
-    ],
-    [::Symbol,
-      Proc.new {|v, fmt| c.to_sym}
-    ],
-    [::String,
-      Proc.new {|v, fmt| c.to_s}
-    ],
-  ].each do | args |
-    Formatter::DEFAULT.add!(Format::new(*args))
-  end
-end
-
 ######################################################
 
 class HeaderOut
@@ -275,7 +172,7 @@ end
 
 ######################################################
 
-class Format
+class Xform::FormatX
   def call input, env
     output = input.new
     header = output.header = input.header.new
@@ -313,10 +210,11 @@ class Main
     strs = ("aaa" .. "zzz").to_a
     vals = (1 .. 200).map{|x| "#{x}%"}
 
-    header = Header.new([:a, :b, :b, :"X %"])
+    header = Header.new([:row_id, :a, :b, :b, :"X %"])
     table = Table.new([], header)
     100.times do | i |
       table << [
+        i + 1,
         ints.sample,
         (i % 3).zero? ? strs.sample + " " : strs.sample,
         (i % 5).zero? ? nil : i / 10.0,
@@ -327,6 +225,9 @@ class Main
   end
 
   def _run! argv
+    (Pipeline.new >> Region.new(["11..23"]) >> CSVOut >> IOOut).call(make_table, env = {})
+    # exit!
+    
     (Pipeline.new >> CSVOut >> IOOut).call(make_table, env = {})
     
     (Pipeline.new >> Quote >> EmptyToNull >> CalculateMeta >> MarkdownOut >> IOOut).call(make_table, env = { })

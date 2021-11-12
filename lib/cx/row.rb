@@ -124,11 +124,10 @@ module CX
     end
 
     def write out = nil
-     out ||= $stdout
-     each{|v| out.write(v.to_s)}
-     nil
-   end
- end
-
+      out ||= $stdout
+      each{|v| out.write(v.to_s)}
+      nil
+    end
+  end
 end
 
