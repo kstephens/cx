@@ -104,7 +104,7 @@ class Main
     ints = (-100  .. 100).to_a
     strs = ("aaa" .. "zzz").to_a
     vals = (1 .. 200).map{|x| "#{x}%"}
-
+    rand = Random.new(12345678)
     header = Header.new([:id, :a, :b, :b, :"X %"])
     table = Table.new([], header)
     header[:id].meta.type = ::Integer
@@ -112,17 +112,17 @@ class Main
     100.times do | i |
       table << [
         i + 1001,
-        ints.sample,
-        (i % 3).zero? ? strs.sample + " " : strs.sample,
+        ints.sample(random: rand),
+        (i % 3).zero? ? strs.sample(random: rand) + " " : strs.sample(random: rand),
         (i % 5).zero? ? nil : i / 2.5,
-        vals.sample,
+        vals.sample(random: rand),
       ].map(&:to_s)
     end
     table
   end
 
   def _run! argv
-    (Pipeline.new >> CalculateMeta >> Grep.new(["a:8"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Grep.new(["a:-8"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
     (Pipeline.new >> CalculateMeta >> Grep.new(["a:!;8"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
     # exit!
     
