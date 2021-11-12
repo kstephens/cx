@@ -62,8 +62,14 @@ module CX
     ##################################
 
     def order= i
-      return if @order == i
-      self._order = (@order && @header && @header.change_order!(self, i)) || i
+      case i
+      when nil
+        @order = nil
+      when @order
+        # NOTHING
+      else
+        self._order = (@order && @header && @header.change_order!(self, i)) || i
+      end
     end
 
     def _order= i
@@ -76,6 +82,11 @@ module CX
       @meta = @meta.dup
       self
     end
+
+    def inspect_content
+      " #{name.inspect}"
+    end
+
   end
 end
 
