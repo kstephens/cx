@@ -4,12 +4,13 @@ module CX
   RSpec.describe ColumnArgs do
     subject() { ColumnArgs.new.parse!(argv) }
     let(:argv) do
-      ["a",
+      [
+        "a",
         "b:",
         "c:!",
         "d:-",
         "e:+",
-        "f:x;y=z",
+        "f:x;y=z;q",
         "g:!;asdf",
         "12:x=z",
       ]
@@ -22,11 +23,11 @@ module CX
       expect(subject.map(&:opts))
         .to eq([{}, {}, {:negate=>true}, {:order=>-1}, {:order=>1}, {:y=>"z"}, {:negate=>true}, {:x=>"z"}])
       expect(subject.map(&:args))
-        .to eq([[], [], [], [], [], ["x"], ["asdf"], []])
+        .to eq([[], [], [], [], [], ["x", "q"], ["asdf"], []])
       expect(subject.map(&:arg_str))
         .to eq(argv)
       expect(subject.map(&:rest_str))
-        .to eq(["", "", "!", "-", "+", "x;y=z", "!;asdf", "x=z"])
+        .to eq(["", "", "!", "-", "+", "x;y=z;q", "!;asdf", "x=z"])
     end
   end
 end

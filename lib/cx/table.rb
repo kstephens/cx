@@ -9,6 +9,7 @@ require 'cx'
 require 'cx/header'
 require 'cx/column'
 require 'cx/row'
+require 'cx/meta'
 require 'cx/inspect'
 require 'cx/logging'
 

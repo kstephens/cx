@@ -14,25 +14,10 @@ require 'cx/column'
 require 'cx/header'
 require 'cx/row'
 require 'cx/table'
-
 require 'cx/formatter'
-
-require 'cx/xform/metatable'
-require 'cx/xform/pipeline'
-require 'cx/xform/strip'
-require 'cx/xform/empty_to_null'
-require 'cx/xform/calculate_meta'
-require 'cx/xform/quote'
-require 'cx/xform/line_out'
-require 'cx/xform/io'
-require 'cx/xform/align'
-require 'cx/xform/csv'
-require 'cx/xform/markdown'
-require 'cx/xform/html'
-require 'cx/xform/eval'
-require 'cx/xform/region'
-require 'cx/xform/grep'
-
+require 'cx/xform'
+CX::Xform.require_all!
+require 'cx/test'
 require 'awesome_print'
 require 'pry'
 
@@ -52,17 +37,6 @@ require 'pry'
 
 module CX
   module Xform
-    class HeaderOut
-      include Xform
-      def call input, env
-        output = Table.new([], input.header.dup, input.meta.dup)
-        output << input.header.map(&:to_s)
-        input.each do | row |
-          output << row.dup
-        end
-        output
-      end
-    end
   end
 
 ######################################################
@@ -88,7 +62,7 @@ end
 ######################################################
 
 class Main
-  include Xform
+  include Xform, Test
 
   def run! argv
     begin
@@ -98,27 +72,6 @@ class Main
         .sub("\n\t", ": #{e}#{e.class ? " (#{e.class})" : ''}\n\t")
       raise e
     end
-  end
-
-  def make_table size = 100
-    ints = (-100  .. 100).to_a
-    strs = ("aaa" .. "zzz").to_a
-    vals = (1 .. 200).map{|x| "#{x}%"}
-    rand = Random.new(12345678)
-    header = Header.new([:id, :a, :b, :b, :"X %"])
-    table = Table.new([], header)
-    header[:id].meta.type = ::Integer
-    header[:"X %"].meta.type = ::Numeric
-    100.times do | i |
-      table << [
-        i + 1001,
-        ints.sample(random: rand),
-        (i % 3).zero? ? strs.sample(random: rand) + " " : strs.sample(random: rand),
-        (i % 5).zero? ? nil : i / 2.5,
-        vals.sample(random: rand),
-      ].map(&:to_s)
-    end
-    table
   end
 
   def _run! argv

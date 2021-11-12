@@ -26,7 +26,7 @@ module CX
       end
       
       def call input, env
-        output << line(input.header.map(&:to_s))
+        # output << line(input.header.map(&:to_s))
         input.each do | r |
           output << line(r)
         end

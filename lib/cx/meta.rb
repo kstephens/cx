@@ -4,6 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/boolean'
 
 module CX
   class Meta

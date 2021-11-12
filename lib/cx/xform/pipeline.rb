@@ -23,7 +23,15 @@ module CX
         @apps << app
         self
       end
+      alias :| :>>
 
+      def self.>> app
+        new >> app
+      end
+      def self.| app
+        new | app
+      end
+      
       def call table, env
         @apps.inject(table) do |table, app|
           app.call(table, env)

@@ -44,6 +44,14 @@ module CX
       def initialize!
       end
     end
+
+    def self.require_all!
+      lib_dir = File.expand_path('../../', __FILE__) + '/'
+      files = Dir["#{lib_dir}cx/xform/*.rb"]
+      requires = files.map{|f| f.sub(lib_dir, '').sub(/\.rb$/, '') }
+      # pp(files: files, requires: requires)
+      requires.each{|r| require r}
+    end
   end
 end
   

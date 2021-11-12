@@ -6,38 +6,40 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# IOOut:
+#   name: out
+#   aliases: o
+#   synopsis: Emit lines to a file
+#   args: [ filename, ... ]
+#   opts: {}
+
 module CX
   module Xform
     class IOOut
       include Xform
       
-      # :COMMAND:
-      # IOOut:
-      #   name: out
-      #   aliases: o
-      #   synopsis: Emit lines to a file
-      #   args: [ filename, ... ]
-      #   opts: {}
       def initialize!
         super
-        binding.pry unless args
         @io = args[0] || $stdout
       end
 
       def call input, env
         open(@io, "w", env) do | io |
+          # io.write("=== BEGIN ===========================\n")
           input.each do | r |
             r.each do | _c, v |
               io.write(v)
             end
           end
+          # io.write("=== END   ===========================\n\n")
         end
         input
       end
 
       def open io, mode, env
         case io
-        when IO
+        when IO, StringIO
           yield io
         when String
           File.open(io.to_s, mode) do | o |
@@ -45,7 +47,7 @@ module CX
             yield o
           end
         else
-         raise TypeError
+          raise TypeError, "not writable : #{io.inspect}"
         end
       end
     end

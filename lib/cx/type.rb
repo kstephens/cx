@@ -8,11 +8,7 @@ require 'time'
 require 'bigdecimal'
 require 'rational'
 require 'set'
-
-module Boolean
-  ::TrueClass.include self
-  ::FalseClass.include self
-end  
+require 'cx/boolean'
 
 module CX
   class Type < Struct.new(:mod, :converter, :coercer, :matches, :format, :name)

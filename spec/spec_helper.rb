@@ -1,5 +1,12 @@
+# coding: utf-8
+# frozen_string_literal: true
+# encoding: UTF-8
+# -*- coding: utf-8 -*-
+
 require "bundler/setup"
-require "cx"
+require 'cx'
+require 'cx/inspect'
+require 'cx/test'
 require 'pry'
 
 RSpec.configure do |config|
