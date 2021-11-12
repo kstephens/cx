@@ -30,9 +30,25 @@ EmptyToNull:
   opts: {}
   file: "lib/cx/xform/empty_to_null.rb"
   path: "cx/xform/empty_to_null"
+Eval:
+  name: html-
+  aliases: html
+  synopsis: Evaluates Ruby code for each row.
+  args: []
+  opts:
+  file: "lib/cx/xform/eval.rb"
+  path: "cx/xform/eval"
+Grep:
+  name: grep
+  aliases:
+  synopsis: Filters by regex
+  args: []
+  opts:
+  file: "lib/cx/xform/grep.rb"
+  path: "cx/xform/grep"
 HtmlOut:
   name: html-
-  aliases: html-
+  aliases: html
   synopsis: Emits HTML.
   args: []
   opts:
@@ -84,6 +100,14 @@ Quote:
   opts: {}
   file: "lib/cx/xform/quote.rb"
   path: "cx/xform/quote"
+Region:
+  name: region
+  aliases: range
+  synopsis: Select a range of rows.
+  args: []
+  opts:
+  file: "lib/cx/xform/region.rb"
+  path: "cx/xform/region"
 Strip:
   name: strip
   aliases: 

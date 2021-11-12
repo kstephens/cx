@@ -11,7 +11,7 @@ module CX
     class Region
       include Xform
       # :COMMAND:
-      # region:
+      # Region:
       #   name: region
       #   aliases: range
       #   synopsis: Select a range of rows.
