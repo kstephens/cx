@@ -6,47 +6,51 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# Align:
+#   name: align
+#   aliases: o
+#   synopsis: Aligns fields based on column max_size.
+#   args: []
+#   opts: {}
+
 module CX
   module Xform
     class Align
       include Xform
-      # :COMMAND:
-      # Align:
-      #   name: align
-      #   aliases: o
-      #   synopsis: Aligns fields based on column max_size.
-      #   args: []
-      #   opts: {}
       def call input, env
-        header! input.header
+        set_cols! input.header
         input.each do | row |
           align_row row
         end
+        @cols = @c_mw = @c_fmt = nil
         input
       end
       
-      def header! header, min_width = 5
-        @header = header
-        @c_mw = header.map do |c|
+      def set_cols! cols, min_width = 5
+        @cols = cols
+        @c_mw = {}
+        @cols.each do |c|
           m = c.meta
-          [
-            m.max_size || 0,
-            c.name.size,
-            min_width
-          ].max
+          @c_mw[c] = 
+            [
+              m.max_size || 0,
+              c.name.size,
+              min_width
+            ].max
         end
         @c_fmt = Hash.new{|h,i| h[i] = "%#{i}s"}
         self
       end
 
       def align_row row, fill = nil
-        @header.map do |c|
+        @cols.map do |c|
           align_col row[c.to_i].to_s, c, fill
         end
       end
 
       def align_col v, c, fill
-        mw = @c_mw[c.to_i]
+        mw = @c_mw[c]
         case fill
         when :header
           mw = - mw

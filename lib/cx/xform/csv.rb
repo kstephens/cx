@@ -26,16 +26,17 @@ module CX
       end
       
       def call input, env
-        # output << line(input.header.map(&:to_s))
+        @cols = input.header.ordered
         input.each do | r |
           output << line(r)
         end
         env[:content_type] = 'text/csv' # according to RFC 4180.
+        @cols = nil
         output
       end
       
       def line r
-        [ @csv.generate_line(r.to_a.map{|v| format_value(v)}) ]
+        [ @csv.generate_line(@cols.map{|c| format_value(r[c])}) ]
       end
     end
   end

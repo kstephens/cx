@@ -8,23 +8,24 @@ require 'cx/xform'
 require 'builder' # XML https://github.com/jimweirich/builder
 require 'cx/io_buffer'
 
+# :COMMAND:
+# HtmlOut:
+#   name: html-
+#   aliases: html
+#   synopsis: Emits HTML.
+#   args: []
+#   opts:
+#     raw:        Columns that contain raw HTML.
+#     filtering:  Adds a filtering input box.
+#     title:      Sets the <title>.
+#     head:       Additional raw HTML at foot of <head>.
+#     body-head:  Additional raw HTML at head of <body>.
+#     body-foot:  Additional raw HTML at foot of <body>.
+
 module CX
   module Xform
     class HTMLOut
       include LineOut, Xform
-      # :COMMAND:
-      # HtmlOut:
-      #   name: html-
-      #   aliases: html
-      #   synopsis: Emits HTML.
-      #   args: []
-      #   opts:
-      #     raw:        Columns that contain raw HTML.
-      #     filtering:  Adds a filtering input box.
-      #     title:      Sets the <title>.
-      #     head:       Additional raw HTML at foot of <head>.
-      #     body-head:  Additional raw HTML at head of <body>.
-      #     body-foot:  Additional raw HTML at foot of <body>.
       def initialize!
         super
         @raw_columns = Set.new((opts[:raw] || '')
@@ -55,7 +56,7 @@ module CX
       
       def call_ input, env, out
         @header = input.header
-        @cols = header.columns
+        @cols = header.ordered
         @colspan = 1 + cols.size
         @right = {style: 'text-align: right;'}
         # @h = XMLWriter.new(out, indent: opts[:indent])

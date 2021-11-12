@@ -92,6 +92,10 @@ module CX
       end
     end
 
+    def vals x
+      x.map{|k| _get(k)}
+    end
+
     def []= k, v
       case k
       when Column

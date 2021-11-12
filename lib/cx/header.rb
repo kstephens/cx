@@ -81,6 +81,19 @@ module CX
     end
     alias :<< :push
 
+    def concat x
+      case x
+      when Header
+        concat x.columns
+      when Enumerable
+        x.map{|c| add_column!(c)}
+      else
+        raise TypeError
+      end
+      compact!
+    end
+    
+
     def alias! c, name
       @aliases[name] = c.name
       self
@@ -111,7 +124,7 @@ module CX
     end
 
     def compact!
-      @columns = @columns.compact.sort_by(&:order)
+      @columns = @columns.compact.sort_by(&:index)
       self
     end
 
@@ -183,6 +196,10 @@ module CX
     def keys   ; @to_column.keys ; end
     def values ; @to_column.values ; end
 
+    def ordered
+      @columns.sort_by{|c| c.order || -1}
+    end
+    
     def inspect mode = nil
       case mode
       when :super
