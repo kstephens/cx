@@ -620,21 +620,9 @@ class Main
       table << [
         ints.sample,
         (i % 3).zero? ? strs.sample + " " : strs.sample,
-        (i % 2).zero? ? nil : i / 10.0,
+        (i % 5).zero? ? nil : i / 10.0,
         vals.sample,
       ].map(&:to_s)
-    end
-    # table << header.map{|_c, _v| nil}
-    
-    ap(header: header)
-    ap(table: table)
-    if false
-      ap(table[0])
-      ap(table[1][:a])
-      ap(table[1][:b])
-      ap(table[0].to_a)
-      ap(table[0].to_h)
-      ap(table.map(&:to_a))
     end
     table
   end
