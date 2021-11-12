@@ -31,6 +31,7 @@ require 'cx/xform/markdown'
 require 'cx/xform/html'
 require 'cx/xform/eval'
 require 'cx/xform/region'
+require 'cx/xform/grep'
 
 require 'awesome_print'
 require 'pry'
@@ -121,7 +122,13 @@ class Main
   end
 
   def _run! argv
+    (Pipeline.new >> CalculateMeta >> Grep.new(["a:8"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Grep.new(["a:!;8"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
+    # exit!
+    
     (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> CSVOut >> IOOut).call(make_table, env = {})
+    (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> HeaderOut >> CSVOut >> IOOut).call(make_table, env = {})
+    # exit!
     (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> MetaTable >> CSVOut >> IOOut).call(make_table, env = {})
     (Pipeline.new >> CalculateMeta >> Region.new(["11..23"]) >> CalculateMeta >> MetaTable >> CSVOut >> IOOut).call(make_table, env = {})
     # exit!
