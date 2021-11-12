@@ -119,7 +119,7 @@ module CX
                             if @raw_columns.include?(c.name)
                               raw!(r[c])
                             else
-                              text!(r[c])
+                              text!(render(r[c]))
                             end
                           end
                         end
@@ -146,6 +146,21 @@ module CX
       end
       def text! x
         raw! @coerce.call(x).to_s
+      end
+      
+      def render x
+        case x
+        when Hash
+          x.map do |k,v|
+            render(k) + "=" + render(v)
+          end * ';'
+        when Enumerable
+          x.map{|x| render(x)} * ';'
+        # when Symbol
+        # x.inspect
+        else
+          x.to_s
+        end
       end
       
       def css content
