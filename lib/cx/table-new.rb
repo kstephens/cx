@@ -23,6 +23,7 @@ require 'cx/xform/align'
 require 'cx/xform/csv'
 require 'cx/xform/markdown'
 require 'cx/xform/html'
+require 'cx/xform/eval'
 
 require 'awesome_print'
 require 'pry'
@@ -664,6 +665,9 @@ class Main
     (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> MetaTable >> MetaTable >> HTMLOut >> IOOut.new(["tmp/metametatable.html"])).
       call(make_table, env = {})
     
+    (Pipeline.new >> Strip >> EmptyToNull >> CalculateMeta >> Eval.new(["_.foo = a + " " + b"]) >>
+      HTMLOut >> IOOut.new(["tmp/table-2.html"])).
+      call(make_table, env = {})
     ################################################
 
     (Pipeline.new >> Strip >> EmptyToNull >> MetaTable >> MarkdownOut >> IOOut.new(["tmp/metatable.md"]) >> IOOut).
