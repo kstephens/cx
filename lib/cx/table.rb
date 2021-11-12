@@ -3,119 +3,123 @@
 # encoding: UTF-8
 # -*- coding: utf-8 -*-
 
+$:.unshift "lib"
+
 require 'cx'
-require 'cx/util'
+require 'cx/header'
+require 'cx/column'
+require 'cx/row'
+require 'cx/inspect'
+require 'cx/logging'
 
 module CX
-  module EnumerableTable
+  class Table
     include Enumerable
-    include DestructiveEach
+    attr_reader :rows, :header, :meta
 
-  def header!
-    @header or raise_ "does not have a header"
-  end
-  # Enumerable:
-  def each(&blk)
-    _rows.each(&blk)
-    self
-  end
-  def empty? ; _rows.empty? ; end
-  def first  ; _rows.first  ; end
-  # Array-like:
-  def [] i   ; _rows[i]     ; end # Used by transpose
-  def size   ; _rows.size   ; end
+    def inspect mode = nil
+      case mode
+      when :super
+        super()
+      when :detail
+        map(&:to_h).inspect
+      else
+        "#<#{self.class} #{size} #{header.inspect(mode)}>"
+      end
+    end
 
-  # Array-like Mutation:
-  def clear        ; _rows_cow.clear               ; end
-  def shift        ; _rows_cow.shift               ; end
-  def unshift  x   ; _rows_cow.unshift x    ; self ; end
-  def pop          ; _rows_cow.pop                 ; end
-  def push     x   ; _rows_cow.push x       ; self ; end
-  def map!     &b  ; _rows_cow.map! &b      ; self ; end
-  def compact! &b  ; _rows_cow.compact! &b  ; self ; end
-  def select!  &b  ; _rows_cow.select! &b   ; self ; end
-  def compact!     ; _rows_cow.compact!     ; self ; end
-  def reverse!     ; _rows_cow.reverse!     ; self ; end
-  # def []= i, v  ## NOT NEEDED
-  def concat enum
-    enum = enum._rows if EnumerableTable === enum
-    _rows_cow.concat(enum)
-    self
-  end
-  # I/O like:
-  def write row ; _rows_cow << row ; self ; end
-  alias :<< :write
+    def initialize rows = nil, header = nil, meta = nil
+      @meta ||= meta || Meta.new
+      @rows ||= rows || [ ]
+      @header = nil
+      self.header = header
+    end
 
-  def inspect mode = nil
-    case mode
-    when :rows
-      str = String.new << _inspect_basic << "\n"
-      str << "#{size} vvvvvvvvvvvvvvvvvvvv\n"
-      each{|e| str << e.inspect << "\n"}
-      str << "#{size} ^^^^^^^^^^^^^^^^^^^^\n"
-    when :super
-      super()
-    else
-      _inspect_basic
+    def new ; dup.deepen! ; end
+    def new_empty
+      self.class.new(nil, @header.dup, @meta.dup)
+    end
+
+    def deepen!
+      @meta = @meta.dup.deepen!
+      @rows = @rows.map(&:dup)
+      self
+    end
+
+    def header= h
+      return if @header == h
+      @header = h
+      @rows.each do | r |
+        r._header = h 
+      end
+      self
+    end
+    alias :header! :header=
+
+    def [] i
+      @rows[i]
+    end
+
+    def size; @rows.size; end
+
+    def each &blk
+      @rows.each(&blk)
+      self
+    end
+
+    def push r
+      @rows.push make_row(r)
+      self
+    end
+    alias :<< :push
+
+    def unshift r
+      @rows.unshift make_row(r)
+      self
+    end
+
+    def make_row r
+      r = Row[r]
+      r._header = @header
+      # puts r.inspect(:super)
+      r
+    end
+
+    def pop   ; @rows.pop   ; end
+    def shift ; @rows.shift ; end
+    def concat rows
+      rows = rows.map{|r| make_row(r)}
+      @rows.concat(rows)
+      self
+    end
+
+    def select! &blk
+      @rows.select!(&blk)
+      self
+    end
+
+    def each_row_col
+      @rows.each do | r |
+        @header.each do | c |
+          yield r, c
+        end
+      end
+      self
+    end
+
+    def each_row_col_val
+      @rows.each do | r |
+        @header.each do | c |
+          yield r, c, r[c]
+        end
+      end
+      self
+    end
+
+    def write out = nil
+      out ||= $stdout
+      each{|r| r.write(out)}
+      nil
     end
   end
-  
-  def _inspect_basic
-    str = "#<#{self.class.name} #{@identifier || "#{'%x' % object_id}"} #{size} #{(@header && @header.cols).inspect}>"
-  end
-end
-
-class Table2
-  include EnumerableTable, Logging
-  attr_accessor :identifier, :header, :input, :rows
-  def initialize header = nil, rows = nil
-    @header = header
-    @rows   = rows
-  end
-  def _rows     ; @rows ||   (@input && @input.rows) || @input  ; end
-  def _rows_cow ; @rows ||= ((@input && @input.rows) || []).dup ; end
-  def header
-    @header || (@input && @input.header)
-  end
-  # Functional: returns new Table
-  def map(&blk)
-    Table2.new(header, _rows.map(&:blk))
-  end
-end
-
-class Table
-  include EnumerableTable, Logging
-  attr_accessor :identifier, :header, :rows
-
-  def initialize header = nil, rows = nil
-    @header = header
-    @rows = rows || [ ]
-  end
-
-  def new header = nil, rows = nil
-    x = self.class.new(header, rows)
-    x.header ||= @header
-    x
-  end
-
-  alias :to_a :rows
-  def as_hash_array header = self.header
-    rows.map{|row| header.row_as_hash(row)}
-  end
-  
-  def _rows     ; @rows ; end
-  def _rows_cow ; @rows ; end
-  # Optimization:
-  def clear     ; @rows = [ ] ; end
-
-  def dup_deep
-    dup.dup_deepen! self
-  end
-  def dup_deepen! src
-    @rows     = @rows.map{|r| r.dup}
-    @header &&= @header.dup_deep
-    @opts     = @opts.dup
-    self
-  end
-end
 end
