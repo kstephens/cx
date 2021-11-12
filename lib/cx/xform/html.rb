@@ -32,8 +32,8 @@ module CX
           .map(&:to_sym)
           .uniq)
         self
-        opts[:filtering] = true; # ???
-        opts[:indent] = 2
+        opts[:filtering] = true # ???
+        opts[:indent] = 2 # ???
         @coerce = opts[:coerce_to_string] || proc{|x| x}
       end
 
@@ -59,7 +59,7 @@ module CX
 
         cols.each do | c |
           data = col_data[c]
-          data[:style] = "text-align: right;" if c.meta.align_ == :right
+          data[:style] = right[:style] if c.meta.align_ == :right
         end
 
         h.html do
