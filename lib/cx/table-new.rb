@@ -287,6 +287,10 @@ class Table
   
   def pop   ; @rows.pop   ; end
   def shift ; @rows.shift ; end
+  def select! &blk
+    @rows.select!(&blk)
+    self
+  end
   
   def size; @rows.size; end
 
