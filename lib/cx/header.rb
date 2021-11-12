@@ -4,260 +4,192 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/column'
+require 'cx/logging'
+require 'cx/inspect'
 
 module CX
   class Header
-  include Enumerable, Logging
-  extend Logging
-  
-  def inspect
-    "#<#{self.class.name} #{"%0x" % object_id} #{name.inspect} #{@cols.inspect}>"
-  end
+    include Enumerable, Logging, Inspect
+    extend Logging
 
-  def initialize cols = nil, opts = nil
-    self.cols = cols if cols
-    @opts = opts || { }
-  end
-  attr_reader :cols, :name_to_col, :ind_to_col
-  attr_accessor :name, :opts
-  alias :to_a :cols
+    attr_reader :columns, :meta, :aliases
 
-  def << c
-    self.cols = [ *cols, c ]
-    self
-  end
-
-  def set_cols! cols
-    _start_col_mapping!
-    cols.each do | c |
-      add_col! c
-    end
-    _finish_col_mapping!
-    self
-  end
-
-  def add_col! c
-    case c
-    when Column
-      col = c.dup_deep
-    when String, Symbol
-      col = Column.new(c)
-    else
-      raise TypeError, "Invalid column name : #{c.inspect} : #{@cols.inspect}"
-    end
-    _add_col! col
-  end
-
-  def _start_col_mapping!
-    @cols        = [ ]
-    @name_to_col = { }
-    @ind_to_col  = { }
-    @to_s = @to_h = @row_fn = nil
-    self
-  end
-
-  def _add_col! col
-    col.ind = @cols.size;
-    if other = @name_to_col[col.name]
-      base_name = col.name.to_s
-      i = other.name.to_s =~ /__(\d+)/ ? $i.to_i : 1;
-      ew_name = nil
-      while @name_to_col[new_name = :"#{base_name}__#{i += 1}"]
-        # try next
-      end
-      log.warn "duplicate column #{col.to_s.inspect} #{col.ind} will be named #{new_name.to_s.inspect} : conflicts with other column #{other.to_s.inspect} #{other.ind}"
-      col.name = new_name
-    end
-    col.header = self
-    _col_! col
-  end
-  
-  def _col_! col
-    @cols[col.ind]         = col
-    @name_to_col[col.name] = col
-    @ind_to_col[col.ind]   = col
-    @to_s = @to_h = @row_fn = nil
-    col
-  end
-  
-  def to_s
-    @to_s ||= @cols.map(&:name).join(',').freeze
-  end
-  
-  def to_h
-    @to_h ||= Hash[@cols.map(&:name).zip(@cols.map(&:ind))]
-  end
-
-  def _finish_col_mapping!
-    self
-  end
-  
-  def dup_deep
-    dup.dup_deepen!(self)
-  end
-  def dup_deepen! src
-    @opts &&= @opts.dup # USED ???
-    cols = @cols
-    _start_col_mapping!
-    cols.map(&:dup_deep).each{|col| _add_col! col}
-    _finish_col_mapping!
-  end
-  alias :cols= :set_cols!
-  
-  # Transform row.
-  def row r, cols = nll
-    row_fn(cols).call(r)
-  end
-  def col_row r, cols = nil
-    (cols || self.cols).map{|c| [c, r[c.to_i]]}
-  end
-  def row_hash r, cols = nil
-    Hash[col_row(r, cols)]
-  end
-  def row_as_hash r, cols = nil
-    Hash[(cols || self.cols).map(&:to_sym).zip(row_fn(cols).call(r))]
-  end
-  def row_arry r, cols = nil
-    row_fn(cols).call(r)
-  end
-  def row_fn cols = nil
-    @row_fn ||= { }
-    @row_fn[cols] ||=
-      begin
-        inds = self[cols || self.cols].map(&:to_i)
-        lambda{|row| row.values_at(*inds)}
-      end
-  end
-  
-  def each &blk
-    @cols.each(&blk)
-    self
-  end
-  def size ; @cols.size ; end
-  
-  def [] x
-    case x
-    when Column  then x
-    when Integer then @ind_to_col[x]
-    when Symbol  then @name_to_col[x]
-    when String  then @name_to_col[x.to_sym]
-    when Enumerable then x.map{|x| self[x]}
-    else
-      nil
-    end
-  end
-  def to_proc
-    @to_proc ||= lambda{|x| self[x]}
-  end
-  alias :call :[]
-  
-  def col x
-    case x
-    when Column
-      # May be from a different Header.
-      col(x.to_sym)
-    when Enumerable
-      x.map{|x| col(x)}
-    else
-      self[x] or raise "Unknown column : #{x.inspect} in #{@ind_to_col.inspect}"
-    end
-  end
-
-  def self.parse_column_args args, split_and_strip = true
-    cols = args.dup
-    if split_and_strip
-      cols = cols.flat_map do |c|
-        c.strip.split(/\s*,\s*/, -1).map(&:strip)
-      end
-    end
-    cols.reject!(&:empty?)
-    cols.map! do | c |
-      if c =~ /^([^:]+)(:(.*))?$/
-        name, opts = $1, $3 || ''
-        case name
-        when /^#?(\d+)$/
-          i = $1.to_i
-          raise "invalid numeric column specification #{c.inspect}}" unless i > 0
-          name = i - 1
+    def initialize cols = nil
+      @version = 0
+      @columns = [ ]
+      @to_column = { }
+      @aliases = { }
+      @meta = Meta.new
+      case cols
+      when nil
+      when Integer
+        cols.times do | i |
+          push Column.new(:"_COL_#{i}")
         end
-        [ name, opts ]
+      when Enumerable
+        cols.each{|x| push x} if cols
+      end
+      compact!
+      @version = 0
+    end
+
+    def [] k
+      case k
+      when Integer
+        @columns[k]
+      when Symbol, String
+        @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
       else
-        raise_ "invalid column specifcation #{c.inspect}"
+        raise TypeError
       end
     end
-    cols.map! do | (name, opts) |
-      kvs = opts.split(':').map do |kv|
-        k, v = kv.split("=", 2)
-        [ k.to_sym, v || true ]
+
+    def size  ; @columns.size  ; end
+    def first ; @columns.first ; end
+    def last  ; @columns.last  ; end
+
+    def new ; dup.deepen! ; end
+    def deepen!
+      @to_column = { }
+      @aliases = @aliases.dup
+      @columns = @columns.map do |c|
+        @to_column[c.to_sym] = c = c.dup
+        c._header = self
+        c
       end
-      [ name, Hash[kvs] ]
-    end
-    pp(cols: cols) if debug?
-    cols
-  end
-    
-  ###########################
-  
-  class Column
-    include Logging
-    attr_accessor :header, :name, :ind, :opts
-    attr_reader :to_s, :clean_name
-    alias :to_i   :ind
-    alias :to_sym :name
-    
-    def initialize name, ind = nil
-      self.name = name
-      @ind = ind
-      @opts = { }
-    end
-    
-    def inspect
-      "#<C #{@name.inspect} #{@ind.inspect} #{@opts.inspect}>"
+      @meta = @meta.dup
+      @version = 0
+      self
     end
 
-    def name= name
-      @name = name.to_sym
-      @to_s = name.to_s.freeze
-      @clean_name = Column.clean_name(name).to_sym
-      @header && @header._col_!(self)
+    def each &blk
+      @columns.each(&blk)
+      self
     end
 
-    def self.clean_name name
-      name.to_s.
-        gsub(/^%|%$/, '').
-        gsub(/[\{\}\[\]\(\)]/, '').
-        gsub(/[^-_\w]/, '_').
-        downcase
-    end
-
-    def opts= opts
-      opts.each do | k, v |
-        sel = :"#{k}="
-        if respond_to?(sel)
-          send(sel, v)
-        else
-          @opts[k] = v
-        end
+    def push x
+      case x
+      when Column
+        add_column!(x)
+      when Symbol, String
+        push Column.new(x)
+      else
+        raise TypeError
       end
       self
     end
-    
-    def copy_to! other
-      other.ind  ||= @ind
-      other.opts = opts.merge(other.opts)
-      other
-    end
-    def to_proc
-      @to_proc ||= lambda{|x| x[@ind]}
-    end
-    def dup_deep
-      dup.dup_deepen!(self)
-    end
-    def dup_deepen! src
-      @opts    = @opts.dup
-      @to_proc = nil
+    alias :<< :push
+
+    def alias! c, name
+      @aliases[name] = c.name
       self
     end
+
+    def add_column! c
+      raise ArgumentError if @columns.include?(c)
+      c.index ||= (@columns.map(&:to_i).max || -1) + 1
+      c.order ||= @columns.last ? @columns.last.order + 1 : 0
+      c.name = available_name(c, c.name || :_COL_)
+      @to_column[c.name] = c
+      make_room_at! c.order
+      @columns << c
+      compact!
+      @version += 1
+      c._header = self
+      c
+    end
+
+    def remove_column! c
+      raise ArgumentError unless @columns.include?(c)
+      @to_column.delete(c.name)
+      @columns.delete(c)
+      c._header = nil
+      compact!
+      @version += 1
+      c
+    end
+
+    def compact!
+      @columns = @columns.compact.sort_by(&:order)
+      self
+    end
+
+    def available_name c, name
+      return name unless @to_column[name]
+      new_name = name
+      i = (c ? c.to_i : @columns.map(&:to_i).max) + 1
+      while @to_column[new_name = :"#{name}#{i}"]
+        i += 1
+      end
+      new_name
+    end
+
+    def change_name! c, name
+      return name if c.name == name
+      raise ArgumentError if @to_column[name]
+      raise ArgumentError unless @columns.include?(c)
+      @to_column.delete(c.name)
+      @aliases.keys do | (a, n) |
+        @aliases.delete(a) if n == c.name
+      end
+      new_name = available_name(c, name)
+      c._name = new_name
+      @to_column[new_name] = c
+      alias! c, c.name_
+      @version += 1
+      new_name
+    end
+
+    def change_index! c, index
+      return index if c.index == index
+      raise ArgumentError unless @columns.include?(c)
+      make_room_at! index
+      c._index = index
+      compact!
+      @version += 1
+      index
+    end
+
+    def change_order! c, order
+      return index if c.order == order
+      raise ArgumentError unless @columns.include?(c)
+      make_room_at! order
+      c._order = order
+      compact!
+      @version += 1
+      order
+    end
+
+    def make_room_at! order
+      @columns.select{|c| c.order >= order}.each do |c|
+        c.order += 1
+      end
+      self
+    end
+
+    def to_row x
+      case x
+      when Row
+        x
+      when Hash, Array
+        Row.new(x, self)
+      else
+        raise TypeError
+      end
+    end
+
+    def size   ; @columns.size ; end
+    def keys   ; @to_column.keys ; end
+    def values ; @to_column.values ; end
+
+    def inspect mode = nil
+      case mode
+      when :super
+        super()
+      else
+        "#<#{self.class} #{object_id} #{map(&:to_sym)}>"
+      end
+    end
   end
-end
 end
