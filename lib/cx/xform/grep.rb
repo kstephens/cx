@@ -23,9 +23,7 @@ module CX
         # pp(col_args: col_args)
         preds = col_args.map{|arg| rx_pred arg}
         pred = lambda do | row |
-          preds.all? do | p |
-            p.call(row)
-          end
+          preds.all? {|p| p.call(row) }
         end
         input.select!(&pred)
         input
@@ -37,11 +35,11 @@ module CX
       rx = Regexp.new(arg.args[-1] || '')
       if arg.opts[:negate]
         lambda do | row |
-          rx !~ row[c]
+          ! rx.match?(row[c].to_s)
         end
       else
         lambda do | row |
-          rx =~ row[c]
+          rx.match?(row[c].to_s)
         end
       end
     end
