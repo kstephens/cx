@@ -130,6 +130,14 @@ Region:
   opts:
   file: "lib/cx/xform/region.rb"
   path: "cx/xform/region"
+Reverse:
+  name: reverse
+  aliases:
+  synopsis: Reverse order of rows.
+  args: []
+  opts:
+  file: "lib/cx/xform/reverse.rb"
+  path: "cx/xform/reverse"
 RowId:
   name: row-id
   aliases:

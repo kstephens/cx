@@ -68,6 +68,23 @@ END
 |1001,79,ekl ,"",133%|
 END
       end
+
+      it "Reversee" do
+        assert_pipeline Reversee, <<'END'
+|id,a,b,b4,X %|
+|1010,-71,jtj ,3.6,25%|
+|1009,-99,ali,3.2,191%|
+|1008,-21,qeg,2.8,135%|
+|1007,-72,xgv ,2.4,55%|
+|1006,67,hjn,"",187%|
+|1005,-38,oub,1.6,9%|
+|1004,-62,rcz ,1.2,127%|
+|1003,84,yis,0.8,12%|
+|1002,77,ymt,0.4,48%|
+|1001,79,ekl ,"",133%|
+END
+      end
+
       it "MetaTable" do
         assert_pipeline MetaTable, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
