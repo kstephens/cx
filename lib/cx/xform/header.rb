@@ -5,24 +5,32 @@
 
 require 'cx'
 require 'cx/xform'
-require 'cx/column_args'
+
+# :COMMAND:
+# HeaderIn:
+#   name: header-in
+#   aliases: [-header, -h]
+#   synopsis: Interprets first row as a column header.
+#   args: []
+#   opts:
 
 # :COMMAND:
 # HeaderOut:
 #   name: header-out
-#   aliases: header-, h-
-#   synopsis: Emits a row header.
-#   args: []
-#   opts:
-# HeaderOut:
-#   name: header-in
-#   aliases: -header, -h
-#   synopsis: Interprets first row as a column header.
+#   aliases: [header-, h-]
+#   synopsis: Emits header as first row.
 #   args: []
 #   opts:
 
 module CX
   module Xform
+    class HeaderIn
+      include Xform
+      def call input, env
+        input.header = Header.new(input.shift.map(&:to_s))
+        input
+      end
+    end
     class HeaderOut
       include Xform
       def call input, env

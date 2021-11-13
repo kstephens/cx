@@ -47,16 +47,18 @@ Grep:
   opts:
   file: "lib/cx/xform/grep.rb"
   path: "cx/xform/grep"
-HeaderOut:
-  name: header-out
-  aliases: header-, h-
-  synopsis: Emits a row header.
+HeaderIn:
+  name: header-in
+  aliases: [-header, -h]
+  synopsis: Interprets first row as a column header.
   args: []
   opts:
+  file: "lib/cx/xform/header.rb"
+  path: "cx/xform/header"
 HeaderOut:
-  name: header-in
-  aliases: -header, -h
-  synopsis: Interprets first row as a column header.
+  name: header-out
+  aliases: [header-, h-]
+  synopsis: Emits header as first row.
   args: []
   opts:
   file: "lib/cx/xform/header.rb"
@@ -163,6 +165,7 @@ Transpose:
   synopsis: Transpose rows and columns.
   args: []
   opts:
+    include-header: Include header in first column.
   file: "lib/cx/xform/transpose.rb"
   path: "cx/xform/transpose"
 TypeInference:
