@@ -30,6 +30,11 @@ module CX
       end
       self
     end
+    
+    def build_index!
+      YamlGenerator.new.run!
+    end
+    
 
     COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
 
@@ -37,6 +42,7 @@ module CX
       include Logging
       def initialize *args
         super
+        self.name ||= infer_name(class_name)
         self.class_name = class_name.to_sym
         self.aliases ||= ""
         self.synopsis ||= "NO-SYNOPSIS"
@@ -47,13 +53,18 @@ module CX
         self.path or raise ArgumentError, "path"
         unless Array === self.aliases
           self.aliases = self.aliases.strip.split(/\s*,\s*/, -1)
-            .map(&:to_sym)
         end
-        self.aliases = self.aliases.map(&:to_sym)
+        name.to_s.sub(/$(.+)-in$/ ){|m| self.aliases << "-#{$1}"}
+        name.to_s.sub(/$(.+)-out$/){|m| self.aliases << "#{$1}-"}
+        self.aliases = self.aliases.map(&:to_sym).sort.uniq
         self
       rescue => exc
         raise_  "#{exc.message} : #{args.inspect}", exc
       end         
+
+      def infer_name class_name
+        class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase
+      end
       
       def cls
         unless @cls
@@ -65,18 +76,22 @@ module CX
     end
     
     class YamlGenerator
+      attr_accessor :verbose
+      
       def run!
         yaml = [ ]
         Dir.glob('lib/cx/xform/**.rb').sort.each do |file|
           yaml << scan!(file)
         end
         yaml = yaml * "\n" + "\n\n"
-        puts "yaml ::::"
-        lineno = 0
-        yaml.split(/\n/, -1) do | line |
-          puts '%-3d %s' % [lineno += 1, line]
+        if verbose
+          puts "yaml ::::"
+          lineno = 0
+          yaml.split(/\n/, -1) do | line |
+            puts '%-3d %s' % [lineno += 1, line]
+          end
+          puts "::::"
         end
-        puts "::::"
         CommandFactory.new.load!(yaml) # Verify before write.
         File.write(COMMANDS_YML, yaml)
       end

@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Region:
-#   name: region
 #   aliases: range
 #   synopsis: Select a range of rows.
 #   args: []

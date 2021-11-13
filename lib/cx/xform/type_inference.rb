@@ -10,7 +10,7 @@ require 'cx/type'
 # :COMMAND:
 # TypeInference:
 #   name: types
-#   aliases: 
+#   aliases:
 #   synopsis: Infer types from field strings.
 #   args: []
 #   opts: {}

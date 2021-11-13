@@ -9,9 +9,8 @@ require 'cx/column_args'
 
 # :COMMAND:
 # Grep:
-#   name: grep
-#   aliases:
-#   synopsis: Filters by regex
+#   aliases: g
+#   synopsis: Filters by regex.
 #   args: []
 #   opts:
 

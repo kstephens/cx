@@ -8,8 +8,7 @@ require 'cx/xform'
 
 # :COMMAND:
 # Align:
-#   name: align
-#   aliases: o
+#   aliases:
 #   synopsis: Aligns fields based on column max_size.
 #   args: []
 #   opts: {}

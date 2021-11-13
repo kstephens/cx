@@ -10,7 +10,6 @@ require 'cx/io_buffer'
 
 # :COMMAND:
 # HtmlOut:
-#   name: 'html-'
 #   aliases: [html]
 #   synopsis: 'Emits HTML.'
 #   args: []

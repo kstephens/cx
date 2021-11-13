@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Transpose:
-#   name: transpose
 #   aliases:
 #   synopsis: Transpose rows and columns.
 #   args: []

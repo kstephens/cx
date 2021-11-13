@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # HeaderIn:
-#   name: header-in
 #   aliases: [-header, -h]
 #   synopsis: Interprets first row as a column header.
 #   args: []
@@ -16,7 +15,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # HeaderOut:
-#   name: header-out
 #   aliases: [header-, h-]
 #   synopsis: Emits header as first row.
 #   args: []

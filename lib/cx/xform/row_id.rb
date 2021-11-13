@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # RowId:
-#   name: row-id
 #   aliases:
 #   synopsis: Inserts a row id column.
 #   args: []

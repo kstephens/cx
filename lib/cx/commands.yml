@@ -1,6 +1,5 @@
 Align:
-  name: align
-  aliases: o
+  aliases:
   synopsis: Aligns fields based on column max_size.
   args: []
   opts: {}
@@ -15,7 +14,6 @@ CalculateMeta:
   file: "lib/cx/xform/calculate_meta.rb"
   path: "cx/xform/calculate_meta"
 CSVOut:
-  name: csv-out
   aliases: csv-
   synopsis: Generates CSV lines.
   args: []
@@ -32,15 +30,12 @@ EmptyToNull:
   file: "lib/cx/xform/empty_to_null.rb"
   path: "cx/xform/empty_to_null"
 Eval:
-  name: html-
-  aliases: html
   synopsis: Evaluates Ruby code for each row.
   args: []
   opts:
   file: "lib/cx/xform/eval.rb"
   path: "cx/xform/eval"
 Grep:
-  name: grep
   aliases:
   synopsis: Filters by regex
   args: []
@@ -48,7 +43,6 @@ Grep:
   file: "lib/cx/xform/grep.rb"
   path: "cx/xform/grep"
 HeaderIn:
-  name: header-in
   aliases: [-header, -h]
   synopsis: Interprets first row as a column header.
   args: []
@@ -56,7 +50,6 @@ HeaderIn:
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
 HeaderOut:
-  name: header-out
   aliases: [header-, h-]
   synopsis: Emits header as first row.
   args: []
@@ -64,7 +57,6 @@ HeaderOut:
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
 HtmlOut:
-  name: 'html-'
   aliases: [html]
   synopsis: 'Emits HTML.'
   args: []
@@ -92,7 +84,6 @@ IOOut:
   path: "cx/xform/io"
 
 MarkdownOut:
-  name: markdown-
   aliases: [md, markdown]
   synopsis: Generate Markdown table lines.
   args: []
@@ -100,7 +91,6 @@ MarkdownOut:
   file: "lib/cx/xform/markdown.rb"
   path: "cx/xform/markdown"
 MetaTable:
-  name: metatable
   aliases: meta-, meta, columns
   synopsis: Generate a table of table metadata.
   args: []
@@ -108,7 +98,6 @@ MetaTable:
   file: "lib/cx/xform/metatable.rb"
   path: "cx/xform/metatable"
 Nop:
-  name: nop
   aliases: noop
   synopsis: Does nothing -- output is same as input.
   args: []
@@ -117,7 +106,6 @@ Nop:
   path: "cx/xform/nop"
 
 Quote:
-  name: quote
   aliases: q
   synopsis: Quote fields that would not be printable..
   args: []
@@ -125,7 +113,6 @@ Quote:
   file: "lib/cx/xform/quote.rb"
   path: "cx/xform/quote"
 Region:
-  name: region
   aliases: range
   synopsis: Select a range of rows.
   args: []
@@ -133,7 +120,6 @@ Region:
   file: "lib/cx/xform/region.rb"
   path: "cx/xform/region"
 Reverse:
-  name: reverse
   aliases:
   synopsis: Reverse order of rows.
   args: []
@@ -141,7 +127,6 @@ Reverse:
   file: "lib/cx/xform/reverse.rb"
   path: "cx/xform/reverse"
 RowId:
-  name: row-id
   aliases:
   synopsis: Inserts a row id column.
   args: []
@@ -152,7 +137,6 @@ RowId:
   file: "lib/cx/xform/row_id.rb"
   path: "cx/xform/row_id"
 Strip:
-  name: strip
   aliases: 
   synopsis: Strip leading and trailing whitespace.
   args: []
@@ -160,7 +144,6 @@ Strip:
   file: "lib/cx/xform/strip.rb"
   path: "cx/xform/strip"
 Transpose:
-  name: transpose
   aliases:
   synopsis: Transpose rows and columns.
   args: []
@@ -170,7 +153,7 @@ Transpose:
   path: "cx/xform/transpose"
 TypeInference:
   name: types
-  aliases: 
+  aliases:
   synopsis: Infer types from field strings.
   args: []
   opts: {}

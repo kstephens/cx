@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Reverse:
-#   name: reverse
 #   aliases:
 #   synopsis: Reverse order of rows.
 #   args: []

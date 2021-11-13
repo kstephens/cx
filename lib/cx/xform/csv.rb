@@ -10,8 +10,7 @@ require 'cx/xform/csv_safe'
 
 # :COMMAND:
 # CSVOut:
-#   name: csv-out
-#   aliases: csv-
+#   aliases:
 #   synopsis: Generates CSV lines.
 #   args: []
 #   opts: {}

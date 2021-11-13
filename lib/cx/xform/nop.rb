@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Nop:
-#   name: nop
 #   aliases: noop
 #   synopsis: Does nothing -- output is same as input.
 #   args: []

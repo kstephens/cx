@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Quote:
-#   name: quote
 #   aliases: q
 #   synopsis: Quote fields that would not be printable..
 #   args: []

@@ -9,7 +9,6 @@ require 'cx/xform/line_out'
 
 # :COMMAND:
 # MarkdownOut:
-#   name: markdown-
 #   aliases: [md, markdown]
 #   synopsis: Generate Markdown table lines.
 #   args: []

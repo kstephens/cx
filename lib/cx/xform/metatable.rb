@@ -8,7 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # MetaTable:
-#   name: metatable
 #   aliases: meta-, meta, columns
 #   synopsis: Generate a table of table metadata.
 #   args: []

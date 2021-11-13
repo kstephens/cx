@@ -8,8 +8,6 @@ require 'cx/xform'
 
 # :COMMAND:
 # Eval:
-#   name: html-
-#   aliases: html
 #   synopsis: Evaluates Ruby code for each row.
 #   args: []
 #   opts:
