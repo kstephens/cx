@@ -16,7 +16,7 @@ require 'cx/xform'
 
 module CX
   module Xform
-    class Reversee
+    class Reverse
       include Xform
       def call input, env
         input.rows.reverse!

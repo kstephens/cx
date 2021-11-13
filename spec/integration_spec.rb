@@ -70,7 +70,7 @@ END
       end
 
       it "Reverse" do
-        assert_pipeline Reversee, <<'END'
+        assert_pipeline Reverse, <<'END'
 |id,a,b,b4,X %|
 |1010,-71,jtj ,3.6,25%|
 |1009,-99,ali,3.2,191%|

@@ -157,6 +157,14 @@ Strip:
   opts: {}
   file: "lib/cx/xform/strip.rb"
   path: "cx/xform/strip"
+Transpose:
+  name: transpose
+  aliases:
+  synopsis: Transpose rows and columns.
+  args: []
+  opts:
+  file: "lib/cx/xform/transpose.rb"
+  path: "cx/xform/transpose"
 TypeInference:
   name: types
   aliases: 
