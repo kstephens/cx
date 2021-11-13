@@ -133,7 +133,6 @@ module CX
               end
             end
           end
-          # size = input.size
           h.tbody({id: "cx-table-tbody"}) do
             ri = 0
             input.each do | r |
@@ -251,8 +250,8 @@ module CX
     
     def indent! state = true
       save = @indent_enabled
-      @indent_enabled = state
       begin
+        @indent_enabled = state
         yield
       ensure
         @indent_enabled = save
@@ -260,7 +259,6 @@ module CX
     end
     
     def _indent
-      # binding.pry unless @indent_enabled
       super if @indent_enabled
     end
     def _newline
@@ -268,7 +266,7 @@ module CX
     end
     def _insert_attributes(attrs, order=nil)
       if @attrs_enabled
-        super(attrs, order || []) if @attrs_enabled
+        super(attrs, order || [])
       end
     end
   end

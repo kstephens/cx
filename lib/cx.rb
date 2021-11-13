@@ -6,12 +6,12 @@ module CX
   def self.base_dir ; BASE_DIR ; end
   BASE_DIR = File.expand_path('../..', __FILE__)
   def self.supress_warnings new_flags = nil
-    _VERBOSE = $VERBOSE
+    save = $VERBOSE
     begin
       $VERBOSE = new_flags
       yield
     ensure
-      $VERBOSE = _VERBOSE
+      $VERBOSE = save
     end
   end
   Empty_Hash   = { }.freeze
@@ -26,5 +26,5 @@ begin
       trace_instruction: false,
     }
 rescue
-end
+end if (ENV['CX_TCO'] || 1).to_i > 0
 
