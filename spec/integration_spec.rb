@@ -87,7 +87,7 @@ END
 
       it "Transpose" do
         assert_pipeline Pipeline | MetaTable | Transpose, <<'END', size: 5
-|_COL_0,_COL_1,_COL_2,_COL_3,_COL_4|
+|_COL_1,_COL_2,_COL_3,_COL_4,_COL_5|
 |id,a,b,b4,X %|
 |id,a,b,b4,x_|
 |true,true,true,true,true|

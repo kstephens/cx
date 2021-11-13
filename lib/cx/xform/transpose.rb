@@ -37,7 +37,7 @@ module CX
         end
         
         header = Header.new
-        (0 ... width).each{|i| header << Column.new(:"_COL_#{i}")}
+        (0 ... width).each{|i| header << Column.new(:"_COL_#{i + 1}")}
         output = Table.new(rows, header)
         output
       end
