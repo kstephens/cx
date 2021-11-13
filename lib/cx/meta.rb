@@ -40,8 +40,8 @@ module CX
       self
     end
 
-    def inspect
-      "#<#{self.class} #{to_h.inspect}>"
+    def inspect_content mode
+      to_h.inspect
     end
 
     def clear!

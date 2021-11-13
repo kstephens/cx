@@ -12,13 +12,8 @@ module CX
     attr_reader :header, :data, :header_version
     attr_accessor :file_name, :line_number
 
-    def inspect mode = nil
-      case mode
-      when :super
-        super()
-      else
-        to_h.inspect
-      end
+    def inspect_content mode
+      to_h.inspect
     end
 
     def self.[] x

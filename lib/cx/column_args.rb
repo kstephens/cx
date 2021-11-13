@@ -5,13 +5,14 @@
 
 require 'cx'
 require 'cx/inspect'
+require 'cx/logging'
 
 module CX
   class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column)
   end
     
   class ColumnArgs
-    include Enumerable # Inspect
+    include Enumerable, Inspect, Logging
 
     attr_reader :columns
 

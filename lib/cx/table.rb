@@ -18,14 +18,12 @@ module CX
     include Enumerable
     attr_reader :rows, :header, :meta
 
-    def inspect mode = nil
+    def inspect_content mode
       case mode
-      when :super
-        super()
       when :detail
-        map(&:to_h).inspect
+        "#{size} #{map(&:to_h).inspect}"
       else
-        "#<#{self.class} #{size} #{header.inspect(mode)}>"
+        "#{size} #{header.inspect_content(mode)}"
       end
     end
 

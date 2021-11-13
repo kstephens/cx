@@ -10,8 +10,8 @@ require 'cx/inspect'
 
 module CX
   class Header
-    include Enumerable, Logging, Inspect
-    extend Logging
+    include Enumerable, Inspect, Logging
+    # extend Logging
 
     attr_reader :columns, :meta, :aliases
 
@@ -200,13 +200,8 @@ module CX
       @columns.sort_by{|c| c.order || -1}
     end
     
-    def inspect mode = nil
-      case mode
-      when :super
-        super()
-      else
-        "#<#{self.class} #{object_id} #{map(&:to_sym)}>"
-      end
+    def inspect_content mode
+      "#{map(&:to_sym)}"
     end
   end
 end

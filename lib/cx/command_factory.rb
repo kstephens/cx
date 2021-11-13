@@ -1,4 +1,5 @@
 require 'cx'
+require 'cx/logging'
 require 'yaml'
 
 module CX
@@ -33,6 +34,7 @@ module CX
     COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
 
     class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :arguments, :options, :file, :path)
+      include Logging
       def initialize *args
         super
         self.class_name = class_name.to_sym
@@ -41,15 +43,17 @@ module CX
         self.description ||= "NO-DESCRIPTION"
         self.arguments ||= ['...']
         self.options ||= { }
-        self.file or raise
-        self.path or raise
+        self.file or raise ArgumentError, "file"
+        self.path or raise ArgumentError, "path"
         unless Array === self.aliases
           self.aliases = self.aliases.strip.split(/\s*,\s*/, -1)
             .map(&:to_sym)
         end
         self.aliases = self.aliases.map(&:to_sym)
         self
-      end
+      rescue => exc
+        raise_  "#{exc.message} : #{args.inspect}", exc
+      end         
       
       def cls
         unless @cls

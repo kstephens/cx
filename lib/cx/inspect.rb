@@ -12,12 +12,14 @@ module CX
       when :super
         super()
       else
-        "#<#{self.class} #{object_id}#{inspect_content}>"
+        content = inspect_content(mode)
+        content = content ? " #{content.to_s}" : ""
+        "#<#{self.class} #{object_id}#{content}>"
       end
     end
 
-    def inspect_content
-      ''
+    def inspect_content mode
+      nil
     end
   end
 end

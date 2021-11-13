@@ -4,10 +4,12 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/inspect'
+require 'cx/logging'
 
 module CX
   class Column
-    include Inspect
+    include Inspect, Logging
     attr_reader :name, :index, :order, :meta, :header
     attr_reader :to_s, :name_ # Derived
     alias :to_sym :name
@@ -83,8 +85,8 @@ module CX
       self
     end
 
-    def inspect_content
-      " #{name.inspect}"
+    def inspect_content mode
+      name.inspect
     end
 
   end
