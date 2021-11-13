@@ -66,6 +66,7 @@ module CX
   def self.raise_cls= x
     @@raise_cls = x
   end
+  @@raise_cls = nil
   class << self
     attr_accessor :debug
   end
