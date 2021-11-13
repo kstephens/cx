@@ -32,7 +32,8 @@ module CX
     def initialize rows = nil, header = nil, meta = nil
       @meta ||= meta || Meta.new
       @rows ||= rows || [ ]
-      @header = nil
+      @header = header
+      @rows.map!{|r| make_row r}
       self.header = header
     end
 
@@ -61,7 +62,9 @@ module CX
       @rows[i]
     end
 
-    def size; @rows.size; end
+    def reverse! ; @rows.reverse ; self ; end
+    def clear    ; @rows.clear   ; self ; end
+    def size     ; @rows.size           ; end
 
     def each &blk
       @rows.each(&blk)
@@ -82,7 +85,6 @@ module CX
     def make_row r
       r = Row[r]
       r._header = @header
-      # puts r.inspect(:super)
       r
     end
 

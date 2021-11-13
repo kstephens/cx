@@ -85,6 +85,29 @@ END
 END
       end
 
+      it "Transpose" do
+        assert_pipeline Pipeline | MetaTable | Transpose, <<'END', size: 5
+|_COL_0,_COL_1,_COL_2,_COL_3,_COL_4|
+|id,a,b,b4,X %|
+|id,a,b,b4,x_|
+|true,true,true,true,true|
+|0,1,2,3,4|
+|0,1,2,3,4|
+|Integer,,,,Numeric|
+|4,2,3,0,2|
+|4,3,4,6,4|
+|1001,-62,ekl ,"",12%|
+|1005,84,ymt,"",9%|
+|0,0,0,1,0|
+|0,0,0,0,0|
+|,,,,|
+|,,,,|
+|right,right,,,|
+|Integer,Integer,String,String;BigDecimal,String|
+|Integer,Integer,String,Object,String|
+END
+      end
+
       it "MetaTable" do
         assert_pipeline MetaTable, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
@@ -95,6 +118,7 @@ END
 |X %,x_,true,4,4,Numeric,2,4,1%,98%,0,0,,,,String,String|
 END
       end
+      
       it "MetaTable | MetaTable" do
         assert_pipeline Pipeline | MetaTable | MetaTable, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
