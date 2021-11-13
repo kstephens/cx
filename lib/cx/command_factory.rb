@@ -68,9 +68,9 @@ module CX
         unless Array === self.aliases
           self.aliases = self.aliases.strip.split(/\s*,\s*/, -1)
         end
-        name.to_s.sub(/$(.+)-in$/ ){|m| self.aliases << "-#{$1}"}
-        name.to_s.sub(/$(.+)-out$/){|m| self.aliases << "#{$1}-"}
-        self.aliases = self.aliases.map(&:to_sym).sort.uniq
+        name.to_s.sub(/^(.+)-in$/ ){|m| self.aliases.unshift "-#{$1}"}
+        name.to_s.sub(/^(.+)-out$/){|m| self.aliases.unshift "#{$1}-"}
+        self.aliases = self.aliases.map(&:to_sym).uniq
         self
       rescue => exc
         raise_  "#{exc.message} : #{args.inspect}", exc
