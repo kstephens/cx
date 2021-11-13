@@ -36,30 +36,6 @@ require 'pry'
 ######################################################
 
 module CX
-  module Xform
-  end
-
-######################################################
-
-class Xform::FormatX
-  def call input, env
-    output = input.new
-    header = output.header = input.header.new
-    
-    input.each do | r |
-      new_r = { }
-      r.each do | c, v |
-        v = c.format(v)
-        new_r[c] = v.nil? ? nil : v.to_s
-      end
-      output << new_r
-    end
-
-    ComputeMeta.new.call(output, env)
-  end
-end
-
-######################################################
 
 class Main
   include Xform, Test
