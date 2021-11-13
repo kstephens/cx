@@ -7,17 +7,18 @@ require 'cx'
 require 'cx/xform'
 require 'cx/xform/line_out'
 
+# :COMMAND:
+# MarkdownOut:
+#   name: markdown-
+#   aliases: [md, markdown]
+#   synopsis: Generate Markdown table lines.
+#   args: []
+#   opts: {}
+
 module CX
   module Xform
     class MarkdownOut
       include LineOut, Xform
-      # :COMMAND:
-      # MarkdownOut:
-      #   name: markdown-
-      #   aliases: md, markdown
-      #   synopsis: Generate Markdown table lines.
-      #   args: []
-      #   opts: {}
       
       def call input, env
         title = opts[:title] # TODO

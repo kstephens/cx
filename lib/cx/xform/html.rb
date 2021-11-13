@@ -10,17 +10,22 @@ require 'cx/io_buffer'
 
 # :COMMAND:
 # HtmlOut:
-#   name: html-
-#   aliases: html
-#   synopsis: Emits HTML.
+#   name: 'html-'
+#   aliases: [html]
+#   synopsis: 'Emits HTML.'
 #   args: []
 #   opts:
-#     raw:        Columns that contain raw HTML.
-#     filtering:  Adds a filtering input box.
-#     title:      Sets the <title>.
-#     head:       Additional raw HTML at foot of <head>.
-#     body-head:  Additional raw HTML at head of <body>.
-#     body-foot:  Additional raw HTML at foot of <body>.
+#     raw:        'Comma-separated list of columns that contain raw HTML.'
+#     filtering:  'Adds a filtering input box.'
+#     title:      'Sets the <title>.'
+#     table-only: 'Emit the <table> without <html>, <head>, <body>.'
+#     indent:     'Spaces to indent.  Default: 1 space.'
+#     filtering:  'Enable filtering.  Default: true.'
+#     sorting:    'Enable sorting.  Default: true.'
+#     styled:     'Enable styling.  Default: true.'
+#     head:       'Additional raw HTML at foot of <head>.'
+#     body-head:  'Additional raw HTML at head of <body>.'
+#     body-foot:  'Additional raw HTML at foot of <body>.'
 
 module CX
   module Xform

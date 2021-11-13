@@ -6,17 +6,18 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# Region:
+#   name: region
+#   aliases: range
+#   synopsis: Select a range of rows.
+#   args: []
+#   opts:
+
 module CX
   module Xform
     class Region
       include Xform
-      # :COMMAND:
-      # Region:
-      #   name: region
-      #   aliases: range
-      #   synopsis: Select a range of rows.
-      #   args: []
-      #   opts:
       def call input, env
         regions = args.flat_map do|arg|
           arg.strip.split(/\s+|\s*,\s*/)

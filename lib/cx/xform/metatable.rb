@@ -6,18 +6,18 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# MetaTable:
+#   name: metatable
+#   aliases: meta-, meta, columns
+#   synopsis: Generate a table of table metadata.
+#   args: []
+#   opts: {}
+
 module CX
   module Xform
     class MetaTable
       include Xform
-      # :COMMAND:
-      # MetaTable:
-      #   name: metatable
-      #   aliases: meta-, meta, columns
-      #   synopsis: Generate a table of table metadata.
-      #   args: []
-      #   opts: {}
-
       def call input, env
         output = input.header.meta.table
         # output << input.header.meta.to_h

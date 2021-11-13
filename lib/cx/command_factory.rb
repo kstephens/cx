@@ -43,7 +43,11 @@ module CX
         self.options ||= { }
         self.file or raise
         self.path or raise
-        self.aliases = self.aliases.strip.split(/\s*,\s*/, -1).map(&:to_sym)
+        unless Array === self.aliases
+          self.aliases = self.aliases.strip.split(/\s*,\s*/, -1)
+            .map(&:to_sym)
+        end
+        self.aliases = self.aliases.map(&:to_sym)
         self
       end
       
@@ -60,12 +64,15 @@ module CX
       def run!
         yaml = [ ]
         Dir.glob('lib/cx/xform/**.rb').sort.each do |file|
-          yaml += scan!(file)
+          yaml << scan!(file)
         end
         yaml = yaml * "\n" + "\n\n"
-        #puts "yaml ::::"
-        #puts yaml
-        #puts "::::"
+        puts "yaml ::::"
+        lineno = 0
+        yaml.split(/\n/, -1) do | line |
+          puts '%-3d %s' % [lineno += 1, line]
+        end
+        puts "::::"
         CommandFactory.new.load!(yaml) # Verify before write.
         File.write(COMMANDS_YML, yaml)
       end

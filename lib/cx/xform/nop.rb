@@ -6,18 +6,18 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# Nop:
+#   name: nop
+#   aliases: noop
+#   synopsis: Does nothing -- output is same as input.
+#   args: []
+#   opts: {}
+
 module CX
   module Xform
     class Nop
       include Xform
-      # :COMMAND:
-      # Nop:
-      #   name: nop
-      #   aliases: noop
-      #   synopsis: Does nothing output is same as input.
-      #   args: []
-      #   opts: {}
-
       def call input, env
         input
       end

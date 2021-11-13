@@ -22,6 +22,7 @@ CSVOut:
   opts: {}
   file: "lib/cx/xform/csv.rb"
   path: "cx/xform/csv"
+
 EmptyToNull:
   name: empty-null
   aliases: 
@@ -46,18 +47,37 @@ Grep:
   opts:
   file: "lib/cx/xform/grep.rb"
   path: "cx/xform/grep"
-HtmlOut:
-  name: html-
-  aliases: html
-  synopsis: Emits HTML.
+HeaderOut:
+  name: header-out
+  aliases: header-, h-
+  synopsis: Emits a row header.
   args: []
   opts:
-    raw:        Columns that contain raw HTML.
-    filtering:  Adds a filtering input box.
-    title:      Sets the <title>.
-    head:       Additional raw HTML at foot of <head>.
-    body-head:  Additional raw HTML at head of <body>.
-    body-foot:  Additional raw HTML at foot of <body>.
+HeaderOut:
+  name: header-in
+  aliases: -header, -h
+  synopsis: Interprets first row as a column header.
+  args: []
+  opts:
+  file: "lib/cx/xform/header.rb"
+  path: "cx/xform/header"
+HtmlOut:
+  name: 'html-'
+  aliases: [html]
+  synopsis: 'Emits HTML.'
+  args: []
+  opts:
+    raw:        'Comma-separated list of columns that contain raw HTML.'
+    filtering:  'Adds a filtering input box.'
+    title:      'Sets the <title>.'
+    table-only: 'Emit the <table> without <html>, <head>, <body>.'
+    indent:     'Spaces to indent.  Default: 1 space.'
+    filtering:  'Enable filtering.  Default: true.'
+    sorting:    'Enable sorting.  Default: true.'
+    styled:     'Enable styling.  Default: true.'
+    head:       'Additional raw HTML at foot of <head>.'
+    body-head:  'Additional raw HTML at head of <body>.'
+    body-foot:  'Additional raw HTML at foot of <body>.'
   file: "lib/cx/xform/html.rb"
   path: "cx/xform/html"
 IOOut:
@@ -68,9 +88,10 @@ IOOut:
   opts: {}
   file: "lib/cx/xform/io.rb"
   path: "cx/xform/io"
+
 MarkdownOut:
   name: markdown-
-  aliases: md, markdown
+  aliases: [md, markdown]
   synopsis: Generate Markdown table lines.
   args: []
   opts: {}
@@ -87,11 +108,12 @@ MetaTable:
 Nop:
   name: nop
   aliases: noop
-  synopsis: Does nothing output is same as input.
+  synopsis: Does nothing -- output is same as input.
   args: []
   opts: {}
   file: "lib/cx/xform/nop.rb"
   path: "cx/xform/nop"
+
 Quote:
   name: quote
   aliases: q
@@ -108,6 +130,17 @@ Region:
   opts:
   file: "lib/cx/xform/region.rb"
   path: "cx/xform/region"
+RowId:
+  name: row-id
+  aliases:
+  synopsis: Inserts a row id column.
+  args: []
+  opts:
+    name:       'Name of column: default __rowid__.'
+    type:       'Type: "integer" or "uuid".'
+    start:      'Start of integer ids: default 1'
+  file: "lib/cx/xform/row_id.rb"
+  path: "cx/xform/row_id"
 Strip:
   name: strip
   aliases: 

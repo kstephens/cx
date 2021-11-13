@@ -7,17 +7,18 @@ require 'cx'
 require 'cx/xform'
 require 'cx/column_args'
 
+# :COMMAND:
+# Grep:
+#   name: grep
+#   aliases:
+#   synopsis: Filters by regex
+#   args: []
+#   opts:
+
 module CX
   module Xform
     class Grep
       include Xform
-      # :COMMAND:
-      # Grep:
-      #   name: grep
-      #   aliases:
-      #   synopsis: Filters by regex
-      #   args: []
-      #   opts:
       def call input, env
         col_args = ColumnArgs.new.parse!(args).bind!(input.header)
         # pp(col_args: col_args)

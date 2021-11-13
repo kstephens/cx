@@ -8,18 +8,18 @@ require 'cx/xform'
 require 'cx/xform/line_out'
 require 'cx/xform/csv_safe'
 
+# :COMMAND:
+# CSVOut:
+#   name: csv-out
+#   aliases: csv-
+#   synopsis: Generates CSV lines.
+#   args: []
+#   opts: {}
+      
 module CX
   module Xform
     class CSVOut
       include LineOut, Xform
-      # :COMMAND:
-      # CSVOut:
-      #   name: csv-out
-      #   aliases: csv-
-      #   synopsis: Generates CSV lines.
-      #   args: []
-      #   opts: {}
-      
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})

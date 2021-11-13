@@ -6,17 +6,18 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# Eval:
+#   name: html-
+#   aliases: html
+#   synopsis: Evaluates Ruby code for each row.
+#   args: []
+#   opts:
+
 module CX
   module Xform
     class Eval
       include Xform
-      # :COMMAND:
-      # Eval:
-      #   name: html-
-      #   aliases: html
-      #   synopsis: Evaluates Ruby code for each row.
-      #   args: []
-      #   opts:
       def call input, env
         code = args.map do | arg |
           case arg

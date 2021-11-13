@@ -6,17 +6,18 @@
 require 'cx'
 require 'cx/xform'
 
+# :COMMAND:
+# Strip:
+#   name: strip
+#   aliases: 
+#   synopsis: Strip leading and trailing whitespace.
+#   args: []
+#   opts: {}
+
 module CX
   module Xform
     class Strip
       include Xform
-      # :COMMAND:
-      # Strip:
-      #   name: strip
-      #   aliases: 
-      #   synopsis: Strip leading and trailing whitespace.
-      #   args: []
-      #   opts: {}
       def call input, env
         input.each_row_col_val do | r, c, v |
           if String === v
