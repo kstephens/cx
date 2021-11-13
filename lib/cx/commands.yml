@@ -14,7 +14,7 @@ CalculateMeta:
   file: "lib/cx/xform/calculate_meta.rb"
   path: "cx/xform/calculate_meta"
 CSVOut:
-  aliases: csv-
+  aliases:
   synopsis: Generates CSV lines.
   args: []
   opts: {}
@@ -36,8 +36,8 @@ Eval:
   file: "lib/cx/xform/eval.rb"
   path: "cx/xform/eval"
 Grep:
-  aliases:
-  synopsis: Filters by regex
+  aliases: g
+  synopsis: Filters by regex.
   args: []
   opts:
   file: "lib/cx/xform/grep.rb"

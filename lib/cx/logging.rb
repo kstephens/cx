@@ -5,12 +5,13 @@
 
 require 'cx'
 require 'logger'
+require 'cx/inspect'
 require 'cx/util'
 
 module CX
   module Logging
     
-  include PPSafe
+  include Inspect, PPSafe
   def self.log
     @@log ||= ThreadSafe.new(::Logger.new($stderr))
   end

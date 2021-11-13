@@ -4,6 +4,8 @@ require 'yaml'
 
 module CX
   class CommandFactory
+    include Logging
+    
     def initialize
       @by_name = {}
     end
@@ -24,13 +26,25 @@ module CX
       data.each do | cls, info |
         info[:class_name] = cls
         vals = info.values_at(*CommandDesc.members)
-        desc = CommandDesc.new(*vals)
-        @by_name[desc.name] = desc
-        desc.aliases.each{|a| @by_name[a] = desc}
+        cmd = CommandDesc.new(*vals)
+        register! cmd
       end
       self
     end
+
+    def register! cmd
+      register_name! cmd, cmd.name
+      cmd.aliases.each{|a| register_name! cmd, a}
+    end
     
+    def register_name! cmd, name
+      existing = @by_name[name]
+      if existing && existing != cmd
+        raise_ "#{cmd.class_name} : #{name} already exists: #{existing.class_name}"
+      end
+      @by_name[cmd.name] = cmd
+    end
+
     def build_index!
       YamlGenerator.new.run!
     end
