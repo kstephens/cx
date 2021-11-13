@@ -87,6 +87,29 @@ END
 
       it "Transpose" do
         assert_pipeline Pipeline | MetaTable | Transpose, <<'END', size: 5
+|_COL_1,_COL_2,_COL_3,_COL_4,_COL_5,_COL_6|
+|name,id,a,b,b4,X %|
+|name_,id,a,b,b4,x_|
+|visible,true,true,true,true,true|
+|order,0,1,2,3,4|
+|index,0,1,2,3,4|
+|type,Integer,,,,Numeric|
+|min_size,4,2,3,0,2|
+|max_size,4,3,4,6,4|
+|min_value,1001,-62,ekl ,"",12%|
+|max_value,1005,84,ymt,"",9%|
+|blanks,0,0,0,1,0|
+|nulls,0,0,0,0,0|
+|format,,,,,|
+|align,,,,,|
+|align_inferred,right,right,,,|
+|types,Integer,Integer,String,String;BigDecimal,String|
+|type_inferred,Integer,Integer,String,Object,String|
+END
+      end
+      
+      it "Transpose: no-include-header" do
+        assert_pipeline Pipeline | MetaTable | Transpose.new(["--no-include-header"]), <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5|
 |id,a,b,b4,X %|
 |id,a,b,b4,x_|
