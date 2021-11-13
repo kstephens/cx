@@ -13,7 +13,7 @@ module CX
     include Enumerable, Inspect, Logging
     # extend Logging
 
-    attr_reader :columns, :meta, :aliases
+    attr_reader :columns, :meta, :aliases, :version
 
     def initialize cols = nil
       @version = 0
@@ -28,7 +28,9 @@ module CX
           push Column.new(:"_COL_#{i}")
         end
       when Enumerable
-        cols.each{|x| push x} if cols
+        cols.each{|x| push x}
+      else
+        raise_ TypeError, "unexpected columns : #{columns.class}"
       end
       compact!
       @version = 0
@@ -47,7 +49,7 @@ module CX
 
     def size  ; @columns.size  ; end
     def first ; @columns.first ; end
-    def last  ; @columns.last  ; end
+    def last  ; @columns[-1]   ; end
 
     def new ; dup.deepen! ; end
     def deepen!
