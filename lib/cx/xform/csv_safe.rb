@@ -28,7 +28,13 @@ module CX
           end
         end
       end
-  
+
+      def read input
+        input.map do | line |
+          parse_line line
+        end
+      end
+      
       def parse_line line, ri = nil
         row = nil
         begin
@@ -39,7 +45,7 @@ module CX
             row = line.chomp.split(@sep, 9999)
           else
             row = ::CSV.parse_line(line)
-          end
+          end 
         rescue ::CSV::MalformedCSVError => exc
           $stderr.puts "  # cx : WARN: Removing \" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
           line = line.gsub('"', '')

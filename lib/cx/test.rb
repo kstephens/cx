@@ -36,13 +36,13 @@ module CX
       opts[:env] ||= {}
       opts[:table] ||= make_table(opts[:size] || 10)
       out = StringIO.new
-      format = opts[:format] || (Xform::Pipeline.new | Xform::HeaderOut | Xform::CSVOut)
+      format = opts[:format] || (Xform::Pipeline.new | Xform::HeaderOut | Xform::CsvOut)
       pipeline =
         Xform::Pipeline.new |
         Xform::CalculateMeta |
         (pipeline || Xform::Pipeline.new) |
         format |
-        Xform::IOOut.new([out])
+        Xform::IoOut.new([out])
       pipeline.call(opts[:table], opts[:env])
       out.string.
         sub(/\A/, '|').

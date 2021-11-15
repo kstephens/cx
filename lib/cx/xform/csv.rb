@@ -5,20 +5,32 @@
 
 require 'cx'
 require 'cx/xform'
-require 'cx/xform/line_out'
+require 'cx/xform/record'
 require 'cx/xform/csv_safe'
 
 # :COMMAND:
-# CSVOut:
+# CsvOut:
 #   aliases:
 #   synopsis: Generates CSV lines.
 #   args: []
 #   opts: {}
-      
+
 module CX
   module Xform
-    class CSVOut
-      include LineOut, Xform
+    class CsvIn
+      include RecordIn, Xform
+      def initialize!
+        super
+        @csv = CSVSafe.new(opts || {})
+      end
+
+      def parse_content str
+        @csv.read StringIO.new(str)
+      end
+    end
+    
+    class CsvOut
+      include RecordOut, Xform
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})
@@ -26,8 +38,9 @@ module CX
       
       def call input, env
         @cols = input.header.ordered
+        output = make_output
         input.each do | r |
-          output << line(r)
+          output << [ line(r) ]
         end
         env[:content_type] = 'text/csv' # according to RFC 4180.
         @cols = nil
@@ -35,7 +48,7 @@ module CX
       end
       
       def line r
-        [ @csv.generate_line(@cols.map{|c| format_value(r[c])}) ]
+        @csv.generate_line(@cols.map{|c| format_value(r[c])})
       end
     end
   end

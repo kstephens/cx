@@ -5,7 +5,7 @@
 
 require 'cx'
 require 'cx/xform'
-require 'cx/xform/line_out'
+require 'cx/xform/record'
 
 # :COMMAND:
 # MarkdownOut:
@@ -17,13 +17,14 @@ require 'cx/xform/line_out'
 module CX
   module Xform
     class MarkdownOut
-      include LineOut, Xform
+      include RecordOut, Xform
       
       def call input, env
         title = opts[:title] # TODO
         @cols = input.header.ordered
         align = Align.new
         align.set_cols!(@cols)
+        output = make_output
         output << format_row(align, @cols.map(&:to_s), :header)
         output << format_row(align, @cols.map{|_| '---'}, '-')
         input.each do | row |

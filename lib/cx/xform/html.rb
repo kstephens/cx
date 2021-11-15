@@ -5,12 +5,12 @@
 
 require 'cx'
 require 'cx/xform'
-require 'builder' # XML https://github.com/jimweirich/builder
 require 'cx/io_buffer'
+require 'builder' # XML https://github.com/jimweirich/builder
 
 # :COMMAND:
 # HtmlOut:
-#   aliases: [html]
+#   aliases: html,htm
 #   synopsis: 'Emits HTML.'
 #   args: []
 #   opts:
@@ -18,10 +18,10 @@ require 'cx/io_buffer'
 #     filtering:  'Adds a filtering input box.'
 #     title:      'Sets the <title>.'
 #     table-only: 'Emit the <table> without <html>, <head>, <body>.'
-#     indent:     'Spaces to indent.  Default: 1 space.'
-#     filtering:  'Enable filtering.  Default: true.'
-#     sorting:    'Enable sorting.  Default: true.'
-#     styled:     'Enable styling.  Default: true.'
+#     indent:     'Spaces to indent.  Default: 1'
+#     filtering:  'Enable filtering.  Default: true'
+#     sorting:    'Enable sorting.  Default: true'
+#     styled:     'Enable styling.  Default: true'
 #     head:       'Additional raw HTML at foot of <head>.'
 #     body-head:  'Additional raw HTML at head of <body>.'
 #     body-foot:  'Additional raw HTML at foot of <body>.'
@@ -29,7 +29,7 @@ require 'cx/io_buffer'
 module CX
   module Xform
     class HTMLOut
-      include LineOut, Xform
+      include RecordOut
       def initialize!
         super
         @raw_columns = Set.new((opts[:raw] || '')
@@ -50,8 +50,9 @@ module CX
       def call input, env
         @resource = env[:html] ||= {resource: { }}
         @once = (@resource[:once] ||= {})
+        output = make_output
         this = self
-        out = IOBuffer.new(lambda{|line| this << line})
+        out = IOBuffer.new(lambda{|line| output << [ line ]})
         call_(input, env, out)
         output
       end
@@ -83,7 +84,7 @@ module CX
         
         @header = @cols = @h = @col_data = nil
         env[:content_type] = 'text/html'
-        output
+        nil
       end
 
       def raw! x
