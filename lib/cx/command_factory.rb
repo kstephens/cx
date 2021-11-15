@@ -22,8 +22,12 @@ module CX
 
     def load! contents = nil
       contents ||= File.read(COMMANDS_YML)
-      data = YAML.load(contents, symbolize_names: true)
-      data.each do | cls, info |
+      load_commands! YAML.load(contents, symbolize_names: true)
+      self
+    end
+
+    def load_commands! commands
+      commands.each do | cls, info |
         info[:class_name] = cls
         vals = info.values_at(*CommandDesc.members)
         cmd = CommandDesc.new(*vals)
