@@ -20,12 +20,10 @@ module CX
       include Xform
       def call input, env
         col_args = ColumnArgs.new.parse!(args).bind!(input.header)
-        # pp(col_args: col_args)
         preds = col_args.map{|arg| rx_pred arg}
-        pred = lambda do | row |
+        input.select! do | row |
           preds.all? {|p| p.call(row) }
         end
-        input.select!(&pred)
         input
       end
     end

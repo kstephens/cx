@@ -124,9 +124,12 @@ module CX
       end
     end
 
-    INTEGER_RX = /^([-+]?\d+)$/
-    Rational_RX = %r{^([-+]?\d+/\d+)$}
-    FLOAT_RX = /^([-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?)$/i
+    Integer_rx = /^([-+]?\d+)$/
+    Rational_rx = %r{^([-+]?\d+/\d+)$}
+    Float_rx = /^([-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?)$/i
+    Date_rx = /^(\d\d\d\d-(0\d|10|11|12)-([012]\d|30|31))$/
+    Time_rx = /^((\d\d\d\d-(0\d|10|11|12)-([012]\d|30|31))[-T ]\d\d:\d\d:\d\d(\.\d+)?([-+]\d\d:\d\d|Z)?)$/i
+    
     # These are in a specific order:
     [
       [::Integer,
@@ -137,7 +140,7 @@ module CX
             Integer(v)
           when String
             case v
-            when FLOAT_RX
+            when Float_rx
               BigDecimal(v).to_i
             else
               Integer(v)
@@ -148,7 +151,7 @@ module CX
             v.to_i
           end
         },
-        matches(INTEGER_RX),
+        matches(Integer_rx),
       ],
       [::Rational,
         Proc.new{|t, v| Rational(v)},
@@ -162,18 +165,18 @@ module CX
             Rational(v)
           when String
             Rational(case v
-                     when Rational_RX
+                     when Rational_rx
                        v
-                     when INTEGER_RX
+                     when Integer_rx
                        Integer(v)
-                     when FLOAT_RX
+                     when Float_rx
                        BigDecimal(v)
                      else
                        v
                      end)
           end
         },
-        matches(Rational_RX),
+        matches(Rational_rx),
       ],
       [::BigDecimal,
         Proc.new{|t, v| BigDecimal(v) },
@@ -187,7 +190,7 @@ module CX
             BigDecimal(v)
           end
         },
-        matches(FLOAT_RX),
+        matches(Float_rx),
       ],
       [::Float,
         Proc.new{|t, v| Float(v) },
@@ -201,7 +204,7 @@ module CX
             v.to_f
           end
         },
-        matches(FLOAT_RX),
+        matches(Float_rx),
       ],
       [::Time,
         Proc.new {|t, v|
@@ -222,7 +225,7 @@ module CX
             Time.parse(t.match(v))
           end
         },
-        matches(/^(\d\d\d\d-\d\d-\d\d[-T ]\d\d:\d\d:\d\d(\.\d+)?(-\d\d:\d\d|Z)?)$/i),
+        matches(Time_rx),
         Proc.new {|t, v| v.iso8601(6)}
       ],
       [::Date,
@@ -234,10 +237,15 @@ module CX
           when Numeric          
             Time.at(v.to_f).to_date
           when String
-            Date.parse(t.match(v))
+            case v
+            when Time_rx
+              Date.parse($2)
+            else              
+              Date.parse(t.match(v))
+            end
           end
         },
-        matches(/^(\d\d\d\d-(0\d|10|11|12)-([012]\d|30|31))$/),
+        matches(Date_rx),
       ],
       [::Boolean,
         Proc.new do | v |
