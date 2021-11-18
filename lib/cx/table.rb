@@ -117,6 +117,11 @@ module CX
       self
     end
 
+    def set_rows! rows
+      @rows = rows
+      self
+    end
+    
     def write out = nil
       out ||= $stdout
       each{|r| r.write(out)}

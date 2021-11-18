@@ -38,6 +38,41 @@ END
 |1100,-27,ylb ,39.6,39%|
 END
       end
+
+      it "Sort" do
+        assert_pipeline Sort.new(["b"]), <<'END', size: 5
+|id,a,b,b4,X %|
+|1001,79,ekl ,"",133%|
+|1005,-38,oub,1.6,9%|
+|1004,-62,rcz ,1.2,127%|
+|1003,84,yis,0.8,12%|
+|1002,77,ymt,0.4,48%|
+END
+      end
+
+      it "Sort : reverse" do
+        assert_pipeline (Pipeline | CalculateMeta | Sort.new(["b:-"])), <<'END', size: 5
+|id,a,b,b4,X %|
+|1002,77,ymt,0.4,48%|
+|1003,84,yis,0.8,12%|
+|1004,-62,rcz ,1.2,127%|
+|1005,-38,oub,1.6,9%|
+|1001,79,ekl ,"",133%|
+END
+      end
+
+      # FIXME!
+      it "Sort : numerically" do
+        assert_pipeline (Pipeline | CalculateMeta | Sort.new(["a"])), <<'END', size: 5
+|id,a,b,b4,X %|
+|1005,-38,oub,1.6,9%|
+|1004,-62,rcz ,1.2,127%|
+|1002,77,ymt,0.4,48%|
+|1001,79,ekl ,"",133%|
+|1003,84,yis,0.8,12%|
+END
+      end
+
       it "Region" do
         assert_pipeline Region.new(["11..23"]), <<'END', size: 100
 |id,a,b,b4,X %|
@@ -56,6 +91,7 @@ END
 |1023,-82,pmc,8.8,63%|
 END
       end
+
       it "Region : reverse" do
         assert_pipeline Region.new(["9..1"]), <<'END', size: 100
 |id,a,b,b4,X %|
@@ -110,7 +146,7 @@ END
 END
       end
       
-      it "Transpose: no-include-header" do
+      it "Transpose : --no-include-header" do
         assert_pipeline Pipeline | MetaTable | Transpose.new(["--no-include-header"]), <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5|
 |id,a,b,b4,X %|

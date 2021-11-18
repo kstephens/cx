@@ -38,9 +38,9 @@ module CX
         end
       end
 
-      def inspect_content
-        " (#{@apps.map(&:inspect) * ' >> '})"
-    end
+      def inspect_content mode
+        "[#{@apps.map(&:inspect) * ' | '}]"
+      end
    end
   end
 end

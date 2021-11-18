@@ -135,6 +135,13 @@ RowId:
     start:      'Start of integer ids: default 1'
   file: "lib/cx/xform/row_id.rb"
   path: "cx/xform/row_id"
+Sort:
+  aliases: s
+  synopsis: Sorts by specified columns.
+  args: []
+  opts:
+  file: "lib/cx/xform/sort.rb"
+  path: "cx/xform/sort"
 Strip:
   aliases: 
   synopsis: Strip leading and trailing whitespace.
