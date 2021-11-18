@@ -29,7 +29,7 @@ require 'builder' # XML https://github.com/jimweirich/builder
 module CX
   module Xform
     class HTMLOut
-      include RecordOut
+      include OutputFormat, RecordOut
       def initialize!
         super
         @raw_columns = Set.new((opts[:raw] || '')
@@ -125,19 +125,7 @@ module CX
       
       def html_table input, env
         h.table(id: 'cx-table', class: 'cx-table') do
-          h.thead do
-            html_filtering(input, env) if opts[:filtering]
-            h.tr do
-              a_base = {class: 'cx-column-header'}
-              h.th(a_base.merge("data-sort-method" => :number), "#")
-              cols.each do | c |
-                a = a_base
-                a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
-                a = a.merge(title: "type: #{c.meta.type_ || :UNKNOWN}")
-                h.th(a, c)
-              end
-            end
-          end
+          html_header(input, env) if include_header?
           h.tbody({id: "cx-table-tbody"}) do
             ri = 0
             input.each do | r |
@@ -159,6 +147,22 @@ module CX
                   end
                 end
               end
+            end
+          end
+        end
+      end
+
+      def html_header input, env
+        h.thead do
+          html_filtering(input, env) if opts[:filtering]
+          h.tr do
+            a_base = {class: 'cx-column-header'}
+            h.th(a_base.merge("data-sort-method" => :number), "#")
+            cols.each do | c |
+              a = a_base
+              a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+              a = a.merge(title: "type: #{c.meta.type_ || :UNKNOWN}")
+              h.th(a, c)
             end
           end
         end

@@ -17,7 +17,7 @@ require 'cx/xform/record'
 module CX
   module Xform
     class MarkdownOut
-      include RecordOut, Xform
+      include OutputFormat, RecordOut, Xform
       
       def call input, env
         title = opts[:title] # TODO
@@ -25,8 +25,10 @@ module CX
         align = Align.new
         align.set_cols!(@cols)
         output = make_output
-        output << format_row(align, @cols.map(&:to_s), :header)
-        output << format_row(align, @cols.map{|_| '---'}, '-')
+        if include_header?
+          output << format_row(align, @cols.map(&:to_s), :header)
+          output << format_row(align, @cols.map{|_| '---'}, '-')
+        end
         input.each do | row |
           output << format_row(align, row.vals(@cols), nil)
         end

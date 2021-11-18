@@ -44,16 +44,17 @@ Grep:
   path: "cx/xform/grep"
 HeaderIn:
   aliases: [-header, -h]
-  synopsis: Interprets first row as a column header.
+  synopsis: Interprets first row as a column name header.
   args: []
   opts:
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
 HeaderOut:
   aliases: [header-, h-]
-  synopsis: Emits header as first row.
+  synopsis: Emits column names as first row.
   args: []
   opts:
+    '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
 HtmlOut:
