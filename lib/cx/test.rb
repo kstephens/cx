@@ -34,29 +34,65 @@ module CX
     
     def run_pipeline pipeline, opts = {}
       opts[:env] ||= {}
-      opts[:table] ||= make_table(opts[:size] || 10)
+      table = nil
+      
       out = StringIO.new
-      format = opts[:format] || (Xform::Pipeline.new | Xform::HeaderOut | Xform::CsvOut)
+      output_format = opts[:output_format] || (Xform::Pipeline.new | Xform::HeaderOut | Xform::CsvOut)
+      input_pipeline = Xform::Pipeline.new
+
+      case
+      when opts[:input_data]
+        input_format = opts[:input_format] || Xform::CsvIn
+        input_io = StringIO.new(opts[:input_data])
+        input_pipeline =
+          Xform::Pipeline.new |
+          Xform::IoIn.new([input_io]) |
+          input_format
+        # binding.pry
+      when opts[:table]
+        table = opts[:table]
+      else
+        table = make_table(opts[:size] || 10)
+      end
+      
       pipeline =
-        Xform::Pipeline.new |
+        input_pipeline |
         Xform::CalculateMeta |
         (pipeline || Xform::Pipeline.new) |
-        format |
+        output_format |
         Xform::IoOut.new([out])
-      pipeline.call(opts[:table], opts[:env])
+      pipeline.call(table, opts[:env])
       out.string.
         sub(/\A/, '|').
         gsub(/\n/, "|\n|").
         sub(/\|\Z/, '')
     end
     
-    def assert_pipeline pipeline, expected, opts = {}
-      expected = expected.gsub(/ *$/, '')
-      actual = run_pipeline(pipeline, opts)
-      if actual != expected
-        File.write("spec/last-pipeline.txt", actual)
+    def assert_pipeline pipeline, *args
+      # pp([:assert_pipeline, :args, args])
+      expected = opts = nil
+      case args.map(&:class)
+      when [String, Hash]
+        expected, opts = args
+      when [String]
+        expected = args.first
+      when [Hash]
+        opts = args.first
+      else
+        raise ArgumentError, args.inspect
       end
-      expect(actual) .to eq(expected)
+      
+      actual = run_pipeline(pipeline, opts || {})
+      if expected
+        if actual != expected
+          File.write("spec/last-pipeline.txt", actual)
+        end
+        expect(actual) .to eq(expected)
+      else
+        # puts actual
+        # binding.pry
+      end
+      actual
     end
     
     extend self

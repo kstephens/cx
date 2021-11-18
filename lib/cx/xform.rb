@@ -45,6 +45,17 @@ module CX
       # TODO:
       include Xform
     end
+
+    module InputFormat
+      include Format
+    end
+    
+    module OutputFormat
+      include Format
+      def include_header?
+        opts.or_default(:include_header, true)
+      end
+    end
     
     module SelectColumns
       include Xform

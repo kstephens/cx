@@ -56,7 +56,9 @@ module CX
       include IoBase
       def call input, env
         open(@io, "r", env) do | ioh |
-          Table.new([ioh.read], Header.new([:_DATA_]).each{|c| c.meta.type == :String})
+          header = Header.new([:_INPUT_]).each{|c| c.meta.type == :String}
+          input_string = ioh.read
+          Table.new([[input_string]], header)
         end
       end
       def default_io ; $stdin ; end

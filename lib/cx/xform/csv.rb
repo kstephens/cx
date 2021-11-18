@@ -24,8 +24,8 @@ module CX
         @csv = CSVSafe.new(opts || {})
       end
 
-      def parse_content str
-        @csv.read StringIO.new(str)
+      def parse_record str
+        @csv.parse_line(str)
       end
     end
     

@@ -29,12 +29,6 @@ module CX
         end
       end
 
-      def read input
-        input.map do | line |
-          parse_line line
-        end
-      end
-      
       def parse_line line, ri = nil
         row = nil
         begin
@@ -57,7 +51,7 @@ module CX
             row = line.split(',', -1)
           end
         end
-        row.map!{|s| unescape_value(s)}
+        row ? row.map!{|s| unescape_value(s)} : [ ]
       end
 
       def generate_line row, ri = nil

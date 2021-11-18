@@ -11,6 +11,7 @@ module CX
   module Xform
     RSpec.describe 'Xform' do
       include CX::Test
+
       it "Grep" do
         assert_pipeline Grep.new(["a:-8"]), <<'END', size: 100
 |id,a,b,b4,X %|
@@ -21,6 +22,7 @@ module CX
 END
 
       end
+      
       it "Grep : negated" do
         assert_pipeline Grep.new(["id:!;^10[1-9]"]), <<'END', size: 100
 |id,a,b,b4,X %|
@@ -166,7 +168,7 @@ END
       end
       
       it "MarkdownOut" do
-        assert_pipeline nil, <<'END', format: MarkdownOut
+        assert_pipeline nil, <<'END', output_format: MarkdownOut
 || id    | a     | b     | b4     | X %   ||
 || ----: | ----: | ----- | ------ | ----: ||
 ||  1001 |    79 | ekl   |        |  133% ||
@@ -182,9 +184,24 @@ END
 END
       end
 
+      it "MarkdownOut : --no-include-header" do
+        assert_pipeline nil, <<'END', output_format: MarkdownOut.new(['--no-include-header'])
+||  1001 |    79 | ekl   |        |  133% ||
+||  1002 |    77 | ymt   | 0.4    |   48% ||
+||  1003 |    84 | yis   | 0.8    |   12% ||
+||  1004 |   -62 | rcz   | 1.2    |  127% ||
+||  1005 |   -38 | oub   | 1.6    |    9% ||
+||  1006 |    67 | hjn   |        |  187% ||
+||  1007 |   -72 | xgv   | 2.4    |   55% ||
+||  1008 |   -21 | qeg   | 2.8    |  135% ||
+||  1009 |   -99 | ali   | 3.2    |  191% ||
+||  1010 |   -71 | jtj   | 3.6    |   25% ||
+END
+      end
+
       it "HTMLOut" do
         format = HTMLOut.new(["--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2'])
-        assert_pipeline nil, <<'END', format: format, size: 5
+        assert_pipeline nil, <<'END', output_format: format, size: 5
 |<table>|
 |  <thead>|
 |    <tr>|
@@ -216,6 +233,32 @@ END
 |</table>|
 END
       end
+
+      it "HTMLOut : --no-include-header" do
+        format = HTMLOut.new(["--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2', '--no-include-header'])
+        assert_pipeline nil, <<'END', output_format: format, size: 5
+|<table>|
+|  <tbody>|
+|    <tr>|
+|      <td>1</td>|
+|<td>1001</td><td>79</td><td>ekl </td><td></td><td>133%</td>    </tr>|
+|    <tr>|
+|      <td>2</td>|
+|<td>1002</td><td>77</td><td>ymt</td><td>0.4</td><td>48%</td>    </tr>|
+|    <tr>|
+|      <td>3</td>|
+|<td>1003</td><td>84</td><td>yis</td><td>0.8</td><td>12%</td>    </tr>|
+|    <tr>|
+|      <td>4</td>|
+|<td>1004</td><td>-62</td><td>rcz </td><td>1.2</td><td>127%</td>    </tr>|
+|    <tr>|
+|      <td>5</td>|
+|<td>1005</td><td>-38</td><td>oub</td><td>1.6</td><td>9%</td>    </tr>|
+|  </tbody>|
+|</table>|
+END
+      end
+
 
       it "Eval" do
         assert_pipeline Eval.new(['_.foo = "#{a} #{b}"']), <<'END'
@@ -282,7 +325,7 @@ END
       end
 
       it "Quote" do
-        assert_pipeline (Pipeline | Quote | EmptyToNull | CalculateMeta), <<'END', format: MarkdownOut
+        assert_pipeline (Pipeline | Quote | EmptyToNull | CalculateMeta), <<'END', output_format: MarkdownOut
 || id    | a     | b      | b4     | X %   ||
 || ----: | ----: | ------ | -----: | ----: ||
 ||  1001 |    79 | "ekl " |        |  133% ||
@@ -295,6 +338,39 @@ END
 ||  1008 |   -21 | qeg    |    2.8 |  135% ||
 ||  1009 |   -99 | ali    |    3.2 |  191% ||
 ||  1010 |   -71 | "jtj " |    3.6 |   25% ||
+END
+      end
+
+      it "CsvIn" do
+        actual = assert_pipeline (Pipeline | HeaderIn), input_data: <<'END'
+a,b,c
+1,2,3
+x,y,z
+END
+        expect(actual) .to eq(<<'END')
+|a,b,c|
+|1,2,3|
+|x,y,z|
+END
+      end
+      
+      it "HeaderOut : --meta-columns=name,..." do
+        assert_pipeline (Pipeline | HeaderOut.new(['--meta-columns=name,min_size,blanks'])), <<'END'
+|__META__,id,a,b,b4,X %|
+|__META__,id,a,b,b4,X %|
+|name,id,a,b,b4,X %|
+|min_size,4,2,3,0,2|
+|blanks,0,0,0,2,0|
+|"",1001,79,ekl ,"",133%|
+|"",1002,77,ymt,0.4,48%|
+|"",1003,84,yis,0.8,12%|
+|"",1004,-62,rcz ,1.2,127%|
+|"",1005,-38,oub,1.6,9%|
+|"",1006,67,hjn,"",187%|
+|"",1007,-72,xgv ,2.4,55%|
+|"",1008,-21,qeg,2.8,135%|
+|"",1009,-99,ali,3.2,191%|
+|"",1010,-71,jtj ,3.6,25%|
 END
       end
     end

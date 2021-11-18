@@ -15,7 +15,7 @@ module CX
       def initialize *args
         super
         @field_sep    = opts[:field_sep]   || ","
-        @record_sep   = opts[:record_sep]  || /\n\r?/
+        @record_sep   = opts[:record_sep]  || $/
         @multi_sep    = opts[:multi_sep]   || ";"
       end
 
@@ -26,21 +26,28 @@ module CX
     end
 
     module RecordIn
-      include RecordBase
+      include RecordBase, InputFormat
       def call input, env
         raise_ ArgumentError, "expected one input row" unless input.size == 1
-        raise_ ArgumentError, "expected one input col" unless input.header.size == 1
-        rows = parse_content(input[0][0])
+        raise_ ArgumentError, "expected one input col" unless input.first.size == 1
+        input_string = input[0][0].to_s
+        rows = input_string.split(@record_sep, 99999999)
+        rows.pop if rows[-1].empty?
+        rows = rows.map!{|line| parse_record(line)}
         header = Header.
           new(rows.first ? rows.first.size : 0).
           each{|c| c.meta.type = ::String}
         output = Table.new(rows, header)
         output
       end
+
+      def parse_record line
+        raise Exception, line
+      end
     end
     
     module RecordOut
-      include RecordBase
+      include RecordBase, OutputFormat
       def make_output
         make_record_table([:_RECORD_])
       end
