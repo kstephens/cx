@@ -11,10 +11,11 @@ require 'set'
 require 'cx/boolean'
 
 module CX
-  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :formatter, :name)
+  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :formatter, :name, :to_s)
     def initialize *args
       super
-      self.name = mod.name.to_sym
+      self.to_s = mod.name.downcase.freeze
+      self.name = self.to_s.to_sym
       self.formatter ||= Proc.new{|t, v| v.to_s}
     end
 
