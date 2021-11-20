@@ -56,7 +56,7 @@ module CX
       include IoBase
       def call input, env
         open(@io, "r", env) do | ioh |
-          header = Header.new([:_INPUT_]).each{|c| c.meta.type == :String}
+          header = Header.new([:_INPUT_]).each{|c| c.meta.type = ::String}
           input_string = ioh.read
           Table.new([[input_string]], header)
         end

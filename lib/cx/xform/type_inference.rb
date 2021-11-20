@@ -38,21 +38,12 @@ module CX
         case
         when v.nil?
           vt = nil
-        when ! (vc = Type.try_parse!(v)).nil?
+        when ! (vc = Type.parse(v)).nil?
           vt = vc.class
         else
           vt = v.class
         end
         [vc, vt]
-      end
-
-      def infer_string_value v, c
-        case v
-        when String
-          formatter.parse(v, c.format)
-        else
-          v
-        end
       end
 
       def gcd_ignore_nil t1, t2, ignore = nil

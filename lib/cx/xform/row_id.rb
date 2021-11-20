@@ -37,7 +37,7 @@ module CX
               require 'securerandom'
               lambda { || SecureRandom.uuid }
             end
-          col.meta.type = String
+          col.meta.type = ::String
           col.meta.min_size = col.meta.max_size = gen.call.size
         when 'integer'
           i = (opts[:start] || 1).to_i
@@ -45,7 +45,7 @@ module CX
           # + 1 to handle negative start
           max_i = i + input.rows.size
           gen = lambda { || i += 1 }
-          col.meta.type = Integer
+          col.meta.type = ::Integer
           col.meta.min_value = i
           col.meta.max_value = max_i
           col.meta.min_size  = i.to_s.size

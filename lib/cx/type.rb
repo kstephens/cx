@@ -11,7 +11,8 @@ require 'set'
 require 'cx/boolean'
 
 module CX
-  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :formatter, :name, :to_s)
+  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :parser, :formatter, :name, :to_s)
+    
     def initialize *args
       super
       self.to_s = mod.name.downcase.freeze
@@ -19,73 +20,97 @@ module CX
       self.formatter ||= Proc.new{|t, v| v.to_s}
     end
 
-    def cast v
-      case v
-      when nil, mod
-        v
-      else
-        caster.call(self, v) rescue nil
-      end
-    end
-
-    def coerce v
-      case v
-      when nil, mod
-        v
-      else
-        coercer.call(self, v) rescue nil
-      end
-    end
-
-    def match v
+    def match v, anchored = true
       case v
       when String
-        matcher.call(self, v)
+        if m = matcher.call(self, v)
+          return nil if anchored && m != v
+          m
+        end
       end
+    rescue
+      nil
     end
     
-    def match_exact v
-      case v
-      when String
-        s = matcher.call(self, v) and s.size == v.size and s
-      end
-    end
-    
-    def parse v
+    def parse v, anchored = true
       case v
       when nil, mod
         v
       when String
-        if vp = match(v)
-          vp = coerce(vp)
+        if vp = match(v, anchored)
+          return nil if anchored && vp != v
+          vp = parser.call(self, vp)
         end
         vp
-      else
-        nil
       end
+    rescue
+      nil
+    end
+
+    def self.parse v, anchored = true, types = @@types
+      return v unless String === v
+      types.find do | t |
+        unless (cv = t.parse(v, anchored)).nil?
+          return cv
+        end
+      end
+      nil
     end
 
     def format v
       formatter.call(self, v)
     end
     
-    def self.try_parse! v, types = @@types
-      return v if v.nil?
-      return v unless String === v
-      types.each do | t |
-        # binding.pry if v.to_s =~ /%$/
-        cv = t.parse(v)
-        # pp(v: v, t: t.mod, cv: cv) if cv
-        return cv unless cv.nil?
+    def cast v
+      case v
+      when nil, mod
+        v
+      else
+        coerce(v) || caster.call(self, v)
       end
+    rescue
       nil
     end
 
+    def cast_string str
+      if pv = self.parse(v)
+        return pv
+      end
+      @@types.each do | t2 |
+        if pv = t2.parse(v) and cv = t.cast(v)
+          return cv
+        end
+      end
+      nil
+    end
+    
+    def coerce v
+      case v
+      when nil, mod
+        v
+      when String
+        case v = parse(v)
+        when nil, mod
+          v
+        else
+          coercer.call(self, v)
+        end
+      else
+        coercer.call(self, v)
+      end
+    rescue
+      nil
+    end
+
+    ##################################################
+    
     @@types = [ ]
     @@types_by = { }
 
     def self.[] x
       case x
+      when Type
+        x
       when Module, Symbol, String
         @@types_by[x]
       end or raise ArgumentError, "unknown Type #{x.inspect}"
@@ -106,11 +131,13 @@ module CX
       @@types
     end    
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    
     ANY  = Proc.new {|t, v| v}
     NONE = Proc.new {|t, v| nil}
     def self.matches rx
       lambda do | t, v |
-        rx.match(v) ? $1 : nil
+        rx.match(v){|m| m[0]}
       end
     end
     
@@ -125,27 +152,32 @@ module CX
       end
     end
 
-    Integer_rx = /^([-+]?\d+)$/
-    Rational_rx = %r{^([-+]?\d+/\d+)$}
-    Float_rx = /^([-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?)$/i
-    Date_rx = /^(\d\d\d\d-(0\d|10|11|12)-([012]\d|30|31))$/
-    Time_rx = /^((\d\d\d\d-(0\d|10|11|12)-([012]\d|30|31))[-T ]\d\d:\d\d:\d\d(\.\d+)?([-+]\d\d:\d\d|Z)?)$/i
+    Integer_rx    = %r{[-+]?\d+}
+    Rational_rx   = %r{[-+]?\d+/\d+}
+    Float_rx      = %r{[-+]?(\d+\.\d*|\.\d+|\d+)([efg][-+]?\d+)?}i
+    Date_rx       = %r{(\d\d\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])}
+    TimeOfDay_rx  = %r{([01]\d|2[0-3]):([0-5]\d):([0-5]\d|60)(\.\d+)?}
+    TimeZone_rx   = %r{[-+]\d\d:?\d\d|Z$}
+    Time_rx       = %r{((\d\d\d\d)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]))[-tT ]\d\d:\d\d:\d\d(\.\d+)? ?([-+]\d\d:?\d\d|Z)?}
     
     # These are in a specific order:
     [
       [::Integer,
-        Proc.new{|t, v| Integer(v)},
+        Proc.new{|t, v|
+          case v
+          when String
+            case v
+            when Integer_RX
+              Integer(v)
+            when Float_RX
+              Integer(BigDecimal(v))
+            end
+          end
+        },
         Proc.new{|t, v|
           case v
           when Numeric
             Integer(v)
-          when String
-            case v
-            when Float_rx
-              BigDecimal(v).to_i
-            else
-              Integer(v)
-            end
           when Boolean
             b2i(v)
           when Time
@@ -153,9 +185,28 @@ module CX
           end
         },
         matches(Integer_rx),
+        Proc.new{|t, v|
+          Integer(v)
+        },
       ],
       [::Rational,
-        Proc.new{|t, v| Rational(v)},
+        Proc.new{|t, v|
+          case v
+          when Numeric
+            Rational(v)
+          when String
+            case v
+            when Integer_RX
+              Rational(v)
+            when Float_RX
+              Rational(BigDecimal(v))
+            when Rational_RX
+              Rational(v)
+            end
+          when Boolean
+            b2i(v)
+          end
+        },
         Proc.new{|t, v|
           case v
           when Float
@@ -164,20 +215,19 @@ module CX
             # Rational((123.23).to_s) => (12323/100)
           when Numeric
             Rational(v)
-          when String
-            Rational(case v
-                     when Rational_rx
-                       v
-                     when Integer_rx
-                       Integer(v)
-                     when Float_rx
-                       BigDecimal(v)
-                     else
-                       v
-                     end)
           end
         },
         matches(Rational_rx),
+        Proc.new{|t, v|
+          Rational(case v
+                   when Rational_rx
+                     v
+                   when Integer_rx
+                     Integer(v)
+                   when Float_rx
+                     BigDecimal(v)
+                   end)
+        },
       ],
       [::BigDecimal,
         Proc.new{|t, v| BigDecimal(v) },
@@ -187,11 +237,14 @@ module CX
             BigDecimal(v.to_s)
           when Rational
             BigDecimal(v.to_f.to_s)
-          when Numeric, String
+          when Numeric
             BigDecimal(v)
           end
         },
         matches(Float_rx),
+        Proc.new{|t, v|
+          BigDecimal(v)
+        },
       ],
       [::Float,
         Proc.new{|t, v| Float(v) },
@@ -199,13 +252,17 @@ module CX
           case v
           when Rational
             v.to_f
-          when Numeric, String
+          when Numeric
             Float(v)
           when Time
             v.to_f
           end
         },
         matches(Float_rx),
+        Proc.new{|t, v|
+          # binding.pry
+          Float(v)
+        },
       ],
       [::Time,
         Proc.new {|t, v|
@@ -222,79 +279,94 @@ module CX
             Time.at(v)
           when Numeric          
             Time.at(v.to_f)
-          when String
-            Time.parse(t.match(v))
           end
         },
         matches(Time_rx),
+        Proc.new {|t, v|
+          Time.parse(v)
+        },
         Proc.new {|t, v| v.iso8601(6)}
       ],
       [::Date,
-        Proc.new {|t, v| Date.parse(t.match(v))},
+        Proc.new {|t, v|
+          case v
+          when Time
+            v.to_date
+          end
+        },
         Proc.new {|t, v|
           case v
           when Time
             v.to_date
           when Numeric          
             Time.at(v.to_f).to_date
-          when String
-            case v
-            when Time_rx
-              Date.parse($2)
-            else              
-              Date.parse(t.match(v))
-            end
           end
         },
         matches(Date_rx),
+        Proc.new {|t, v|
+          # binding.pry if v =~ /^2021-/
+          case v
+          when Date_rx
+            Date.parse(v)
+          when Time_rx
+            Time.parse(v).to_date
+          end
+        },
       ],
       [::Boolean,
         Proc.new do | v |
           case v
-          when "true"
-            true
-          when "false"
-            false
+          when Numeric
+            ! v.zero?
           end
         end,
         Proc.new{|t, v|
           case v
           when Numeric
             ! v.zero?
-          when String
-            case v
-            when /^(true|t|-?[1-9]\d*)$/i
-              true
-            when /^(false|f|0+)$/i
-              false
-            end
           end
         },
-        matches(/^(true|false)$/i),
+        matches(/^(true|t|-?[1-9]\d*|false|f|0+)$/i),
+        Proc.new {|t, v|
+          case v
+          when /^(true|t|-?[1-9]\d*)$/i
+            true
+          when /^(false|f|0+)$/i
+            false
+          end
+        },
       ],
       [::String,
         Proc.new{|t, v| v.to_s },
         Proc.new{|t, v| v.to_s },
         ANY,
+        Proc.new{|t, v| v.to_s },
       ],
       [::Symbol,
-        Proc.new{|t, v| v.to_sym},
         Proc.new{|t, v|
-          case v
-          when String
-            v.to_sym
-          end
+          String === v ? v.to_sym : nil
         },
-        NONE,
+        Proc.new{|t, v| nil },
+        ANY,
+        Proc.new{|t, v|
+          String === v ? v.to_sym : nil
+        },
       ],
-     [::Object,
-       Proc.new{|t, v| v },
-       Proc.new{|t, v| v },
-       ANY,
-       Proc.new{|t, v| v.inspect},
-     ],
-   ].each do | args |
-     add!(*args)
+      [::Object,
+        Proc.new{|t, v| v },
+        Proc.new{|t, v| v },
+        ANY,
+        Proc.new{|t, v| v },
+        Proc.new{|t, v| v.inspect},
+      ],
+      [::Numeric,
+        Proc.new{|t, v| Numeric === v ? v : nil},
+        Proc.new{|t, v| Numeric === v ? v : nil},
+        NONE,
+        Proc.new{|t, v| v },
+      ],
+    ].each do | args |
+      add!(*args)
    end
   end
 end

@@ -51,7 +51,7 @@ module CX
 
         input.header.each do | c |
           m = c.meta
-          if m.type_inferred && m.type_inferred < Numeric
+          if m.type_inferred && m.type_inferred <= ::Numeric
             m.align_inferred = :right
           end
         end

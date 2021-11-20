@@ -60,6 +60,8 @@ module CX
     module SelectColumns
       include Xform
       def initialize!
+        super
+        # TODO
       end
     end
 

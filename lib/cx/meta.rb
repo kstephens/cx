@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'cx/boolean'
+require 'cx/type'
 
 module CX
   class Meta
