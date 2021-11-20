@@ -91,7 +91,7 @@ module CX
       types.each do | t |
         values.each do | v |
           cv = yield t, v
-          actual << [ t.name, v.class, stringify(v), cv.class, stringify(cv) ]
+          actual << [ v.class, stringify(v), :>>, t.name, :>>, cv.class, stringify(cv) ]
         end
       end
       actual
