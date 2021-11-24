@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'cx/args'
+require 'cx/inspect'
 require 'cx/xform/pipeline'
 
 module CX
@@ -13,16 +14,16 @@ module CX
 
     def parse! _argv
       @argv = _argv.dup
-
-      @global = Args.new.parse!(argv, no_args: true)
-      args = @global.args
-      @global.args = []
-      @pipeline = parse_pipeline! args
+      @pipeline = parse_pipeline! @argv.dup
+      @global = @pipeline.args
       self
     end
 
-    def parse_pipeline! args
-      parse_args! args, Pipeline.new
+    def parse_pipeline! argv
+      opts = Args.new.parse!(argv, no_args: true)
+      argv[0 .. -1] = opts.args
+      opts.args = []
+      parse_args! argv, Pipeline.new(opts)
     end
     
     def parse_args! args, pipeline
@@ -51,6 +52,7 @@ module CX
     end
     
     class Command < Struct.new(:argv, :args)
+      include Inspect
       def initialize argv
         self.argv = argv
         self.args = Args.new.parse!(argv)
@@ -69,9 +71,13 @@ module CX
         )
         factory.call(args)
       end
+      def inspect_content mode
+        "#{args.inspect}"
+      end
     end
 
-    class Pipeline < Struct.new(:commands)
+    class Pipeline < Struct.new(:args, :commands)
+      include Inspect
       def initialize *args
         super
         self.commands ||= [ ]
@@ -88,6 +94,9 @@ module CX
           xform >> command.build_xform(factory)
         end
         xform
+      end
+      def inspect_content mode
+        "#{args.inspect} #{commands.inspect}"
       end
     end
   end

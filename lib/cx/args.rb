@@ -4,9 +4,11 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/inspect'
 
 module CX
   class Args
+    include Inspect
     attr_accessor :argv, :args, :opts
 
     def initialize
@@ -65,6 +67,10 @@ module CX
     end
 
     alias :to_a :argv
+
+    def inspect_content mode
+      "#{opts.inspect} #{args.inspect}"
+    end
   end
 end
 
