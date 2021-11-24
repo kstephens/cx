@@ -32,6 +32,10 @@ module CX
       end
       table
     end
+
+    def build cls, *argv
+      cls.new.build argv
+    end
     
     def run_pipeline pipeline, opts = {}
       opts[:env] ||= {}
@@ -47,7 +51,7 @@ module CX
         input_io = StringIO.new(opts[:input_data])
         input_pipeline =
           Xform::Pipeline.new |
-          Xform::IoIn.new([input_io]) |
+          build(Xform::IoIn, input_io) |
           input_format
         # binding.pry
       when opts[:table]
@@ -61,7 +65,7 @@ module CX
         Xform::CalculateMeta |
         (pipeline || Xform::Pipeline.new) |
         output_format |
-        Xform::IoOut.new([out])
+        build(Xform::IoOut, out)
       pipeline.call(table, opts[:env])
       out.string.
         sub(/\A/, '|').

@@ -13,7 +13,7 @@ module CX
       include CX::Test
 
       it "Grep" do
-        assert_pipeline Grep.new(["a:-8"]), <<'END', size: 100
+        assert_pipeline build(Grep, "a:-8"), <<'END', size: 100
 |id,a,b,b4,X %|
 |1023,-82,pmc,8.8,63%|
 |1064,-81,dwn ,25.2,103%|
@@ -24,7 +24,7 @@ END
       end
       
       it "Grep : negated" do
-        assert_pipeline Grep.new(["id:!;^10[1-9]"]), <<'END', size: 100
+        assert_pipeline build(Grep, "id:!;^10[1-9]"), <<'END', size: 100
 |id,a,b,b4,X %|
 |1001,79,ekl ,"",133%|
 |1002,77,ymt,0.4,48%|
@@ -40,7 +40,7 @@ END
       end
 
       it "Sort" do
-        assert_pipeline Sort.new(["b"]), <<'END', size: 5
+        assert_pipeline build(Sort, "b"), <<'END', size: 5
 |id,a,b,b4,X %|
 |1001,79,ekl ,"",133%|
 |1005,-38,oub,1.6,9%|
@@ -51,7 +51,7 @@ END
       end
 
       it "Sort : reverse" do
-        assert_pipeline (Pipeline | CalculateMeta | Sort.new(["b:-"])), <<'END', size: 5
+        assert_pipeline (Pipeline | CalculateMeta | build(Sort, "b:-")), <<'END', size: 5
 |id,a,b,b4,X %|
 |1002,77,ymt,0.4,48%|
 |1003,84,yis,0.8,12%|
@@ -63,7 +63,7 @@ END
 
       # FIXME!
       it "Sort : numerically" do
-        assert_pipeline (Pipeline | CalculateMeta | Sort.new(["a"])), <<'END', size: 5
+        assert_pipeline (Pipeline | CalculateMeta | build(Sort, "a")), <<'END', size: 5
 |id,a,b,b4,X %|
 |1005,-38,oub,1.6,9%|
 |1004,-62,rcz ,1.2,127%|
@@ -74,7 +74,7 @@ END
       end
 
       it "Region" do
-        assert_pipeline Region.new(["11..23"]), <<'END', size: 100
+        assert_pipeline build(Region, "11..23"), <<'END', size: 100
 |id,a,b,b4,X %|
 |1011,39,axr,"",97%|
 |1012,-38,wky,4.4,60%|
@@ -93,7 +93,7 @@ END
       end
 
       it "Region : reverse" do
-        assert_pipeline Region.new(["9..1"]), <<'END', size: 100
+        assert_pipeline build(Region, "9..1"), <<'END', size: 100
 |id,a,b,b4,X %|
 |1009,-99,ali,3.2,191%|
 |1008,-21,qeg,2.8,135%|
@@ -147,7 +147,7 @@ END
       end
       
       it "Transpose : --no-include-header" do
-        assert_pipeline Pipeline | MetaTable | Transpose.new(["--no-include-header"]), <<'END', size: 5
+        assert_pipeline Pipeline | MetaTable | build(Transpose, "--no-include-header"), <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5|
 |id,a,b,b4,X %|
 |id,a,b,b4,x_|
@@ -221,7 +221,7 @@ END
       end
 
       it "MarkdownOut : --no-include-header" do
-        assert_pipeline nil, <<'END', output_format: MarkdownOut.new(['--no-include-header'])
+        assert_pipeline nil, <<'END', output_format: build(MarkdownOut, '--no-include-header')
 ||  1001 |    79 | ekl   |        |  133% ||
 ||  1002 |    77 | ymt   | 0.4    |   48% ||
 ||  1003 |    84 | yis   | 0.8    |   12% ||
@@ -236,7 +236,7 @@ END
       end
 
       it "HTMLOut" do
-        format = HTMLOut.new(["--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2'])
+        format = build(HTMLOut, "--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2')
         assert_pipeline nil, <<'END', output_format: format, size: 5
 |<table>|
 |  <thead>|
@@ -271,7 +271,7 @@ END
       end
 
       it "HTMLOut : --no-include-header" do
-        format = HTMLOut.new(["--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2', '--no-include-header'])
+        format = build(HTMLOut, "--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2', '--no-include-header')
         assert_pipeline nil, <<'END', output_format: format, size: 5
 |<table>|
 |  <tbody>|
@@ -297,7 +297,7 @@ END
 
 
       it "Eval" do
-        assert_pipeline Eval.new(['_.foo = "#{a} #{b}"']), <<'END'
+        assert_pipeline build(Eval, '_.foo = "#{a} #{b}"'), <<'END'
 |id,a,b,b4,X %,foo|
 |1001,79,ekl ,"",133%,79 ekl |
 |1002,77,ymt,0.4,48%,77 ymt|
@@ -313,7 +313,7 @@ END
       end
 
       it "RowId" do
-        assert_pipeline RowId.new(['--start=13', '--name=the_id']), <<'END'
+        assert_pipeline build(RowId, '--start=13', '--name=the_id'), <<'END'
 |the_id,id,a,b,b4,X %|
 |13,1001,79,ekl ,"",133%|
 |14,1002,77,ymt,0.4,48%|
@@ -329,7 +329,7 @@ END
       end
 
       it "Strip" do
-        assert_pipeline Strip.new([]), <<'END'
+        assert_pipeline build(Strip), <<'END'
 |id,a,b,b4,X %|
 |1001,79,ekl,"",133%|
 |1002,77,ymt,0.4,48%|
@@ -391,7 +391,7 @@ END
       end
       
       it "HeaderOut : --meta-columns=name,..." do
-        assert_pipeline (Pipeline | HeaderOut.new(['--meta-columns=name,min_size,blanks'])), <<'END'
+        assert_pipeline (Pipeline | build(HeaderOut, '--meta-columns=name,min_size,blanks')), <<'END'
 |__META__,id,a,b,b4,X %|
 |__META__,id,a,b,b4,X %|
 |name,id,a,b,b4,X %|

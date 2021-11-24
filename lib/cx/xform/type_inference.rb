@@ -21,6 +21,7 @@ module CX
       include Xform
 
       def initialize!
+        super
         @parse_string = true
       end
 

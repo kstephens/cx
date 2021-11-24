@@ -19,7 +19,8 @@ module CX
   module Xform
     class CalculateMeta
       include Xform
-      def initialize!
+      def initialize
+        super
         @ti = TypeInference.new
       end
 

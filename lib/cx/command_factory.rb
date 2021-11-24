@@ -10,12 +10,15 @@ module CX
       @by_name = {}
     end
 
-    def call argv
-      argv = argv.dup
-      cmd_name = argv.shift.to_sym
-      cmd = @by_name[cmd_name]
+    def call args
+      raise TypeError, "unspected #{x.class}" unless Args === args
+      cmd_name = args.argv.shift.to_sym
+      unless cmd = @by_name[cmd_name]
+        raise ArgumentError, "cannot find xform for #{cmd_name.inspect}"
+      end
       cls = cmd.cls
-      obj = cls.new(argv)
+      obj = cls.new
+      obj.set_args! args
       obj
     end
     alias :new :call

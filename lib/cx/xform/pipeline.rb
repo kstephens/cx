@@ -13,13 +13,13 @@ module CX
 
       attr_accessor :apps
       
-      def initialize!
+      def initialize
         @apps = [ ]
         super
       end
 
       def >> app
-        app = app.new if app.respond_to?(:new)
+        app = app.new.build if app.respond_to?(:new)
         @apps << app
         self
       end

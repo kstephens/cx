@@ -12,7 +12,7 @@ module CX
       include Xform
       attr_accessor :col_sep, :row_sep, :multi_sep
     
-      def initialize *args
+      def initialize!
         super
         @field_sep    = opts[:field_sep]   || ","
         @record_sep   = opts[:record_sep]  || $/
