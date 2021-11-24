@@ -34,5 +34,16 @@ module CX
         expect(input) .to eq([])
       end
     end
+
+    describe "terminator: Proc" do
+      let(:input) { "--f --a=abc --no-b a -- b --not-an-option DELIMITER c d e".split(' ') }
+      let(:opts) { {terminator: Proc.new{|arg| arg == 'DELIMITER'}} }
+      it "parses" do
+        expect(subject.opts) .to eq({:f=>true, :a=>"abc", :b=>false})
+        expect(subject.args) .to eq ["a", "b", "--not-an-option"]
+        expect(subject.argv) .to eq ["--f", "--a=abc", "--no-b", "a", "--", "b", "--not-an-option"]
+        expect(input) .to eq ["DELIMITER", "c", "d", "e"]
+      end
+    end
   end
 end
