@@ -16,20 +16,29 @@ module CX
     end
     
     def parse! argv, o = { }
-      argv = argv.map(&:dup) # .map(&:freeze)
+      argv = argv.dup
       @argv.concat(argv)
       x = argv.dup
       while arg = x.shift
         case arg
-        when /^--no-([-_a-z0-9]+)$/i
-          set_opt! $1, false
-        when /^--([-_a-z0-9]+)$/i
-          set_opt! $1, true
-        when /^--([-_a-z0-9]+)=(.*)$/i
-          set_opt! $1, $2
-        when '--'
-          @args.concat(x)
-          break
+        when String
+          case arg
+          when /^--no-([-_a-z0-9]+)$/i
+            set_opt! $1, false
+          when /^--([-_a-z0-9]+)$/i
+            set_opt! $1, true
+          when /^--([-_a-z0-9]+)=(.*)$/i
+            set_opt! $1, $2
+          when '--'
+            @args.concat(x)
+            break
+          else
+            @args << arg
+            if o[:no_args]
+              @args.concat(x)
+              break
+            end
+          end
         else
           @args << arg
           if o[:no_args]
