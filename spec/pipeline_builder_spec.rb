@@ -8,7 +8,7 @@ module CX
         "--gflg --gopt=abc124 cmd1 // cmd2 --flg2 arg2 // // cmd3 --flg3 --opt3=abc123 arg3 arg3".split(' ')
       end
       it "parses" do
-        expect(subject.argv) .to eq(argv)
+        # expect(argv) .to eq([])
         expect(subject.global.opts) .to eq({:gflg=>true, :gopt=>"abc124"})
         expect(subject.global.args) .to eq([])
         expect(subject.pipeline.commands.map(&:args).map(&:to_h))
@@ -30,7 +30,7 @@ module CX
         "--gflg p1-c1 // p1-c2 --o1=123 {{ --p2-opt=345 p2-c1 --f1 // p2-c3 --o2=234 }} p1-c2-a2 // // p1-c3".split(' ')
       end
       it "parses" do
-        expect(subject.argv) .to eq(argv)
+        # expect(argv) .to eq([])
         expect(subject.global.opts) .to eq({:gflg=>true})
         expect(subject.pipeline.args.opts) .to eq({:gflg=>true})
         expect(subject.global.args) .to eq([])

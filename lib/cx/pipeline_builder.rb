@@ -10,40 +10,57 @@ require 'cx/xform/pipeline'
 
 module CX
   class PipelineBuilder
-    attr_accessor :argv, :pipeline, :global, :factory
+    attr_accessor :pipeline, :global, :factory
 
-    def parse! _argv
-      @argv = _argv.dup
-      @pipeline = parse_pipeline! @argv.dup
+    def parse! argv
+      @argv = argv
+      @pipeline = parse_pipeline!
       @global = @pipeline.args
+      @argv = nil
       self
     end
-
-    def parse_pipeline! argv
-      opts = Args.new.parse!(argv, no_args: true)
-      argv[0 .. -1] = opts.args
-      opts.args = []
-      parse_args! argv, Pipeline.new(opts)
+    alias :call :parse!
+    
+    def parse_pipeline!
+      args = Args.new.parse!(
+        @argv,
+        no_args: true,
+        terminator: Proc.new { |arg|
+          %r{\A(//|{{|}})\Z}.match(arg)
+        }
+      )
+      pipeline = Pipeline.new(args)
+      parse_argv! pipeline
+      pipeline
     end
     
-    def parse_args! args, pipeline
-      pending = [ ]
-      while arg = args.shift
-        case arg
-        when nil
+    def parse_argv! pipeline
+      pending = []
+      until @argv.empty?
+        case @argv.first
         when '//'
-          pipeline << Command.new(pending) unless pending.empty?
+          @argv.shift
+          add_command!(pipeline, pending)
           pending = [ ]
         when '{{'
-          pending << parse_pipeline!(args)
+          @argv.shift
+          pending << parse_pipeline!
         when '}}'
+          @argv.shift
           break
         else
-          pending << arg
+          pending << @argv.shift
         end
       end
-      pipeline << Command.new(pending) unless pending.empty?
-      pipeline
+      add_command!(pipeline, pending)
+    end
+
+    def add_command! pipeline, argv
+      unless argv.empty?
+        args = Args.new.parse!(argv.dup)
+        raise CX::Error, "command without name #{argv * ' '}" if ! args.opts.empty? && args.argv.empty?
+        pipeline << Command.new(args) unless args.argv.empty?
+      end
     end
     
     def build_xform
@@ -51,24 +68,17 @@ module CX
       @pipeline.build_xform(@factory)
     end
     
-    class Command < Struct.new(:argv, :args)
+    class Command < Struct.new(:args)
       include Inspect
-      def initialize argv
-        self.argv = argv
-        self.args = Args.new.parse!(argv)
-      end
-      
       def build_xform factory
-        args = Args.new.parse!(
-          argv.map do | arg |
-            case arg
-            when Pipeline, Command
-              arg.build_xform factory
-            else
-              arg
-            end
+        args.argv.map! do | arg |
+          case arg
+          when Pipeline, Command
+            arg.build_xform factory
+          else
+            arg
           end
-        )
+        end
         factory.call(args)
       end
       def inspect_content mode

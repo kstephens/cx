@@ -2,21 +2,36 @@ require 'cx/args'
 
 module CX
   RSpec.describe Args do
-    subject() { Args.new.parse!(argv) }
+    subject() { Args.new.parse!(input, opts) }
+    let(:opts) { {} }
+    let(:input) { "--f --a-opt=abc --no-b a -- b --not-an-option".split(' ') }
+    
     describe "basic" do
-      let(:argv) { "--flag --option=abc124 a -- b --not-an-option".split(' ') }
       it "parses" do
-        expect(subject.argv) .to eq argv
+        expect(subject.opts) .to eq({:f=>true, :a_opt=>"abc", :b=>false})
         expect(subject.args) .to eq ["a", "b", "--not-an-option"]
-        expect(subject.opts) .to eq({:flag=>true, :option=>"abc124"})
+        expect(subject.argv) .to eq ["--f", "--a-opt=abc", "--no-b", "a", "--", "b", "--not-an-option"]
+        expect(input) .to eq([])
       end
     end
+
+    describe "no_args: true" do
+      let(:opts) { {no_args: true} }
+      it "stops at first non-option" do
+        expect(subject.opts) .to eq({:f=>true, :a_opt=>"abc", :b=>false})
+        expect(subject.args) .to eq []
+        expect(subject.argv) .to eq ["--f", "--a-opt=abc", "--no-b" ]
+        expect(input) .to eq ["a", "--", "b", "--not-an-option"]
+      end
+    end
+
     describe "non-strings" do
-      let(:argv) { ['--flag', '--option=abc124', 'a', :NOT_A_STRING, 'b'] }
+      let(:input) { ['--f', '--a=123', 'a', '--', :NOT_A_STRING, 'b'] }
       it "parses" do
-        expect(subject.argv) .to eq argv
+        expect(subject.opts) .to eq({:f=>true, :a=>"123"})
         expect(subject.args) .to eq ["a", :NOT_A_STRING, "b"]
-        expect(subject.opts) .to eq({:flag=>true, :option=>"abc124"})
+        expect(subject.argv) .to eq ["--f", "--a=123", "a", "--", :NOT_A_STRING, "b"]
+        expect(input) .to eq([])
       end
     end
   end

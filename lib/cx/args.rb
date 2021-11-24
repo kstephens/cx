@@ -9,47 +9,84 @@ require 'cx/inspect'
 module CX
   class Args
     include Inspect
-    attr_accessor :argv, :args, :opts
+    attr_accessor :args, :opts, :argv
 
     def initialize
-      @argv = [ ]
       @args = [ ]
       @opts = { }
+      @argv = [ ]
+    end
+
+    def dup
+      obj = super
+      obj.args = args.dup
+      obj.opts = opts.dup
+      obj.argv = argv.dup
+      obj
     end
     
-    def parse! argv, o = { }
-      argv = argv.dup
-      @argv.concat(argv)
-      x = argv.dup
-      while arg = x.shift
-        case arg
-        when String
+    def parse! input, options = { }
+      @no_args = options[:no_args]
+      @terminator = options[:terminator] || Proc.new{|x| false}
+      @input = input
+      catch(:stop!) do
+        each_input! do | arg |
           case arg
-          when /^--no-([-_a-z0-9]+)$/i
-            set_opt! $1, false
-          when /^--([-_a-z0-9]+)$/i
-            set_opt! $1, true
-          when /^--([-_a-z0-9]+)=(.*)$/i
-            set_opt! $1, $2
-          when '--'
-            @args.concat(x)
-            break
-          else
-            @args << arg
-            if o[:no_args]
-              @args.concat(x)
-              break
+          when String
+            case arg
+            when /^--no-([-_a-z0-9]+)$/i
+              set_opt! $1, false
+            when /^--([-_a-z0-9]+)$/i
+              set_opt! $1, true
+            when /^--([-_a-z0-9]+)=(.*)$/i
+              set_opt! $1, $2
+            else
+              arg! arg
             end
-          end
-        else
-          @args << arg
-          if o[:no_args]
-            @args.concat(x)
-            break
+          else
+            arg! arg
           end
         end
       end
+      @input = nil
       self
+    end
+
+    def each_input!
+      loop do
+        case arg = take_arg!
+        when '--'
+          loop do
+            arg! take_arg!
+          end
+        else
+          yield arg
+        end
+      end
+    end
+
+    def take_arg!
+      arg = @input.first
+      case
+      when @input.empty?
+        throw :stop!
+      when @terminator.call(arg)
+        throw :stop!
+      else
+        @argv << arg
+        @input.shift
+        arg
+      end
+    end
+
+    def arg! arg
+      if @no_args
+        @argv.pop
+        @input.unshift arg
+        throw :stop!
+      else
+        @args << arg
+      end
     end
 
     alias :call :parse!
@@ -60,9 +97,9 @@ module CX
 
     def to_h
       {
-        argv: @argv,
-        args: @args,
         opts: @opts,
+        args: @args,
+        argv: @argv,
       }
     end
 
