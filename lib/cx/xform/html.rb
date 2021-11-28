@@ -37,14 +37,14 @@ module CX
           .map(&:to_sym)
           .uniq)
         self
-        @indent      = opts.or_default(:indent, 1).to_i
+        @indent      = opts.fetch(:indent, 1).to_i
         @coerce      = opts[:coerce_to_string] || proc{|x| x}
-        @table_only  = opts.or_default(:table_only, false)
-        @filtering   = opts.or_default(:filtering, true)
+        @table_only  = opts.fetch(:table_only, false)
+        @filtering   = opts.fetch(:filtering, true)
         @filtering   = false if @table_only
-        @sorting     = opts.or_default(:sorting, true)
+        @sorting     = opts.fetch(:sorting, true)
         @sorting     = false if @table_only
-        @styled      = opts.or_default(:styled, true)
+        @styled      = opts.fetch(:styled, true)
       end
 
       def call input, env

@@ -26,9 +26,9 @@ module CX
     end
     
     def parse! input, options = { }
+      @input = input
       @no_args = options[:no_args]
       @terminator = options[:terminator] || Proc.new{|x| false}
-      @input = input
       catch(:stop!) do
         each_input! do | arg |
           case arg
@@ -51,6 +51,8 @@ module CX
       @input = nil
       self
     end
+    
+    alias :call :parse!
 
     def each_input!
       loop do
@@ -88,8 +90,6 @@ module CX
         @args << arg
       end
     end
-
-    alias :call :parse!
 
     def set_opt! key, val
       @opts[key.gsub(/-/, '_').to_sym] = val

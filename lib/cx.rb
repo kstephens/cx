@@ -1,5 +1,4 @@
 require "cx/version"
-require "cx/default"
 
 module CX
   class Error < StandardError; end

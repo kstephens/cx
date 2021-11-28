@@ -4,139 +4,175 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
-require 'cx/pipe'
+require 'cx'
+require 'cx/xform'
+require 'cx/xform/record'
+
+# :COMMAND:
+# SqlOut:
+#   aliases: sql-
+#   synopsis: Generates CSV lines.
+#   args: []
+#   opts:
+#     table: Table name
+#     transaction: Emit a TRANSACTION block.
+#     rollback: Emit a ROLLBACK statement.
+#     commit: Emit a COMMIT statement.
+#     create: Emit a CREATE TABLE statement.
+#     temporary: CREATE TEMPORARY TABLE statement.
+#     insert: Emit INSERT INTO statements.
+#     
+#     
 
 module CX
-class SqlOut < Pipe
-  include Pipe::Format
-  attr_reader :input, :header, :output, :table
-  def table
-    @table ||= opts[:table] || @header.name or raise_ "unspecifed table name"
-  end
-  def call input, env
-    @header = input.header!
-    @input = input
-    @output = new_table(input)
-    do_actions!
-    env[:content_type] = 'text/plain' # application/x-sql ?
-    app.call(output, env)
-  end
+  module Xform
+    class SqlOut
+      include RecordOut
+      attr_reader :input, :header, :output, :table
 
-  def do_actions!
-    actions = [:transaction, :create, :insert]
-      .select{|action| to_bool(opts[action])}
-      .compact
-    if actions.include?(:transaction)
-      case
-      when to_bool(opts[:rollback]) && ! to_bool(opts[:commit], false)
-        actions << :rollback
-      when to_bool(opts[:commit], true)
-        actions << :commit
+      def initialize!
+        super
       end
-    end
-    actions.each do |action|
-      send(:"#{action}!")
-      output << "\n"
-    end
-  end
 
-  def transaction!
-    output <<<<"END"
+      def call input, env
+        @input = input
+        @header = input.header
+        @output = make_output
+        @table = opts[:table] || @header.meta.name or raise_ "unspecifed table name"
+        # binding.pry
+        do_actions!
+        env[:content_type] = 'text/plain' # application/x-sql ?
+        result = @output
+        @input = @header = @output = @table = nil
+        result
+      end
+
+      def do_actions!
+        actions = [:transaction, :create, :insert]
+          .select{|action| opts[action]}
+          .compact
+        case
+        when ! actions.include?(:transaction)
+        when opts[:rollback] && opts[:commit]
+          actions << :rollback
+        when opts[:temporary]
+          actions << :create
+        when opts.fetch(:commit, true)
+          actions << :commit
+        end
+        actions.uniq.each do |action|
+          send(:"#{action}!")
+          self << "\n"
+        end
+      end
+
+      def transaction!
+        self <<<<"END"
 START TRANSACTION;
 END
-  end
+      end
 
-  def commit!
-    output <<<<"END"
+      def commit!
+        self <<<<"END"
 COMMIT;
 END
-  end
+      end
 
-  def rollback!
-    output <<<<"END"
+      def rollback!
+        self <<<<"END"
 ROLLBACK;
 END
-  end
+      end
   
-  def create!
-    output <<<<"END"
-CREATE #{opts[:temp] && "TEMPORARY "}TABLE #{sql_identifer(table)}
+      def create!
+        self <<<<"END"
+CREATE #{opts[:temporary] && "TEMPORARY "}TABLE #{sql_identifer(table)}
 (
 #{header.map{|c| "  " + sql_column_def(c)} * ",\n"}
 );
 END
-  end
-  
-  def sql_column_def col
-    "#{col.name} #{type_to_sql_type col}"
-  end
+      end
 
-  def type_to_sql_type col
-    type = col.type
-    type = String if type == Symbol
-    sql_types = {
-      Float   => "FLOAT",
-      Integer => "INT",
-      Typing::Boolean => "CHAR(1)",
-      String  => "VARCHAR(#{col.max_width || 255})",
-      Object  => "<<UNTYPED>>",
-    }
-    cls = Typing.first_superclass(sql_types.keys, type)
-    sql_types[cls.first]
-  end
-  
-  def insert!
-    sql_insert_into = <<"END"
+      def sql_column_def col
+        "#{col.name_} #{type_to_sql_type col}"
+      end
+
+      def type_to_sql_type col
+        case cls = col.meta.type_
+        when Symbol, nil
+          cls = String
+        end
+        sql_types = {
+          BigDecimal => 'NUMERIC',
+          Float   => "FLOAT",
+          Integer => "INT",
+          Boolean => "CHAR(1)",
+          String  => "VARCHAR(#{col.meta.max_size || 255})",
+          Object  => "TEXT",
+        }
+        # cls = Typing.first_superclass(sql_types.keys, type)
+        sql_types[cls]
+      end
+
+      def << str
+        # puts str; binding.pry
+        @output << [ str.to_s ]
+        self
+      end
+    
+    def insert!
+      sql_insert_into = <<"END"
 INSERT INTO #{sql_identifer(table)}
   #{sql_columns(header)}
 VALUES
 END
-    sep = "  "
-    input.each do |r|
-      output << sql_insert_into
-      output << sep << sql_row(r)
-      if opts[:many_inserts]
-        output << ";\n\n"
-      else
-        sql_insert_into = nil
-        sep = ",\n  "
+      sep = "  "
+      input.each do |r|
+        self << sql_insert_into
+        self << sep << sql_row(r)
+        if opts[:many_inserts]
+          self << ";\n\n"
+        else
+          sql_insert_into = nil
+          sep = ",\n  "
+        end
+      end
+      self << ";\n" unless opts[:many_inserts]
       end
     end
-    output << ";\n" unless opts[:many_inserts]
-  end
 
-  def sql_columns cols
-    sql_list cols.map{|c| sql_identifer(c)} # ??? may require quoting
-  end
+    def sql_columns cols
+      sql_list cols.map{|c| sql_identifer(c.name_)} # ??? may require quoting
+    end
 
-  def sql_identifer name
-    name.to_s # TODO: proper escape
-  end
+    def sql_identifer name
+      name.to_s # TODO: proper escape
+    end
 
-  def sql_row row
-    sql_list @header.map{|c| sql_val(row[c.to_i])}
-  end
+    def sql_row row
+      sql_list @header.map{|c| sql_val(row[c.to_i])}
+    end
 
-  def sql_list arr
-    String.new << '(' << (arr.map(&:to_s) * ', ') << ')'
-  end
+    def sql_list arr
+      String.new << '(' << (arr.map(&:to_s) * ', ') << ')'
+    end
 
-  def sql_val v # TODO: proper string escape.
-    case v
-    when nil
-      "NULL"
-    when String, Symbol
-      # ??? good enough?
-      v = v.to_s.
-        inspect.
-        gsub(/^"|"$/, '').
-        gsub("\\\"", '"').
-        gsub("'", "''")
-      "'" + v + "'"
-    else
-      v.to_s
+    def sql_val v # TODO: proper string escape.
+      case v
+      when nil
+        "NULL"
+      when String, Symbol
+        # ??? good enough?
+        v = v.to_s.
+          inspect.
+          gsub(/^"|"$/, '').
+          gsub("\\\"", '"').
+          gsub("'", "''")
+        "'" + v + "'"
+      else
+        v.to_s
+      end
     end
   end
 end
 
-end

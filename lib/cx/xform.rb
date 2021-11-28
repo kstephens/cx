@@ -51,7 +51,7 @@ module CX
     module OutputFormat
       include Format
       def include_header?
-        opts.or_default(:include_header, true)
+        opts.fetch(:include_header, true)
       end
     end
     

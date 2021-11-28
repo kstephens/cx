@@ -409,6 +409,39 @@ END
 |"",1010,-71,jtj ,3.6,25%|
 END
       end
+
+      it "SqlOut" do
+        format = build SqlOut, "--table=the_table", '--create', '--transaction', '--commit', '--insert'
+        assert_pipeline (Pipeline | CalculateMeta), <<'END', output_format: format
+|START TRANSACTION;|
+||
+|CREATE TABLE the_table|
+|(|
+|  id INT,|
+|  a INT,|
+|  b VARCHAR(4),|
+|  b4 TEXT,|
+|  x_ |
+|);|
+||
+|INSERT INTO the_table|
+|  (id, a, b, b4, x_)|
+|VALUES|
+|  ('1001', '79', 'ekl ', '', '133%'),|
+|  ('1002', '77', 'ymt', '0.4', '48%'),|
+|  ('1003', '84', 'yis', '0.8', '12%'),|
+|  ('1004', '-62', 'rcz ', '1.2', '127%'),|
+|  ('1005', '-38', 'oub', '1.6', '9%'),|
+|  ('1006', '67', 'hjn', '', '187%'),|
+|  ('1007', '-72', 'xgv ', '2.4', '55%'),|
+|  ('1008', '-21', 'qeg', '2.8', '135%'),|
+|  ('1009', '-99', 'ali', '3.2', '191%'),|
+|  ('1010', '-71', 'jtj ', '3.6', '25%');|
+||
+|COMMIT;|
+||
+END
+      end
     end
   end
 end

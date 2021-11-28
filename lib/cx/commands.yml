@@ -143,6 +143,22 @@ Sort:
   opts:
   file: "lib/cx/xform/sort.rb"
   path: "cx/xform/sort"
+SqlOut:
+  aliases: sql-
+  synopsis: Generates CSV lines.
+  args: []
+  opts:
+    table: Table name
+    transaction: Emit a TRANSACTION block.
+    rollback: Emit a ROLLBACK statement.
+    commit: Emit a COMMIT statement.
+    create: Emit a CREATE TABLE statement.
+    temporary: CREATE TEMPORARY TABLE statement.
+    insert: Emit INSERT INTO statements.
+    
+    
+  file: "lib/cx/xform/sql.rb"
+  path: "cx/xform/sql"
 Strip:
   aliases: 
   synopsis: Strip leading and trailing whitespace.

@@ -21,12 +21,13 @@ module CX
 
       def make_record_table cols = []
         cols = cols.map{|c| Column.new(c).tap{|c| c.meta.type = ::String}}
-        Table.new([],Header.new(cols))
+        Table.new([], Header.new(cols))
       end
     end
 
     module RecordIn
       include RecordBase, InputFormat
+      
       def call input, env
         raise_ ArgumentError, "expected one input row" unless input.size == 1
         raise_ ArgumentError, "expected one input col" unless input.first.size == 1
@@ -48,17 +49,10 @@ module CX
     
     module RecordOut
       include RecordBase, OutputFormat
+      
       def make_output
         make_record_table([:_RECORD_])
       end
-
-=begin
-      def write str
-        raise_ "write: not a string : #{str.class}"
-        output << [ str ]
-      end
-      alias :<< :write
-=end
 
       def format_value v
         case v

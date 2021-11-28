@@ -21,7 +21,7 @@ module CX
       
       def initialize!
         super
-        @include_header = opts.or_default(:include_header, true)
+        @include_header = opts.fetch(:include_header, true)
       end
       
       def call input, env
