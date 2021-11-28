@@ -111,7 +111,7 @@ END
           Object  => "TEXT",
         }
         # cls = Typing.first_superclass(sql_types.keys, type)
-        sql_types[cls]
+        sql_types[cls] || sql_types[Object]
       end
 
       def << str

@@ -421,7 +421,7 @@ END
 |  a INT,|
 |  b VARCHAR(4),|
 |  b4 TEXT,|
-|  x_ |
+|  x_ TEXT|
 |);|
 ||
 |INSERT INTO the_table|
