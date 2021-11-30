@@ -28,6 +28,7 @@ module CX
     right = {style: 'text-align: right;'}
     output = new_table(input)
     h = HTML.new(output)
+    h << "<!DOCTYPE html>\n"
     h.html do
       h.head do
         h.meta(charset: "UTF-8")
