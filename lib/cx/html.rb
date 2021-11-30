@@ -41,7 +41,7 @@ module CX
         h.div(id: 'cx-content', class: 'cx-content') do
         x = opts[:title] and h.div({id: 'cx-title', class: 'cx-title'}, x)
         h.table(id: 'cx-table', class: 'cx-table') do
-          h.thead do
+          h.thead(id: 'cx-table-thead', class: 'cx-table-thead') do
             if opts[:filtering]
               h.tr(class: 'cx-filter') do
                 h.span(class: 'cx-filter') do
@@ -203,7 +203,7 @@ a:hover {
 table.cx-table {
   position: relative,
 }
-th.cx-column-header {
+thead.cx-table-thead {
   position: sticky;
   top: 0;
 }
