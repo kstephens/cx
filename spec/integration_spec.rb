@@ -235,6 +235,13 @@ END
 END
       end
 
+      it "HTMLOut: Full" do
+        format = build(HTMLOut, '--filtering')
+        result = run_pipeline(Pipeline | CalculateMeta, output_format: format)
+        File.write("tmp/test.html", result)
+        # puts result
+      end
+      
       it "HTMLOut" do
         format = build(HTMLOut, "--table-only", '--no-styled', '--no-filtering', '--no-sorting', '--indent=2')
         assert_pipeline nil, <<'END', output_format: format, size: 5
@@ -445,3 +452,4 @@ END
     end
   end
 end
+

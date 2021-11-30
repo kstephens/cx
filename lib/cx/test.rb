@@ -67,10 +67,7 @@ module CX
         output_format |
         build(Xform::IoOut, out)
       pipeline.call(table, opts[:env])
-      out.string.
-        sub(/\A/, '|').
-        gsub(/\n/, "|\n|").
-        sub(/\|\Z/, '')
+      out.string
     end
     
     def assert_pipeline pipeline, *args
@@ -88,6 +85,11 @@ module CX
       end
       
       actual = run_pipeline(pipeline, opts || {})
+      actual = actual.
+        sub(/\A/, '|').
+        gsub(/\n/, "|\n|").
+        sub(/\|\Z/, '')
+
       if expected
         if actual != expected
           File.write("spec/last-pipeline.actual", actual)
