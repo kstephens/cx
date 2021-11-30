@@ -95,10 +95,11 @@ module CX
       end
 
       def html_body input, env
+        h.raw! "<!DOCTYPE html>\n"
         h.html do
           h.head do
             x = opts[:title] || env[:in_file] and h.title(x)
-            if @style
+            if @styled
               css read_content('cx.css')
             end
             h.raw! read_content('header.html')
