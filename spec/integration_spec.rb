@@ -237,7 +237,7 @@ END
 
       it "HTMLOut: Full" do
         format = build(HTMLOut, '--filtering')
-        result = run_pipeline(Pipeline | CalculateMeta, output_format: format)
+        result = run_pipeline(Pipeline | CalculateMeta, output_format: format, size: 200)
         File.write("tmp/test.html", result)
         # puts result
       end

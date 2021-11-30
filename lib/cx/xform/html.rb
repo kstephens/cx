@@ -122,6 +122,7 @@ module CX
           if @sorting
             h.js! h.file_content!("tablesort.js")
             h.js! "new Tablesort(document.getElementById('cx-table'));"
+            h.js! "var cx_filter = cx_make_filter('cx-table');"
           end
           h.html! h.file_content!('footer.html')
         end
@@ -188,7 +189,7 @@ module CX
               h.input(
                 type: "text",
                 class: "cx-filter-input",
-                onkeyup: "cx_filter_rows()",
+                onkeyup: "cx_filter.filter_rows()",
                 placeholder: "#{UNICODE[:search]} Filter..."
               )
             end
