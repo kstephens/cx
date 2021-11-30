@@ -127,7 +127,7 @@ module CX
       def html_table input, env
         h.table(id: 'cx-table', class: 'cx-table') do
           html_header(input, env) if include_header?
-          h.tbody({id: "cx-table-tbody"}) do
+          h.tbody({id: "cx-tbody"}) do
             ri = 0
             input.each do | r |
               ri += 1
@@ -154,14 +154,23 @@ module CX
       end
 
       def html_header input, env
-        h.thead do
+        h.thead(id: 'cx-thead', class: 'cx-thead') do
           html_filtering(input, env) if opts[:filtering]
-          h.tr do
-            a_base = {class: 'cx-column-header'}
-            h.th(a_base.merge("data-sort-method" => :number), "#")
+          h.tr(class: 'cx-columns') do
+            a_base = {class: 'cx-column'}
+            a_row_number = a_base
+            if @sorting
+              a_row_number = a_row_number.merge("data-sort-method" => :number)
+            end
+            h.th(a_row_number, "#")
             cols.each do | c |
               a = a_base
-              a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+              if @filtering
+                a = a.merge("data-filter-name" => c.name_)
+              end
+              if @sorting
+                a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+              end
               a = a.merge(title: "type: #{c.meta.type_ || :UNKNOWN}")
               h.th(a, c)
             end

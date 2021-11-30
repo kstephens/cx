@@ -47,7 +47,7 @@ a:hover {
 table.cx-table {
   position: relative,
 }
-th.cx-column-header {
+table.cx-table thead.cx-table-thead {
   position: sticky;
   top: 0;
 }
