@@ -30,6 +30,7 @@ module CX
     h = HTML.new(output)
     h.html do
       h.head do
+        h.meta(charset: "UTF-8")
         x = opts[:title] || env[:in_file] and h.title(x)
         h << HTML_HEAD
         x = opts[:head]  and h.raw!(x)
@@ -239,6 +240,10 @@ END
  * Basic row filtering.
  */
 var cx_filter_timeout = null;
+function cx_filter_escapeRegExp(str) {
+  // ??? WEIRD ESCAPES HERE
+  return str.replaceAll(/[.*+?^$|{}()\\[\\]]/g, '\\\\$&'); // $& means the whole matched string
+}
 function cx_filter_rows() {
   if ( ! cx_filter_timeout ) 
     cx_filter_timeout = setTimeout(function() {cx_filter_rows_now();}, 50);
@@ -246,26 +251,35 @@ function cx_filter_rows() {
 function cx_filter_rows_now() {
   // Declare variables
   var input = document.getElementById("cx-filter");
-  var filter = input.value.trim().toUpperCase();
+  var filter = input.value.trim();
   var table = document.getElementById("cx-table");
   var tbody = document.getElementById("cx-table-tbody");
   var tr = tbody.getElementsByTagName("tr");
 
+  var filter_words = filter.split(new RegExp(' +', 'g')).map(cx_filter_escapeRegExp);
+  var filter_rx = filter_words.join('.+');
+  // console.log('filter_rx = "' + filter_rx + '"');
+  rx = new RegExp(filter_rx, 'im');
+
   for (i = 0; i < tr.length; i++) {
-    var tds = tr[i].getElementsByTagName("td")
-    var display = "";
-    if ( ! (filter === '') ) {
-display = "none";
+    if ( filter === '' ) {
+      tr[i].style.display = '';
+    } else {
+    var tds = tr[i].getElementsByTagName("td");
+    var line_text = "";
     for (j = 1; j < tds.length; j++) {
       var td = tds[j];
       var txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        display = "";
-        break;
-      }
+      line_text += txtValue + ' '
     }
+/*
+    if ( rx.test(line_text) ) {
+      console.log('line_text = "' + line_text + '"');
+      console.log('rx match = ' + line_text.match(rx) + '');
     }
-    tr[i].style.display = display;
+*/
+    tr[i].style.display = rx.test(line_text) ? "" : "none";
+    }
   }
   if ( cx_filter_timeout ) {
     var tmp = cx_filter_timeout;
