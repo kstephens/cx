@@ -3,7 +3,7 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => [ :readme, :generate_commands_yml, :spec ]
+task :default => [ :readme, :generate_commands_yml, :spec, :js_test ]
 
 task :readme do
   File.write "README.md", <<"END"
@@ -25,6 +25,17 @@ gem install cx
 
 END
 
+end
+
+desc "Run JS tests"
+task :js_test do
+  js_files = %w[
+    lib/cx/xform/html/parser_combinator.js
+  ]
+  js_files.each do | path |
+    path = File.expand_path(path)
+    sh %Q{node -e 'require("#{path}")'}
+  end
 end
 
 desc "Generate lib/cx/commands.yml"

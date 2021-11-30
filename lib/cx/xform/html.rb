@@ -114,6 +114,7 @@ module CX
             x = opts[:body_foot] and raw!(x)
           end
           if @filtering
+            js read_content_once("parser_combinator.js")
             js read_content_once("filter.js")
           end
           if @sorting
