@@ -6,7 +6,7 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/io_buffer'
-require 'builder' # XML https://github.com/jimweirich/builder
+require 'cx/html_markup'
 
 # :COMMAND:
 # HtmlOut:
@@ -65,7 +65,8 @@ module CX
         @colspan = 1 + cols.size
         @right = {style: 'text-align: right;'}
         # @h = XMLWriter.new(out, indent: opts[:indent])
-        @h = HtmlMarkup.new(target: out, indent: @indent)
+        @h = CX::HtmlMarkup.new(target: out, indent: @indent)
+        @h.file_content_path = File.expand_path("../html", __FILE__)
         @h.attrs_enabled = @styled || @sorting || @filtering
         @col_data = Hash.new{|h, k| h[k] = {}}
 
@@ -100,9 +101,9 @@ module CX
           h.head do
             x = opts[:title] || env[:in_file] and h.title(x)
             if @styled
-              css read_content('cx.css')
+              h.css! h.file_content!('cx.css')
             end
-            h.raw! read_content('header.html')
+            h.html! h.file_content!('header.html')
             x = opts[:head] and h.raw!(x)
           end
           h.body do
@@ -114,15 +115,15 @@ module CX
             x = opts[:body_foot] and raw!(x)
           end
           if @filtering
-            js read_content_once("jquery-3.6.0.slim.min.js")
-            js read_content_once("parser_combinator.js")
-            js read_content_once("filter.js")
+            h.js! h.file_content!("jquery-3.6.0.slim.min.js")
+            h.js! h.file_content!("parser_combinator.js")
+            h.js! h.file_content!("filter.js")
           end
           if @sorting
-            js read_content_once("tablesort.js")
-            js "new Tablesort(document.getElementById('cx-table'));"
+            h.js! h.file_content!("tablesort.js")
+            h.js! "new Tablesort(document.getElementById('cx-table'));"
           end
-          raw! read_content('footer.html')
+          h.html! h.file_content!('footer.html')
         end
       end
       
@@ -140,7 +141,7 @@ module CX
                 cols.each do | c |
                   data = col_data[c]
                   h.indent!(false) do
-                    h.td(title: "#{row_tooltip} - #{c.name}", style:  data[:style]) do
+                    h.td(title: "#{row_tooltip} - #{c.name}", style: data[:style]) do
                       if @raw_columns.include?(c.name)
                         raw!(r[c])
                       else
@@ -184,10 +185,12 @@ module CX
         h.tr(class: 'cx-filter') do
           h.th(class: 'cx-filter', colspan: colspan) do
             h.span(class: 'cx-filter') do
-              h.input({type: "text",
+              h.input(
+                type: "text",
                 class: "cx-filter-input",
                 onkeyup: "cx_filter_rows()",
-                placeholder: "#{UNICODE[:search]} Filter..."})
+                placeholder: "#{UNICODE[:search]} Filter..."
+              )
             end
             h.span(class: 'cx-row-count-span') do
               h.span({class: 'cx-matched-row-count'}, input.size.to_s)
@@ -216,33 +219,6 @@ module CX
         end
       end
       
-      def css content
-        if content
-          h.style(type: "text/css") do
-            raw! content
-          end
-        end
-      end
-
-      def js content
-        if content
-          h.script(type: "text/javascript") do
-            h.raw! content
-          end
-        end
-      end
-      
-      def read_content name
-        File.read(File.expand_path("../html/#{name}", __FILE__))
-      end
-
-      def read_content_once name
-        unless @once[name]
-          @once[name] = true
-          read_content(name)
-        end
-      end
-      
      UNICODE = {
        # Left-Pointing Magnifying Glass : U+1F50D
        search: "🔍",
@@ -251,43 +227,3 @@ module CX
   end
 end
 
-require 'cgi/util'
-module CX
-  class HtmlMarkup < Builder::XmlMarkup
-    attr_accessor :indent_enabled, :attrs_enabled
-    def initialize *args
-      super
-      @indent_enabled = true
-      @attrs_enabled = true
-    end
-    
-    def raw! s
-      @target << s
-    end
-    def text! s
-      raw! ::CGI::escapeHTML(s.to_s)
-    end
-    
-    def indent! state = true
-      save = @indent_enabled
-      begin
-        @indent_enabled = state
-        yield
-      ensure
-        @indent_enabled = save
-      end
-    end
-    
-    def _indent
-      super if @indent_enabled
-    end
-    def _newline
-      super if @indent_enabled
-    end
-    def _insert_attributes(attrs, order=nil)
-      if @attrs_enabled
-        super(attrs, order || [])
-      end
-    end
-  end
-end
