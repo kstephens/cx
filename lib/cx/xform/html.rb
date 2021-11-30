@@ -107,13 +107,14 @@ module CX
           end
           h.body do
             x = opts[:body_head] and h.html(x)
-            h.div(id: 'cx-content', class: 'cx-content') do
-              x = opts[:title] and h.div({id: 'cx-title', class: 'cx-title'}, x)
+            h.div(class: 'cx-content') do
+              x = opts[:title] and h.div({class: 'cx-title'}, x)
               yield
             end
             x = opts[:body_foot] and raw!(x)
           end
           if @filtering
+            js read_content_once("jquery-3.6.0.slim.min.js")
             js read_content_once("parser_combinator.js")
             js read_content_once("filter.js")
           end
@@ -128,7 +129,7 @@ module CX
       def html_table input, env
         h.table(id: 'cx-table', class: 'cx-table') do
           html_header(input, env) if include_header?
-          h.tbody({id: "cx-tbody"}) do
+          h.tbody(class: 'cx-tbody') do
             ri = 0
             input.each do | r |
               ri += 1
@@ -155,7 +156,7 @@ module CX
       end
 
       def html_header input, env
-        h.thead(id: 'cx-thead', class: 'cx-thead') do
+        h.thead(class: 'cx-thead') do
           html_filtering(input, env) if opts[:filtering]
           h.tr(class: 'cx-columns') do
             a_base = {class: 'cx-column'}
@@ -180,19 +181,18 @@ module CX
       end
 
       def html_filtering input, env
-        h.tr(id: 'cx-filter', class: 'cx-filter') do
+        h.tr(class: 'cx-filter') do
           h.th(class: 'cx-filter', colspan: colspan) do
             h.span(class: 'cx-filter') do
               h.input({type: "text",
-                id: 'cx-filter-input',
                 class: "cx-filter-input",
                 onkeyup: "cx_filter_rows()",
                 placeholder: "#{UNICODE[:search]} Filter..."})
             end
             h.span(class: 'cx-row-count-span') do
-              h.span({id: 'cx-matched-row-count'}, input.size.to_s)
+              h.span({class: 'cx-matched-row-count'}, input.size.to_s)
               h.text!('/')
-              h.span({id: 'cx-row-count'}, input.size.to_s)
+              h.span({class: 'cx-row-count'}, input.size.to_s)
             end
           end
         end
