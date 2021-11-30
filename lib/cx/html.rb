@@ -56,11 +56,12 @@ module CX
               end
             end
             h.tr do
-              a = {class: 'cx-column-header'}
-              h.th(a.merge("data-sort-method" => :number), "#")
+              tr_a = {class: 'cx-column-header'}
+              h.th(tr_a.merge("data-sort-method" => :number), "#")
               cols.each do | c |
-                a = a.merge("data-sort-method" => :number) if c.justify == :right
-                h.th(a, c)
+                th_a = tr_a
+                th_a = th_a.merge("data-sort-method" => :number) if c.justify == :right
+                h.th(th_a, c)
               end
             end
           end
