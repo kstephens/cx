@@ -167,15 +167,21 @@ module CX
               a_row_number = a_row_number.merge("data-sort-method" => :number)
             end
             h.th(a_row_number, "#")
+            idx = 0
             cols.each do | c |
+              idx += 1
               a = a_base
               if @filtering
-                a = a.merge("data-filter-name" => c.name_)
+                a = a.merge(
+                  "data-column-index" => idx,
+                  "data-filter-name" => c.name_.to_s,
+                  "data-filter-name-full" => c.name.to_s)
               end
               if @sorting
                 a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
               end
-              a = a.merge(title: "type: #{c.meta.type_ || :UNKNOWN}")
+              names = [ c.name, c.name_ ].map(&:to_s).sort.uniq.map(&:inspect).join(', ');
+              a = a.merge(title: "name: #{names}; index: #{idx}; type: #{c.meta.type_ || :UNKNOWN}")
               h.th(a, c)
             end
           end
