@@ -57,9 +57,11 @@ module CX
         output
       end
 
+      attr_reader :input, :env
       attr_reader :h, :colspan, :cols, :col_data, :header, :right
       
       def call_ input, env, out
+        @input, @env = input, env
         @header = input.header
         @cols = header.ordered
         @colspan = 1 + cols.size
@@ -75,91 +77,70 @@ module CX
           data[:style] = right[:style] if c.meta.align_ == :right
         end
 
+        root!
+        @input, @env = @header = @cols = @h = @col_data = nil
+        
+        env[:content_type] = 'text/html'
+      end
+
+      #########################################
+      
+      def root!
         if @table_only
-          html_table(input, env)
+          table!
         else
-          html_body(input, env) do
-            html_table(input, env)
+          document! do
+            table!
           end
         end
-        
-        @header = @cols = @h = @col_data = nil
-        env[:content_type] = 'text/html'
-        nil
       end
 
-      def raw! x
-        h.raw! x.to_s
-      end
-      def text! x
-        raw! @coerce.call(x).to_s
-      end
-
-      def html_body input, env
+      def document!
         h.raw! "<!DOCTYPE html>\n"
+        
         h.html do
           h.head do
-            x = opts[:title] || env[:in_file] and h.title(x)
+            h.meta(charset: "UTF-8")
+            if x = opts[:title] || env[:in_file] 
+              h.title(x);
+            end
             if @styled
               h.css! h.file_content!('cx.css')
             end
-            h.html! h.file_content!('header.html')
-            x = opts[:head] and h.raw!(x)
+            h.html! h.file_content!('head.html')
+            optional_content(:head) {|x| raw!(x) }
           end
           h.body do
-            x = opts[:body_head] and h.html(x)
+            optional_content(:body_head) {|x| raw!(x)}
             h.div(class: 'cx-content') do
               x = opts[:title] and h.div({class: 'cx-title'}, x)
               yield
             end
-            x = opts[:body_foot] and raw!(x)
+            optional_content(:body_foot) {|x| raw!(x)}
           end
-          if @filtering
-            h.js! h.file_content!("jquery-3.6.0.slim.min.js")
-            h.js! h.file_content!("parser_combinator.js")
-            h.js! h.file_content!("filter.js")
-          end
-          if @sorting
-            h.js! h.file_content!("tablesort.js")
-            h.js! "new Tablesort(document.getElementById('cx-table'));\n"
-            h.js! "var cx_filter = cx_make_filter('cx-table');\n"
-          end
-          h.html! h.file_content!('footer.html')
-        end
-      end
-      
-      def html_table input, env
-        h.table(id: 'cx-table', class: 'cx-table') do
-          html_header(input, env) if include_header?
-          h.tbody(class: 'cx-tbody') do
-            ri = 0
-            input.each do | r |
-              ri += 1
-              row_tooltip = "#{ri}/#{input.size}"
-              # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
-              h.tr(title: row_tooltip) do
-                h.td(right, ri)
-                cols.each do | c |
-                  data = col_data[c]
-                  h.indent!(false) do
-                    h.td(title: "#{row_tooltip} - #{c.name}", style: data[:style]) do
-                      if @raw_columns.include?(c.name)
-                        raw!(r[c])
-                      else
-                        text!(render(r[c]))
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
+          raw! h.file_content!('foot.html')
         end
       end
 
-      def html_header input, env
+      def table!
+        optional_content(:table_head) {|x| raw!(x)}
+        h.table(id: 'cx-table', class: 'cx-table') do
+          thead! if include_header?
+          tbody!
+        end
+        optional_content(:table_foot) {|x| raw!(x)}
+        table_footer!
+      end
+
+      #########################################################
+
+      attr_accessor :col_idx
+      
+      def thead!
         h.thead(class: 'cx-thead') do
-          html_filtering(input, env) if opts[:filtering]
+
+          thead_filtering! if opts[:filtering]
+          
           h.tr(class: 'cx-columns') do
             a_base = {class: 'cx-column'}
             a_row_number = a_base
@@ -167,50 +148,143 @@ module CX
               a_row_number = a_row_number.merge("data-sort-method" => :number)
             end
             h.th(a_row_number, "#")
-            idx = 0
+            self.col_idx = 0
             cols.each do | c |
-              idx += 1
-              a = a_base
-              if @filtering
-                a = a.merge(
-                  "data-column-index" => idx,
-                  "data-filter-name" => c.name_.to_s,
-                  "data-filter-name-full" => c.name.to_s)
-              end
-              if @sorting
-                a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
-              end
-              names = [ c.name, c.name_ ].map(&:to_s).sort.uniq.map(&:inspect).join(', ');
-              a = a.merge(title: "name: #{names}; index: #{idx}; type: #{c.meta.type_ || :UNKNOWN}")
-              h.th(a, c)
+              self.col_idx += 1
+              thead_col! c, a_base
             end
           end
         end
       end
 
-      def html_filtering input, env
-        h.tr(class: 'cx-filter') do
-          h.th(class: 'cx-filter', colspan: colspan) do
-            h.span(class: 'cx-filter') do
-              h.input(
-                type: "text",
-                class: "cx-filter-input",
-                onkeyup: "cx_filter.filter_rows()",
-                placeholder: "#{UNICODE[:search]} Filter..."
-              )
+      def thead_col! c, a
+        if @filtering
+          a = a.merge(
+            "data-column-index" => col_idx,
+            "data-filter-name" => c.name_.to_s,
+            "data-filter-name-full" => c.name.to_s)
+        end
+        if @sorting
+          a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+        end
+        
+        names = [ c.name, c.name_ ].map(&:to_s).sort.uniq.map(&:inspect).join(', ')
+        
+        td_title = <<"END".sub(/\n\Z/, '') # .gsub("\n", "&#10;")
+name: #{names}
+index: #{col_idx}
+type: #{c.meta.type_ || :UNKNOWN}
+END
+        td_title = "name: #{names}; index: #{col_idx}; type: #{c.meta.type_ || :UNKNOWN}"
+        a = a.merge(title: td_title)
+
+        h.th(a, c)
+      end
+
+      #########################################################
+      
+      attr_accessor :row_idx
+      
+      def tbody!
+        h.tbody(class: 'cx-tbody') do
+          self.row_idx = 0
+          input.each do | r |
+            self.row_idx += 1
+            tbody_tr! r
+          end
+        end
+      end
+
+      def tbody_tr! r
+        row_tooltip = "#{row_idx}/#{input.size}"
+        # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
+        h.tr(title: row_tooltip) do
+          row_id = "r#{row_idx}"
+          if false
+            h.td(right.merge(id: row_id)) do
+              h.a({href: "\##{row_id}"}, row_idx)
             end
-            h.span(class: 'cx-row-count-span') do
-              h.span({class: 'cx-matched-row-count'}, input.size.to_s)
-              h.text!('/')
-              h.span({class: 'cx-row-count'}, input.size.to_s)
+          else
+            # h.td((right.merge(id: row_id)}, row_idx);
+            h.td(right, row_idx);
+          end
+          
+          cols.each do | c |
+            data = col_data[c]
+            h.indent!(false) do
+              h.td(
+                title: "#{row_tooltip} - #{c.name}",
+                style: data[:style]) do
+                if @raw_columns.include?(c.name)
+                  raw!(r[c])
+                else
+                  text!(render(r[c]))
+                end
+              end
             end
           end
         end
       end
       
-      def html_sorting input
+      def thead_filtering!
+        h.tr(class: 'cx-filter-row') do
+          h.th(colspan: colspan) do
+            h.span(class: 'cx-filter-input-span') do
+              h.input(
+                type: "text",
+                # id: "cx-filter-input",
+                class: "cx-filter-input",
+                onkeyup: "cx_filter.filter_rows()",
+                placeholder: "#{UNICODE[:search]} Filter..."
+              )
+              if false
+                h.button({class: 'cx-filter-input-clear', onclick: 'document.getElementById("cx-filter-input").value = ""; cx_filter.filter_rows()'}, 'X')
+              end
+              h.span(class: 'cx-filter-row-count-span') do
+                h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
+                h.text!('/')
+                h.span({class: 'cx-filter-row-count'}, input.size.to_s)
+              end
+            end
+          end
+        end
       end
       
+      def table_footer!
+        if @filtering
+          h.js! h.file_content!("jquery-3.6.0.slim.min.js")
+          h.js! h.file_content!("parser_combinator.js")
+          h.js! h.file_content!("filter.js")
+        end
+        if @sorting
+          h.js! h.file_content!("tablesort.js")
+          h.js! "new Tablesort(document.getElementById('cx-table'));\n"
+          h.js! "var cx_filter = cx_make_filter('cx-table');\n"
+        end
+      end
+
+      ########################################
+
+      def optional_content name, default = nil
+        case content = opts[name]
+        when /^@(.*)/
+          content = File.read(content)
+        end
+        content ||= default
+        yield content if content && block_given?
+        content
+      end
+      
+      ########################################
+
+      def raw! x
+        h.raw! x.to_s
+      end
+      
+      def text! x
+        raw! @coerce.call(x).to_s
+      end
+
       def render x
         case x
         when Hash
@@ -220,7 +294,19 @@ module CX
         when Enumerable
           x.map{|x| render(x)} * ';'
         # when Symbol
-        # x.inspect
+          # x.inspect
+        when String
+          case
+          when false ## @quote_strings
+            case x
+            when /[ \\"']/
+              x.inspect
+            else
+              x
+            end
+          else
+            x
+          end
         else
           x.to_s
         end

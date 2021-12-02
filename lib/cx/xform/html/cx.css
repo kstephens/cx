@@ -3,18 +3,11 @@ body {
   background-color: #000;
   color: #eee;
 }
-.cx-title {
-  text-align: center
-}
-div.cx-content {
-  display: inline-block;
-}
 table {
   border-collapse: collapse;
 }
 thead th {
   background-color: #333;
-  border: 0.1rem solid #111
 }
 tr:hover {
   background-color: #444;
@@ -22,7 +15,10 @@ tr:hover {
 tr:nth-child(even) {
   background-color: #222;
 }
-th, td {
+th {
+  padding: 0.5rem 1rem;
+}
+td {
   padding: 0.5rem 1rem;
   border-bottom: 1px solid #555;
 }
@@ -43,26 +39,49 @@ a:hover {
   text-decoration: underline;
 }
 
-# https://css-tricks.com/position-sticky-and-table-headers/
+/*******************************************/
+
+.cx-title {
+  text-align: center
+}
+div.cx-content {
+  display: inline-block;
+}
+
+/* https://css-tricks.com/position-sticky-and-table-headers/ */
 table.cx-table {
   position: relative,
 }
-table.cx-table thead.cx-table-thead {
+.cx-thead {
   position: sticky;
   top: 0;
 }
-
-th.cx-filter {
+.cx-filter-row {
   position: sticky;
-  left: 0;
-}
-input.cx-filter-input {
-  width: 20em;
-  float: left;
+  left: 0; /* needed for sticky? */
 }
 
-.cx-row-count-span {
-    /* float: right; */
-    vertical-align: middle;
-    font-size: 80%;
+.cx-filter-input-clear {
+  background-color: inherit; /* black; */
+  color: red;
+  border: none;
+  padding: 2px 2px;
+  vertical-align: middle;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 80%;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.cx-filter-input {
+  width: 20em;
+  /* float: left; /* needed for sticky? */
+}
+
+.cx-filter-row-count-span {
+  /* float: right; */
+  vertical-align: middle;
+  font-size: 80%;
 }
