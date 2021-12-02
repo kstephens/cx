@@ -20,14 +20,14 @@ module CX
 COERCER__#{name} = ::CX::TypedAccessor.coercer_for(#{type})
 def #{name}= __X__
    #{ivar} = COERCER__#{name}.call(__X__)
-   $stderr.puts "### #{self} #{target} #{name} #{type} : \#{__X__.inspect} => \#{#{ivar}.inspect}" if #{ivar}.class != __X__.class
+   # $stderr.puts "### #{self} #{target} #{name} #{type} : \#{__X__.inspect} => \#{#{ivar}.inspect}" if #{ivar}.class != __X__.class
 end
 alias :__#{name}= :#{name}=
 
 ###################################################
 
 END
-      $stderr.puts expr
+      # $stderr.puts expr
       target.module_eval(expr)
     end
     

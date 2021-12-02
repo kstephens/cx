@@ -53,18 +53,21 @@ module CX
     def clear!
       @types = Set.new
       @type_inferred = @align_inferred = nil
+      @type_object = nil
       @min_width = @max_width = @min_value = @max_value = nil
       @blanks = @nulls = @whitespace = 0
       self
     end
 
     def min_max_size! n
+      return self unless n
       @min_size = n if ! @min_size || @min_size > n
       @max_size = n if ! @max_size || @max_size < n 
       self
     end
 
     def min_max_value! val
+      return self unless val
       @min_value = val if ! @min_value || @min_value > val
       @max_value = val if ! @max_value || @max_value < val
       self
