@@ -4,6 +4,7 @@
 # -*- coding: utf-8 -*-
 
 require 'cx/meta'
+require 'cx/type'
 
 module CX
   RSpec.describe Meta do
@@ -18,6 +19,10 @@ module CX
         expect(subject.max_#{meth}) .to eq(nil)
 
         subject.min_max_#{meth}! 5
+        expect(subject.min_#{meth}) .to eq(5)
+        expect(subject.max_#{meth}) .to eq(5)
+
+        subject.min_max_#{meth}! nil
         expect(subject.min_#{meth}) .to eq(5)
         expect(subject.max_#{meth}) .to eq(5)
 
@@ -76,6 +81,18 @@ END
         subject.type = :Float
         expect(subject.type) .to eq(Float)
         expect(subject.type_) .to eq(Float)
+      end
+    end
+
+    describe "type_object" do
+      it "works" do
+        expect(subject.type_object) .to eq(nil)
+
+        subject.type_inferred = Integer
+        expect(subject.type_object) .to eq(Type[:Integer])
+
+        subject.type = Float
+        expect(subject.type_object) .to eq(Type[Float])
       end
     end
   end

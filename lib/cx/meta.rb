@@ -87,7 +87,9 @@ module CX
       self
     end
 
-    def align_ ; align || align_inferred; end
+    def align_
+      align || align_inferred
+    end
 
     def to_h
       ATTRS.map(&:first).map{|k| [k, send(k)]}.to_h
@@ -140,7 +142,7 @@ module CX
     end
     
     def type_object
-      @type_object ||= Type[type_]
+      @type_object ||= Type[type_] unless type_.nil?
     end
   end
 end
