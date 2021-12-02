@@ -6,17 +6,20 @@
 require 'cx'
 require 'cx/boolean'
 require 'cx/type'
+require 'cx/typed_accessor'
 
 module CX
   class Meta
+    extend CX::TypedAccessor
+    
     ATTRS =
       [
-        [:name,       type: String],
-        [:name_,      type: String],
+        [:name,       type: Symbol],
+        [:name_,      type: Symbol],
         [:visible,    type: Boolean],
         [:order,      type: Integer],
         [:index,      type: Integer],
-        [:type,       type: String],
+        [:type,       type: Module],
         [:min_size,   type: Integer],
         [:max_size,   type: Integer],
         [:min_value,  type: Object],
@@ -24,13 +27,15 @@ module CX
         [:blanks,     type: Integer],
         [:nulls,      type: Integer],
         [:format,     type: String],
-        [:align,      type: Symbol],
+        [:align,          type: Symbol],
         [:align_inferred, type: Symbol],
-        [:types,      type: String],
-        [:type_inferred, type: String],
+        [:types,          type: Set], # Set.new([Module])
+        [:type_inferred,  type: Module],
       ]
-    attr_accessor *ATTRS.map(&:first)
+    attr_accessor_typed *ATTRS
 
+    #####################################
+    
     def initialize
       self.visible = true
       clear!
@@ -49,7 +54,7 @@ module CX
       @types = Set.new
       @type_inferred = @align_inferred = nil
       @min_width = @max_width = @min_value = @max_value = nil
-      @blanks = @nulls = 0
+      @blanks = @nulls = @whitespace = 0
       self
     end
 
@@ -88,15 +93,24 @@ module CX
     def table
       header = Header.new
       ATTRS.each do | (name, opts) |
-        opts[:align_inferred] ||= align_for_type(opts[:type_inferred] || opts[:type])
-        opts[:align] ||= align_for_type(opts[:type])
+        type = opts[:type_inferred] || opts[:type]
+        type = type.first if Array === type
+        
+        opts[:align_inferred] ||= align_for_type(type)
+        
+        type = opts[:type_inferred] || opts[:type]
+        type = type.first if Array === type
+
+        opts[:align] ||= align_for_type(type)
         col = Column.new(name).tap{|c| c.meta.update(opts)}
-        col.meta.type = opts[:type]
+        col.meta.type = type
         header << col
       end
+      
       header[:min_value].meta.type =
         header[:max_value].meta.type =
-       self.type
+        type
+      
      Table.new([], header)
     end
     
@@ -105,10 +119,25 @@ module CX
     end
 
     def type_
-      self.type  || self.type_inferred
+      @type  || @type_inferred
     end
+    
     def align_
-      self.align || self.align_inferred || align_for_type(type_)
+      @align || @align_inferred || align_for_type(type_)
+    end
+
+    def type= x
+      self.__type = x
+      @type_object = nil
+    end
+    
+    def type_inferred= x
+      self.__type_inferred = x
+      @type_object = nil
+    end
+    
+    def type_object
+      @type_object ||= Type[type_]
     end
   end
 end
