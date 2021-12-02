@@ -5,14 +5,13 @@ Align:
   opts: {}
   file: "lib/cx/xform/align.rb"
   path: "cx/xform/align"
-CalculateMeta:
-  name: meta
+Coerce:
   aliases: 
-  synopsis: Calculates various column metadata.
+  synopsis: Coerce columns by inferred types.
   args: []
   opts: {}
-  file: "lib/cx/xform/calculate_meta.rb"
-  path: "cx/xform/calculate_meta"
+  file: "lib/cx/xform/coerce.rb"
+  path: "cx/xform/coerce"
 CsvOut:
   aliases:
   synopsis: Generates CSV lines.
@@ -89,8 +88,15 @@ MarkdownOut:
   opts: {}
   file: "lib/cx/xform/markdown.rb"
   path: "cx/xform/markdown"
+MetaIn:
+  aliases: [ -meta, types ]
+  synopsis: Calculates various column metadata from row data.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/meta_in.rb"
+  path: "cx/xform/meta_in"
 MetaTable:
-  aliases: meta-, meta, columns
+  aliases: meta-, meta, columns, columns-
   synopsis: Generate a table of table metadata.
   args: []
   opts: {}

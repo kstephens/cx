@@ -8,16 +8,15 @@ require 'cx/xform'
 require 'cx/xform/type_inference'
 
 # :COMMAND:
-# CalculateMeta:
-#   name: meta
-#   aliases: 
-#   synopsis: Calculates various column metadata.
+# MetaIn:
+#   aliases: [ -meta, types ]
+#   synopsis: Calculates various column metadata from row data.
 #   args: []
 #   opts: {}
 
 module CX
   module Xform
-    class CalculateMeta
+    class MetaIn
       include Xform
       def initialize
         super

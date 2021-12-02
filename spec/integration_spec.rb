@@ -51,7 +51,7 @@ END
       end
 
       it "Sort : reverse" do
-        assert_pipeline (Pipeline | CalculateMeta | build(Sort, "b:-")), <<'END', size: 5
+        assert_pipeline (Pipeline | MetaIn | build(Sort, "b:-")), <<'END', size: 5
 |id,a,b,b4,X %|
 |1002,77,ymt,0.4,48%|
 |1003,84,yis,0.8,12%|
@@ -63,7 +63,7 @@ END
 
       # FIXME!
       it "Sort : numerically" do
-        assert_pipeline (Pipeline | CalculateMeta | build(Sort, "a")), <<'END', size: 5
+        assert_pipeline (Pipeline | MetaIn | build(Sort, "a")), <<'END', size: 5
 |id,a,b,b4,X %|
 |1005,-38,oub,1.6,9%|
 |1004,-62,rcz ,1.2,127%|
@@ -237,7 +237,7 @@ END
 
       it "HTMLOut: Full" do
         format = build(HTMLOut, '--filtering')
-        result = run_pipeline(Pipeline | CalculateMeta | Quote, output_format: format, size: 200)
+        result = run_pipeline(Pipeline | MetaIn | Quote, output_format: format, size: 200)
         File.write("tmp/test.html", result)
         # puts result
       end
@@ -368,7 +368,7 @@ END
       end
 
       it "Quote" do
-        assert_pipeline (Pipeline | Quote | EmptyToNull | CalculateMeta), <<'END', output_format: MarkdownOut
+        assert_pipeline (Pipeline | Quote | EmptyToNull | MetaIn), <<'END', output_format: MarkdownOut
 || id    | a     | b      | b4     | X %   ||
 || ----: | ----: | ------ | -----: | ----: ||
 ||  1001 |    79 | "ekl " |        |  133% ||
@@ -419,7 +419,7 @@ END
 
       it "SqlOut" do
         format = build SqlOut, "--table=the_table", '--create', '--transaction', '--commit', '--insert'
-        assert_pipeline (Pipeline | CalculateMeta), <<'END', output_format: format
+        assert_pipeline (Pipeline | MetaIn), <<'END', output_format: format
 |START TRANSACTION;|
 ||
 |CREATE TABLE the_table|

@@ -5,10 +5,11 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/meta_in'
 
 # :COMMAND:
 # MetaTable:
-#   aliases: meta-, meta, columns
+#   aliases: meta-, meta, columns, columns-
 #   synopsis: Generate a table of table metadata.
 #   args: []
 #   opts: {}
@@ -23,7 +24,7 @@ module CX
         input.header.each do | c |
           output << c.meta.to_h
         end
-        CalculateMeta.new.call(output, env)
+        MetaIn.new.call(output, env)
       end
     end
   end

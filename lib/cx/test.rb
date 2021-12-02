@@ -62,7 +62,7 @@ module CX
       
       pipeline =
         input_pipeline |
-        Xform::CalculateMeta |
+        Xform::MetaIn |
         (pipeline || Xform::Pipeline.new) |
         output_format |
         build(Xform::IoOut, out)
