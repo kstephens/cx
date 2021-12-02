@@ -196,10 +196,12 @@ END
       end
 
       def tbody_tr! r
-        row_tooltip = "#{row_idx}/#{input.size}"
+        row_tooltip = "#{row_idx} / #{input.size}"
         # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
         h.tr(title: row_tooltip) do
           row_id = "r#{row_idx}"
+          # link to row:
+          # FIXME: scrolls row to top of frame which is under the thead!!!
           if false
             h.td(right.merge(id: row_id)) do
               h.a({href: "\##{row_id}"}, row_idx)
@@ -229,21 +231,24 @@ END
       def thead_filtering!
         h.tr(class: 'cx-filter-row') do
           h.th(colspan: colspan) do
-            h.span(class: 'cx-filter-input-span') do
-              h.input(
-                type: "text",
-                # id: "cx-filter-input",
-                class: "cx-filter-input",
-                onkeyup: "cx_filter.filter_rows()",
-                placeholder: "#{UNICODE[:search]} Filter..."
-              )
-              if false
-                h.button({class: 'cx-filter-input-clear', onclick: 'document.getElementById("cx-filter-input").value = ""; cx_filter.filter_rows()'}, 'X')
-              end
-              h.span(class: 'cx-filter-row-count-span') do
-                h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
-                h.text!('/')
-                h.span({class: 'cx-filter-row-count'}, input.size.to_s)
+            h.indent!(false) do
+              h.span(class: 'cx-filter-input-span') do
+                h.input(
+                  type: "text",
+                  id: "cx-filter-input",
+                  class: "cx-filter-input",
+                  onkeyup: "cx_filter.filter_rows()",
+                  placeholder: "#{UNICODE[:search]} Filter..."
+                )
+                # Clear filter button:
+                if true
+                  h.button({class: 'cx-filter-input-clear', onclick: 'document.getElementById("cx-filter-input").value = ""; cx_filter.filter_rows()'}, 'X')
+                end
+                h.span(class: 'cx-filter-row-count-span') do
+                  h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
+                  h.text!(' / ')
+                  h.span({class: 'cx-filter-row-count'}, input.size.to_s)
+                end
               end
             end
           end
