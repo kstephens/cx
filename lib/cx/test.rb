@@ -102,36 +102,76 @@ module CX
       actual
     end
 
+    # if $CX_TEST_ACCEPT is:
+    #   'prompt' - prompt the user.
+    #   'always' - accept the diff.
+    #   'match=REGEX' - accept if the name matches REGEX.
     def assert_content name, actual_content
       unless String === actual_content
         strio = StringIO.new
         PP.pp(actual_content, strio, 250)
         actual_content = strio.string
       end
+
       expected_file = "spec/#{name}"
       actual_file   = "#{expected_file}.actual"
       diff_file     = "#{expected_file}.diff"
       expected_content = File.read(expected_file) rescue nil
+
+      if false
+        puts "expected_content ::::\n#{expected_content}\n::::"
+        puts "actual_content   ::::\n#{actual_content}\n::::"
+        puts "expected_file    = #{expected_file}"
+        puts "actual_file      = #{actual_file}"
+      end
+      
       if actual_content != expected_content
+        FileUtils.mkdir_p(File.dirname(expected_file))
         File.write(expected_file, "") unless expected_content
         File.write(actual_file, actual_content)
-        Kernel.system("set -x; diff -u '#{expected_file}' '#{actual_file}' | tee '#{diff_file}' >/dev/tty")
-        File.open("/dev/tty", "w+") do | tty |
-          tty.write " ### #{name} diff : Accept? [AY]: "
-          case tty.readline
-          when /^[ay]/i
-            File.write(expected_file, actual_content)
-            File.unlink(actual_file)
-            File.unlink(diff_file)
-          else
-            expect(actual_file) .to eq(expected_file)
-          end
+        Kernel.system("set -x; diff -u '#{expected_file}' '#{actual_file}' > '#{diff_file}'")
+        Kernel.system("cat '#{diff_file}' | (colordiff 2>/dev/null || cat -)")
+        puts File.read(diff_file)
+        binding.pry
+        if accept = accept_diff(name)
+          File.write(expected_file, actual_content)
+          File.unlink(actual_file)
+          File.unlink(diff_file)
+        else
+          expect(actual_file) .to eq(expected_file)
         end
       end
+      
     rescue => exe
       pp(exe)
       binding.pry
       :HERE
+    end
+
+    def accept_diff name
+      accept = prompt = false
+      (ENV['CX_TEST_ACCEPT'] || '').split(',').each do | opt |
+        accept ||=
+          case opt
+          when /^prompt$/i
+            prompt = true
+          when /^all$/i
+            true
+          when /^match=(.+)$/
+            name =~ /#{$1}/
+          end
+      end
+      if ! accept && prompt && (prompt = prompt_user("#{name} diff : Accept? [AY]: "))
+        accept = prompt =~ /^[ay]/i
+      end
+      accept
+    end
+    
+    def prompt_user msg, default = nil
+      File.open("/dev/tty", "w+") do | tty |
+        tty.write "  ### #{msg} : "
+        tty.readline rescue default
+      end
     end
 
     def assert_many actual, expected
