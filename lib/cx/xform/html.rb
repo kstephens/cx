@@ -121,8 +121,8 @@ module CX
           end
           if @sorting
             h.js! h.file_content!("tablesort.js")
-            h.js! "new Tablesort(document.getElementById('cx-table'));"
-            h.js! "var cx_filter = cx_make_filter('cx-table');"
+            h.js! "new Tablesort(document.getElementById('cx-table'));\n"
+            h.js! "var cx_filter = cx_make_filter('cx-table');\n"
           end
           h.html! h.file_content!('footer.html')
         end
