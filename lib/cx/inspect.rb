@@ -7,18 +7,19 @@ require 'cx'
 
 module CX
   module Inspect
-    def inspect mode = nil
-      case mode
-      when :super
+    def inspect *modes
+      case
+      when modes.include?(:super)
         super()
       else
-        content = inspect_content(mode)
+        content = inspect_content(modes)
         content = content ? " #{content.to_s}" : ""
+        content = "#{object_id}#{content}" unless modes.include?(:no_id)
         "#<#{self.class} #{object_id}#{content}>"
       end
     end
 
-    def inspect_content mode
+    def inspect_content modes
       nil
     end
   end
