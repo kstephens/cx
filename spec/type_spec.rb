@@ -90,7 +90,35 @@ module CX
       end
       assert_content "type_spec/coerce-1", actual
     end
-    
+
+    describe 'add!' do
+      it "Registers for Type.lookup" do
+        # expect(fut(nil)) .to be_nil # ??? TODO
+        expect(Type.all.first) .to be_a(Type)
+      end
+    end
+
+    describe 'lookup' do
+      def fut x; Type.lookup(x); end
+      
+      it 'resolves by Module, String, Symbol, nil, Type' do
+        expect(fut(Type.all.first)) .to eq(Type.all.first)
+        expect(fut(Integer))    .to be_a(Type)
+        expect(fut(:Integer))   .to be_a(Type)
+        expect(fut("Integer"))  .to be_a(Type)
+        expect(fut(:integer))   .to be_a(Type)
+        expect(fut("integer"))  .to be_a(Type)
+      end
+      
+      it 'resolves ancestors' do
+        boolean = fut(Boolean)
+        expect(boolean) .to be_a(Type)
+        expect(fut(Boolean)) .to eq(boolean)
+        expect(fut(false.class)) .to eq(boolean)
+        expect(fut(true.class)) .to eq(boolean)
+      end
+    end
+
     def do_values values = self.values
       actual = [ ]
       types.each do | t |

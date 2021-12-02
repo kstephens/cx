@@ -106,31 +106,76 @@ module CX
     
     @@types = [ ]
     @@types_by = { }
+    @@types_by_cache = { }
 
-    def self.[] x
-      case x
-      when Type
-        x
-      when Module, Symbol, String
-        @@types_by[x]
-      end or raise ArgumentError, "unknown Type #{x.inspect}"
-    end
+    class << self
+      def all
+        @@types
+      end
 
-    def self.add! *args
-      type = new(*args)
-      @@types << type
-      @@types_by[type.mod] =
-        @@types_by[type.name.to_sym] =
-        @@types_by[type.name.downcase.to_sym] =
-        @@types_by[type.name.to_s] =
-        @@types_by[type.name.downcase.to_s] =
+      def lookup x
+        case x
+        when Type
+          x
+        when Symbol, String
+          @@types_by_cache[x]
+        when Module
+          type_by_module(x)
+        end or raise ArgumentError, "unknown Type #{x.inspect}"
+      end
+      alias :[] :lookup
+
+      def type_by_module mod
+        case type = @@types_by_cache[mod]
+        when false
+          # Sentinel
+          return nil
+        when nil
+          # Search below
+        else
+          return type
+        end
+
+        type = @@types_by[mod]
+
+        unless type
+          type = @@types.find do | type |
+            mod <= type.mod
+          end
+        end
+
+        if type
+          # puts "Found: #{type.mod} for #{mod}"
+          tmp_type = Type.new(mod)
+          add_types_by! tmp_type, @@types_by_cache
+        else
+          # Sentinel
+          @@types_by_cache[mod] = false
+        end
         type
-      self
-    end
-    def self.all
-      @@types
-    end    
+      end
 
+      def add_types_by! type, out
+        h = { }
+        h[type.mod] = type
+        [ type.mod.to_s, type.to_s, type.name.to_s ].each do | s |
+          sd = s.downcase
+          h[s] = h[s.to_sym] = h[sd] = h[sd.to_sym] = type
+        end
+        # puts "add_types_by! #{type.mod} : #{h.keys.inspect}"
+        out.update(h)
+        type
+      end
+
+      def add! *args
+        type = new(*args)
+        @@types << type
+        add_types_by! type, @@types_by
+        add_types_by! type, @@types_by_cache
+        self
+      end
+    end
+    
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ANY  = Proc.new {|t, v| v}
@@ -367,6 +412,6 @@ module CX
       ],
     ].each do | args |
       add!(*args)
-   end
+    end
   end
 end
