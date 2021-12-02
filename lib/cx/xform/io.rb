@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'tempfile'
 
 # :COMMAND:
 # IoIn:
@@ -42,9 +43,17 @@ module CX
           end
         when String
           file_name = io.to_s.dup.freeze
-          File.open(file_name, mode) do | ioh |
-            env[:io_file] = file_name
-            yield fh
+          case mode
+          when /[wa]/
+            Tempfile.create(file_name) do | ioh |
+              env[:out_file] = file_name
+              yield ioh
+            end
+          else
+            File.open(file_name, mode) do | ioh |
+              env[:in_file] = file_name
+              yield ioh
+            end
           end
         else
           raise_ TypeError, "cannot open #{io.inspect} #{mode.inspect}"
