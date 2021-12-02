@@ -237,7 +237,7 @@ END
                   type: "text",
                   id: "cx-filter-input",
                   class: "cx-filter-input",
-                  onkeyup: "cx_filter.filter_rows()",
+                  onkeyup: "cx_filter.filter_rows(event)",
                   placeholder: "#{UNICODE[:search]} Filter..."
                 )
                 # Clear filter button:
