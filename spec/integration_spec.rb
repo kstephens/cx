@@ -183,12 +183,12 @@ END
       it "MetaTable | MetaTable" do
         assert_pipeline Pipeline | MetaTable | MetaTable, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
-|name,name,true,0,0,String,1,3,X %,id,0,0,,,,Symbol,Symbol|
-|name_,name_,true,1,1,String,1,2,a,x_,0,0,,,,Symbol,Symbol|
+|name,name,true,0,0,Symbol,1,3,X %,id,0,0,,,,Symbol,Symbol|
+|name_,name_,true,1,1,Symbol,1,2,a,x_,0,0,,,,Symbol,Symbol|
 |visible,visible,true,2,2,Boolean,4,4,true,true,0,0,,,,TrueClass,TrueClass|
 |order,order,true,3,3,Integer,1,1,0,4,0,0,,right,right,Integer,Integer|
 |index,index,true,4,4,Integer,1,1,0,4,0,0,,right,right,Integer,Integer|
-|type,type,true,5,5,String,7,7,Integer,Numeric,0,3,,,,Class;NilClass,Class|
+|type,type,true,5,5,Module,7,7,Integer,Numeric,0,3,,,,Class;NilClass,Class|
 |min_size,min_size,true,6,6,Integer,1,1,0,4,0,0,,right,right,Integer,Integer|
 |max_size,max_size,true,7,7,Integer,1,1,4,7,0,0,,right,right,Integer,Integer|
 |min_value,min_value,true,8,8,,0,4,-100,1001,1,0,,,,Integer;String,Object|
@@ -198,8 +198,8 @@ END
 |format,format,true,12,12,String,,,,,0,5,,,,NilClass,|
 |align,align,true,13,13,Symbol,,,,,0,5,,,,NilClass,|
 |align_inferred,align_inferred,true,14,14,Symbol,5,5,right,right,0,3,,,,Symbol;NilClass,Symbol|
-|types,types,true,15,15,String,16,28,Integer,Integer,0,0,,,,Set,Set|
-|type_inferred,type_inferred,true,16,16,String,6,7,Integer,Object,0,0,,,,Class,Class|
+|types,types,true,15,15,Set,16,28,Integer,Integer,0,0,,,,Set,Set|
+|type_inferred,type_inferred,true,16,16,Module,6,7,Integer,Object,0,0,,,,Class,Class|
 END
       end
       
@@ -385,16 +385,17 @@ END
       end
 
       it "CsvIn" do
-        actual = assert_pipeline (Pipeline | HeaderIn), input_data: <<'END'
+        input_data = <<'END'
 a,b,c
 1,2,3
 x,y,z
 END
-        expect(actual) .to eq(<<'END')
+        expected = <<'END'
 |a,b,c|
 |1,2,3|
 |x,y,z|
 END
+        actual = assert_pipeline (Pipeline | HeaderIn), expected, input_data: input_data
       end
       
       it "HeaderOut : --meta-columns=name,..." do

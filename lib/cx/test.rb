@@ -12,6 +12,10 @@ require 'pp'
 
 module CX
   module Test
+    class << self
+      attr_accessor :metadata
+    end
+    
     def make_table size = 100
       ints = (-100  .. 100).to_a
       strs = ("aaa" .. "zzz").to_a
@@ -69,7 +73,7 @@ module CX
       pipeline.call(table, opts[:env])
       out.string
     end
-    
+
     def assert_pipeline pipeline, *args
       # pp([:assert_pipeline, :args, args])
       expected = opts = nil
@@ -83,6 +87,7 @@ module CX
       else
         raise ArgumentError, args.inspect
       end
+      opts ||= { }
       
       actual = run_pipeline(pipeline, opts || {})
       actual = actual.
@@ -93,29 +98,45 @@ module CX
       if expected
         if actual != expected
           File.write("spec/last-pipeline.actual", actual)
+          # File.write("/dev/tty", pipeline.inspect(:no_id))
+          # exit!
         end
         expect(actual) .to eq(expected)
       else
+        assert_content opts[:test_name], actual
         # puts actual
         # binding.pry
       end
       actual
     end
 
-    # if $CX_TEST_ACCEPT is:
-    #   'prompt' - prompt the user.
-    #   'always' - accept the diff.
-    #   'match=REGEX' - accept if the name matches REGEX.
     def assert_content name, actual_content
+      unless name
+        m = Test.metadata
+        name =
+          m[:file_path].
+          sub(%r{^\./spec/}, '').
+          sub(/\.rb$/, '') +
+          '/' +
+          m[:full_description]
+        name = name.gsub(/ +/, '-').gsub(%r{[^-_/a-z0-9]}i, '_')
+        if false
+          # File.write("/dev/tty", x.metadata.inspect)
+          File.write("/dev/tty", name.inspect)
+          exit! 9
+        end
+      end
+      
       unless String === actual_content
         strio = StringIO.new
         PP.pp(actual_content, strio, 250)
         actual_content = strio.string
       end
 
-      expected_file = "spec/#{name}"
-      actual_file   = "#{expected_file}.actual"
-      diff_file     = "#{expected_file}.diff"
+      dir = "spec/#{name}"
+      expected_file = "#{dir}.expected"
+      actual_file   = "#{dir}.actual"
+      diff_file     = "#{dir}.diff"
       expected_content = File.read(expected_file) rescue nil
 
       if false
@@ -131,21 +152,28 @@ module CX
         File.write(actual_file, actual_content)
         Kernel.system("set -x; diff -u '#{expected_file}' '#{actual_file}' > '#{diff_file}'")
         Kernel.system("cat '#{diff_file}' | (colordiff 2>/dev/null || cat -)")
-        puts File.read(diff_file)
-        binding.pry
+        # puts File.read(diff_file)
+
         if accept = accept_diff(name)
           File.write(expected_file, actual_content)
           File.unlink(actual_file)
           File.unlink(diff_file)
         else
+          File.write("/dev/tty", <<END)
+if $CX_TEST_ACCEPT is:
+* 'prompt'       - prompts for Y.
+* 'all'          - accept the diff.
+* 'match=REGEX'  - accept if the name matches REGEX.
+END
           expect(actual_file) .to eq(expected_file)
         end
       end
       
     rescue => exe
       pp(exe)
-      binding.pry
-      :HERE
+      pp(exe.backtrace)
+      # binding.pry
+      raise exe
     end
 
     def accept_diff name
