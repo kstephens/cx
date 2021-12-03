@@ -8,19 +8,45 @@ module CX
     attr_accessor :cause
     
     module Support
-      def raise_ msg_ = nil, exc = nil
-        msg = String.new
-        msg << "#{inspect}"
-        msg << " : " << msg_ if msg_
-        msg << " : #{exc.inspect}" if exc
+      def raise_ *args
+        msg = exc = exc_cls = exc_message = backtrace = nil
+        args.each do | arg |
+          case arg
+          when Class
+            exc_cls = arg
+            exc_message = 'NO-MESSAGE'
+          when Exception
+            exc = arg
+            exc_message = exc.message
+            backtrace = exc.backtrace
+          when Array
+            backtrace = arg
+          else
+            msg = arg.to_s
+          end
+        end
+        
+        msg ||= "NO-MESSAGE"
+        backtrace ||= exc && exc.backtrace
+        exc_cls ||= raise_cls
+        
+        msg_ = String.new
+        msg_ << "#{inspect}"
+        msg_ << " : " << msg.to_s if msg
+        msg_ << " : #{exc.class} : #{exc.message}" if exc
+        msg = msg_
+        
+        exc_to_raise = exc_cls.new(msg)
+        
         if debug?
-          pp(exc: exc, msg: msg, backtrace: exc && exc.backtrace.reverse)
+          pp(exc_to_raise: exc_to_raise, exc: exc, msg: msg, backtrace: backtrace && backtrace.reverse)
           binding.pry
         end
-        if exc
-          raise raise_cls, msg, exc.backtrace
+        
+        if backtrace
+          raise exc_to_raise, backtrace
         else
-          raise raise_cls, msg
+          raise exc_to_raise
         end
       end
 
@@ -33,7 +59,7 @@ module CX
       end
 
       def raise_cls
-        @@raise_cls || StandardError
+        @@raise_cls || ::CX::Error
       end
       
       def self.raise_cls= x
