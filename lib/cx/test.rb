@@ -48,19 +48,21 @@ module CX
 
       case
       when opts[:input_data]
+        File.write("tmp/last-pipeline.input", opts[:input_data])
+
         input_format = opts[:input_format] || Xform::CsvIn
         input_io = StringIO.new(opts[:input_data])
+
         input_pipeline =
           Xform::Pipeline.new |
           build(Xform::IoIn, input_io) |
           input_format
-        # binding.pry
       when opts[:table]
         table = opts[:table]
       else
         table = make_table(opts[:size] || 10)
       end
-      
+
       pipeline =
         input_pipeline |
         Xform::MetaIn |
@@ -94,7 +96,7 @@ module CX
 
       if expected
         if actual != expected
-          File.write("spec/last-pipeline.actual", actual)
+          File.write("tmp/last-pipeline.actual", actual)
           # File.write("/dev/tty", pipeline.inspect(:no_id))
           # exit!
           puts <<"END"

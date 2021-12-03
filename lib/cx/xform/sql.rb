@@ -36,8 +36,9 @@ module CX
         @header = input.header
         @output = make_output
         @table = opts[:table] || @header.meta.name or raise_ "unspecifed table name"
-        # binding.pry
+
         do_actions!
+
         env[:content_type] = 'text/plain' # application/x-sql ?
         result = @output
         @input = @header = @output = @table = nil

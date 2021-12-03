@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+$VERBOSE = nil
+
 require "bundler/setup"
 require 'cx'
 require 'cx/inspect'

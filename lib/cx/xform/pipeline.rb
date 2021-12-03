@@ -6,18 +6,21 @@ require 'cx/xform'
 module CX
   module Xform
     class Pipeline
-      include Xform
+      include Enumerable, Xform
 
-      attr_accessor :apps
+      attr_accessor :xforms
       
       def initialize
-        @apps = [ ]
+        @xforms = [ ]
         super
       end
 
+      def size   ; @xforms.size   ; end
+      def empty? ; @xforms.empty? ; end
+        
       def >> app
         app = app.new.build if app.respond_to?(:new)
-        @apps << app
+        @xforms << app
         self
       end
       alias :| :>>
@@ -30,13 +33,13 @@ module CX
       end
       
       def call table, env
-        @apps.inject(table) do |table, app|
+        @xforms.inject(table) do |table, app|
           app.call(table, env)
         end
       end
 
       def inspect_content mode
-        "[#{@apps.map(&:inspect) * ' | '}]"
+        "[#{@xforms.map(&:inspect) * ' | '}]"
       end
    end
   end

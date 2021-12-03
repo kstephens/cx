@@ -34,7 +34,7 @@ module CX
           cmp_vals(a.first, b.first)
         end
         input.set_rows!(rows_with_keys.map{|rk| rk[1]})
-        # GC
+
         @to_s_cache = @order = rows_with_keys = nil
         input
       end

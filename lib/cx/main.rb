@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-# coding: utf-8
 # frozen_string_literal: true
-# encoding: UTF-8
 
 # cx: Copyright 2020, Kurt Stephens
 

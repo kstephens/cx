@@ -3,7 +3,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => [ :readme, :generate_commands_yml, :spec, :js_test ]
+task :default => [ :readme, :commands_yml, :spec, :js_test ]
+
+task :build => [ :readme, :commands_yml ]
 
 task :readme do
   File.write "README.md", <<"END"
@@ -40,7 +42,7 @@ end
 
 desc "Generate lib/cx/commands.yml"
 XFORM_FILES = Rake::FileList.new("lib/cx/xform/*.rb")
-task :generate_commands_yml => "lib/cx/commands.yml"
+task :commands_yml => "lib/cx/commands.yml"
 file "lib/cx/commands.yml" => XFORM_FILES do
   require 'cx/command_factory'
   CX::CommandFactory::YamlGenerator.new.run!
