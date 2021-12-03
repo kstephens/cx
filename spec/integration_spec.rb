@@ -217,6 +217,39 @@ END
 END
       end
 
+      it "Cut" do
+        assert_pipeline build(Cut, 'b', 'a'), <<'END', size: 5
+|b,a|
+|ekl ,79|
+|ymt,77|
+|yis,84|
+|rcz ,-62|
+|oub,-38|
+END
+      end
+
+      it "Cut : reorder/remove fields" do
+        assert_pipeline build(Cut, 'b', '*', 'id:-'), <<'END', size: 5
+|b,a,b4,X %|
+|ekl ,79,"",133%|
+|ymt,77,0.4,48%|
+|yis,84,0.8,12%|
+|rcz ,-62,1.2,127%|
+|oub,-38,1.6,9%|
+END
+      end
+
+      it "Cut : duplicate fields" do
+        assert_pipeline build(Cut, 'b', 'a', 'b'), <<'END', size: 5
+|b,a,b3|
+|ekl ,79,ekl |
+|ymt,77,ymt|
+|yis,84,yis|
+|rcz ,-62,rcz |
+|oub,-38,oub|
+END
+      end
+
       it "Transpose" do
         assert_pipeline Pipeline | MetaTable | Transpose, <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5,_COL_6|

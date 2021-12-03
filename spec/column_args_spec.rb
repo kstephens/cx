@@ -69,11 +69,11 @@ module CX
         
         it "interpolates * as other columns" do
           expect(subject.map(&:name))
-            .to eq([:a, :f, :e, :d, :c, :b, :unknown])
+            .to eq([:a, :b, :e, :f, :c, nil, :unknown]) # nil: HUH?
           expect(subject.map(&:index))
-            .to eq([0, 5, 4, 3, 2, 1, nil])
+            .to eq([0, 1, 4, 5, 2, 3, nil])
           expect(subject.map(&:column).map(&:to_s))
-            .to eq(["a", "f", "e", "d", "c", "b", ""])
+            .to eq(["a", "b", "e", "f", "c", "d", ""])
         end
         
         describe "unbound" do

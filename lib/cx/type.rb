@@ -11,13 +11,14 @@ require 'set'
 require 'cx/boolean'
 
 module CX
-  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :parser, :formatter, :name, :to_s)
+  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :parser, :formatter, :name, :to_s, :rank)
     
     def initialize *args
       super
       self.to_s = mod.name.downcase.freeze
       self.name = self.to_s.to_sym
       self.formatter ||= Proc.new{|t, v| v.to_s}
+      self.rank = 0
     end
 
     def match v, anchored = true
@@ -165,7 +166,7 @@ module CX
         @@types << type
         add_types_by! type, @@types_by
         add_types_by! type, @@types_by_cache
-        self
+        type
       end
     end
     
@@ -431,7 +432,8 @@ module CX
         Proc.new{|t, v| v },
       ],
     ].each do | args |
-      add!(*args)
+      type = add!(*args)
+      type.rank = @@types.size
     end
   end
 end

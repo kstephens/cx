@@ -83,7 +83,7 @@ module CX
       when nil
         nil
       else
-        raise TypeError
+        raise TypeError, "[] : unexpected #{k.inspect}"
       end
     end
 
@@ -100,7 +100,7 @@ module CX
       when nil
         nil
       else
-        raise TypeError
+        raise TypeError, "[]= : unexpected #{k.inspect}"
       end
     end
 

@@ -41,6 +41,10 @@ module CX
       clear!
     end
 
+    def dup
+      super.deepen!
+    end
+    
     def deepen!
       @types = @types.dup
       self

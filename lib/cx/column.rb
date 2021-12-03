@@ -80,7 +80,12 @@ module CX
 
     ##################################
 
+    def dup
+      super.deepen!
+    end
+    
     def deepen!
+      @header = nil
       @meta = @meta.dup
       self
     end

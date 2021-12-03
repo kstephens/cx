@@ -20,6 +20,13 @@ CsvOut:
   file: "lib/cx/xform/csv.rb"
   path: "cx/xform/csv"
 
+Cut:
+  aliases: 
+  synopsis: Cut columns.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/cut.rb"
+  path: "cx/xform/cut"
 EmptyToNull:
   name: empty-null
   aliases: 

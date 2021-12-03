@@ -8,7 +8,7 @@ require 'cx/inspect'
 require 'cx/logging'
 
 module CX
-  class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column)
+  class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column, :wildcard)
     def header_column! c
       self.column = c
       self.name = c.name
@@ -98,23 +98,27 @@ module CX
     end
 
     def wildcards!
-      col_seen = { }
       new_cas = [ ]
       scan = @args.dup
       while ca = scan.shift
         case
         when ca.name == :*
           @header.ordered.each do |c|
-            ca = ColumnArg.new.header_column!(c)
-            ca.args = ca.args.map(&:dup)
-            ca.opts = ca.opts.dup
-            ca.arg_str = ca.arg_str.dup
-            ca.rest_str = ca.rest_str.dup
-            scan.unshift ca
+            unless new_cas.find{|ca| ca.column == c}
+              ca = ColumnArg.new.header_column!(c)
+              ca.args = ca.args.map(&:dup)
+              ca.opts = ca.opts.dup
+              ca.arg_str = ca.arg_str.dup
+              ca.rest_str = ca.rest_str.dup
+              ca.wildcard = true
+              new_cas << ca
+            end
           end
-        when ! col_seen[ca.column]
+        else
+          new_cas.reject! do |x|
+            x.column == ca.column and x.wildcard
+          end
           new_cas << ca
-          col_seen[ca.column] = ca
         end
       end
       @args = new_cas
