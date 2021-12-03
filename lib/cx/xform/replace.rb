@@ -18,9 +18,14 @@ module CX
   module Xform
     class Replace
       include Xform
+      
       def call input, env
         @cleared = Set.new
-        col_args = ColumnArgs.new.parse!(args).bind!(input.header)
+        col_args = ColumnArgs.new.
+          parse!(args).
+          bind!(input.header).
+          or_all!
+        
         fns = col_args.map{|arg| replace_fn input.header, arg}
         input.select! do | row |
           fns.each {|f| f.call(row) }
@@ -30,13 +35,16 @@ module CX
     end
     
     def replace_fn header, col_arg
-      search  = col_arg.args[0]
-      replace = col_arg.args[1] || ''
-      c = col_arg.column or raise ArgumentError, c.inspect
+      search  = col_arg.args[0] || opts[:search]
+      replace = col_arg.args[1] || opts[:replace] || ''
       rx = Regexp.new(search)
+
+      global = opts[:global] || col_arg.opts[:global] || col_arg.opts[:g]
+      
+      c = col_arg.column
       lambda do | row |
         old_v = row[c].to_s
-        new_v = old_v.sub(rx, replace)
+        new_v = global ? old_v.gsub(rx, replace) : old_v.sub(rx, replace)
         if old_v != new_v
           unless @cleared.include?(c)
             @cleared << c

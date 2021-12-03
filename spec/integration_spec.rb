@@ -84,6 +84,28 @@ END
 END
       end
 
+      it "Replace : all" do
+        assert_pipeline build(Replace, "--search=1", "--replace=_"), <<'END', size: 5
+|id,a,b,b4,X %|
+|_001,79,ekl ,"",_33%|
+|_002,77,ymt,0.4,48%|
+|_003,84,yis,0.8,_2%|
+|_004,-62,rcz ,_.2,_27%|
+|_005,-38,oub,_.6,9%|
+END
+      end
+
+      it "Replace : all : --global" do
+        assert_pipeline build(Replace, "--search=1", "--replace=_", "--global"), <<'END', size: 5
+|id,a,b,b4,X %|
+|_00_,79,ekl ,"",_33%|
+|_002,77,ymt,0.4,48%|
+|_003,84,yis,0.8,_2%|
+|_004,-62,rcz ,_.2,_27%|
+|_005,-38,oub,_.6,9%|
+END
+      end
+
       it "Replace | MetaIn" do
         assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | MetaTable), <<'END', size: 5
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|

@@ -8,7 +8,7 @@ require 'cx/xform'
 
 # :COMMAND:
 # Strip:
-#   aliases: 
+#   aliases: trim
 #   synopsis: Strip leading and trailing whitespace.
 #   args: []
 #   opts: {}

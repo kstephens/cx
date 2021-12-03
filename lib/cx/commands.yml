@@ -112,7 +112,7 @@ Nop:
 
 Quote:
   aliases: q
-  synopsis: Quote fields that would not be printable..
+  synopsis: Quote fields that would not be printable.
   args: []
   opts: {}
   file: "lib/cx/xform/quote.rb"
@@ -173,7 +173,7 @@ SqlOut:
   file: "lib/cx/xform/sql.rb"
   path: "cx/xform/sql"
 Strip:
-  aliases: 
+  aliases: trim
   synopsis: Strip leading and trailing whitespace.
   args: []
   opts: {}

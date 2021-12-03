@@ -24,6 +24,12 @@ module CX
       end
 
       def call input, env
+        @columns = ColumnArgs.new.
+          parse!(args).
+          bind!(input.header).
+          or_all!.
+          columns
+        
         header = input.header
 
         m = header.meta
@@ -32,7 +38,7 @@ module CX
         m.min_size = 0
         m.max_size = input.size
 
-        header.each do |c|
+        @columns.each do |c|
           m = c.meta
           m.clear!
           m.type  = nil if opts[:clear_type]
@@ -50,7 +56,7 @@ module CX
           end
         end
 
-        input.header.each do | c |
+        @columns.each do | c |
           m = c.meta
           if m.type_inferred && m.type_inferred <= ::Numeric
             m.align_inferred = :right
@@ -63,7 +69,7 @@ module CX
       def process_row! header, r
         m = header.meta
         r_blanks = r_nulls = 0
-        header.each do | c |
+        @columns.each do | c |
           v = r[c]
           m.type!(v.class)
           case process_value!(r, c, v)

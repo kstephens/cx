@@ -27,6 +27,7 @@ module CX
           parse!(args).
           bind!(input.header).
           or_all!
+        
         @order = col_args.args.map{|c| c.opts[:order] || 1}
         columns = col_args.columns
         rows_with_keys = input.map do | row |
