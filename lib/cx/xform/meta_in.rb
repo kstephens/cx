@@ -35,7 +35,8 @@ module CX
         header.each do |c|
           m = c.meta
           m.clear!
-          m.name = c.name
+          m.type  = nil if opts[:clear_type]
+          m.name  = c.name
           m.name_ = c.name_
           m.index = c.index
           m.order = c.order

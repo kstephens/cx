@@ -61,15 +61,59 @@ END
 END
       end
 
-      # FIXME!
+      # FIXME!!!
       it "Sort : numerically" do
-        assert_pipeline (Pipeline | MetaIn | build(Sort, "a")), <<'END', size: 5
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | Coerce | build(Sort, "x_:-")), <<'END', size: 5
 |id,a,b,b4,X %|
-|1005,-38,oub,1.6,9%|
-|1004,-62,rcz ,1.2,127%|
-|1002,77,ymt,0.4,48%|
-|1001,79,ekl ,"",133%|
-|1003,84,yis,0.8,12%|
+|1005,-38,oub,1.6,9|
+|1002,77,ymt,0.4,48|
+|1001,79,ekl ,"",133|
+|1004,-62,rcz ,1.2,127|
+|1003,84,yis,0.8,12|
+END
+      end
+
+      it "Replace" do
+        assert_pipeline build(Replace, "x_:%;"), <<'END', size: 5
+|id,a,b,b4,X %|
+|1001,79,ekl ,"",133|
+|1002,77,ymt,0.4,48|
+|1003,84,yis,0.8,12|
+|1004,-62,rcz ,1.2,127|
+|1005,-38,oub,1.6,9|
+END
+      end
+
+      it "Replace | MetaIn" do
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | MetaTable), <<'END', size: 5
+|name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
+|id,id,true,0,0,Integer,4,4,1001,1005,0,0,,,right,Integer,Integer|
+|a,a,true,1,1,,2,3,-62,84,0,0,,,right,Integer,Integer|
+|b,b,true,2,2,,3,4,ekl ,ymt,0,0,,,,String,String|
+|b4,b4,true,3,3,,0,6,"","",1,0,,,,String;BigDecimal,Object|
+|X %,x_,true,4,4,String,1,4,9,133,0,0,,,right,Integer,Integer|
+END
+      end
+
+      it "Replace | MetaIn | Coerce" do
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | Coerce), <<'END', size: 5
+|id,a,b,b4,X %|
+|1001,79,ekl ,"",133|
+|1002,77,ymt,0.4,48|
+|1003,84,yis,0.8,12|
+|1004,-62,rcz ,1.2,127|
+|1005,-38,oub,1.6,9|
+END
+      end
+
+      it "Replace | MetaIn | Coerce | MetaTable" do
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | Coerce | build(MetaIn, "--clear-type") | MetaTable), <<'END', size: 5
+|name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
+|id,id,true,0,0,,4,4,1001,1005,0,0,,,right,Integer,Integer|
+|a,a,true,1,1,,2,3,-62,84,0,0,,,right,Integer,Integer|
+|b,b,true,2,2,,3,4,ekl ,ymt,0,0,,,,String,String|
+|b4,b4,true,3,3,,0,6,"","",1,0,,,,String;BigDecimal,Object|
+|X %,x_,true,4,4,,1,4,9,133,0,0,,,right,Integer,Integer|
 END
       end
 

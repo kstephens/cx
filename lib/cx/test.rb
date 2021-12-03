@@ -100,17 +100,23 @@ module CX
           File.write("spec/last-pipeline.actual", actual)
           # File.write("/dev/tty", pipeline.inspect(:no_id))
           # exit!
+          puts <<"END"
+#### Actual : #{Test.metadata[:full_description]}
+####
+#{actual}
+####
+END
         end
         expect(actual) .to eq(expected)
       else
-        assert_content opts[:test_name], actual
+        assert_content actual, opts[:test_name]
         # puts actual
         # binding.pry
       end
       actual
     end
 
-    def assert_content name, actual_content
+    def assert_content actual_content, name = nil
       unless name
         m = Test.metadata
         name =
@@ -160,10 +166,18 @@ module CX
           File.unlink(diff_file)
         else
           File.write("/dev/tty", <<END)
-if $CX_TEST_ACCEPT is:
-* 'prompt'       - prompts for Y.
-* 'all'          - accept the diff.
-* 'match=REGEX'  - accept if the name matches REGEX.
+#################################################################
+##
+## assert_content : #{name}
+## expected_file  : #{expected_file}"
+## actual_file    : #{actual_file}"
+##
+##  if $CX_TEST_ACCEPT is:
+##    * 'prompt'       - prompts for Y.
+##    * 'all'          - accept the diff.
+##    * 'match=REGEX'  - accept if the name matches REGEX.
+##
+#################################################################
 END
           expect(actual_file) .to eq(expected_file)
         end

@@ -9,7 +9,7 @@ require 'cx/column_args'
 
 # :COMMAND:
 # Replace:
-#   aliases: g
+#   aliases: sub
 #   synopsis: Replace by regex.
 #   args: []
 #   opts:
@@ -21,8 +21,6 @@ module CX
       def call input, env
         col_args = ColumnArgs.new.parse!(args).bind!(input.header)
         fns = col_args.map{|arg| replace_fn input.header, arg}
-        pp(col_args: col_args.columns)
-        # binding.pry
         input.select! do | row |
           fns.each {|f| f.call(row) }
         end
@@ -34,12 +32,18 @@ module CX
       search  = col_arg.args[0]
       replace = col_arg.args[1] || ''
       c = col_arg.column or raise ArgumentError, c.inspect
-      c.meta.type = nil
-      c.meta.type_inferred = :String
       rx = Regexp.new(search)
-      pp(rx: rx.inspect, replace: replace)
       lambda do | row |
-        row[c] = row[c].to_s.sub(rx, replace)
+        old_value = row[c].to_s
+        new_value = old_value.sub(rx, replace)
+        if old_value != new_value
+          if c.meta.type != :String
+            c.meta.clear!
+            c.meta.type = :String
+            c.meta.type_inferred = nil
+          end
+          row[c] = new_value
+        end
       end
     end
   end

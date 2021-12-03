@@ -47,7 +47,7 @@ module CX
           v = Type.parse(x)
           [x.class, stringify(x), v.class, stringify(v)]
         end
-        assert_content "type_spec/parse-1", actual
+        assert_content actual, "type_spec/parse-1"
       end
       
       it 'parses unanchored' do
@@ -59,7 +59,7 @@ module CX
           v = Type.parse(x, false)
           [x.class, stringify(x), v.class, stringify(v)]
         end
-        assert_content "type_spec/parse-2", actual
+        assert_content actual, "type_spec/parse-2"
       end
     end
     
@@ -72,7 +72,7 @@ module CX
       actual = do_values(strings) do | t, v |
         t.match(v)
       end
-      assert_content "type_spec/match-1", actual
+      assert_content actual, "type_spec/match-1"
     end
     
     it "cast" do
@@ -80,7 +80,7 @@ module CX
       actual = do_values(values_and_strings) do | t, v |
         t.cast(v)
       end
-      assert_content "type_spec/cast-1", actual
+      assert_content actual, "type_spec/cast-1"
     end
     
     it "coerce" do
@@ -88,7 +88,7 @@ module CX
       actual = do_values(values_and_strings) do | t, v |
         t.coerce(v)
       end
-      assert_content "type_spec/coerce-1", actual
+      assert_content actual, "type_spec/coerce-1"
     end
 
     describe 'add!' do

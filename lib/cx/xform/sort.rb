@@ -19,14 +19,10 @@ module CX
     class Sort
       include Xform
       
-      def initialize!
-        super
+      def call input, env
         @to_s_cache = Hash.new do |h, k|
           String === s ? s : h[k] = k.to_s.freeze
         end
-      end
-      
-      def call input, env
         colargs = ColumnArgs.new.parse!(args).bind!(input.header)
         @order = colargs.columns.map{|c| c.opts[:order] || 1}
         cols = colargs.columns.map(&:column)
@@ -37,7 +33,8 @@ module CX
           cmp_vals(a.first, b.first)
         end
         input.set_rows!(rows_with_keys.map{|rk| rk[1]})
-        rows_with_keys = nil # GC
+        # GC
+        @to_s_cache = @order = rows_with_keys = nil
         input
       end
     end

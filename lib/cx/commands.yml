@@ -125,6 +125,13 @@ Region:
   opts:
   file: "lib/cx/xform/region.rb"
   path: "cx/xform/region"
+Replace:
+  aliases: sub
+  synopsis: Replace by regex.
+  args: []
+  opts:
+  file: "lib/cx/xform/replace.rb"
+  path: "cx/xform/replace"
 Reverse:
   aliases:
   synopsis: Reverse order of rows.

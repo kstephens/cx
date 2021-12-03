@@ -17,6 +17,7 @@ module CX
     end
     
     def initialize
+      @_args = Args.new
     end
 
     def initialize!

@@ -308,7 +308,7 @@ module CX
           when Date
             v.to_time
           else
-            Time.parse(t.match(v))
+            # Time.parse(t.match(v))
           end
         },
         Proc.new {|t, v|
