@@ -74,8 +74,12 @@ module CX
     end
     
     def bind! header
-      @columns.each do | c |
-        c.column ||= header[c.name] || header[c.index]
+      header.each do | c |
+        if ca =
+            @columns.find {|ca| ca.name  == c.name  } ||
+            @columns.find {|ca| ca.name  == c.name_ }
+          ca.column ||= c
+        end
       end
       self
     end
