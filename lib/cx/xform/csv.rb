@@ -6,6 +6,13 @@ require 'cx/xform/record'
 require 'cx/xform/csv_safe'
 
 # :COMMAND:
+# CsvIn:
+#   aliases:
+#   synopsis: Parses CSV lines.
+#   args: []
+#   opts: {}
+
+# :COMMAND:
 # CsvOut:
 #   aliases:
 #   synopsis: Generates CSV lines.

@@ -6,7 +6,7 @@ require 'cx/xform/record'
 
 # :COMMAND:
 # MarkdownOut:
-#   aliases: [md, markdown]
+#   aliases: [ md, md-, markdown ]
 #   synopsis: Generate Markdown table lines.
 #   args: []
 #   opts: {}
@@ -30,7 +30,7 @@ module CX
           output << format_row(align, row.vals(@cols), nil)
         end
         @cols = nil
-        env[:content_type] = 'text/markdown' # 2016 RFC7763 at IETF
+        env[:content_type] ||= 'text/markdown' # 2016 RFC7763 at IETF
         output
       end
 

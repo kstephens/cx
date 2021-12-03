@@ -6,7 +6,6 @@ require 'cx/type'
 
 # :COMMAND:
 # TypeInference:
-#   name: types
 #   aliases:
 #   synopsis: Infer types from field strings.
 #   args: []

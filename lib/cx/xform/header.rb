@@ -5,14 +5,14 @@ require 'cx/xform'
 
 # :COMMAND:
 # HeaderIn:
-#   aliases: [-header, -h]
+#   aliases: [ -h ]
 #   synopsis: Interprets first row as a column name header.
 #   args: []
 #   opts:
 
 # :COMMAND:
 # HeaderOut:
-#   aliases: [header-, h-]
+#   aliases: [ h- ]
 #   synopsis: Emits column names as first row.
 #   args: []
 #   opts:

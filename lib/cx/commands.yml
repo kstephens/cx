@@ -12,6 +12,13 @@ Coerce:
   opts: {}
   file: "lib/cx/xform/coerce.rb"
   path: "cx/xform/coerce"
+CsvIn:
+  aliases:
+  synopsis: Parses CSV lines.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/csv.rb"
+  path: "cx/xform/csv"
 CsvOut:
   aliases:
   synopsis: Generates CSV lines.
@@ -49,14 +56,14 @@ Grep:
   file: "lib/cx/xform/grep.rb"
   path: "cx/xform/grep"
 HeaderIn:
-  aliases: [-header, -h]
+  aliases: [ -h ]
   synopsis: Interprets first row as a column name header.
   args: []
   opts:
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
 HeaderOut:
-  aliases: [header-, h-]
+  aliases: [ h- ]
   synopsis: Emits column names as first row.
   args: []
   opts:
@@ -82,14 +89,21 @@ HtmlOut:
   file: "lib/cx/xform/html.rb"
   path: "cx/xform/html"
 IoIn:
-  aliases: in,i
+  aliases: [in, i]
   synopsis: Read from a file.
   args: [ filename, ... ]
   opts: {}
   file: "lib/cx/xform/io.rb"
   path: "cx/xform/io"
+IoOut:
+  aliases: [out, o]
+  synopsis: Write records to a file.
+  args: [ filename, ... ]
+  opts: {}
+  file: "lib/cx/xform/io.rb"
+  path: "cx/xform/io"
 MarkdownOut:
-  aliases: [md, markdown]
+  aliases: [ md, md-, markdown ]
   synopsis: Generate Markdown table lines.
   args: []
   opts: {}
@@ -195,7 +209,6 @@ Transpose:
   file: "lib/cx/xform/transpose.rb"
   path: "cx/xform/transpose"
 TypeInference:
-  name: types
   aliases:
   synopsis: Infer types from field strings.
   args: []
