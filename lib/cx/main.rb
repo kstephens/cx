@@ -7,13 +7,17 @@ require 'cx'
 require 'cx/version'
 require 'cx/logging'
 require 'cx/util'
-require 'cx/command'
+require 'cx/xform'
+require 'cx/args'
 require 'cx/table'
 require 'cx/header'
-require 'cx/typing'
-require 'cx/pipe'
-require 'cx/command/io'
-require 'cx/command/misc' # AUTOLOAD!
+require 'cx/error'
+require 'cx/xform'
+require 'cx/xform/pipeline'
+require 'cx/command_factory'
+require 'cx/pipeline_builder'
+require 'cx/xform/io'
+require 'cx/xform/csv'
 require 'set'
 require 'shellwords'
 require 'tempfile'
@@ -23,208 +27,165 @@ require 'pp'
 ######################################
 
 module CX
-# Main command line driver.
-class Main
-  include Logging
-  extend Logging
-  Logging.raise_cls = Error
+  # Main command line driver.
+  class Main
+    include Support
+    
+    Error::Support.raise_cls = ::CX::Error
 
-  attr_accessor :progname, :args, :opts, :env, :pipeline, :exit_code
-  
-  def initialize args
-    @progname = File.basename($0)
-    @args = args.map(&:dup)
-    @exit_code = 0
-    @opts = { }
-    @env = { }
-    @verbose = false
-  end
+    attr_accessor :progname, :argv, :args, :opts, :env, :pipeline, :exit_code
 
-  def run!
-    log.level = Logger::WARN
-    @env = {
-      main: {
-        progname: $0,
-        ARGV: args,
-        # ENV: ENV,
-        t0: Time.now,
+    def initialize argv
+      @verbose = false
+      @progname = File.basename($0)
+      @exit_code = 0
+      @argv = argv.map(&:dup)
+      @args = [ ]
+      @opts = { }
+      @env = {
+        main: {
+          progname: @progname,
+          cwd: Dir.pwd,
+          argv: argv.map(&:dup),
+          args: :UNKNOWN,
+          opts: :UNKNOWN,
+          debug: false,
+          verbose: false,
+          t0: Time.now,
+          exit_code: 0,
+        },
       }
-    }
+      log.level = Logger::WARN
+    end
+
+    def parse_argv!
+      @env[:main][:env_args] = @env_args = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
+      @env[:main][:argv_full] = @argv_full = @env_args + @argv
+      @env[:main][:parsed_args] = @parsed_args = Args.new.parse!(@argv_full, no_args: true)
+      @env[:main][:args] = @args = @argv_full
+      @env[:main][:opts] = @opts = @parsed_args.opts
+      @env[:main][:verbose] = @opts[:verbose]
+      @env[:main][:debug] = @debug = @opts[:debug]
+      
+      CX::Debug.debug = @debug
+      log.level = Logger::INFO  if @verbose
+      log.level = Logger::DEBUG if @debug
+      self
+    end
     
-    args = self.args.map(&:dup)
-    @env_opts = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
-    args = @env_opts + args
-    @opts = parse_opts! args
-    env[:opts] = opts
+    def run!
+      parse_argv!
+
+      case
+      when opts[:help]
+        help!
+        exit 0
+      when opts[:version]
+        puts CX::VERSION
+        exit 0
+      when opts[:_test___]
+        test!
+      when opts[:_pry___]
+        if opts[:_break___]
+          binding.pry
+          :stopped_here
+        end
+      end
+
+      setup_pipeline!
+      env[:main][:pipeline] = @pipeline
+
+      go!
+
+      self
+    rescue => exc
+      log.error "#{progname} : #{exc.inspect}"
+      log.error { (["backtrace:::"] + exc.backtrace.reverse + [":::"]).join("\n") }
+      @exit_code = @env[:main][:exit_code]
+      self
+    ensure
+      GC.start(full_mark: true, immediate_sweep: true) if @full_gc
+    end
+
+    # Starts application command pipeline.
+    def go!
+      @pipeline.call(Table.new, env)
+      self
+    end
+
+    def setup_pipeline!
+      @pipeline = parse_pipeline! @args
+      default_io_and_format! @pipeline
+      pp(pipeline: @pipeline) if @debug
+      raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?
+      self
+    end
     
-    @verbose = opts[:verbose]
-    @debug = @opts[:debug]
-    CX::Logging.debug = @debug
-    log.level = Logger::INFO  if @verbose
-    log.level = Logger::DEBUG if @debug
+    def parse_pipeline! pipeline_args
+      pp(pipeline_args!: pipeline_args) if @debug
+      @builder = PipelineBuilder.new
+      @builder.parse!(pipeline_args)
+      # binding.pry
+      pipeline = @builder.build_xform      
+      pipeline
+    end
+
+    def default_io_and_format! pipeline
+      factory = CommandFactory.new.load!
+      xforms = pipeline.xforms
+
+      # Default to stdio:
+      unless xforms.find{|x| Xform::IoIn === x}
+        xforms.unshift(Xform::IoIn.new)
+      end
+      unless xforms.find{|x| Xform::IoOut === x}
+        xforms.push(Xform::IoOut.new)
+      end
+      
+      # Default the io/out formats:
+      unless xforms.find{|x| Xform::InputFormat === x}
+        ios = [ ]
+        while x = xforms.shift
+          ios.push x
+          break if Xform::IoIn === x
+        end
+        x = factory.new(Args.new.parse!(default_input_format))
+        xforms.unshift(x)
+        ios.each{|x| xforms.unshift(x)}
+      end
+      unless xforms.find{|x| Xform::OutputFormat === x}
+        ios = [ ]
+        while x = xforms.pop
+          ios.push x
+          break if Xform::IoOut === x
+        end
+        x = factory.new(Args.new.parse!(default_output_format))
+        xforms.push(x)
+        ios.each{|x| xforms.push(x)}
+      end
+
+      pipeline
+    end
+
+    def default_input_format
+      ['-csv']
+    end
+    def default_output_format
+      ['csv-']
+    end
     
-    case
-    when opts[:help]
-      help!
+    def test!
+      require 'cx/help_and_test'
+      unit_test!
+      CX::HelpAndTest.test!(opts)
       exit 0
-    when opts[:version]
-      puts CX::VERSION
-      exit 0
-    when opts[:_test___]
-      test!
-    when opts[:_pry___]
-      if opts[:_break___]
-        binding.pry
-        :stopped_here
-      end
     end
 
-    @pipeline = parse_pipeline! args
-    env[:main][:commands] = @pipeline
-
-    pp(pipeline: @pipeline) if @debug
-    @app = make_pipeline @pipeline
-
-    go!
-
-    self
-  rescue => exc
-    log.error "#{progname} : #{exc.inspect}"
-    log.error { (["backtrace:::"] + exc.backtrace.reverse + [":::"]).join("\n") }
-    @exit_code = 1
-    self
-  ensure
-    GC.start(full_mark: true, immediate_sweep: true)
-  end
-
-  # Starts application command pipeline.
-  def go!
-    @app.run! env
-    self
-  end
-
-  # TODO: use an option parse library?
-  def parse_opts! args, opts = { }
-    while arg = args.first
-      case arg
-      when /^--([^=]+)=(.*)$/
-        k, v = $1, $2
-      when /^--([^=]+)$/
-        k, v = $1, 1
-      when /^\+\+([^=]+)$/
-        k, v = $1, -1
-      when '--'
-        args.shift
-        break
-      else
-        break 
-      end
-      k = k.gsub('-', '_').to_sym
-      if Integer === v
-        x = (opts[k] || 0) + v
-        v = x > 0
-      end
-      opts[k] = v
-      args.shift
+    def help!
+      require 'cx/help_and_test'
+      CX::HelpAndTest.help!
     end
-    opts
   end
-
-  ###################################
-  # Parse pipeline
-  #
-  
-  def parse_pipeline! args
-    pipeline = [ ]
-    pp(parse_pipeline!: args) if @debug
-    while arg = args.shift
-      case arg
-      when '//'
-      else
-        args.unshift arg
-        pipeline << parse_cmd!(args)
-      end
-    end
-    raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?
-    pipeline.extend(Pipe::Pipeline)
-    # pp(pipeline: pipeline)
-    pipeline
-  end
-
-  def parse_cmd! args
-    name = args.shift.to_sym
-    opts = parse_opts! args
-    cmd = [ name, cmd_args = [ ], opts ]
-    while arg = args.shift
-      case arg
-      when '//', '/'
-        break
-      when '{{'
-        cmd_args << parse_pipeline!(args)
-      when '}}'
-        args.unshift nil # sentinel for parse_pipeline!
-        break
-      else
-        cmd_args << arg
-      end
-    end
-    cmd
-  end
-
-  ###################################
-  # Build pipeline
-  #
-  
-  # Applications are right folded.
-  # If input/output applications are unspecified,
-  # STDIN and STDOUT are wrapped around the pipeline.
-  def make_pipeline pipeline
-    unless Command.factory(pipeline[0][0])  <= Pipe::In
-      pipeline.unshift([:in, [$stdin]])
-    end
-    unless Command.factory(pipeline[-1][0]) <= Pipe::Out
-      pipeline.push([:out, [$stdout]])
-    end
-    pp(pipeline: pipeline) if @debug
-    app = reduce_pipeline app, pipeline
-    app
-  end
-
-  def reduce_pipeline app, pipeline
-    pipeline.reverse.inject(app) do |app, spec|
-      make_cmd app, spec
-    end.extend(Pipe::Pipeline)
-  end
-  
-  def make_cmd app, cmd
-    name, args, opts = cmd
-    pp(make_cmd: [app, cmd]) if @debug    
-    args.map! do |arg|
-      Pipe::Pipeline === arg ? reduce_pipeline(nil, arg) : arg
-    end
-    new_app = Command.factory(name).new(app, args, opts)
-    new_app = HeaderIn.new(new_app) if Pipe::NeedsHeader === new_app
-    new_app = Debug.new(new_app) if @debug
-    new_app
-  end
-
-  def test!
-    require 'cx/help_and_test'
-    unit_test!
-    CX::HelpAndTest.test!(opts)
-    exit 0
-  end
-  
-  def help!
-    require 'cx/help_and_test'
-    CX::HelpAndTest.help!
-  end
-  
-  def inspect
-    "#<#{self.class} #{args.inspect}>"
-  end
-end
-
 end
 
 ##################################
