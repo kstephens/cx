@@ -26,17 +26,29 @@ module CX
     end
 
     def initialize data = nil, header = nil
-      @data = data
+      set_data! data
       @header = header
     end
 
-    def new ; dup.deepen! ; end
-    def deepen!
-      @data = @data.dup
+    def initialize_copy orig
+      super
+      set_data! @data.dup
       @meta = @meta && @meta.dup
       self
     end
 
+    def set_data! data
+      raise "data already set to #{@data.class}" if @data && @data.class != data.class
+      case @data = data
+      when Array
+        extend ArrayRow
+      when Hash
+        extend HashRow
+      else
+        raise "unexpected data #{@data.class}"
+      end
+    end
+    
     def _header= h
       @header = h
       self
@@ -54,7 +66,7 @@ module CX
 
     ###########################
 
-    def _get k
+    def _getXXX k
       return nil unless k
       case @data
       when Hash
@@ -64,7 +76,7 @@ module CX
       end
     end
 
-    def _set k, v
+    def _setXXX k, v
       raise TypeError unless k
       case @data
       when Hash
@@ -126,6 +138,24 @@ module CX
       out ||= $stdout
       each{|v| out.write(v.to_s)}
       nil
+    end
+
+    module ArrayRow
+      def _get k
+        @data[k.to_i]
+      end
+      def _set k, v
+        @data[k.to_i] = v
+      end
+    end
+    
+    module HashRow
+      def _get k
+        @data[k.to_sym]
+      end
+      def _set k, v
+        @data[k.to_sym] = v
+      end
     end
   end
 end

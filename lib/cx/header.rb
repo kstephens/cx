@@ -64,8 +64,8 @@ module CX
     def first ; @columns.first ; end
     def last  ; @columns[-1]   ; end
 
-    def new ; dup.deepen! ; end
-    def deepen!
+    def initialize_copy orig
+      super
       @to_column = { }
       @aliases = @aliases.dup
       @columns = @columns.map do |c|

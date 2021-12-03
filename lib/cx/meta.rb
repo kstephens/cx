@@ -41,11 +41,8 @@ module CX
       clear!
     end
 
-    def dup
-      super.deepen!
-    end
-    
-    def deepen!
+    def initialize_copy orig
+      super
       @types = @types.dup
       self
     end

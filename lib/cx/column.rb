@@ -80,11 +80,8 @@ module CX
 
     ##################################
 
-    def dup
-      super.deepen!
-    end
-    
-    def deepen!
+    def initialize_copy orig
+      super
       @header = nil
       @meta = @meta.dup
       self

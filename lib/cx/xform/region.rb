@@ -22,7 +22,7 @@ module CX
           arg.strip.split(/\s+|\s*,\s*/)
         end.map{|arg| parse_region(input, arg)}
 
-        output = input.new_empty
+        output = input.dup_empty
         regions.each do | (a, b, exc) |
           rows = a <= b ?
             input[Range.new(a, b, exc)] :

@@ -35,13 +35,13 @@ module CX
       self.header = header
     end
 
-    def new ; dup.deepen! ; end
-    def new_empty
-      self.class.new(nil, @header.dup, @meta.dup)
+    def dup_empty
+      self.class.new([], @header.dup, @meta.dup)
     end
 
-    def deepen!
-      @meta = @meta.dup.deepen!
+    def initialize_copy orig
+      super
+      @meta = @meta.dup
       @rows = @rows.map(&:dup)
       self
     end
