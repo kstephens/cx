@@ -12,9 +12,9 @@ module CX
 
     def call args
       raise TypeError, "unspected #{x.class}" unless Args === args
-      cmd_name = args.argv.shift.to_sym
+      cmd_name = args.args.shift.to_sym
       unless cmd = @by_name[cmd_name]
-        raise ArgumentError, "cannot find xform for #{cmd_name.inspect}"
+        raise ArgumentError, "cannot find xform for #{cmd_name.inspect} : valid commands : #{valid_commands.inspect}"
       end
       cls = cmd.cls
       obj = cls.new
@@ -23,6 +23,10 @@ module CX
     end
     alias :new :call
 
+    def valid_commands
+      @by_name.keys.map(&:to_s).uniq
+    end
+    
     def load! contents = nil
       contents ||= File.read(COMMANDS_YML)
       load_commands! YAML.load(contents, symbolize_names: true)
@@ -41,15 +45,18 @@ module CX
 
     def register! cmd
       register_name! cmd, cmd.name
+      cmd.aliases.map!(&:to_sym)
       cmd.aliases.each{|a| register_name! cmd, a}
     end
     
     def register_name! cmd, name
+      name = name.to_sym
       existing = @by_name[name]
       if existing && existing != cmd
         raise_ "#{cmd.class_name} : #{name} already exists: #{existing.class_name}"
       end
-      @by_name[cmd.name] = cmd
+      # pp(name: name, cmd: cmd.name)
+      @by_name[name] = cmd
     end
 
     def build_index!
@@ -84,7 +91,7 @@ module CX
       end         
 
       def infer_name class_name
-        class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase
+        class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase.to_sym
       end
       
       def cls
