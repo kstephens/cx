@@ -12,6 +12,7 @@ require 'cx/html_markup'
 # HtmlOut:
 #   aliases: html,htm
 #   synopsis: 'Emits HTML.'
+#   suffixes: [ .html, .htm ]
 #   args: []
 #   opts:
 #     raw:        'Comma-separated list of columns that contain raw HTML.'

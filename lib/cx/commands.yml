@@ -12,9 +12,11 @@ Coerce:
   opts: {}
   file: "lib/cx/xform/coerce.rb"
   path: "cx/xform/coerce"
+
 CsvIn:
   aliases:
   synopsis: Parses CSV lines.
+  suffixes: [ .csv ]
   args: []
   opts: {}
   file: "lib/cx/xform/csv.rb"
@@ -22,6 +24,7 @@ CsvIn:
 CsvOut:
   aliases:
   synopsis: Generates CSV lines.
+  suffixes: [ .csv ]
   args: []
   opts: {}
   file: "lib/cx/xform/csv.rb"
@@ -73,6 +76,7 @@ HeaderOut:
 HtmlOut:
   aliases: html,htm
   synopsis: 'Emits HTML.'
+  suffixes: [ .html, .htm ]
   args: []
   opts:
     raw:        'Comma-separated list of columns that contain raw HTML.'
@@ -105,6 +109,7 @@ IoOut:
 MarkdownOut:
   aliases: [ md, md-, markdown ]
   synopsis: Generate Markdown table lines.
+  suffixes: [ .md ]
   args: []
   opts: {}
   file: "lib/cx/xform/markdown.rb"

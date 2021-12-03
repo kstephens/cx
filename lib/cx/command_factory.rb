@@ -63,10 +63,11 @@ module CX
       YamlGenerator.new.run!
     end
     
-
     COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
 
-    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :arguments, :options, :file, :path)
+    ###########################################
+    
+    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :file, :path)
       include Support
       def initialize *args
         super
@@ -75,6 +76,7 @@ module CX
         self.aliases ||= ""
         self.synopsis ||= "NO-SYNOPSIS"
         self.description ||= "NO-DESCRIPTION"
+        self.suffixes ||= [ ]
         self.arguments ||= ['...']
         self.options ||= { }
         self.file or raise ArgumentError, "file"

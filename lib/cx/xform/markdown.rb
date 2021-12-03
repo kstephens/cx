@@ -8,6 +8,7 @@ require 'cx/xform/record'
 # MarkdownOut:
 #   aliases: [ md, md-, markdown ]
 #   synopsis: Generate Markdown table lines.
+#   suffixes: [ .md ]
 #   args: []
 #   opts: {}
 

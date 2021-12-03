@@ -9,6 +9,7 @@ require 'cx/xform/csv_safe'
 # CsvIn:
 #   aliases:
 #   synopsis: Parses CSV lines.
+#   suffixes: [ .csv ]
 #   args: []
 #   opts: {}
 
@@ -16,6 +17,7 @@ require 'cx/xform/csv_safe'
 # CsvOut:
 #   aliases:
 #   synopsis: Generates CSV lines.
+#   suffixes: [ .csv ]
 #   args: []
 #   opts: {}
 
