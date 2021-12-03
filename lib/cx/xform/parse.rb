@@ -6,15 +6,15 @@ require 'cx/type'
 require 'cx/xform/column_change'
 
 # :COMMAND:
-# Coerce:
+# Parse:
 #   aliases: 
-#   synopsis: Coerce columns by inferred types.
+#   synopsis: Parse strings into richer types..
 #   args: []
 #   opts: {}
 
 module CX
   module Xform
-    class Coerce
+    class Parse
       include ColumnChange, SelectColumns, Xform
       
       def call input, env
@@ -23,12 +23,11 @@ module CX
         
         input.each do | r |
           columns.each do | c |
-            old_v = r[c]
-            new_v = c.meta.type_object.coerce(old_v)
+            new_v = Type.parse(old_v = r[c])
             new_v = old_v if new_v.nil?
             change_maybe!(r, c, old_v, new_v) do
               c.meta.clear!
-              c.meta.type = nil
+              c.meta.type = nil # new_v.class
               c.meta.type_inferred = nil
             end
           end

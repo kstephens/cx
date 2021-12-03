@@ -135,6 +135,13 @@ Nop:
   opts: {}
   file: "lib/cx/xform/nop.rb"
   path: "cx/xform/nop"
+Parse:
+  aliases: 
+  synopsis: Parse strings into richer types..
+  args: []
+  opts: {}
+  file: "lib/cx/xform/parse.rb"
+  path: "cx/xform/parse"
 
 Quote:
   aliases: q
