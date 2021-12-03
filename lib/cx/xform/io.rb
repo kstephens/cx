@@ -6,13 +6,14 @@ require 'tempfile'
 
 # :COMMAND:
 # IoIn:
-#   aliases: in,i
+#   aliases: [in, i]
 #   synopsis: Read from a file.
 #   args: [ filename, ... ]
 #   opts: {}
 
+# :COMMAND:
 # IoOut:
-#   aliases: out,o
+#   aliases: [out, o]
 #   synopsis: Write records to a file.
 #   args: [ filename, ... ]
 #   opts: {}
@@ -27,11 +28,22 @@ module CX
         raise_ ArgumentError, "too many arguments" if args.size > 1
         @io = args[0]
       end
+
+      def inspect_content modes
+        @io.inspect
+      end
       
-      def open io, mode, env
+      def open io, mode, env, &blk
+        open_ io, mode, env, &blk
+      rescue => exc
+        raise_ exc, "cannot open #{io.inspect} #{mode.inspect}"
+      end
+      
+      def open_ io, mode, env, &blk
+        raise_ ArgumentError, "no block" unless block_given?
         case io
         when '-', nil
-          open default_io, mode, env
+          open default_io, mode, env, &blk
         when IO, StringIO
           begin
             yield io
