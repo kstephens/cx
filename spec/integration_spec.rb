@@ -201,7 +201,6 @@ END
       end
       
       it "Region : negative offset" do
-        $stop = true
         assert_pipeline build(Region, '-1..-5'), <<'END', size: 100
 |id,a,b,b4,X %|
 |1100,-27,ylb ,39.6,39%|
@@ -209,6 +208,12 @@ END
 |1098,56,gns,38.8,64%|
 |1097,-88,jte ,38.4,170%|
 |1096,-9,ywj,"",127%|
+END
+      end
+
+      it "Region : nothing" do
+        assert_pipeline build(Region), <<'END', size: 100
+|id,a,b,b4,X %|
 END
       end
 
