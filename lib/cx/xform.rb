@@ -55,11 +55,14 @@ module CX
     end
     
     module SelectColumns
-      include Xform
-      attr_accessor :selected_columns
-      def call input, env
-        super
-        @selected_columns = :TODO
+      attr_accessor :column_argv, :column_args, :selected_columns
+      
+      def column_args! input
+        @column_args =
+          ColumnArgs.new.
+          parse!(column_argv || args).
+          bind!(input.header).
+          wildcards!
       end
     end
 

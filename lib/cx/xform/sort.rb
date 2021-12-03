@@ -14,19 +14,16 @@ require 'cx/column_args'
 module CX
   module Xform
     class Sort
-      include Xform
+      include SelectColumns, Xform
       
       def call input, env
+        column_args!(input).or_all!
+        
         @to_s_cache = Hash.new do |h, k|
           String === s ? s : h[k] = k.to_s.freeze
         end
-        col_args = ColumnArgs.new.
-          parse!(args).
-          bind!(input.header).
-          or_all!
-        
-        @order = col_args.args.map{|c| c.opts[:order] || 1}
-        columns = col_args.columns
+        @order = column_args.args.map{|c| c.opts[:order] || 1}
+        columns = column_args.columns
         rows_with_keys = input.map do | row |
           [ columns.map{|c| row[c]}, row ]
         end

@@ -14,14 +14,10 @@ require 'cx/column_args'
 module CX
   module Xform
     class Quote
-      include Xform
+      include SelectColumns, Xform
       
       def call input, env
-        columns = ColumnArgs.new.
-          parse!(args).
-          bind!(input.header).
-          or_all!.
-          columns
+        columns = column_args!(input).or_all!.columns
         
         input.each do | r |
           columns.each do | c |

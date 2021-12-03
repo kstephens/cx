@@ -14,10 +14,10 @@ require 'cx/column_args'
 module CX
   module Xform
     class Grep
-      include Xform
+      include SelectColumns, Xform
+      
       def call input, env
-        col_args = ColumnArgs.new.parse!(args).bind!(input.header)
-        preds = col_args.map{|arg| rx_pred arg}
+        preds = column_args!(input).map{|arg| rx_pred arg}
         input.select! do | row |
           preds.all? {|p| p.call(row) }
         end

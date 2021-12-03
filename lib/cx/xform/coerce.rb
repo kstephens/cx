@@ -13,14 +13,12 @@ require 'cx/xform'
 module CX
   module Xform
     class Coerce
-      include Xform
+      include SelectColumns, Xform
+      
       def call input, env
         @cleared = Set.new
-        columns = ColumnArgs.new.
-          parse!(args).
-          bind!(input.header).
-          or_all!.
-          columns
+        columns = column_args!(input).or_all!.columns
+        
         input.each do | r |
           columns.each do | c |
             old_v = r[c]

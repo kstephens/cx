@@ -14,18 +14,15 @@ require 'cx/xform/type_inference'
 module CX
   module Xform
     class MetaIn
-      include Xform
+      include SelectColumns, Xform
+      
       def initialize
         super
         @ti = TypeInference.new
       end
 
       def call input, env
-        @columns = ColumnArgs.new.
-          parse!(args).
-          bind!(input.header).
-          or_all!.
-          columns
+        @columns = column_args!(input).or_all!.columns
         
         header = input.header
 
@@ -59,7 +56,8 @@ module CX
             m.align_inferred = :right
           end
         end
-
+        
+        @columns = nil
         input
       end
 

@@ -14,19 +14,19 @@ require 'cx/column_args'
 module CX
   module Xform
     class Replace
-      include Xform
+      include SelectColumns, Xform
       
       def call input, env
-        @cleared = Set.new
-        col_args = ColumnArgs.new.
-          parse!(args).
-          bind!(input.header).
-          or_all!
+        column_args!(input).or_all!
         
-        fns = col_args.map{|arg| replace_fn input.header, arg}
+        @cleared = Set.new
+        
+        fns = column_args.map{|arg| replace_fn input.header, arg}
         input.select! do | row |
           fns.each {|f| f.call(row) }
         end
+
+        @cleared = nil
         input
       end
     end
