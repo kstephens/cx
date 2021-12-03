@@ -38,14 +38,20 @@ module CX
       when /^([-+]?\d+)$/
         arg = arg.to_i - 1
         arg = input.size + arg + 1 if arg < 0
-        [ arg, arg, false ]
+        a = b = arg
+        exc = false
       when /^([^.]+)\.\.(\.)?([^.]+)$/
-        a, exc, b = parse_region(input, $1), $2, parse_region(input, $3)
-        a = a.first; b = b.first
-        [ a, b, ! ! exc ]
+        a, exc, b = parse_region(input, $1), $2,  parse_region(input, $3)
+        a = a.first
+        b = b.first
       else
         raise_ "Invalid range #{arg.inspect}"
       end
+      a = input.size + a if a < 0
+      b = input.size + b if b < 0
+      a = [[a, 0].max, input.size - 1].min
+      b = [[b, 0].max, input.size - 1].min
+      [ a, b, ! ! exc ]
     end
   end
 end

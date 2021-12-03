@@ -173,10 +173,9 @@ END
 END
       end
 
-      it "Reverse" do
-        assert_pipeline Reverse, <<'END'
+      it "Region : reverse" do
+        assert_pipeline build(Region, "9..1"), <<'END', size: 100
 |id,a,b,b4,X %|
-|1010,-71,jtj ,3.6,25%|
 |1009,-99,ali,3.2,191%|
 |1008,-21,qeg,2.8,135%|
 |1007,-72,xgv ,2.4,55%|
@@ -186,6 +185,30 @@ END
 |1003,84,yis,0.8,12%|
 |1002,77,ymt,0.4,48%|
 |1001,79,ekl ,"",133%|
+END
+      end
+
+      it "Region : negative offset" do
+        $stop = true
+        assert_pipeline build(Region, '-5..-1'), <<'END', size: 100
+|id,a,b,b4,X %|
+|1096,-9,ywj,"",127%|
+|1097,-88,jte ,38.4,170%|
+|1098,56,gns,38.8,64%|
+|1099,-4,sod,39.2,151%|
+|1100,-27,ylb ,39.6,39%|
+END
+      end
+      
+      it "Region : negative offset" do
+        $stop = true
+        assert_pipeline build(Region, '-1..-5'), <<'END', size: 100
+|id,a,b,b4,X %|
+|1100,-27,ylb ,39.6,39%|
+|1099,-4,sod,39.2,151%|
+|1098,56,gns,38.8,64%|
+|1097,-88,jte ,38.4,170%|
+|1096,-9,ywj,"",127%|
 END
       end
 
