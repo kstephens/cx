@@ -239,6 +239,17 @@ END
 END
       end
 
+      it "Cut : negative wildcard" do
+        assert_pipeline build(Cut, 'b', '*-', 'id'), <<'END', size: 5
+|b,id|
+|ekl ,1001|
+|ymt,1002|
+|yis,1003|
+|rcz ,1004|
+|oub,1005|
+END
+      end
+
       it "Cut : duplicate fields" do
         assert_pipeline build(Cut, 'b', 'a', 'b'), <<'END', size: 5
 |b,a,b3|
