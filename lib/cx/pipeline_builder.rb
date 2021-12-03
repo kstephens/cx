@@ -71,7 +71,7 @@ module CX
     class Command < Struct.new(:args)
       include Support
       def build_xform factory
-        args.argv.map! do | arg |
+        args.args.map! do | arg |
           case arg
           when Pipeline, Command
             arg.build_xform factory

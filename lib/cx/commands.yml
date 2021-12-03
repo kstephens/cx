@@ -226,6 +226,12 @@ Strip:
   opts: {}
   file: "lib/cx/xform/strip.rb"
   path: "cx/xform/strip"
+Tee:
+  aliases: t
+  synopsis: 'Sent input to multiple output pipelines.'
+  args: [ pipelines, ... ]
+  file: "lib/cx/xform/tee.rb"
+  path: "cx/xform/tee"
 Transpose:
   aliases:
   synopsis: Transpose rows and columns.
