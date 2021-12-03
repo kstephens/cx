@@ -159,9 +159,11 @@ Parse:
 
 Quote:
   aliases: q
-  synopsis: Quote fields that would not be printable.
+  synopsis: Quote string values that would be ambigous or unprintable.
   args: []
-  opts: {}
+  opts:
+    --mode: "maybe, everything, always"
+    --strings-only: Ignore non-strings.
   file: "lib/cx/xform/quote.rb"
   path: "cx/xform/quote"
 
