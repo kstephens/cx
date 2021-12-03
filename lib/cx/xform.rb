@@ -64,9 +64,10 @@ module CX
     
     module SelectColumns
       include Xform
-      def initialize!
+      attr_accessor :selected_columns
+      def call input, env
         super
-        # TODO
+        @selected_columns = :TODO
       end
     end
 
