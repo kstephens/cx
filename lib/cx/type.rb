@@ -66,7 +66,7 @@ module CX
       when nil, mod
         v
       else
-        coerce(v) || caster.call(self, v)
+        caster.call(self, v)
       end
     rescue
       nil
@@ -88,13 +88,6 @@ module CX
       case v
       when nil, mod
         v
-      when String
-        case v = parse(v)
-        when nil, mod
-          v
-        else
-          coercer.call(self, v)
-        end
       else
         coercer.call(self, v)
       end
@@ -358,8 +351,35 @@ module CX
           end
         },
       ],
+      [::Numeric,
+        Proc.new do | t, v |
+          Type[:Integer].cast(v) ||
+            Type[:Rational].cast(v) ||
+            Type[:BigDecimal].cast(v) ||
+            Type[:Float].cast(v)
+        end,
+        Proc.new do |t, v|
+          # binding.pry if String === "133%"
+          Type[:Integer].coerce(v) ||
+            Type[:Rational].coerce(v) ||
+            Type[:BigDecimal].coerce(v) ||
+            Type[:Float].coerce(v)
+        end,
+        Proc.new do |t, v |
+          Type[:Integer].match(v) ||
+            Type[:Rational].match(v) ||
+            Type[:BigDecimal].match(v) ||
+            Type[:Float].match(v)
+        end,
+        Proc.new do |t, v|
+          Type[:Integer].parse(v) ||
+            Type[:Rational].parse(v) ||
+            Type[:BigDecimal].parse(v) ||
+            Type[:Float].parse(v)
+        end,
+      ],
       [::Boolean,
-        Proc.new do | v |
+        Proc.new do | t, v |
           case v
           when Numeric
             ! v.zero?
