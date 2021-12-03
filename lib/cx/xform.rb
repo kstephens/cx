@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
 require 'cx'
-require 'cx/error'
-require 'cx/debug'
-require 'cx/inspect'
-require 'cx/logging'
 require 'cx/args'
+require 'cx/column_args'
 
 module CX
   module Xform
-    include Error::Support, Debug, Inspect, Logging
+    include Support
 
     def build argv = []
       set_args! Args.new.parse!(argv)
@@ -44,8 +41,6 @@ module CX
     end
 
     module Format
-      # TODO:
-      include Xform
     end
 
     module InputFormat

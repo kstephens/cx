@@ -26,5 +26,5 @@ begin
 rescue
 end if (ENV['CX_TCO'] || 1).to_i > 0
 
-require 'cx/error'
+require 'cx/support'
 

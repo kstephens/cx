@@ -7,7 +7,7 @@ require 'bigdecimal'
 
 module CX
 module Typing
-  extend Logging
+  extend Support
 
   module Boolean ; end
 

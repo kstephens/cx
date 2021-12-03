@@ -9,7 +9,7 @@ require 'cx/logging'
 
 module CX
   class Column
-    include Inspect, Logging
+    include Support
     attr_reader :name, :index, :order, :meta, :header
     attr_reader :to_s, :name_ # Derived
     alias :to_sym :name

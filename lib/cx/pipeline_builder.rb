@@ -1,15 +1,15 @@
-# coding: utf-8
 # frozen_string_literal: true
-# encoding: UTF-8
-# -*- coding: utf-8 -*-
 
 require 'cx'
 require 'cx/args'
 require 'cx/inspect'
 require 'cx/xform/pipeline'
+require 'cx/command_factory'
 
 module CX
   class PipelineBuilder
+    include Support
+    
     attr_accessor :pipeline, :global, :factory
 
     def parse! argv
@@ -69,7 +69,7 @@ module CX
     end
     
     class Command < Struct.new(:args)
-      include Inspect
+      include Support
       def build_xform factory
         args.argv.map! do | arg |
           case arg
@@ -87,7 +87,7 @@ module CX
     end
 
     class Pipeline < Struct.new(:args, :commands)
-      include Inspect
+      include Support
       def initialize *args
         super
         self.commands ||= [ ]

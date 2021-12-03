@@ -23,7 +23,7 @@ module CX
     end
 
     module RecordIn
-      include RecordBase, InputFormat
+      include InputFormat, RecordBase
       
       def call input, env
         raise_ ArgumentError, "expected one input row" unless input.size == 1
@@ -45,7 +45,7 @@ module CX
     end
     
     module RecordOut
-      include RecordBase, OutputFormat
+      include OutputFormat, RecordBase
       
       def make_output
         make_record_table([:_RECORD_])

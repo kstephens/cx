@@ -15,7 +15,7 @@ require 'cx/xform/csv_safe'
 module CX
   module Xform
     class CsvIn
-      include RecordIn, Xform
+      include RecordIn
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})
@@ -27,7 +27,7 @@ module CX
     end
     
     class CsvOut
-      include RecordOut, Xform
+      include RecordOut
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})

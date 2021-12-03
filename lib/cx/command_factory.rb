@@ -4,7 +4,7 @@ require 'yaml'
 
 module CX
   class CommandFactory
-    include Logging
+    include Support
     
     def initialize
       @by_name = {}
@@ -60,7 +60,7 @@ module CX
     COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
 
     class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :arguments, :options, :file, :path)
-      include Logging
+      include Support
       def initialize *args
         super
         self.name ||= infer_name(class_name)

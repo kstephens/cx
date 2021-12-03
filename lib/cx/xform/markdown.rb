@@ -14,7 +14,7 @@ require 'cx/xform/record'
 module CX
   module Xform
     class MarkdownOut
-      include OutputFormat, RecordOut, Xform
+      include OutputFormat, RecordOut
       
       def call input, env
         title = opts[:title] # TODO

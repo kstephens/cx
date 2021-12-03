@@ -22,7 +22,7 @@ module CX
   end
     
   class ColumnArgs
-    include Enumerable, Inspect, Logging
+    include Enumerable, Support
 
     attr_reader :args, :header
 

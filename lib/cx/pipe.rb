@@ -9,7 +9,7 @@ module CX
   # Base class for standard Pipe applications.
 # Initialization protocol is defined in Main::make_cmd.
 class Pipe
-  include Enumerable, Logging, PPSafe
+  include Enumerable, Support
   extend Logging
   
   attr_accessor :app, :args, :opts, :identifier, :block

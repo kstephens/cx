@@ -10,7 +10,7 @@ require 'cx/inspect'
 
 module CX
   class Header
-    include Enumerable, Inspect, Logging
+    include Enumerable, Support
     # extend Logging
 
     attr_reader :columns, :meta, :aliases, :version
