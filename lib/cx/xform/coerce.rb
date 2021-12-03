@@ -18,15 +18,27 @@ module CX
     class Coerce
       include Xform
       def call input, env
-        colargs = ColumnArgs.new.parse!(args).bind!(input.header)
-        pp(colargs: colargs)
+        @cleared = Set.new
+        columns = ColumnArgs.new.
+          parse!(args).
+          bind!(input.header).
+          or_all!.
+          columns
         input.each do | r |
-          r.header.each do | c |
-            v = r[c]
-            new_v = (c.meta.type_object.coerce(v) rescue nil)
-            new_v = c.meta.type_object.coerce(v)
-            pp(c: c, type: c.meta.type_, v: v, new_v: new_v) if new_v.class != v.class
-            r[c] = new_v if new_v
+          columns.each do | c |
+            old_v = r[c]
+            new_v = c.meta.type_object.coerce(old_v)
+            unless new_v.nil?
+              unless new_v == old_v && new_v.class == old_v.class
+                unless @cleared.include?(c)
+                  @cleared << c
+                  c.meta.clear!
+                  c.meta.type = nil
+                  c.meta.type_inferred = nil
+                end
+              end
+              r[c] = new_v
+            end
           end
         end
         input

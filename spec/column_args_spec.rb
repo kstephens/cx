@@ -13,21 +13,77 @@ module CX
         "f:x;y=z;q",
         "g:!;asdf",
         "12:x=z",
+        "*:foo",
       ]
     end
+    
     it "parses" do
       expect(subject.map(&:name))
-        .to eq([:a, :b, :c, :d, :e, :f, :g, nil])
+        .to eq([:a, :b, :c, :d, :e, :f, :g, nil, :*])
       expect(subject.map(&:index))
-        .to eq([nil, nil, nil, nil, nil, nil, nil, 11])
+        .to eq([nil, nil, nil, nil, nil, nil, nil, 11, nil])
       expect(subject.map(&:opts))
-        .to eq([{}, {}, {:negate=>true}, {:order=>-1}, {:order=>1}, {:y=>"z"}, {:negate=>true}, {:x=>"z"}])
+        .to eq([{}, {}, {:negate=>true}, {:order=>-1}, {:order=>1}, {:y=>"z"}, {:negate=>true}, {:x=>"z"},
+          {}])
       expect(subject.map(&:args))
-        .to eq([[], [], [], [], [], ["x", "q"], ["asdf"], []])
+        .to eq([[], [], [], [], [], ["x", "q"], ["asdf"], [], ["foo"]])
       expect(subject.map(&:arg_str))
         .to eq(argv)
       expect(subject.map(&:rest_str))
-        .to eq(["", "", "!", "-", "+", "x;y=z;q", "!;asdf", "x=z"])
+        .to eq(["", "", "!", "-", "+", "x;y=z;q", "!;asdf", "x=z", "foo"])
+    end
+    
+    describe "bind!" do
+      subject() { ColumnArgs.new.parse!(argv).bind!(header) }
+      let(:header) { Header.new([:a, :b, :c, :d, :e, :f]) }
+      let(:argv) do
+        [
+          "a",
+          "*",
+          "c:!",
+          "4",
+          "unknown:+",
+        ]
+      end
+      
+      it "binds" do
+        expect(subject.map(&:name))
+          .to eq([:a, :*, :c, nil, :unknown])
+        expect(subject.map(&:index))
+          .to eq([0, nil, 2, 3, nil])
+        expect(subject.map(&:column).map(&:to_s))
+          .to eq(["a", "", "c", "d", ""])
+      end
+
+      describe "unbound" do
+        it "finds" do
+          expect(subject.unbound.map(&:name))
+            .to eq([:*, :unknown])
+        end
+      end
+
+      describe "wildcards!" do
+        subject() {
+          ColumnArgs.new.parse!(argv).bind!(header).wildcards!
+        }
+        
+        it "interpolates * as other columns" do
+          expect(subject.map(&:name))
+            .to eq([:a, :f, :e, :d, :c, :b, :unknown])
+          expect(subject.map(&:index))
+            .to eq([0, 5, 4, 3, 2, 1, nil])
+          expect(subject.map(&:column).map(&:to_s))
+            .to eq(["a", "f", "e", "d", "c", "b", ""])
+        end
+        
+        describe "unbound" do
+          it "does not find *" do
+            expect(subject.unbound.map(&:name))
+              .to eq([ :unknown])
+          end
+        end
+      end
+
     end
   end
 end

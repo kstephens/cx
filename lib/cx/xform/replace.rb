@@ -19,6 +19,7 @@ module CX
     class Replace
       include Xform
       def call input, env
+        @cleared = Set.new
         col_args = ColumnArgs.new.parse!(args).bind!(input.header)
         fns = col_args.map{|arg| replace_fn input.header, arg}
         input.select! do | row |
@@ -34,15 +35,16 @@ module CX
       c = col_arg.column or raise ArgumentError, c.inspect
       rx = Regexp.new(search)
       lambda do | row |
-        old_value = row[c].to_s
-        new_value = old_value.sub(rx, replace)
-        if old_value != new_value
-          if c.meta.type != :String
+        old_v = row[c].to_s
+        new_v = old_v.sub(rx, replace)
+        if old_v != new_v
+          unless @cleared.include?(c)
+            @cleared << c
             c.meta.clear!
             c.meta.type = :String
             c.meta.type_inferred = nil
           end
-          row[c] = new_value
+          row[c] = new_v
         end
       end
     end

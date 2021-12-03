@@ -23,11 +23,14 @@ module CX
         @to_s_cache = Hash.new do |h, k|
           String === s ? s : h[k] = k.to_s.freeze
         end
-        colargs = ColumnArgs.new.parse!(args).bind!(input.header)
-        @order = colargs.columns.map{|c| c.opts[:order] || 1}
-        cols = colargs.columns.map(&:column)
+        col_args = ColumnArgs.new.
+          parse!(args).
+          bind!(input.header).
+          or_all!
+        @order = col_args.args.map{|c| c.opts[:order] || 1}
+        columns = col_args.columns
         rows_with_keys = input.map do | row |
-          [ cols.map{|c| row[c]}, row ]
+          [ columns.map{|c| row[c]}, row ]
         end
         rows_with_keys.sort! do | a, b |
           cmp_vals(a.first, b.first)

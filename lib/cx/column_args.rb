@@ -9,24 +9,35 @@ require 'cx/logging'
 
 module CX
   class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column)
+    def header_column! c
+      self.column = c
+      self.name = c.name
+      self.index = c.order
+      self.opts = { }
+      self.args = [ ]
+      self.arg_str = ""
+      self.rest_str = ""
+      self
+    end
   end
     
   class ColumnArgs
     include Enumerable, Inspect, Logging
 
-    attr_reader :columns
+    attr_reader :args, :header
 
     def initialize
-      @columns = [ ]
+      @args = [ ]
+      @header = nil
     end
 
     def each &blk
-      @columns.each(&blk)
+      @args.each(&blk)
     end
 
     def parse! _args
       _args.each do | arg_str |
-        @columns << parse_arg(arg_str)
+        @args << parse_arg(arg_str)
       end
       self
     end
@@ -56,8 +67,9 @@ module CX
         name = arg_str
         rest_str = ""
       end
-      index = (name =~ /^\d+$/ and name.to_i)
-      index &&= index - 1
+      if name =~ /^(\d+)+$/ && (i = name.to_i) > 0
+        index = i - 1
+      end
       c = ColumnArg.new(
         index ? nil : name.to_sym,
         index,
@@ -68,28 +80,73 @@ module CX
       )
       if c.name == :*
         c.index  = nil
-        c.column = :REST
       end
       c
     end
     
     def bind! header
-      header.each do | c |
-        if ca =
-            @columns.find {|ca| ca.name  == c.name  } ||
-            @columns.find {|ca| ca.name  == c.name_ }
-          ca.column ||= c
+      @header = header
+      @args.each do | ca |
+        if ca.column ||=
+            (ca.index && header.ordered[ca.index]) ||
+            header.get(ca.name) ||
+            header.find{|c| c.name_ == ca.name}
+          ca.index = ca.column.order
         end
       end
       self
     end
 
-    def collapse!
-      @all = @columns.dup
-      @selected = @columns
+    def wildcards!
+      col_seen = { }
+      new_cas = [ ]
+      scan = @args.dup
+      while ca = scan.shift
+        case
+        when ca.name == :*
+          @header.ordered.each do |c|
+            ca = ColumnArg.new.header_column!(c)
+            ca.args = ca.args.map(&:dup)
+            ca.opts = ca.opts.dup
+            ca.arg_str = ca.arg_str.dup
+            ca.rest_str = ca.rest_str.dup
+            scan.unshift ca
+          end
+        when ! col_seen[ca.column]
+          new_cas << ca
+          col_seen[ca.column] = ca
+        end
+      end
+      @args = new_cas
+      self
+    end
+
+    def or_all!
+      if @args.empty?
+        @args = @header.ordered.map{|c| ColumnArg.new.header_column!(c)}
+      end
       self
     end
     
+    def unbound
+      @args.reject(&:column)
+    end
+    
+    def bound
+      @args.select(&:column)
+    end
+
+    def check!
+      unless (ub = unbound).empty?
+        msg = ub.map(&:arg_str).map(&:inspect).join(', ')
+        raise CX::Error, "unknown column: #{msg}"
+      end
+      self
+    end
+    
+    def columns
+      bound.map(&:column)
+    end
   end
 end
 

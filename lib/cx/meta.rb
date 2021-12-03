@@ -59,6 +59,11 @@ module CX
       self
     end
 
+    def clear_all!
+      clear!
+      @type = nil
+    end
+    
     def min_max_size! n
       return self unless n
       @min_size = n if ! @min_size || @min_size > n
