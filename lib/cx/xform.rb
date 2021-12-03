@@ -4,13 +4,15 @@
 # -*- coding: utf-8 -*-
 
 require 'cx'
+require 'cx/error'
+require 'cx/debug'
 require 'cx/inspect'
-require 'cx/args'
 require 'cx/logging'
+require 'cx/args'
 
 module CX
   module Xform
-    include Inspect, Logging
+    include Error::Support, Debug, Inspect, Logging
 
     def build argv = []
       set_args! Args.new.parse!(argv)
@@ -24,6 +26,10 @@ module CX
       self
     end
 
+    def call input, env
+      raise_ "call : not implemented"
+    end
+    
     def argv ; @_args.argv ; end
     def args ; @_args.args ; end
     def opts ; @_args.opts ; end
