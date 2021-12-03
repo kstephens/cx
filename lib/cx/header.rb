@@ -43,10 +43,23 @@ module CX
       when Symbol, String
         @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
       else
-        raise TypeError
+        raise TypeError, "Header[] : unexpected #{k.class}"
       end
     end
 
+    def get k
+      case k
+      when nil
+        nil
+      when Integer
+        @columns[k]
+      when Symbol, String
+        @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
+      else
+        nil
+      end
+    end
+    
     def size  ; @columns.size  ; end
     def first ; @columns.first ; end
     def last  ; @columns[-1]   ; end
