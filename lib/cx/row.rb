@@ -66,26 +66,6 @@ module CX
 
     ###########################
 
-    def _getXXX k
-      return nil unless k
-      case @data
-      when Hash
-        @data[k.to_sym]
-      else
-        @data[k.to_i]
-      end
-    end
-
-    def _setXXX k, v
-      raise TypeError unless k
-      case @data
-      when Hash
-        @data[k.to_sym] = v
-      else
-        @data[k.to_i] = v
-      end
-    end
-
     def [] k
       case k
       when Column
@@ -97,10 +77,6 @@ module CX
       else
         raise TypeError, "[] : unexpected #{k.inspect}"
       end
-    end
-
-    def vals x
-      x.map{|k| _get(k)}
     end
 
     def []= k, v
@@ -116,12 +92,16 @@ module CX
       end
     end
 
+    def vals x
+      x.map{|k| _get(k)}
+    end
+
     def keys
       @header
     end
 
     def values
-      @header.map{|c| _get(c)}
+      vals @header
     end
     alias :to_a :values
 
@@ -129,9 +109,7 @@ module CX
     def last  ; _get(@header.last)  ; end
 
     def to_h
-      h = { }
-      @header.each{|c| h[c.to_sym] = _get(c)}
-      h
+      Hash.new(@header.zip(values))
     end
 
     def write out = nil
