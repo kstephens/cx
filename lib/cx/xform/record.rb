@@ -11,9 +11,9 @@ module CX
     
       def initialize!
         super
-        @field_sep    = opts[:field_sep]   || ","
-        @record_sep   = opts[:record_sep]  || $/
-        @multi_sep    = opts[:multi_sep]   || ";"
+        @field_sep    = opts.fetch(:field_sep,   ",")
+        @record_sep   = opts.fetch(:record_sep,  $/)
+        @multi_sep    = opts.fetch(:multi_sep,   ";")
       end
 
       def make_record_table cols = []

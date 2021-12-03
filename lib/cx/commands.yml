@@ -37,6 +37,20 @@ Cut:
   opts: {}
   file: "lib/cx/xform/cut.rb"
   path: "cx/xform/cut"
+DelimitedIn:
+  aliases: [ -d ]
+  synopsis: Parse delimted records
+  args: []
+  opts: {}
+  file: "lib/cx/xform/delimited.rb"
+  path: "cx/xform/delimited"
+DelimitedOut:
+  aliases: [ d- ]
+  synopsis: Generate delimited records.
+  args: []
+  opts: {}
+  file: "lib/cx/xform/delimited.rb"
+  path: "cx/xform/delimited"
 EmptyToNull:
   name: empty-null
   aliases: 
