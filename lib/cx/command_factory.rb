@@ -1,5 +1,4 @@
 require 'cx'
-require 'cx/logging'
 require 'yaml'
 
 module CX
@@ -98,7 +97,10 @@ module CX
       
       def cls
         unless @cls
-          require path
+          unless @cls = (CX::Xform.const_get(class_name) rescue nil)
+            log.debug "#{self.class} : load #{class_name.inspect} : require #{path.inspect}"
+            require path
+          end
           @cls = CX::Xform.const_get(class_name)
         end
         @cls
