@@ -40,7 +40,6 @@ module CX
       super
       @meta = @meta.dup
       @rows = @rows.map(&:dup)
-      self
     end
 
     def header= h

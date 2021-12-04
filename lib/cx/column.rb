@@ -84,7 +84,6 @@ module CX
       super
       @header = nil
       @meta = @meta.dup
-      self
     end
 
     def inspect_content mode

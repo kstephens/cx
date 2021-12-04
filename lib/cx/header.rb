@@ -75,7 +75,6 @@ module CX
       end
       @meta = @meta.dup
       @version = 0
-      self
     end
 
     def each &blk

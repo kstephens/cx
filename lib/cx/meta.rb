@@ -44,7 +44,6 @@ module CX
     def initialize_copy orig
       super
       @types = @types.dup
-      self
     end
 
     def inspect_content mode

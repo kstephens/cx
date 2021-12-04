@@ -31,7 +31,6 @@ module CX
       super
       set_data! @data.dup
       @meta = @meta && @meta.dup
-      self
     end
 
     def set_data! data
