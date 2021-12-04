@@ -29,7 +29,6 @@ module CX
       @rows ||= rows || [ ]
       @header = header
       @rows.map!{|r| make_row r}
-      self.header = header
     end
 
     def dup_empty

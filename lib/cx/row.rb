@@ -109,8 +109,12 @@ module CX
     def first ; _get(@header.first) ; end
     def last  ; _get(@header.last)  ; end
 
-    def to_h
-      Hash.new(@header.zip(values))
+    def to_h cols = @header
+      h = { }
+      cols.each do | c |
+        h[c.to_sym] = _get(c)
+      end
+      h
     end
 
     def write out = nil
