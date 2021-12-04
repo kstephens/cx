@@ -12,13 +12,13 @@ module CX
         msg = exc = exc_cls = exc_message = backtrace = nil
         args.each do | arg |
           case arg
-          when Class
-            exc_cls = arg
-            exc_message = 'NO-MESSAGE'
           when Exception
             exc = arg
             exc_message = exc.message
             backtrace = exc.backtrace
+          when Class
+            exc_cls = arg
+            exc_message = 'NO-MESSAGE'
           when Array
             backtrace = arg
           else
@@ -31,12 +31,13 @@ module CX
         exc_cls ||= raise_cls
         
         msg_ = String.new
-        msg_ << "#{inspect}"
+        msg_ << "#{self.class}" # self.inspect?
         msg_ << " : " << msg.to_s if msg
         msg_ << " : #{exc.class} : #{exc.message}" if exc
         msg = msg_
         
         exc_to_raise = exc_cls.new(msg)
+        exc_to_raise.cause = exc
         
         if debug?
           pp(exc_to_raise: exc_to_raise, exc: exc, msg: msg, backtrace: backtrace && backtrace.reverse)
