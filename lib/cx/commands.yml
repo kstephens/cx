@@ -5,6 +5,12 @@ Align:
   opts: {}
   file: "lib/cx/xform/align.rb"
   path: "cx/xform/align"
+Cat:
+  aliases:
+  synopsis: 'Concatenates rows from multiple pipelines.'
+  args: [ pipelines, ... ]
+  file: "lib/cx/xform/cat.rb"
+  path: "cx/xform/cat"
 Coerce:
   aliases: 
   synopsis: Coerce columns by inferred types.

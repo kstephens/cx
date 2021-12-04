@@ -22,7 +22,7 @@ module CX
       self._index = index
     end
 
-    def clean!
+    def clear!
       @header = @order = @index = nil
       self
     end
