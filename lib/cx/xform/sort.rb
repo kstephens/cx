@@ -47,13 +47,9 @@ module CX
         when b.nil?
           return @order[i]
         else
-          cmp = case
-                when a.class == b.class
-                  a <=> b
-                else
-                  @to_s_cache[a] <=> @to_s_cache[b]
-                end
-          return @order[i] * cmp unless cmp.zero?
+          unless (cmp = (a <=> b) rescue (a.to_s <=> b.tos)).zero?
+            return @order[i] * cmp
+          end
         end
       end
       0
