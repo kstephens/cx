@@ -46,23 +46,37 @@ module CX
         main: {
           progname: @progname,
           cwd: Dir.pwd,
-          argv: argv.map(&:dup),
+          cmd_argv: argv.map(&:dup),
+          env_argv: [],
+          full_argv: argv.map(&:dup),
           args: :UNKNOWN,
           opts: :UNKNOWN,
           debug: false,
           verbose: false,
-          t0: Time.now,
+          t0: $cx_t0 || Time.now,
+          t1: nil,
+          t_elapsed: nil,
           exit_code: 0,
+          defaults: {
+          },
+          trace: {
+            in:  Hash.new{|h,k| h[k] = []},
+            out: Hash.new{|h,k| h[k] = []},
+          },
+          stats: {
+            in:  Hash.new{|h,k| h[k] = 0},
+            out: Hash.new{|h,k| h[k] = 0}
+          },
         },
       }
       log.level = Logger::WARN
     end
 
     def parse_argv!
-      @env[:main][:env_args] = @env_args = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
-      @env[:main][:argv_full] = @argv_full = @env_args + @argv
-      @env[:main][:parsed_args] = @parsed_args = Args.new.parse!(@argv_full, no_args: true)
-      @env[:main][:args] = @args = @argv_full
+      @env[:main][:env_argv] = @env_args = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
+      @env[:main][:full_argv] = (full_argv = @env_args + @argv).dup
+      @env[:main][:parsed_args] = @parsed_args = Args.new.parse!(full_argv, no_args: true)
+      @env[:main][:args] = @args = full_argv
       @env[:main][:opts] = @opts = @parsed_args.opts
       @env[:main][:verbose] = @opts[:verbose]
       @env[:main][:debug] = @debug = @opts[:debug]
@@ -116,6 +130,11 @@ module CX
       @exit_code = @env[:main][:exit_code]
       self
     ensure
+      env[:main][:t1] = Time.now
+      env[:main][:t_elapsed] = env[:main][:t1] - env[:main][:t0]
+      if opts[:show_env]
+        pp(env: env)
+      end
       GC.start(full_mark: true, immediate_sweep: true) if @full_gc
     end
 

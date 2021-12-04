@@ -45,6 +45,15 @@ module CX
         when '-', nil
           open default_io, mode, env, &blk
         when IO, StringIO
+          
+          env[:in_file] = env[:out_file] = nil
+          case mode
+          when /[wa]/
+            env[:out_file] = io.inspect
+          else
+            env[:in_file] = io.inspect
+          end
+          
           begin
             yield io
           ensure
@@ -68,6 +77,16 @@ module CX
           raise_ TypeError, "cannot open #{io.inspect} #{mode.inspect}"
         end
       end
+
+      def update_stats! env, direction, file_name, n_bytes
+        # begin
+          env = env[:main]
+          (env[:trace][direction][:files] ||= []) << file_name
+          env[:stats][direction][:files] += 1
+          env[:stats][direction][:bytes] += n_bytes if n_bytes
+        # rescue
+        # end
+      end
     end
 
     class IoIn
@@ -76,6 +95,7 @@ module CX
         open(@io, "r", env) do | ioh |
           header = Header.new([:_INPUT_]).each{|c| c.meta.type = ::String}
           input_string = ioh.read
+          update_stats! env, :in, env[:in_file], input_string.size
           Table.new([[input_string]], header)
         end
       end
@@ -87,11 +107,15 @@ module CX
       def call input, env
         open(@io, "w", env) do | ioh |
           # io.write("=== BEGIN ===========================\n")
+          n_bytes = 0
           input.each do | r |
             r.each do | _c, v |
+              v = v.to_s
+              n_bytes += v.size
               ioh.write(v)
             end
           end
+          update_stats! env, :out, env[:out_file], n_bytes
           # io.write("=== END   ===========================\n\n")
         end
         input

@@ -7,6 +7,8 @@
 # "cx --help" for documentation.
 # "cx ---test---" to execute integration tests.
 
+$cx_t0 = Time.now
+
 require 'bundler/setup' unless ARGV.delete('---no-bundler---')
 $:.unshift(File.expand_path('../../lib', __FILE__))
 
