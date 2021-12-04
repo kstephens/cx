@@ -17,12 +17,11 @@ module CX
       @argv = [ ]
     end
 
-    def dup
-      obj = super
-      obj.args = args.dup
-      obj.opts = opts.dup
-      obj.argv = argv.dup
-      obj
+    def initialize_copy orig
+      super
+      @args = @args.dup
+      @opts = @opts.dup
+      @argv = @argv.dup
     end
     
     def parse! input, options = { }
