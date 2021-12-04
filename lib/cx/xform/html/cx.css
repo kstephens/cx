@@ -42,10 +42,19 @@ a:hover {
 /*******************************************/
 
 .cx-title {
-  text-align: center
+    text-align: center;
 }
 div.cx-content {
   display: inline-block;
+}
+.cx-right {
+    text-align: right;
+}
+.cx-left {
+    text-align: left;
+}
+.cx-center {
+    text-align: center;
 }
 
 /* https://css-tricks.com/position-sticky-and-table-headers/ */

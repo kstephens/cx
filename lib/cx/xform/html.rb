@@ -66,7 +66,7 @@ module CX
         @header = input.header
         @cols = header.ordered
         @colspan = 1 + cols.size
-        @right = {style: 'text-align: right;'}
+        @right = {class: 'cx-right'}
         # @h = XMLWriter.new(out, indent: opts[:indent])
         @h = CX::HtmlMarkup.new(target: out, indent: @indent)
         @h.file_content_path = File.expand_path("../html", __FILE__)
@@ -75,7 +75,7 @@ module CX
 
         cols.each do | c |
           data = col_data[c]
-          data[:style] = right[:style] if c.meta.align_ == :right
+          data[:class] = right[:class] if c.meta.align_ == :right
         end
 
         root!
@@ -213,11 +213,10 @@ END
           end
           
           cols.each do | c |
-            data = col_data[c]
+            attrs = col_data[c].merge(title: "#{row_tooltip} - #{c.name}")
+
             h.indent!(false) do
-              h.td(
-                title: "#{row_tooltip} - #{c.name}",
-                style: data[:style]) do
+              h.td(attrs) do
                 if @raw_columns.include?(c.name)
                   raw!(r[c])
                 else
