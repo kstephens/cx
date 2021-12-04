@@ -11,11 +11,16 @@ module CX
     
       def initialize!
         super
-        @field_sep    = opts.fetch(:field_sep,   ",")
-        @record_sep   = opts.fetch(:record_sep,  $/)
-        @multi_sep    = opts.fetch(:multi_sep,   ";")
+        @field_sep    = decode_string(opts.fetch(:field_sep,   ","))
+        @record_sep   = decode_string(opts.fetch(:record_sep,  $/))
+        @multi_sep    = decode_string(opts.fetch(:multi_sep,   ";"))
       end
 
+      def decode_string s
+        s = '"' + s.gsub(/["#]/){|m| '\\' + m[0]} + '"'
+        eval(s)
+      end
+      
       def make_record_table cols = []
         cols = cols.map{|c| Column.new(c).tap{|c| c.meta.type = ::String}}
         Table.new([], Header.new(cols))
@@ -29,7 +34,7 @@ module CX
         raise_ ArgumentError, "expected one input row" unless input.size == 1
         raise_ ArgumentError, "expected one input col" unless input.first.size == 1
         input_string = input[0][0].to_s
-        rows = input_string.split(@record_sep, 99999999)
+        rows = input_string.split(@record_sep, -1)
         rows.pop if rows[-1].empty?
         rows = rows.map!{|line| parse_record(line)}
         header = Header.

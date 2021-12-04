@@ -9,19 +9,27 @@ require 'cx/xform/record'
 #   aliases: [ -d ]
 #   synopsis: Parse delimted records
 #   args: []
-#   opts: {}
+#   opts:
+#     --field-sep:   'Default: ",".'
+#     --record-sep:  'Default: system newline.'
 
 # :COMMAND:
 # DelimitedOut:
 #   aliases: [ d- ]
 #   synopsis: Generate delimited records.
 #   args: []
-#   opts: {}
+#   opts:
+#     --field-sep:   'Default: ",".'
+#     --record-sep:  'Default: system newline.'
+#     --mulit-sep:   'Separator for enumerable values.  Default: ";".'
 
 module CX
   module Xform
     class DelimitedIn
       include RecordIn
+      def parse_record line
+        line.split(@field_sep, -1)
+      end
     end
     
     class DelimitedOut

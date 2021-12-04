@@ -41,14 +41,19 @@ DelimitedIn:
   aliases: [ -d ]
   synopsis: Parse delimted records
   args: []
-  opts: {}
+  opts:
+    --field-sep:   'Default: ",".'
+    --record-sep:  'Default: system newline.'
   file: "lib/cx/xform/delimited.rb"
   path: "cx/xform/delimited"
 DelimitedOut:
   aliases: [ d- ]
   synopsis: Generate delimited records.
   args: []
-  opts: {}
+  opts:
+    --field-sep:   'Default: ",".'
+    --record-sep:  'Default: system newline.'
+    --mulit-sep:   'Separator for enumerable values.  Default: ";".'
   file: "lib/cx/xform/delimited.rb"
   path: "cx/xform/delimited"
 EmptyToNull:
