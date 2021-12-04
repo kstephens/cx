@@ -49,7 +49,7 @@ module CX
           col.meta.min_size  = i.to_s.size
           col.meta.max_size  = (Math.log10(max_i) + 1).to_i + 1 + 1
         else
-          raise ArgumentError, "invalid row id type: #{type.inspect}"
+          raise_ ArgumentError, "invalid row id type: #{type.inspect}"
         end
 
         input.each do | r |

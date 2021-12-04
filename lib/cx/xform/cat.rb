@@ -18,7 +18,10 @@ module CX
         input_xforms.each do | x |
           x.default_input_format!(env[:main][:defaults][:input_format])
         end
-
+        if input_xforms.empty?
+          log.warn "cat: no inputs"
+        end
+        
         output = input
         output_header = output.header
         
