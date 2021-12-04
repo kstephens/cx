@@ -7,6 +7,7 @@ require 'cx/xform'
 # HeaderIn:
 #   aliases: [ -h ]
 #   synopsis: Interprets first row as a column name header.
+#   inverse: [ 'h-' ]
 #   args: []
 #   opts:
 
@@ -14,6 +15,7 @@ require 'cx/xform'
 # HeaderOut:
 #   aliases: [ h- ]
 #   synopsis: Emits column names as first row.
+#   inverse: [ '-h' ]
 #   args: []
 #   opts:
 #     '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'

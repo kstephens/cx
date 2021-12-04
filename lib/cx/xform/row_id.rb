@@ -18,6 +18,7 @@ module CX
     class RowId
       include Xform
       attr_accessor :uuid_generator
+      
       def call input, env
         col_name = (opts[:name] || :__rowid__).to_sym
         type     = (opts[:type] || "integer").to_s

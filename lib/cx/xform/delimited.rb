@@ -7,7 +7,8 @@ require 'cx/xform/record'
 # :COMMAND:
 # DelimitedIn:
 #   aliases: [ -d ]
-#   synopsis: Parse delimted records
+#   synopsis: Parse delimited records.
+#   inverse: [ d- ]
 #   args: []
 #   opts:
 #     --field-sep:   'Default: ",".'
@@ -17,6 +18,7 @@ require 'cx/xform/record'
 # DelimitedOut:
 #   aliases: [ d- ]
 #   synopsis: Generate delimited records.
+#   inverse: [ -d ]
 #   args: []
 #   opts:
 #     --field-sep:   'Default: ",".'

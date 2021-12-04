@@ -17,6 +17,7 @@ CsvIn:
   aliases:
   synopsis: Parses CSV lines.
   suffixes: [ .csv ]
+  inverse: [ 'csv-' ]
   args: []
   opts: {}
   file: "lib/cx/xform/csv.rb"
@@ -25,6 +26,7 @@ CsvOut:
   aliases:
   synopsis: Generates CSV lines.
   suffixes: [ .csv ]
+  inverse: [ '-csv' ]
   args: []
   opts: {}
   file: "lib/cx/xform/csv.rb"
@@ -39,7 +41,8 @@ Cut:
   path: "cx/xform/cut"
 DelimitedIn:
   aliases: [ -d ]
-  synopsis: Parse delimted records
+  synopsis: Parse delimited records.
+  inverse: [ d- ]
   args: []
   opts:
     --field-sep:   'Default: ",".'
@@ -49,6 +52,7 @@ DelimitedIn:
 DelimitedOut:
   aliases: [ d- ]
   synopsis: Generate delimited records.
+  inverse: [ -d ]
   args: []
   opts:
     --field-sep:   'Default: ",".'
@@ -80,6 +84,7 @@ Grep:
 HeaderIn:
   aliases: [ -h ]
   synopsis: Interprets first row as a column name header.
+  inverse: [ 'h-' ]
   args: []
   opts:
   file: "lib/cx/xform/header.rb"
@@ -87,6 +92,7 @@ HeaderIn:
 HeaderOut:
   aliases: [ h- ]
   synopsis: Emits column names as first row.
+  inverse: [ '-h' ]
   args: []
   opts:
     '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'cx'
 require 'cx/xform'
 
 # :COMMAND:
