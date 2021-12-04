@@ -258,7 +258,7 @@ END
       
       def table_footer!
         if @filtering
-          h.js! h.file_content!("vendor/jquery-3.6.0.slim.min.js")
+          h.js! h.file_content!("vendor/zepto.min.js")
           h.js! h.file_content!("parser_combinator.js")
           h.js! h.file_content!("filter.js")
         end
