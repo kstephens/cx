@@ -79,13 +79,11 @@ module CX
       end
 
       def update_stats! env, direction, file_name, n_bytes
-        # begin
-          env = env[:main]
-          (env[:trace][direction][:files] ||= []) << file_name
-          env[:stats][direction][:files] += 1
-          env[:stats][direction][:bytes] += n_bytes if n_bytes
-        # rescue
-        # end
+        env = env[:main]
+        (env[:trace][direction][:files] ||= []) << file_name
+        env[:stats][direction][:files] += 1
+        env[:stats][direction][:bytes] += n_bytes if n_bytes
+      rescue
       end
     end
 
