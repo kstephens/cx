@@ -2,6 +2,13 @@
 
 $VERBOSE = nil
 
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start do
+    enable_coverage :branch
+  end
+end
+
 require "bundler/setup"
 require 'cx'
 require 'cx/inspect'

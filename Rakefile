@@ -7,6 +7,12 @@ task :default => [ :readme, :commands_yml, :spec, :js_test ]
 
 task :build => [ :readme, :commands_yml ]
 
+desc "Run tests under simplecov."
+task :coverage do
+  ENV['COVERAGE'] = '1'
+  Rake::Task[:spec].invoke
+end
+
 task :readme do
   File.write "README.md", <<"END"
 # CX
