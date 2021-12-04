@@ -40,7 +40,7 @@ module CX
     end
 
     def _name= n
-      @name = n
+      @name = n.to_sym
       @to_s = @name.to_s.freeze
       @name_ = Column.simple_name(@name).to_sym
     end
