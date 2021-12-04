@@ -258,12 +258,12 @@ END
       
       def table_footer!
         if @filtering
-          h.js! h.file_content!("jquery-3.6.0.slim.min.js")
+          h.js! h.file_content!("vendor/jquery-3.6.0.slim.min.js")
           h.js! h.file_content!("parser_combinator.js")
           h.js! h.file_content!("filter.js")
         end
         if @sorting
-          h.js! h.file_content!("tablesort.js")
+          h.js! h.file_content!("vendor/tablesort.js")
           h.js! "new Tablesort(document.getElementById('cx-table'));\n"
           h.js! "var cx_filter = cx_make_filter('cx-table');\n"
         end
