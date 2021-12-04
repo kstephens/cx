@@ -9,6 +9,7 @@ require 'cx/boolean'
 
 module CX
   class Type < Struct.new(:mod, :caster, :coercer, :matcher, :parser, :formatter, :name, :to_s, :rank)
+    include Support
     
     def initialize *args
       super
@@ -112,7 +113,7 @@ module CX
           @@types_by_cache[x]
         when Module
           type_by_module(x)
-        end or raise ArgumentError, "unknown Type #{x.inspect}"
+        end or raise_ ArgumentError, "unknown Type #{x.inspect}"
       end
       alias :[] :lookup
 

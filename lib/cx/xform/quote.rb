@@ -29,7 +29,7 @@ module CX
           when /a/i
             :always
           else
-            raise "Invalid mode #{mode.inspect}"
+            raise_ "Invalid mode #{mode.inspect}"
           end
 
         columns = column_args!(input).or_all!.columns

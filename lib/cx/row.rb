@@ -35,14 +35,14 @@ module CX
     end
 
     def set_data! data
-      raise "data already set to #{@data.class}" if @data && @data.class != data.class
+      raise_ "data already set to #{@data.class}" if @data && @data.class != data.class
       case @data = data
       when Array
         extend ArrayRow
       when Hash
         extend HashRow
       else
-        raise "unexpected data #{@data.class}"
+        raise_ "unexpected data #{@data.class}"
       end
     end
     
@@ -61,6 +61,11 @@ module CX
       @header.size
     end
 
+    def map_columns!
+      @header.columns.each{|c| r[c] = yield c, r[c]}
+      self
+    end
+    
     ###########################
 
     def [] k
@@ -72,7 +77,7 @@ module CX
       when nil
         nil
       else
-        raise TypeError, "[] : unexpected #{k.inspect}"
+        raise_ TypeError, "[] : unexpected #{k.inspect}"
       end
     end
 
@@ -85,7 +90,7 @@ module CX
       when nil
         nil
       else
-        raise TypeError, "[]= : unexpected #{k.inspect}"
+        raise_ TypeError, "[]= : unexpected #{k.inspect}"
       end
     end
 
@@ -114,6 +119,8 @@ module CX
       each{|v| out.write(v.to_s)}
       nil
     end
+
+    ###########################
 
     module ArrayRow
       def _get k

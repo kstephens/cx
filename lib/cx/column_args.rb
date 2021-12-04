@@ -143,7 +143,7 @@ module CX
     def check!
       unless (ub = unbound).empty?
         msg = ub.map(&:arg_str).map(&:inspect).join(', ')
-        raise CX::Error, "unknown column: #{msg}"
+        raise_ CX::Error, "unknown column: #{msg}"
       end
       self
     end

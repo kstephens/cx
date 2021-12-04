@@ -43,7 +43,7 @@ module CX
       when Symbol, String
         @to_column[k.to_sym] || @to_column[@aliases[k.to_sym]]
       else
-        raise TypeError, "Header[] : unexpected #{k.class}"
+        raise_ TypeError, "Header[] : unexpected #{k.class}"
       end
     end
 
@@ -90,7 +90,7 @@ module CX
       when Symbol, String
         push Column.new(x)
       else
-        raise TypeError
+        raise_ TypeError
       end
       self
     end
@@ -103,7 +103,7 @@ module CX
       when Enumerable
         x.map{|c| add_column!(c)}
       else
-        raise TypeError
+        raise_ TypeError
       end
       compact!
     end
@@ -115,7 +115,7 @@ module CX
     end
 
     def add_column! c
-      raise ArgumentError if @columns.include?(c)
+      raise_ ArgumentError if @columns.include?(c)
       c.index ||= (@columns.map(&:to_i).max || -1) + 1
       c.order ||= @columns.last ? @columns.last.order + 1 : 0
       c.name = available_name(c, c.name || :_COL_)
@@ -129,7 +129,7 @@ module CX
     end
 
     def remove_column! c
-      raise ArgumentError unless @columns.include?(c)
+      raise_ ArgumentError unless @columns.include?(c)
       @to_column.delete(c.name)
       @columns.delete(c)
       c._header = nil
@@ -155,8 +155,8 @@ module CX
 
     def change_name! c, name
       return name if c.name == name
-      raise ArgumentError if @to_column[name]
-      raise ArgumentError unless @columns.include?(c)
+      raise_ ArgumentError if @to_column[name]
+      raise_ ArgumentError unless @columns.include?(c)
       @to_column.delete(c.name)
       @aliases.keys do | (a, n) |
         @aliases.delete(a) if n == c.name
@@ -171,7 +171,7 @@ module CX
 
     def change_index! c, index
       return index if c.index == index
-      raise ArgumentError unless @columns.include?(c)
+      raise_ ArgumentError unless @columns.include?(c)
       make_room_at! index
       c._index = index
       compact!
@@ -181,7 +181,7 @@ module CX
 
     def change_order! c, order
       return index if c.order == order
-      raise ArgumentError unless @columns.include?(c)
+      raise_ ArgumentError unless @columns.include?(c)
       make_room_at! order
       c._order = order
       compact!
@@ -203,7 +203,7 @@ module CX
       when Hash, Array
         Row.new(x, self)
       else
-        raise TypeError
+        raise_ TypeError
       end
     end
 

@@ -26,7 +26,7 @@ module CX
     end
     
     def rx_pred arg
-      c = arg.column or raise ArgumentError, c.inspect
+      c = arg.column or raise_ ArgumentError, c.inspect
       rx = Regexp.new(arg.args[-1] || '')
       if arg.opts[:negate]
         lambda do | row |
