@@ -14,11 +14,9 @@ module CX
       include Xform
       
       def call input, env
-        input_xforms = args
+        input_xforms = args.select{|x| Xform::Pipeline === x}
         input_xforms.each do | x |
-          raise_ "expected xform : #{x.inspect}" unless Xform::Pipeline  === x
-          ## FIXME:!!!
-          # x.default_format!(env[:main][:defaults])
+          x.default_input_format!(env[:main][:defaults][:input_format])
         end
 
         output = input

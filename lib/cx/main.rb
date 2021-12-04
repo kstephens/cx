@@ -148,7 +148,8 @@ module CX
       @pipeline = parse_pipeline! @args
 
       @pipeline.default_io!
-      @pipeline.default_format!(@env[:main][:defaults])
+      @pipeline.default_input_format!(@env[:main][:defaults][:input_format])
+      @pipeline.default_output_format!(@env[:main][:defaults][:output_format])
       
       pp(pipeline: @pipeline) if @debug
       raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?

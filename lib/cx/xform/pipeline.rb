@@ -48,34 +48,32 @@ module CX
         end
       end
 
-      def default_format! opts = { }
-        if format = opts[:input_format]
+      def default_input_format! format
+        return self unless format
+        unless xforms.find{|x| Xform::InputFormat === x}
           format = format.call if Proc === format
-          unless xforms.find{|x| Xform::InputFormat === x}
-            ios = [ ]
-            while x = xforms.shift
-              ios.push x
-              break if Xform::IoIn === x
-            end
-            xforms.unshift(format)
-            ios.each{|x| xforms.unshift(x)}
+          ios = [ ]
+          while x = xforms.shift
+            ios.push x
+            break if Xform::IoIn === x
           end
+          xforms.unshift(format)
+          ios.each{|x| xforms.unshift(x)}
         end
+      end
 
-        if format = opts[:output_format]
+      def default_output_format! format
+        return self unless format
+        unless xforms.find{|x| Xform::OutputFormat === x}
           format = format.call if Proc === format
-          unless xforms.find{|x| Xform::OutputFormat === x}
-            ios = [ ]
-            while x = xforms.pop
-              ios.push x
-              break if Xform::IoOut === x
-            end
-            xforms.push(format)
-            ios.each{|x| xforms.push(x)}
-            self
+          ios = [ ]
+          while x = xforms.pop
+            ios.push x
+            break if Xform::IoOut === x
           end
+          xforms.push(format)
+          ios.each{|x| xforms.push(x)}
         end
-
         self
       end
 
