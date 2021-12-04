@@ -92,6 +92,18 @@ module CX
         end
       end
 
+      @factory = factory = CommandFactory.new.load!
+      env[:main][:defaults].
+        update(input_format:
+               lambda do
+                 @factory.new(Args.new.parse!(['-csv']))
+               end,
+               output_format:
+                 lambda do
+                 @factory.new(Args.new.parse!(['csv-']))
+               end
+              )
+      
       setup_pipeline!
       env[:main][:pipeline] = @pipeline
 
@@ -115,7 +127,10 @@ module CX
 
     def setup_pipeline!
       @pipeline = parse_pipeline! @args
-      default_io_and_format! @pipeline
+
+      @pipeline.default_io!
+      @pipeline.default_format!(@env[:main][:defaults])
+      
       pp(pipeline: @pipeline) if @debug
       raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?
       self
@@ -124,56 +139,13 @@ module CX
     def parse_pipeline! pipeline_args
       pp(pipeline_args!: pipeline_args) if @debug
       @builder = PipelineBuilder.new
+      @builder.factory = @factory
       @builder.parse!(pipeline_args)
       # binding.pry
       pipeline = @builder.build_xform      
       pipeline
     end
 
-    def default_io_and_format! pipeline
-      factory = CommandFactory.new.load!
-      xforms = pipeline.xforms
-
-      # Default to stdio:
-      unless xforms.find{|x| Xform::IoIn === x}
-        xforms.unshift(Xform::IoIn.new)
-      end
-      unless xforms.find{|x| Xform::IoOut === x}
-        xforms.push(Xform::IoOut.new)
-      end
-      
-      # Default the io/out formats:
-      unless xforms.find{|x| Xform::InputFormat === x}
-        ios = [ ]
-        while x = xforms.shift
-          ios.push x
-          break if Xform::IoIn === x
-        end
-        x = factory.new(Args.new.parse!(default_input_format))
-        xforms.unshift(x)
-        ios.each{|x| xforms.unshift(x)}
-      end
-      unless xforms.find{|x| Xform::OutputFormat === x}
-        ios = [ ]
-        while x = xforms.pop
-          ios.push x
-          break if Xform::IoOut === x
-        end
-        x = factory.new(Args.new.parse!(default_output_format))
-        xforms.push(x)
-        ios.each{|x| xforms.push(x)}
-      end
-
-      pipeline
-    end
-
-    def default_input_format
-      ['-csv']
-    end
-    def default_output_format
-      ['csv-']
-    end
-    
     def test!
       require 'cx/help_and_test'
       unit_test!
