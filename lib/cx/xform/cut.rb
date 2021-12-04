@@ -26,7 +26,7 @@ module CX
         columns = column_args.bound.map(&:column)
         
         output_columns = columns.map(&:dup)
-        output_columns.each{|c| c.index = c.order = nil}
+        output_columns.each(&:clear!)
         header = Header.new(output_columns)
         output = Table.new([], header)
         input.each do | r |
