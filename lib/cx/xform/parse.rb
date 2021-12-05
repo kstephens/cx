@@ -15,22 +15,24 @@ require 'cx/xform/column_change'
 module CX
   module Xform
     class Parse
-      include ColumnChange, SelectColumns, Xform
+      include SelectColumns, Xform
       
       def call input, env
-        change_start!
         columns = column_args!(input).or_all!.columns
-        
-        input.each do | r |
-          columns.each do | c |
-            new_v = Type.parse(old_v = r[c])
-            new_v = old_v if new_v.nil?
-            change_maybe!(r, c, old_v, new_v) do
-              c.meta.clear!
-              c.meta.type = nil # new_v.class
-              c.meta.type_inferred = nil
+        columns.each do | c |
+          m = c.meta.clear!
+          input.each do | r |
+            case new_v = old_v = r[c]
+            when nil
+            when String
+              if (new_v = Type.parse(old_v)) != nil?
+                new_v = old_v
+              end
             end
+            m.update!(r[c] = new_v)
           end
+          m.infer!
+          m.type = m.type_inferred if m.type_inferred
         end
         input
       end

@@ -104,6 +104,15 @@ module CX
       self
     end
 
+    def infer!
+      types.delete(NilClass)
+      if types.size == 1
+        self.type_inferred = types.first
+      end
+      self.align_inferred = :right if type_inferred && type_inferred <= ::Numeric
+      self
+    end
+    
     def update m
       m.to_h.each do | k, v |
         send(:"#{k}=", (v.dup rescue v))

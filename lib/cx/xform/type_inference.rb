@@ -22,10 +22,27 @@ module CX
       end
 
       def call input, env
-        input.each_row_col_val do | r, c, v |
-          vc, vt = infer_type(r, c, v)
+        @columns = column_args!(input).or_all!.columns
+        columns.each do | c |
+          types = Set.new
+          input.each do | r |
+            case v = r[c]
+            when String
+              if (vc = Type.parse(v)).nil?
+                r[c] = vc if @parse_string
+                types << vc.class
+              else
+                types << String
+              end
+            else
+              types << v.class
+            end
+          end
           m = c.meta
-          m.type_inferred = gcd_ignore_nil(m.type_inferred, vt)
+          if m.type_inferred = types.inject(t) {|(t1, t2)| gcd(t1, t2) }
+            m.type = types.first if types.size == 1
+            m.align_inferred = :right if m.type_inferred <= ::Numeric
+          end
         end
         input
       end

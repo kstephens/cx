@@ -70,7 +70,7 @@ module CX
       columns ||= @header
       @rows.each do | r |
         columns.each do | c |
-          yield r, c, _get(c)
+          yield r, c, r._get(c)
         end
       end
       self

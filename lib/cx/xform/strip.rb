@@ -13,9 +13,10 @@ require 'cx/xform'
 module CX
   module Xform
     class Strip
-      include Xform
+      include SelectColumns, Xform
       def call input, env
-        input.each_row_col_val do | r, c, v |
+        columns = column_args!(input).or_all!.columns
+        input.each_columns columns do | r, c, v |
           if String === v
             r[c] = v.strip
           end

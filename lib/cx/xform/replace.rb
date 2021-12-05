@@ -19,14 +19,11 @@ module CX
       def call input, env
         column_args!(input).or_all!
         
-        @cleared = Set.new
-        
         fns = column_args.map{|arg| replace_fn input.header, arg}
         input.select! do | row |
           fns.each {|f| f.call(row) }
         end
 
-        @cleared = nil
         input
       end
     end
@@ -42,15 +39,7 @@ module CX
       lambda do | row |
         old_v = row[c].to_s
         new_v = global ? old_v.gsub(rx, replace) : old_v.sub(rx, replace)
-        if old_v != new_v
-          unless @cleared.include?(c)
-            @cleared << c
-            c.meta.clear!
-            c.meta.type = :String
-            c.meta.type_inferred = nil
-          end
-          row[c] = new_v
-        end
+        row[c] = new_v
       end
     end
   end

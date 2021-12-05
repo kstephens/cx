@@ -13,7 +13,8 @@ require 'cx/xform'
 module CX
   module Xform
     class Align
-      include Xform
+      include SelectColumns, Xform
+
       def call input, env
         set_cols! input.header
         input.each do | row |
