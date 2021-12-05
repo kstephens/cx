@@ -11,15 +11,16 @@ require 'cx/xform/record'
 #   synopsis: Generates CSV lines.
 #   args: []
 #   opts:
-#     table: Table name
+#     table: Table name.
 #     transaction: Emit a TRANSACTION block.
 #     rollback: Emit a ROLLBACK statement.
 #     commit: Emit a COMMIT statement.
 #     create: Emit a CREATE TABLE statement.
 #     temporary: CREATE TEMPORARY TABLE statement.
 #     insert: Emit INSERT INTO statements.
-#     
-#     
+#     varchar-size: 'VARCHAR(size). Default: 255.'
+#
+
 
 module CX
   module Xform

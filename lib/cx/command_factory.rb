@@ -39,6 +39,7 @@ module CX
     def load_commands! commands
       commands.each do | cls, info |
         info[:class_name] = cls
+        info[:options] ||= info[:opts] # ???
         vals = info.values_at(*CommandDesc.members)
         cmd = CommandDesc.new(*vals)
         register! cmd

@@ -10,7 +10,9 @@ require 'cx/xform/record'
 #   synopsis: Generate Markdown table lines.
 #   suffixes: [ .md ]
 #   args: []
-#   opts: {}
+#   opts:
+#     title: Output title.
+#     include-header: Include a header.
 
 module CX
   module Xform

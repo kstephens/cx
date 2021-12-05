@@ -10,8 +10,8 @@ require 'cx/column_args'
 #   synopsis: Quote string values that would be ambigous or unprintable.
 #   args: []
 #   opts:
-#     --mode: "maybe, everything, always"
-#     --strings-only: Ignore non-strings.
+#     mode: "maybe, everything, always"
+#     strings-only: Ignore non-strings.
 
 module CX
   module Xform

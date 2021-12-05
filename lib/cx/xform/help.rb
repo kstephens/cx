@@ -16,77 +16,98 @@ module CX
       def call input, env
         require 'cx/command_factory'
         factory = CommandFactory.new.load!
+        _doc = String.new
+        
         doc = String.new
         doc << <<'END'
-= Overview
+# Overview
 
 CX processes a pipeline of commands which transform tabular data.
 
-A pipeline's commands are separated by "//" -- mnemonic: Unix shell pipe "|"
-Some commands have pipelines arguments delimited by "{{" and "}}".
+A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
 
-= Commands
+Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
 
-== Options
+# Commands
 
-Either "--FLAG" or "--NAME=VALUE". "--" terminates all option parsing.
+## Options
 
-== Arguments
+Command and global options:
 
-Most commands take one or more column arguments to act on.
-These have the form:
+   Syntax         | Semantic 
+------------------|--------------------------------
+`--FLAG`          | Enable.
+`--no-FLAG`       | Disable (false).
+`--OPTION=VALUE`  | Sets option.
+`--`              | Terminates all option parsing.
 
-| COLUMN            | Name or index. |
-| COLUMN:-          | Reverse order or removal. |
-| COLUMN:+          | Forward order or addition. |
-| COLUMN:!          | Negation. |
-| COLUMN:arg1;arg2  | Processing arguments. |
-| COLUMN:opt1=val1  | Processing options. 
+## Arguments
 
-The '*' column name implies all columns.
+Most commands take one or more column arguments:
 
-== Examples
+    Syntax              | Semantic
+------------------------|--------------------------------
+`COLUMN`                | Name or index.
+`COLUMN:-`              | Reverse order or removal.
+`COLUMN:+`              | Forward order or addition.
+`COLUMN:!`              | Negation.
+`COLUMN:arg1;arg2...`   | Processing arguments.
+`COLUMN:opt1=val1;...`  | Processing options.
+
+For most commands, all columns are processed when column arguments are given.
+
+The column name  `"*"` implies all columns; see `cut` for examples.
+
+## Examples
 
 ```
-# Match all rows where field "a" does not contain "foo".
+# Match all rows where field `"a"` does not contain `"foo"`.
 cx in file.csv // grep a:!foo
 ```
 
-= Global Options
+# Global Options
 
-| --debug           | Enables debugging info. |
-| --verbose         | Enables verbose info.   |
-| --help            | This help document.     |
+  Syntax            | Semantic
+--------------------|-------------------------
+`--debug`           | Enable debugging info.
+`--verbose`         | Enable verbose info.  
+`--help`            | Print this document.    
 
 END
 
-        doc << "= Commands\n"
-        factory.all.sort_by(&:name).each do | cmd |
+        doc << "# Commands\n"
+        factory.all.
+          sort_by(&:name).
+          # take(17).
+          #take(14).
+          #reverse.take(1).
+          each do | c |
           doc << "\n"
-          doc << "== `#{cmd.name}`\n\n"
-          doc << cmd.synopsis
-          doc << "\n\nAliases: " << cmd.aliases.map{|x| code x}.join(', ') << ".\n" unless cmd.aliases.empty?
-          unless cmd.options.empty?
-            doc << "\nOptions:\n"
-            cmd.options.each do | name, desc |
-              doc << "* `" << name << "` - " << desc << "\n"
+          doc << "## `#{c.name}`\n\n"
+          doc << c.synopsis
+          doc << "\n\nAliases: " << c.aliases.map{|x| code x}.join(', ') << ".\n" unless c.aliases.empty?
+
+          unless c.options.empty?
+            doc << "\n\nOptions:\n\n"
+            c.options.each do | name, desc |
+              doc << "* " << code('--' + name.to_s) << " - " << desc.to_s << "\n"
             end
-            doc << "\n"
           end
-          doc << "\n\n" << cmd.description unless cmd.description.empty?
+
+          doc << "\n\n" << c.description unless c.description.empty?
           doc << "\n"
         end
 
         doc << <<'END'
 
-= Installation
+# Installation
 
 ```
 git clone https://github.com/kstephens/cx.git
 gem install cx
 ```
 
-= Attribution
+# Attribution
 
 Copyright 2020 - Kurt Stephens 
 

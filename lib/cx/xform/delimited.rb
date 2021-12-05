@@ -11,8 +11,8 @@ require 'cx/xform/record'
 #   inverse: [ d- ]
 #   args: []
 #   opts:
-#     --field-sep:   'Default: ",".'
-#     --record-sep:  'Default: system newline.'
+#     field-sep:   'Default: ",".'
+#     record-sep:  'Default: system newline.'
 
 # :COMMAND:
 # DelimitedOut:
@@ -21,9 +21,9 @@ require 'cx/xform/record'
 #   inverse: [ -d ]
 #   args: []
 #   opts:
-#     --field-sep:   'Default: ",".'
-#     --record-sep:  'Default: system newline.'
-#     --mulit-sep:   'Separator for enumerable values.  Default: ";".'
+#     field-sep:   'Default: ",".'
+#     record-sep:  'Default: system newline.'
+#     multi-sep:   'Separator for enumerable values.  Default: ";".'
 
 module CX
   module Xform
