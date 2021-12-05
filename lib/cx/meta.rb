@@ -63,16 +63,35 @@ module CX
       clear!
       @type = nil
     end
-    
+
+    def update! v
+      case v
+      when nil
+        @nulls += 1
+      when ''
+        min_max_value! v
+        @types << v.class
+        @blanks += 1
+        min_max_size! 0
+      else
+        min_max_value! v
+        @types << v.class
+        v = v.to_s
+        @whitespace +=1 if v =~ /\s/
+        min_max_size! v.size
+      end
+      v
+    end
+
     def min_max_size! n
-      return self unless n
+      return nil unless n
       @min_size = n if ! @min_size || @min_size > n
       @max_size = n if ! @max_size || @max_size < n 
       self
     end
 
     def min_max_value! val
-      return self unless val
+      return nil if val.nil?
       @min_value = val if ! @min_value || @min_value > val
       @max_value = val if ! @max_value || @max_value < val
       self
@@ -121,7 +140,7 @@ module CX
         header[:max_value].meta.type =
         type
       
-     Table.new([], header)
+      Table.new([], header)
     end
     
     def align_for_type type
