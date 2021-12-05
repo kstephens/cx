@@ -107,7 +107,6 @@ module CX
       compact!
     end
     
-
     def alias! c, name
       @aliases[name] = c.name
       self

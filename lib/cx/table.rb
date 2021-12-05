@@ -127,24 +127,6 @@ module CX
       self
     end
 
-    def each_row_col
-      @rows.each do | r |
-        @header.each do | c |
-          yield r, c
-        end
-      end
-      self
-    end
-
-    def each_row_col_val
-      @rows.each do | r |
-        @header.each do | c |
-          yield r, c, r[c]
-        end
-      end
-      self
-    end
-
     def set_rows! rows
       @rows = rows
       self

@@ -68,11 +68,6 @@ module CX
     def first ; _get(@header.first) ; end
     def last  ; _get(@header.last)  ; end
 
-    def map_columns!
-      @header.columns.each{|c| r[c] = yield c, r[c]}
-      self
-    end
-    
     ###########################
 
     def [] k
