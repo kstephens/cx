@@ -58,12 +58,45 @@ module CX
     def reverse! ; @rows.reverse ; self ; end
     def clear    ; @rows.clear   ; self ; end
     def size     ; @rows.size           ; end
+    def first    ; @rows.first          ; end
+    def last     ; @rows[-1]            ; end
 
     def each &blk
       @rows.each(&blk)
       self
     end
 
+    def each_columns columns = nil
+      columns ||= @header
+      @rows.each do | r |
+        columns.each do | c |
+          yield r, c, _get(c)
+        end
+      end
+      self
+    end
+    
+    def map! &blk
+      @rows.map! do | r |
+        if (nr = yield r).object_id == r.object_id
+          r
+        else
+          make_row(nr)
+        end
+      end
+      self
+    end
+
+    def map_columns! columns = nil
+      columns ||= @header
+      @rows.each do | r |
+        columns.each do | c |
+          r._set(c, yield(r, c, r._get(c)))
+        end
+      end
+      self
+    end
+    
     def push r
       @rows.push make_row(r)
       self

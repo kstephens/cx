@@ -50,15 +50,23 @@ module CX
       self
     end
 
-    def each &blk
-      @header.each do |c|
-        yield c, _get(c)
+    def each cols = nil
+      (cols || @header).each do |c|
+        yield(c, _get(c))
       end
+      self
+    end
+    
+    def map! cols = nil
+      (cols || @header).each do |c|
+        _set(c, yield(c, _get(c)))
+      end
+      self
     end
 
-    def size
-      @header.size
-    end
+    def size  ; @header.size        ; end
+    def first ; _get(@header.first) ; end
+    def last  ; _get(@header.last)  ; end
 
     def map_columns!
       @header.columns.each{|c| r[c] = yield c, r[c]}

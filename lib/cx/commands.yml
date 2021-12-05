@@ -146,19 +146,20 @@ MarkdownOut:
   file: "lib/cx/xform/markdown.rb"
   path: "cx/xform/markdown"
 MetaIn:
-  aliases: [ -meta, types ]
-  synopsis: Calculates various column metadata from row data.
+  aliases:
+  synopsis: Calculates various column metadata.
   args: []
   opts: {}
-  file: "lib/cx/xform/meta_in.rb"
-  path: "cx/xform/meta_in"
-MetaTable:
-  aliases: meta-, meta, columns, columns-
-  synopsis: Generate a table of table metadata.
+  examples:
+  file: "lib/cx/xform/meta.rb"
+  path: "cx/xform/meta"
+MetaOut:
+  aliases:
+  synopsis: Generate a table of column metadata.
   args: []
   opts: {}
-  file: "lib/cx/xform/metatable.rb"
-  path: "cx/xform/metatable"
+  file: "lib/cx/xform/meta.rb"
+  path: "cx/xform/meta"
 Nop:
   aliases: noop
   synopsis: Does nothing -- output is same as input.
