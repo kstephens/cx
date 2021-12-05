@@ -11,6 +11,7 @@ Cat:
   args: [ pipelines, ... ]
   file: "lib/cx/xform/cat.rb"
   path: "cx/xform/cat"
+
 Coerce:
   aliases: 
   synopsis: Coerce columns by inferred types.
@@ -45,6 +46,7 @@ Cut:
   opts: {}
   file: "lib/cx/xform/cut.rb"
   path: "cx/xform/cut"
+
 DelimitedIn:
   aliases: [ -d ]
   synopsis: Parse delimited records.
@@ -104,6 +106,12 @@ HeaderOut:
     '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'
   file: "lib/cx/xform/header.rb"
   path: "cx/xform/header"
+Help:
+  aliases:
+  synopsis: 'This documentation.'
+  args: [ command ]
+  file: "lib/cx/xform/help.rb"
+  path: "cx/xform/help"
 HtmlOut:
   aliases: html,htm
   synopsis: 'Emits HTML.'
@@ -248,7 +256,7 @@ Strip:
   path: "cx/xform/strip"
 Tee:
   aliases: t
-  synopsis: 'Sent input to multiple output pipelines.'
+  synopsis: 'Send input to multiple output pipelines.'
   args: [ pipelines, ... ]
   file: "lib/cx/xform/tee.rb"
   path: "cx/xform/tee"
@@ -261,7 +269,7 @@ Transpose:
   file: "lib/cx/xform/transpose.rb"
   path: "cx/xform/transpose"
 TypeInference:
-  aliases:
+  aliases: [ -types, types ]
   synopsis: Infer types from field strings.
   args: []
   opts: {}

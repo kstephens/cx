@@ -93,10 +93,21 @@ module CX
     def run!
       parse_argv!
 
+      @factory = factory = CommandFactory.new.load!
+      env[:main][:defaults].
+        update(input_format:
+               lambda do
+                 @factory.new(Args.new.parse!(['-csv']))
+               end,
+               output_format:
+                 lambda do
+                 @factory.new(Args.new.parse!(['csv-']))
+               end
+              )
+
       case
       when opts[:help]
-        help!
-        exit 0
+        args.unshift 'help'
       when opts[:version]
         puts CX::VERSION
         exit 0
@@ -109,27 +120,24 @@ module CX
         end
       end
 
-      @factory = factory = CommandFactory.new.load!
-      env[:main][:defaults].
-        update(input_format:
-               lambda do
-                 @factory.new(Args.new.parse!(['-csv']))
-               end,
-               output_format:
-                 lambda do
-                 @factory.new(Args.new.parse!(['csv-']))
-               end
-              )
-      
       setup_pipeline!
       env[:main][:pipeline] = @pipeline
+      # pp(pipeline_argv: @pipeline.pipeline_argv) if debug?
 
       go!
 
       self
     rescue => exc
-      log.error "#{progname} : #{exc.inspect}"
-      log.error { (["backtrace:::"] + exc.backtrace.reverse + [":::"]).join("\n") }
+      msg = progname.dup
+      reason = exc.reason rescue nil
+      data = exc.data rescue nil
+      msg << exc.message
+      msg << "\nreason: #{reason}" if reason
+      msg << "\nin: #{data}" if data
+      if debug?
+        msg << (["\nbacktrace ::::"] + exc.backtrace.reverse + ["::::"]).join("\n")
+      end
+      log.error msg
       @exit_code = @env[:main][:exit_code]
       self
     ensure
@@ -164,7 +172,6 @@ module CX
       @builder = PipelineBuilder.new
       @builder.factory = @factory
       @builder.parse!(pipeline_args)
-      # binding.pry
       pipeline = @builder.build_xform      
       pipeline
     end

@@ -23,7 +23,8 @@ module CX
     def call input, env
       raise_ "call : not implemented"
     end
-    
+
+    attr_accessor :progname 
     def argv ; @_args.argv ; end
     def args ; @_args.args ; end
     def opts ; @_args.opts ; end
@@ -33,20 +34,19 @@ module CX
       initialize!
       self
     end
-    
-    def debug? ; false ; end
 
     def >> app
       Pipeline.new >> app
     end
 
-    module Format
+    def pipeline_argv argv = self.argv
+      argv.map{|x| Xform === x ? x.pipeline_argv : x}
     end
 
+    module Format ; end
     module InputFormat
       include Format
     end
-    
     module OutputFormat
       include Format
       def include_header?

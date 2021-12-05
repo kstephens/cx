@@ -5,7 +5,7 @@ require 'cx/xform'
 # :COMMAND:
 # Tee:
 #   aliases: t
-#   synopsis: 'Sent input to multiple output pipelines.'
+#   synopsis: 'Send input to multiple output pipelines.'
 #   args: [ pipelines, ... ]
 
 module CX

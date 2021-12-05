@@ -4,7 +4,7 @@ require 'cx'
 
 module CX
   class Row
-    include Enumerable
+    include Enumerable, Support
 
     attr_reader :header, :data, :header_version
     attr_accessor :file_name, :line_number

@@ -1,24 +1,21 @@
-# coding: utf-8
 # frozen_string_literal: true
-# encoding: UTF-8
-# -*- coding: utf-8 -*-
 
 module CX
   class Error < StandardError
-    attr_accessor :cause
+    attr_accessor :reason, :cause, :data
     
     module Support
       def raise_ *args
-        msg = exc = exc_cls = exc_message = backtrace = nil
+        msg = exc = exc_cls = backtrace = nil
         args.each do | arg |
           case arg
           when Exception
             exc = arg
-            exc_message = exc.message
+            msg ||= exc.message
             backtrace = exc.backtrace
           when Class
             exc_cls = arg
-            exc_message = 'NO-MESSAGE'
+            msg ||= 'NO-MESSAGE'
           when Array
             backtrace = arg
           else
@@ -31,13 +28,14 @@ module CX
         exc_cls ||= raise_cls
         
         msg_ = String.new
-        msg_ << "#{self.class}" # self.inspect?
+        msg_ << "#{describe_self_for_error}"
         msg_ << " : " << msg.to_s if msg
         msg_ << " : #{exc.class} : #{exc.message}" if exc
-        msg = msg_
         
-        exc_to_raise = exc_cls.new(msg)
-        exc_to_raise.cause = exc
+        exc_to_raise = exc_cls.new(msg_)
+        exc_to_raise.reason = msg
+        exc_to_raise.cause  = exc
+        exc_to_raise.data   = data_for_error
         
         if debug?
           pp(exc_to_raise: exc_to_raise, exc: exc, msg: msg, backtrace: backtrace && backtrace.reverse)
@@ -51,6 +49,14 @@ module CX
         end
       end
 
+      def describe_self_for_error
+        self.class.to_s.sub(/^CX::/, '')
+      end
+
+      def data_for_error
+        nil
+      end
+      
       def reraise
         yield
       rescue raise_cls

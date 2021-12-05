@@ -2,6 +2,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/help'
 
 module CX
   module Xform
@@ -40,16 +41,19 @@ module CX
 
       def default_io!
         # Default to stdio:
-        unless xforms.find{|x| Xform::IoIn === x}
-          xforms.unshift(Xform::IoIn.new)
-        end
         unless xforms.find{|x| Xform::IoOut === x}
           xforms.push(Xform::IoOut.new)
         end
+        return self if xforms.any?{|x| Xform::Help === x}
+        unless xforms.find{|x| Xform::IoIn === x}
+          xforms.unshift(Xform::IoIn.new)
+        end
+        self
       end
 
       def default_input_format! format
         return self unless format
+        return self if xforms.any?{|x| Xform::Help === x}
         unless xforms.find{|x| Xform::InputFormat === x}
           format = format.call if Proc === format
           ios = [ ]
@@ -60,10 +64,12 @@ module CX
           xforms.unshift(format)
           ios.each{|x| xforms.unshift(x)}
         end
+        self
       end
 
       def default_output_format! format
         return self unless format
+        return self if xforms.any?{|x| Xform::Help === x}
         unless xforms.find{|x| Xform::OutputFormat === x}
           format = format.call if Proc === format
           ios = [ ]
@@ -80,7 +86,15 @@ module CX
       def inspect_content mode
         "[#{@xforms.map(&:inspect) * ' | '}]"
       end
-   end
+
+      def pipeline_argv
+        x = xforms.flat_map do | arg |
+          arg.pipeline_argv + [ '//' ]
+        end
+        x.pop
+        ['{{'] + x + ['}}']
+      end
+    end
   end
 end
 

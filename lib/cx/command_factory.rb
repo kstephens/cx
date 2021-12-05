@@ -4,19 +4,23 @@ require 'yaml'
 module CX
   class CommandFactory
     include Support
+
+    attr_reader :all, :by_name
     
     def initialize
+      @all = [ ]
       @by_name = {}
     end
 
     def call args
-      raise TypeError, "unspected #{x.class}" unless Args === args
+      raise TypeError, "unexpected #{x.class}" unless Args === args
       cmd_name = args.args.shift.to_sym
       unless cmd = @by_name[cmd_name]
-        raise ArgumentError, "cannot find xform for #{cmd_name.inspect} : valid commands : #{valid_commands.inspect}"
+        raise ArgumentError, "unknown command  #{cmd_name.inspect} : valid commands : #{valid_commands.inspect}"
       end
       cls = cmd.cls
       obj = cls.new
+      obj.progname = cmd_name.to_s
       obj.set_args! args
       obj
     end
@@ -44,17 +48,17 @@ module CX
 
     def register! cmd
       register_name! cmd, cmd.name
+      @all << cmd
       cmd.aliases.map!(&:to_sym)
       cmd.aliases.each{|a| register_name! cmd, a}
     end
     
     def register_name! cmd, name
-      name = name.to_sym
+      raise TypeError unless Symbol === name
       existing = @by_name[name]
       if existing && existing != cmd
         raise_ "#{cmd.class_name} : #{name} in #{cmd.file} : already exists: #{existing.class_name} #{existing.file}"
       end
-      # pp(name: name, cmd: cmd.name)
       @by_name[name] = cmd
     end
 
@@ -74,10 +78,11 @@ module CX
         self.path or raise ArgumentError, "path"
 
         self.name ||= infer_name(class_name)
+        self.name = self.name.to_sym
         self.class_name = class_name.to_sym
         self.aliases ||= ""
-        self.synopsis ||= "NO-SYNOPSIS"
-        self.description ||= "NO-DESCRIPTION"
+        self.synopsis ||= ""
+        self.description ||= ""
         self.suffixes ||= [ ]
         self.arguments ||= ['...']
         self.options ||= { }
