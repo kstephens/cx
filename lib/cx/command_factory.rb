@@ -52,7 +52,7 @@ module CX
       name = name.to_sym
       existing = @by_name[name]
       if existing && existing != cmd
-        raise_ "#{cmd.class_name} : #{name} already exists: #{existing.class_name}"
+        raise_ "#{cmd.class_name} : #{name} in #{cmd.file} : already exists: #{existing.class_name} #{existing.file}"
       end
       # pp(name: name, cmd: cmd.name)
       @by_name[name] = cmd
@@ -66,10 +66,13 @@ module CX
 
     ###########################################
     
-    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :file, :path)
+    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :examples, :file, :path)
       include Support
       def initialize *args
         super
+        self.file or raise ArgumentError, "file"
+        self.path or raise ArgumentError, "path"
+
         self.name ||= infer_name(class_name)
         self.class_name = class_name.to_sym
         self.aliases ||= ""
@@ -78,14 +81,18 @@ module CX
         self.suffixes ||= [ ]
         self.arguments ||= ['...']
         self.options ||= { }
-        self.file or raise ArgumentError, "file"
-        self.path or raise ArgumentError, "path"
+        self.examples ||= [ ]
         unless Array === self.aliases
-          self.aliases = self.aliases.strip.split(/\s*,\s*/, -1)
+          self.aliases = self.aliases.split(/\s*,\s*/).map(&:strip)
         end
+        unless Array === self.examples
+          self.examples = self.examples.split(/\s*\n\s*\n\s*/, -1).map(&:strip)
+        end
+        
         name.to_s.sub(/^(.+)-in$/ ){|m| self.aliases.unshift "-#{$1}"}
         name.to_s.sub(/^(.+)-out$/){|m| self.aliases.unshift "#{$1}-"}
         self.aliases = self.aliases.map(&:to_sym).uniq
+        
         self
       rescue => exc
         raise_  "#{exc.message} : #{args.inspect}", exc
