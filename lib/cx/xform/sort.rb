@@ -3,6 +3,7 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/column_args'
+require 'cx/compare'
 
 # :COMMAND:
 # Sort:
@@ -39,18 +40,8 @@ module CX
 
     def cmp_vals a_, b_
       a_.each_with_index do | a, i |
-        b = b_[i]
-        case
-        when a.nil? && b.nil?
-        when a.nil?
-          return - @order[i]
-        when b.nil?
-          return @order[i]
-        else
-          unless (cmp = (a <=> b) rescue (a.to_s <=> b.tos)).zero?
-            return @order[i] * cmp
-          end
-        end
+        cmp = Compare.compare(a, b_[i])
+        return @order[i] * cmp unless cmp.zero?
       end
       0
     end
