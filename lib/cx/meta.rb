@@ -50,7 +50,11 @@ module CX
       to_h.inspect
     end
 
-    def clear!
+    def clear! c = nil
+      if c
+        @name  = c.name
+        @name_ = c.name_
+      end
       @types = Set.new
       @type_inferred = @align_inferred = nil
       @type_object = nil

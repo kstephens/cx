@@ -83,6 +83,10 @@ module CX
       @order = i
     end
 
+    def meta_clear!
+      @meta.clear!(self)
+    end
+    
     ##################################
 
     def initialize_copy orig

@@ -8,7 +8,7 @@ require 'cx/xform/column_change'
 # :COMMAND:
 # Parse:
 #   aliases: 
-#   synopsis: Parse strings into richer types..
+#   synopsis: Parse strings into richer types.
 #   args: []
 #   opts: {}
 
@@ -20,12 +20,12 @@ module CX
       def call input, env
         columns = column_args!(input).or_all!.columns
         columns.each do | c |
-          m = c.meta.clear!
+          m = c.meta_clear!
           input.each do | r |
             case new_v = old_v = r[c]
             when nil
             when String
-              if (new_v = Type.parse(old_v)) != nil?
+              if (new_v = Type.parse(old_v)).nil?
                 new_v = old_v
               end
             end
