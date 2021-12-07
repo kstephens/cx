@@ -95,9 +95,6 @@ END
       Dir["#{base_dir}/*/*/diff"].sort.map do | diff |
         dir = File.dirname(diff)
         ex = CX::Example.load!(dir)
-        # ex.show!
-        # $stderr.puts pps(ex: ex.files, contents: ex.contents)
-        # pp(files: ex.files, contents: ex.contents)
         ex.contents.diff.empty? ? nil : ex
       end.compact
     end
@@ -106,11 +103,9 @@ END
       extend Logging
       CX::Logging.log.level = ::Logger::INFO
       examples = examples_with_diffs
-      # pp(examples: examples)
       log.info "  ### { diffs!"
       examples.each do | ex |
         log.info "    ### { #{ex.command} : #{ex.example}"
-        # pp(files: ex.files, contents: ex.contents)
         ex.contents
         ex.show!
         s = <<"END"

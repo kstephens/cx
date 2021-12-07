@@ -192,7 +192,6 @@ END
       end
 
       def run_example! command, e
-        # pp(e: e)
         example = Example.new_from_hash(
           command:    command.name,
           example:    e[:cmd],
