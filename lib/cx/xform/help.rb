@@ -109,7 +109,7 @@ END
           doc << "\nAliases: " << c.aliases.map{|x| code x}.join(', ') << ".\n" unless c.aliases.empty?
 
           doc << "\nInvocation: \n\n"
-          doc << "`$ cx` *...* `//` `#{c.name}` "
+          doc << "`#{c.name}` "
           doc << '*column-args* *...* ' if c.has_column_args?
           unless c.options.empty?
             doc << '*[* '

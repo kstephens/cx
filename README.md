@@ -108,7 +108,7 @@ Aligns fields based on column max_size and alignment.
 
 Invocation: 
 
-`$ cx` *...* `//` `align` 
+`align` 
 
 Examples:
 
@@ -127,7 +127,7 @@ Concatenates rows from multiple pipelines.  Columns are shared.
 
 Invocation: 
 
-`$ cx` *...* `//` `cat` 
+`cat` 
 
 Examples:
 
@@ -150,7 +150,7 @@ Coerce columns by inferred types.
 
 Invocation: 
 
-`$ cx` *...* `//` `coerce` 
+`coerce` 
 
 ## `csv-in`
 
@@ -160,7 +160,7 @@ Aliases: `-csv`.
 
 Invocation: 
 
-`$ cx` *...* `//` `csv-in` 
+`csv-in` 
 
 ## `csv-out`
 
@@ -170,7 +170,7 @@ Aliases: `csv-`.
 
 Invocation: 
 
-`$ cx` *...* `//` `csv-out` 
+`csv-out` 
 
 Examples:
 
@@ -190,7 +190,7 @@ Cut columns.
 
 Invocation: 
 
-`$ cx` *...* `//` `cut` *column-args* *...* 
+`cut` *column-args* *...* 
 
 Examples:
 
@@ -251,7 +251,7 @@ Aliases: `-delimited`, `-d`.
 
 Invocation: 
 
-`$ cx` *...* `//` `delimited-in` *[* `--field-sep=...` `--record-sep=...` *]* 
+`delimited-in` *[* `--field-sep=...` `--record-sep=...` *]* 
 
 Options:
 
@@ -266,7 +266,7 @@ Aliases: `delimited-`, `d-`.
 
 Invocation: 
 
-`$ cx` *...* `//` `delimited-out` *column-args* *...* *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...` *]* 
+`delimited-out` *column-args* *...* *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...` *]* 
 
 Options:
 
@@ -280,7 +280,7 @@ Empty fields are converted to NULL.
 
 Invocation: 
 
-`$ cx` *...* `//` `empty-null` *column-args* *...* 
+`empty-null` *column-args* *...* 
 
 ## `eval`
 
@@ -288,7 +288,7 @@ Evaluates Ruby code for each row.
 
 Invocation: 
 
-`$ cx` *...* `//` `eval` 
+`eval` 
 
 Examples:
 
@@ -319,7 +319,7 @@ Aliases: `g`.
 
 Invocation: 
 
-`$ cx` *...* `//` `grep` *column-args* *...* 
+`grep` *column-args* *...* 
 
 Examples:
 
@@ -356,7 +356,7 @@ Aliases: `-header`, `-h`.
 
 Invocation: 
 
-`$ cx` *...* `//` `header-in` 
+`header-in` 
 
 Examples:
 
@@ -377,7 +377,7 @@ Aliases: `header-`, `h-`.
 
 Invocation: 
 
-`$ cx` *...* `//` `header-out` *[* `--meta-columns=...` *]* 
+`header-out` *[* `--meta-columns=...` *]* 
 
 Options:
 
@@ -401,7 +401,7 @@ This documentation.
 
 Invocation: 
 
-`$ cx` *...* `//` `help` `command`
+`help` `command`
 
 ## `html-out`
 
@@ -411,7 +411,7 @@ Aliases: `html-`, `html`, `htm`.
 
 Invocation: 
 
-`$ cx` *...* `//` `html-out` *[* `--raw` `--filtering=...` `--title` `--table-only` `--indent=...` `--sorting=...` `--styled=...` `--head` `--body-head` `--body-foot` *]* 
+`html-out` *[* `--raw` `--filtering=...` `--title` `--table-only` `--indent=...` `--sorting=...` `--styled=...` `--head` `--body-head` `--body-foot` *]* 
 
 Options:
 
@@ -434,7 +434,7 @@ Aliases: `-io`, `in`, `i`.
 
 Invocation: 
 
-`$ cx` *...* `//` `io-in` `filename` `...`
+`io-in` `filename` `...`
 
 ## `io-out`
 
@@ -444,7 +444,7 @@ Aliases: `io-`, `out`, `o`.
 
 Invocation: 
 
-`$ cx` *...* `//` `io-out` `filename` `...`
+`io-out` `filename` `...`
 
 ## `jira-out`
 
@@ -454,7 +454,7 @@ Aliases: `jira-`, `jira`.
 
 Invocation: 
 
-`$ cx` *...* `//` `jira-out` 
+`jira-out` 
 
 Examples:
 
@@ -476,7 +476,7 @@ Aliases: `markdown-`, `md`, `md-`, `markdown`.
 
 Invocation: 
 
-`$ cx` *...* `//` `markdown-out` *[* `--title=...` `--include-header=...` *]* 
+`markdown-out` *[* `--title=...` `--include-header=...` *]* 
 
 Options:
 
@@ -534,7 +534,7 @@ Aliases: `-meta`.
 
 Invocation: 
 
-`$ cx` *...* `//` `meta-in` 
+`meta-in` 
 
 Examples:
 
@@ -556,7 +556,7 @@ Aliases: `meta-`.
 
 Invocation: 
 
-`$ cx` *...* `//` `meta-out` 
+`meta-out` 
 
 Examples:
 
@@ -587,7 +587,7 @@ Aliases: `noop`.
 
 Invocation: 
 
-`$ cx` *...* `//` `nop` 
+`nop` 
 
 ## `parse`
 
@@ -595,7 +595,7 @@ Parse strings into richer types.
 
 Invocation: 
 
-`$ cx` *...* `//` `parse` 
+`parse` 
 
 Examples:
 
@@ -617,7 +617,7 @@ Aliases: `q`.
 
 Invocation: 
 
-`$ cx` *...* `//` `quote` *[* `--mode` `--strings-only` *]* 
+`quote` *[* `--mode` `--strings-only` *]* 
 
 Options:
 
@@ -632,7 +632,7 @@ Aliases: `range`.
 
 Invocation: 
 
-`$ cx` *...* `//` `region` 
+`region` 
 
 ## `replace`
 
@@ -642,7 +642,7 @@ Aliases: `sub`.
 
 Invocation: 
 
-`$ cx` *...* `//` `replace` 
+`replace` 
 
 ## `reverse`
 
@@ -652,7 +652,7 @@ Aliases: `tac`.
 
 Invocation: 
 
-`$ cx` *...* `//` `reverse` 
+`reverse` 
 
 Examples:
 
@@ -672,7 +672,7 @@ Inserts a row id column.
 
 Invocation: 
 
-`$ cx` *...* `//` `row-id` *[* `--name=...` `--type=...` `--start=...` *]* 
+`row-id` *[* `--name=...` `--type=...` `--start=...` *]* 
 
 Options:
 
@@ -718,7 +718,7 @@ Aliases: `s`.
 
 Invocation: 
 
-`$ cx` *...* `//` `sort` 
+`sort` 
 
 Examples:
 
@@ -776,7 +776,7 @@ Aliases: `sql-`.
 
 Invocation: 
 
-`$ cx` *...* `//` `sql-out` *[* `--table` `--transaction` `--rollback` `--commit` `--create` `--temporary` `--insert` `--varchar-size=...` *]* 
+`sql-out` *[* `--table` `--transaction` `--rollback` `--commit` `--create` `--temporary` `--insert` `--varchar-size=...` *]* 
 
 Options:
 
@@ -824,7 +824,7 @@ Aliases: `trim`.
 
 Invocation: 
 
-`$ cx` *...* `//` `strip` 
+`strip` 
 
 ## `tee`
 
@@ -834,7 +834,7 @@ Aliases: `t`.
 
 Invocation: 
 
-`$ cx` *...* `//` `tee` `pipelines` `...`
+`tee` `pipelines` `...`
 
 ## `transpose`
 
@@ -842,7 +842,7 @@ Transpose rows and columns.
 
 Invocation: 
 
-`$ cx` *...* `//` `transpose` *[* `--include-header` *]* 
+`transpose` *[* `--include-header` *]* 
 
 Options:
 
@@ -856,7 +856,7 @@ Aliases: `-types`, `types`.
 
 Invocation: 
 
-`$ cx` *...* `//` `type-inference` 
+`type-inference` 
 
 
 # Installation
