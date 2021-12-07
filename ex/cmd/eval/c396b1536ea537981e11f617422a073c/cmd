@@ -1,1 +1,0 @@
-bin/cx in a/SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
