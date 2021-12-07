@@ -2,6 +2,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/meta'
 
 module CX
   module Xform
@@ -41,6 +42,7 @@ module CX
           new(rows.first ? rows.first.size : 0).
           each{|c| c.meta.type = ::String}
         output = Table.new(rows, header)
+        output = MetaIn.new.call(output, env)
         output
       end
 

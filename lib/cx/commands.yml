@@ -540,6 +540,26 @@
   lineno: 15
   path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: SetMeta
+  name: set-meta
+  aliases: []
+  synopsis: Set column meta.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
+  example_runs:
+  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' //
+      md
+    :dir: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48
+  file: lib/cx/xform/meta.rb
+  lineno: 25
+  path: cx/xform/meta
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Nop
   name: nop
   aliases:

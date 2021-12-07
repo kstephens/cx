@@ -22,6 +22,16 @@ require 'cx/xform'
 #     - 'cx in SOME.csv // -h // -meta // meta- // h-'
 #     - 'cx in SOME.csv // -h // parse // -meta // meta- // h-'
 
+# :COMMAND:
+# SetMeta:
+#   aliases:
+#   synopsis: Set column meta.
+#   args: []
+#   opts: {}
+#   examples:
+#     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md"
+
+
 module CX
   module Xform
     class MetaIn
@@ -84,6 +94,17 @@ module CX
           output << c.meta.to_h
         end
         MetaIn.new.call(output, env)
+      end
+    end
+
+    class SetMeta
+      include SelectColumns, Xform
+
+      def call input, env
+        column_args!(input).bound.each do | ca |
+          ca.column.meta.update(ca.opts)
+        end
+        input
       end
     end
   end

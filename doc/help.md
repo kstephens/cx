@@ -707,6 +707,27 @@ uuid,a,b,c,d
 ```
 
 
+## `set-meta`
+
+Set column meta.
+
+Invocation: 
+
+`set-meta` 
+
+Examples:
+
+```
+ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md 
+| a                    | b     | c     | d     |
+| -------------------: | ----- | ----- | ----- |
+|                    1 | ab    | 3     | foo   |
+|                   24 | 44    | 6     | bar   |
+|                  134 | 5     | 9     | baz   |
+|                    2 | 12    | 11    | abc   |
+```
+
+
 ## `sort`
 
 Sorts by specified columns.
