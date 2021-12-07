@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: row-id
+example: cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/run
+  exit: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/exit
+  output: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/output
+  expected: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/expected
+  actual: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/actual
+  diff: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/diff
+contents: 
+dir: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250
+dir_name: 7b4c46b6feb221003f76bf308c57a250
+base_dir: ex/cmd
+yaml_file: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250/example.yml

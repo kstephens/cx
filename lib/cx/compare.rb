@@ -2,16 +2,24 @@ require 'cx'
 
 module CX
   module Compare
+    include Logging
+    
     def self.compare a, b
+      # pp(compare: { a: a, b: b, equal?: a.equal?(b) })
       case 
       when a.nil?
         -1
       when b.nil?
         1
-      when a.equals?(b)
+      when a.equal?(b)
         0
       else
-        (a <=> b rescue nil) || a.to_s <=> b.to_s
+        begin
+          a <=> b
+        rescue
+          log.debug
+          a.to_s <=> b.to_s
+        end
       end
     rescue
       0

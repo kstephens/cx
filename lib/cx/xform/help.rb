@@ -3,6 +3,7 @@
 require 'cx/xform'
 require 'fileutils'
 require 'cx/random'
+require 'cx/example'
 
 # :COMMAND:
 # Help:
@@ -191,35 +192,14 @@ END
       end
 
       def run_example! command, e
-        # pp(example: e)
-        dir, cmd = e.values_at(:dir, :cmd)
-        log.info "run #{command.name} : #{cmd}"
-        log.info "dir #{dir}"
-        FileUtils.mkdir_p(dir)
-        File.write("#{dir}/cmd", cmd)
-        File.write(run = "#{dir}/run", <<"END")
-#!/usr/bin/env bash
-dir='#{dir}'
-cp -p ex/data/*.* "$dir"
-export CX_RANDOM_SEED=#{CX::Random.seed}
-PATH="$(/bin/pwd)/bin:$PATH"
-cd "$dir" || exit 9
-[[ -n "$CX_VERBOSE" ]] && set -x
-(
-  #{cmd}
-) >actual
-echo $! > exit
-[[ -f expected ]] || cp actual expected
-diff -u expected actual | (read _; read _; cat) > diff
-[[ ! -s diff ]]
-END
-        File.chmod(0755, run)
-        e[:success] = system run
-        command.read_example! e
-        ok =  e[:success]
-        log.info "run #{command.name} : #{cmd} : ok #{ok}"
-        log.info "actual: ::::\n#{e[:files]['actual']}\n::::"
-        log.info "output: ::::\n#{e[:files]['output']}\n::::"
+        # pp(e: e)
+        example = Example.new_from_hash(
+          command:    command.name,
+          example:    e[:cmd],
+          base_dir:  "ex/cmd",
+        )
+        example.run!
+        example.show!
       end
     end
   end

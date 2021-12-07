@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/sql-out/
+dir_name: 
+command: sql-out
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/sql-out//run
+  exit: ex/cmd/sql-out//exit
+  output: ex/cmd/sql-out//output
+  expected: ex/cmd/sql-out//expected
+  actual: ex/cmd/sql-out//actual
+  diff: ex/cmd/sql-out//diff
+contents: 
+yaml_file: ex/cmd/sql-out//example.yml

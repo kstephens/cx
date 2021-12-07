@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: sql-out
+example: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/run
+  exit: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/exit
+  output: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/output
+  expected: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/expected
+  actual: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/actual
+  diff: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/diff
+contents: 
+dir: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd
+dir_name: 52a9e31a24a15e7b2c8c39216dcf9dcd
+base_dir: ex/cmd
+yaml_file: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/example.yml

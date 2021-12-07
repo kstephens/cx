@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/reverse/
+dir_name: 
+command: reverse
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/reverse//run
+  exit: ex/cmd/reverse//exit
+  output: ex/cmd/reverse//output
+  expected: ex/cmd/reverse//expected
+  actual: ex/cmd/reverse//actual
+  diff: ex/cmd/reverse//diff
+contents: 
+yaml_file: ex/cmd/reverse//example.yml

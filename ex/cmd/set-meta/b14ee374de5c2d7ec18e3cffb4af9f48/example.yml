@@ -1,0 +1,17 @@
+--- !ruby/struct:CX::Example
+command: set-meta
+example: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' //
+  md
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/run
+  exit: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/exit
+  output: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/output
+  expected: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/expected
+  actual: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/actual
+  diff: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/diff
+contents: 
+dir: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48
+dir_name: b14ee374de5c2d7ec18e3cffb4af9f48
+base_dir: ex/cmd
+yaml_file: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/example.yml

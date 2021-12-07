@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: grep
+example: cx in SOME.csv // -h // grep d:a
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/run
+  exit: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/exit
+  output: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/output
+  expected: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/expected
+  actual: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/actual
+  diff: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/diff
+contents: 
+dir: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53
+dir_name: 035ce77b4b8729cd13a3d5fbae67ef53
+base_dir: ex/cmd
+yaml_file: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53/example.yml

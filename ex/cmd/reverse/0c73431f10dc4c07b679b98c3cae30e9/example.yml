@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: reverse
+example: cx in SOME.csv // -h // reverse // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/run
+  exit: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/exit
+  output: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/output
+  expected: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/expected
+  actual: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/actual
+  diff: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/diff
+contents: 
+dir: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9
+dir_name: 0c73431f10dc4c07b679b98c3cae30e9
+base_dir: ex/cmd
+yaml_file: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/example.yml

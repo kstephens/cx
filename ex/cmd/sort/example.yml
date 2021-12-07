@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/sort/
+dir_name: 
+command: sort
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/sort//run
+  exit: ex/cmd/sort//exit
+  output: ex/cmd/sort//output
+  expected: ex/cmd/sort//expected
+  actual: ex/cmd/sort//actual
+  diff: ex/cmd/sort//diff
+contents: 
+yaml_file: ex/cmd/sort//example.yml

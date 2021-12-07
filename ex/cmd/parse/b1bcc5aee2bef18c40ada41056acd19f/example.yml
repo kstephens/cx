@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: parse
+example: cx in SOME.csv // -h // parse // align // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/run
+  exit: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/exit
+  output: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/output
+  expected: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/expected
+  actual: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/actual
+  diff: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/diff
+contents: 
+dir: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f
+dir_name: b1bcc5aee2bef18c40ada41056acd19f
+base_dir: ex/cmd
+yaml_file: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/example.yml

@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/grep/
+dir_name: 
+command: grep
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/grep//run
+  exit: ex/cmd/grep//exit
+  output: ex/cmd/grep//output
+  expected: ex/cmd/grep//expected
+  actual: ex/cmd/grep//actual
+  diff: ex/cmd/grep//diff
+contents: 
+yaml_file: ex/cmd/grep//example.yml

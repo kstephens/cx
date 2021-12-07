@@ -53,5 +53,13 @@ module CX
     def ppss expr
       pps(expr).strip
     end
+    
+    def with_newlines s
+      s = s.to_s
+      if s.index("\n")
+        s = "::::\n#{s}::::"
+      end
+      s
+    end
   end
 end

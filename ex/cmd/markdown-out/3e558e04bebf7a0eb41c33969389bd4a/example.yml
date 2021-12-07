@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: markdown-out
+example: cx in SOME.csv // -h // parse // md
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/run
+  exit: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/exit
+  output: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/output
+  expected: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/expected
+  actual: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/actual
+  diff: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/diff
+contents: 
+dir: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a
+dir_name: 3e558e04bebf7a0eb41c33969389bd4a
+base_dir: ex/cmd
+yaml_file: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/example.yml

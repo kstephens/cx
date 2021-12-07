@@ -6,9 +6,9 @@ PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x
 (
-  cx in SOME.csv // -h // markdown
+  cx in SOME.csv // -h // markdown;
+  echo $! > exit
 ) >actual
-echo $! > exit
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]

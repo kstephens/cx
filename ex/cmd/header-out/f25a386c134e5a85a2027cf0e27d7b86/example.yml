@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: header-out
+example: cx in SOME.csv // -csv // -h // h- // csv-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/run
+  exit: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/exit
+  output: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/output
+  expected: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/expected
+  actual: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/actual
+  diff: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/diff
+contents: 
+dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
+dir_name: f25a386c134e5a85a2027cf0e27d7b86
+base_dir: ex/cmd
+yaml_file: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/example.yml

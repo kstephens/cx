@@ -86,8 +86,6 @@ module DestructiveEach
   end
 end
 
-end
-
 class ::Array
   include CX::DestructiveEach
 end
@@ -109,4 +107,5 @@ class RecurLimit
       @recur_level -= 1
     end
   end
+end
 end

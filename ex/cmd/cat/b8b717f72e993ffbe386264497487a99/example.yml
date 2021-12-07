@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: cat
+example: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/run
+  exit: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/exit
+  output: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/output
+  expected: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/expected
+  actual: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/actual
+  diff: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/diff
+contents: 
+dir: ex/cmd/cat/b8b717f72e993ffbe386264497487a99
+dir_name: b8b717f72e993ffbe386264497487a99
+base_dir: ex/cmd
+yaml_file: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/example.yml

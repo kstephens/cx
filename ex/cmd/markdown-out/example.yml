@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/markdown-out/
+dir_name: 
+command: markdown-out
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/markdown-out//run
+  exit: ex/cmd/markdown-out//exit
+  output: ex/cmd/markdown-out//output
+  expected: ex/cmd/markdown-out//expected
+  actual: ex/cmd/markdown-out//actual
+  diff: ex/cmd/markdown-out//diff
+contents: 
+yaml_file: ex/cmd/markdown-out//example.yml

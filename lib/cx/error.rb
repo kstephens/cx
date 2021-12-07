@@ -33,9 +33,12 @@ module CX
         msg_ << " : #{exc.class} : #{exc.message}" if exc
         
         exc_to_raise = exc_cls.new(msg_)
-        exc_to_raise.reason = msg
-        exc_to_raise.cause  = exc
-        exc_to_raise.data   = data_for_error
+        begin
+          exc_to_raise.reason = msg rescue nil
+          exc_to_raise.cause  = exc rescue nil
+          exc_to_raise.data   = data_for_error rescue nil
+        rescue
+        end
         
         if debug?
           pp(exc_to_raise: exc_to_raise, exc: exc, msg: msg, backtrace: backtrace && backtrace.reverse)

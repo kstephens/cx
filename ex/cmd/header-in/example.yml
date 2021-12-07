@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/header-in/
+dir_name: 
+command: header-in
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/header-in//run
+  exit: ex/cmd/header-in//exit
+  output: ex/cmd/header-in//output
+  expected: ex/cmd/header-in//expected
+  actual: ex/cmd/header-in//actual
+  diff: ex/cmd/header-in//diff
+contents: 
+yaml_file: ex/cmd/header-in//example.yml

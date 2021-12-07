@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: cut
+example: cx in SOME.csv // -h // cut b a c // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/run
+  exit: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/exit
+  output: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/output
+  expected: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/expected
+  actual: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/actual
+  diff: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/diff
+contents: 
+dir: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12
+dir_name: 1543ea9818cca0217bfa095b32087a12
+base_dir: ex/cmd
+yaml_file: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/example.yml

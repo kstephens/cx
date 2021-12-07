@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: transpose
+example: cx in SOME.csv // -h // transpose --no-include-header // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/run
+  exit: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/exit
+  output: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/output
+  expected: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/expected
+  actual: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/actual
+  diff: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/diff
+contents: 
+dir: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50
+dir_name: 41a39c7109bb54c2c89ef0dcfd64ea50
+base_dir: ex/cmd
+yaml_file: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/example.yml

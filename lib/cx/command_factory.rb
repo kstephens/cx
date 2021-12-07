@@ -225,7 +225,7 @@ module CX
         info[:options]   ||= info[:opts] # ???
         info[:arguments] ||= info[:args] # ???
         command = CommandDesc.from_hash(info).initialize!
-        log.info "#{self.class} : #{command.file}:#{command.lineno} : found #{command.class_name} #{command.name}"
+        log.info "#{self.class} : #{command.file}:#{command.lineno} : found #{command.class_name} : #{command.name} : #{command.aliases}"
         command
       end
       

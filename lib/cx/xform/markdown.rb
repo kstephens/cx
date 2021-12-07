@@ -27,7 +27,7 @@ module CX
       include SelectColumns, OutputFormat, RecordOut
       
       def call input, env
-        cols = column_args!(input).or_all!.columns
+        cols = column_args!(input).or_all!.columns.sort_by(&:order)
         @align = Align.new
         @align.set_cols!(cols)
         output = make_output

@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: eval
+example: cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/run
+  exit: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/exit
+  output: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/output
+  expected: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/expected
+  actual: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/actual
+  diff: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/diff
+contents: 
+dir: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320
+dir_name: 8133205e0a466c30ed4c5d2c40c8d320
+base_dir: ex/cmd
+yaml_file: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320/example.yml

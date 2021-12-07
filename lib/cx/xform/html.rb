@@ -64,7 +64,7 @@ module CX
       def call_ input, env, out
         @input, @env = input, env
         @header = input.header
-        @cols = column_args!(input).or_all!.columns
+        @cols = column_args!(input).or_all!.columns.sort_by(&:order)
         @colspan = 1 + cols.size
         @right = {class: 'cx-right'}
         # @h = XMLWriter.new(out, indent: opts[:indent])

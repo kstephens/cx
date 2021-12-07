@@ -763,46 +763,46 @@ Examples:
 ```
  $ cx in SOME.csv // -h // sort d  // h- 
 a,b,c,d
-1,ab,3,foo
+2,12,11,abc
 24,44,6,bar
 134,5,9,baz
-2,12,11,abc
+1,ab,3,foo
 ```
 
 ```
  $ cx in SOME.csv // -h // sort    // h- 
 a,b,c,d
 1,ab,3,foo
-24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+24,44,6,bar
 ```
 
 ```
  $ cx in SOME.csv // -h //            sort a    // h- 
 a,b,c,d
 1,ab,3,foo
-24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+24,44,6,bar
 ```
 
 ```
  $ cx in SOME.csv // -h // parse   // sort a    // h- 
 a,b,c,d
 1,ab,3,foo
+2,12,11,abc
 24,44,6,bar
 134,5,9,baz
-2,12,11,abc
 ```
 
 ```
  $ cx in SOME.csv // -h // parse   // sort a:-  // h- 
 a,b,c,d
-1,ab,3,foo
-24,44,6,bar
 134,5,9,baz
+24,44,6,bar
 2,12,11,abc
+1,ab,3,foo
 ```
 
 

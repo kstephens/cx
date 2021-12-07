@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: csv-out
+example: cx in SOME.csv // csv- --separator="\x09"
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/run
+  exit: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/exit
+  output: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/output
+  expected: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/expected
+  actual: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/actual
+  diff: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/diff
+contents: 
+dir: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2
+dir_name: 0dedd8eff3d0f13183aa3e97061627c2
+base_dir: ex/cmd
+yaml_file: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/example.yml

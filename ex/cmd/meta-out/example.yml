@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+dir: ex/cmd/meta-out/
+dir_name: 
+command: meta-out
+example: 
+success: false
+base_dir: ex/cmd
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/meta-out//run
+  exit: ex/cmd/meta-out//exit
+  output: ex/cmd/meta-out//output
+  expected: ex/cmd/meta-out//expected
+  actual: ex/cmd/meta-out//actual
+  diff: ex/cmd/meta-out//diff
+contents: 
+yaml_file: ex/cmd/meta-out//example.yml

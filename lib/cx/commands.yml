@@ -316,7 +316,7 @@
   examples: []
   example_runs: []
   file: lib/cx/xform/help.rb
-  lineno: 7
+  lineno: 8
   path: cx/xform/help
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: HtmlOut

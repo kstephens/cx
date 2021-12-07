@@ -1,0 +1,16 @@
+--- !ruby/struct:CX::Example
+command: sort
+example: cx in SOME.csv // -h // sort    // h-
+success: true
+files: !ruby/struct:CX::Example::Contents
+  run: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/run
+  exit: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/exit
+  output: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/output
+  expected: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/expected
+  actual: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/actual
+  diff: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/diff
+contents: 
+dir: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3
+dir_name: 314dd2df677294d78952f56d8b3d91f3
+base_dir: ex/cmd
+yaml_file: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3/example.yml
