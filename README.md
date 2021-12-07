@@ -301,6 +301,15 @@ Integer,Integer,Integer,String
 Integer,Integer,Integer,String
 ```
 
+```
+ $ cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h- 
+a,b,c,d,a_to_power_of_c
+1,ab,3,foo,1
+24,44,6,bar,191102976
+134,5,9,baz,13929745610903012864
+2,12,11,abc,2048
+```
+
 
 ## `grep`
 

@@ -10,6 +10,7 @@ require 'cx/xform'
 #   opts:
 #   examples:
 #     - 'cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-'
+#     - 'cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-'
 
 module CX
   module Xform

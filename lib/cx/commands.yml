@@ -207,11 +207,15 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
+  - cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
   file: lib/cx/xform/eval.rb
   path: cx/xform/eval
   example_runs:
   - :cmd: cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
     :dir: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320
+  - :cmd: cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" //
+      h-
+    :dir: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep
   name: grep

@@ -31,11 +31,13 @@ end
 
 namespace :example do
   desc "run examples."
-  task :run do
-    sh "bin/cx --debug help --run-examples"
+  task :run => [ :commands_yml ] do
+    sh "bin/cx --debug help --run-examples --make-help > tmp/README.md"
+    sh "mv tmp/README.md ."
   end
   desc "Show changed examples."
   task :changed do
+    # system %q{set -x; git status ex/cmd || exit 0}
     system %q{find ex/cmd -name diff ! -size 0 | xargs wc -l >&2}
     system %q{find ex/cmd -name diff ! -size 0 | xargs head -999 >&2}
     system %q{find ex/cmd -name diff ! -size 0 | sed -e 's@/diff$@@' | xargs -n1 -I@ echo mv @/actual @/expected}
