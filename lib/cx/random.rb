@@ -11,7 +11,7 @@ module CX
     
     def self.random
       @random ||=
-        ::Random.new(use_seed ? seed : Random.new_seed)
+        ::Random.new(use_seed ? seed : ::Random.new_seed)
     end
 
     def self.uuid
