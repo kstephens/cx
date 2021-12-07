@@ -77,9 +77,6 @@ module CX
         },
       }
       log.level = Logger::WARN
-      log.formatter = Proc.new do | severity, datetime, progname, msg |
-        "# cx : %-6s : %s\n" % [ severity, msg ]
-      end
     end
 
     def parse_argv!

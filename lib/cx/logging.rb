@@ -8,7 +8,13 @@ require 'logger'
 module CX
   module Logging
     def self.log
-      @@log ||= ThreadSafe.new(::Logger.new($stderr))
+      @@log ||=
+        ::Logger.new($stderr)
+        .tap do |log|
+          log.formatter = Proc.new do | severity, datetime, progname, msg |
+            "# cx : %-6s : %s\n" % [ severity, msg ]
+          end
+        end
     end
     
     @@log = nil
