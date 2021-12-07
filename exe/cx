@@ -5,19 +5,13 @@
 # "cx ---test---" to execute integration tests.
 
 $cx_t0 = Time.now
-
-begin
-  require 'set'
-  needs_pry = %w(--verbose --debug ---pry--- ---test--- ---break---)
-  unless Set.new(needs_pry).intersection(ARGV).empty?
-    require 'pry'
-  else
-    $VERBOSE = nil
-  end
-end
+$require_pry =
+  %w(--verbose --debug ---pry--- ---test--- ---break---) & ARGV != []  
+$VERBOSE = nil unless ARGV.include?("--debug")
 
 require 'bundler/setup' unless ARGV.delete('---no-bundler---')
 $:.unshift(File.expand_path('../../lib', __FILE__))
+require 'pry' if $require_pry
 
 require 'cx/main'
 exit CX::Main.new(ARGV).run!.exit_code

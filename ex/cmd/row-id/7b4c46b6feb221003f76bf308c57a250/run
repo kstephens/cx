@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir='ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

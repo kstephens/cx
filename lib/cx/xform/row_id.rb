@@ -2,6 +2,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/random'
 
 # :COMMAND:
 # RowId:
@@ -9,11 +10,13 @@ require 'cx/xform'
 #   synopsis: Inserts a row id column.
 #   args: []
 #   opts:
-#     name:       'Name of column: default __rowid__.'
-#     type:       'Type: "integer" or "uuid".'
-#     start:      'Start of integer ids: default 1'
+#     name:       'Name of id column.  Default: "__rowid__".'
+#     type:       'Type: "integer" or "uuid".  Default: "integer".'
+#     start:      'Start of integer ids.  Default: 1'
 #   examples:
 #     - 'cx in SOME.csv // -h // row-id --start=100 // h-'
+#     - 'cx in SOME.csv // -h // row-id --name=id // h-'
+#     - 'cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-'
 
 module CX
   module Xform
@@ -34,8 +37,7 @@ module CX
         when 'uuid'
           gen = @uuid_generator ||
             begin
-              require 'securerandom'
-              lambda { || SecureRandom.uuid }
+              lambda { || CX::Random.uuid }
             end
           col.meta.type = ::String
           col.meta.min_size = col.meta.max_size = gen.call.size

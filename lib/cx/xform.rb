@@ -55,6 +55,13 @@ module CX
     end
 
     module PipelineArgs
+      attr_accessor :pipeline_args
+
+      def pipeline_args! args = self.args
+        @pipeline_args, other_args = args.partition{|x| Xform === x}
+        args[0 .. -1] = other_args
+        @pipeline_args
+      end
     end
     
     module SelectColumns

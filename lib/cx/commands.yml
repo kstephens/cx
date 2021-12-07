@@ -29,12 +29,12 @@
   has_column_args: 
   has_pipeline_args: 
   examples:
-  - cx in OTHER.csv // -h // cat {{ cx in DUPLICATES // -h }} // h-
+  - cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
   file: lib/cx/xform/cat.rb
   path: cx/xform/cat
   example_runs:
-  - :cmd: cx in OTHER.csv // -h // cat {{ cx in DUPLICATES // -h }} // h-
-    :dir: ex/cmd/cat/8231f0faf86e2e13e3ced05a13e215a8
+  - :cmd: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
+    :dir: ex/cmd/cat/b8b717f72e993ffbe386264497487a99
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Coerce
   name: coerce
@@ -100,17 +100,26 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // cut a,d
-  - cx in SOME.csv // -h // cut d,@
-  - cx in SOME.csv // -h // cut @,b:-
+  - cx in SOME.csv // -h // cut b a c
+  - cx in SOME.csv // -h // cut c:-
+  - cx in SOME.csv // -h // cut 'a,*'
+  - cx in SOME.csv // -h // cut 'd,*'
+  - cx in SOME.csv // -h // cut '*,b:-'
   file: lib/cx/xform/cut.rb
   path: cx/xform/cut
   example_runs:
   - :cmd: cx in SOME.csv // -h // cut a,d
     :dir: ex/cmd/cut/d56f63be7cdb06d724261bc6b9f5962a
-  - :cmd: cx in SOME.csv // -h // cut d,@
-    :dir: ex/cmd/cut/f88433c7cfe98f7bea9bef27948aa374
-  - :cmd: cx in SOME.csv // -h // cut @,b:-
-    :dir: ex/cmd/cut/b9ccf45c280858dd57d4ff0ef753ce2d
+  - :cmd: cx in SOME.csv // -h // cut b a c
+    :dir: ex/cmd/cut/b2e5da35aa7f82d58dc1541505c2beb7
+  - :cmd: cx in SOME.csv // -h // cut c:-
+    :dir: ex/cmd/cut/ea54c987efb7be815b25e7358df2abc1
+  - :cmd: cx in SOME.csv // -h // cut 'a,*'
+    :dir: ex/cmd/cut/6e4080c8a14cdd960e77ba0a775833f8
+  - :cmd: cx in SOME.csv // -h // cut 'd,*'
+    :dir: ex/cmd/cut/505d0e6f586fd00e6ba2d16c49348487
+  - :cmd: cx in SOME.csv // -h // cut '*,b:-'
+    :dir: ex/cmd/cut/97eb8675d1c481886c775ca8bc0866e9
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: DelimitedIn
   name: delimited-in
@@ -594,7 +603,8 @@
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Reverse
   name: reverse
-  aliases: []
+  aliases:
+  - tac
   synopsis: Reverse order of rows.
   description: ''
   suffixes: []
@@ -602,10 +612,13 @@
   options: []
   has_column_args: 
   has_pipeline_args: 
-  examples: []
+  examples:
+  - cx in SOME.csv // -h // reverse // h-
   file: lib/cx/xform/reverse.rb
   path: cx/xform/reverse
-  example_runs: []
+  example_runs:
+  - :cmd: cx in SOME.csv // -h // reverse // h-
+    :dir: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: RowId
   name: row-id
@@ -617,28 +630,34 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :name
-    description: 'Name of column: default __rowid__.'
-    default: 
+    description: 'Name of id column.  Default: "__rowid__".'
+    default: '"__rowid__".'
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :type
-    description: 'Type: "integer" or "uuid".'
-    default: 
+    description: 'Type: "integer" or "uuid".  Default: "integer".'
+    default: '"integer".'
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :start
-    description: 'Start of integer ids: default 1'
-    default: 
+    description: 'Start of integer ids.  Default: 1'
+    default: '1'
     values: []
   has_column_args: 
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // row-id --start=100 // h-
+  - cx in SOME.csv // -h // row-id --name=id // h-
+  - cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
   file: lib/cx/xform/row_id.rb
   path: cx/xform/row_id
   example_runs:
   - :cmd: cx in SOME.csv // -h // row-id --start=100 // h-
     :dir: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594
+  - :cmd: cx in SOME.csv // -h // row-id --name=id // h-
+    :dir: ex/cmd/row-id/6e4c935e554250c3f1e77e9fdfe779e1
+  - :cmd: cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
+    :dir: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Sort
   name: sort

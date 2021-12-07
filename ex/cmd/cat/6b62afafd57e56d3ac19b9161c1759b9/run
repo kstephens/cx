@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/cat/6b62afafd57e56d3ac19b9161c1759b9'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in OTHER.csv // -h // cat {{ cx in DUPLICATES.csv // -h }} // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

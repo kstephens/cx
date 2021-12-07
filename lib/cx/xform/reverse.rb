@@ -8,10 +8,13 @@ require 'cx/xform'
 
 # :COMMAND:
 # Reverse:
-#   aliases:
+#   aliases: [ tac ]
 #   synopsis: Reverse order of rows.
 #   args: []
 #   opts:
+#   examples:
+#     - cx in SOME.csv // -h // reverse // h-
+
 
 module CX
   module Xform

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 dir='ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207'
 cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
 PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x

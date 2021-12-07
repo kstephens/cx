@@ -2,6 +2,7 @@
 
 require 'cx/xform'
 require 'fileutils'
+require 'cx/random'
 
 # :COMMAND:
 # Help:
@@ -200,6 +201,7 @@ END
 #!/usr/bin/env bash
 dir='#{dir}'
 cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=#{CX::Random.seed}
 PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x

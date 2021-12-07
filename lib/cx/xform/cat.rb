@@ -9,7 +9,7 @@ require 'cx/xform'
 #   args: [ ]
 #   options: { }
 #   examples:
-#     - 'cx in OTHER.csv // -h // cat {{ cx in DUPLICATES // -h }} // h-'
+#     - 'cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-'
 
 module CX
   module Xform

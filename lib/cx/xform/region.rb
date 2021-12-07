@@ -8,7 +8,7 @@ require 'cx/xform'
 #   aliases: range
 #   synopsis: Select a range of rows.
 #   args: []
-#   opts:
+#   opts: {}
 
 module CX
   module Xform
