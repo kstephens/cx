@@ -1,22 +1,23 @@
 #!/usr/bin/env ruby
-# coding: utf-8
 # frozen_string_literal: true
-# encoding: UTF-8
-# -*- coding: utf-8 -*-
 
 # "cx --help" for documentation.
 # "cx ---test---" to execute integration tests.
 
 $cx_t0 = Time.now
 
-require 'bundler/setup' unless ARGV.delete('---no-bundler---')
-$:.unshift(File.expand_path('../../lib', __FILE__))
-
 begin
   require 'set'
   needs_pry = %w(--verbose --debug ---pry--- ---test--- ---break---)
-  require 'pry' unless Set.new(needs_pry).intersection(ARGV).empty?
+  unless Set.new(needs_pry).intersection(ARGV).empty?
+    require 'pry'
+  else
+    $VERBOSE = nil
+  end
 end
+
+require 'bundler/setup' unless ARGV.delete('---no-bundler---')
+$:.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'cx/main'
 exit CX::Main.new(ARGV).run!.exit_code
