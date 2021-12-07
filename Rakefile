@@ -3,9 +3,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => [ :readme, :commands_yml, :spec, :js_test ]
+task :default => [ :commands_yml, :spec, :js_test, :readme ]
 
-task :build => [ :readme, :commands_yml ]
+task :build => [ :commands_yml, :'example:run', :readme ]
 
 desc "Run tests under simplecov."
 task :coverage do
@@ -14,7 +14,7 @@ task :coverage do
 end
 
 task :readme do
-  sh "bin/cx --debug help --run-examples --make-help > tmp/README.md"
+  sh "bin/cx --debug help --make-help > tmp/README.md"
   sh "mv tmp/README.md ."
 end
 
@@ -26,6 +26,19 @@ task :js_test do
   js_files.each do | path |
     path = File.expand_path(path)
     sh %Q{node -e 'require("#{path}")'}
+  end
+end
+
+namespace :example do
+  desc "run examples."
+  task :run do
+    sh "bin/cx --debug help --run-examples"
+  end
+  desc "Show changed examples."
+  task :changed do
+    system %q{find ex/cmd -name diff ! -size 0 | xargs wc -l >&2}
+    system %q{find ex/cmd -name diff ! -size 0 | xargs head -999 >&2}
+    system %q{find ex/cmd -name diff ! -size 0 | sed -e 's@/diff$@@' | xargs -n1 -I@ echo mv @/actual @/expected}
   end
 end
 
