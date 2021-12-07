@@ -11,6 +11,8 @@ require 'cx/xform/column_change'
 #   synopsis: Parse strings into richer types.
 #   args: []
 #   opts: {}
+#   examples:
+#     - 'cx in SOME.csv // -h // parse // align // h-'
 
 module CX
   module Xform

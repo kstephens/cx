@@ -10,6 +10,7 @@ require 'cx/xform'
 #   args: []
 #   opts: {}
 #   examples:
+#     - 'cx in SOME.csv // -h // -meta // h-'
 
 # :COMMAND:
 # MetaOut:
@@ -17,6 +18,9 @@ require 'cx/xform'
 #   synopsis: Generate a table of column metadata.
 #   args: []
 #   opts: {}
+#   examples:
+#     - 'cx in SOME.csv // -h // -meta // meta- // h-'
+#     - 'cx in SOME.csv // -h // parse // -meta // meta- // h-'
 
 module CX
   module Xform

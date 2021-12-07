@@ -10,7 +10,13 @@ require 'cx/compare'
 #   aliases: s
 #   synopsis: Sorts by specified columns.
 #   args: []
-#   opts:
+#   opts: {}
+#   examples:
+#     - 'cx in SOME.csv // -h // sort d  // h-'
+#     - 'cx in SOME.csv // -h // sort    // h-'
+#     - 'cx in SOME.csv // -h //            sort a    // h-'
+#     - 'cx in SOME.csv // -h // parse   // sort a    // h-'
+#     - 'cx in SOME.csv // -h // parse   // sort a:-  // h-'
 
 module CX
   module Xform

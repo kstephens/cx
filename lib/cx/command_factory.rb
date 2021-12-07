@@ -1,5 +1,7 @@
 require 'cx'
 require 'yaml'
+require 'digest/md5'
+require 'fileutils'
 
 module CX
   class CommandFactory
@@ -14,7 +16,8 @@ module CX
 
     def call args
       raise TypeError, "unexpected #{x.class}" unless Args === args
-      cmd_name = args.args.shift.to_sym
+      cmd_name = args.args.shift
+      raise TypeError, cmd_name unless String === cmd_name
       unless cmd = @by_name[cmd_name]
         raise ArgumentError, "unknown command  #{cmd_name.inspect} : valid commands : #{valid_commands.inspect}"
       end
@@ -37,11 +40,8 @@ module CX
     end
 
     def load_commands! commands
-      commands.each do | cls, info |
-        info[:class_name] = cls
-        info[:options] ||= info[:opts] # ???
-        vals = info.values_at(*CommandDesc.members)
-        cmd = CommandDesc.new(*vals)
+      commands.each do | info |
+        cmd = CommandDesc.from_hash(info)
         register! cmd
       end
       self
@@ -50,15 +50,15 @@ module CX
     def register! cmd
       register_name! cmd, cmd.name
       @all << cmd
-      cmd.aliases.map!(&:to_sym)
+      cmd.aliases
       cmd.aliases.each{|a| register_name! cmd, a}
     end
     
     def register_name! cmd, name
-      raise TypeError unless Symbol === name
+      raise TypeError, "name #{name.inspect}" unless String === name
       existing = @by_name[name]
       if existing && existing != cmd
-        raise_ "#{cmd.class_name} : #{name} in #{cmd.file} : already exists: #{existing.class_name} #{existing.file}"
+        raise_ "#{cmd.class_name} : #{name.inspect} in #{cmd.file} : already exists as #{existing.class_name.inspect} #{existing.file}"
       end
       @by_name[name] = cmd
     end
@@ -71,16 +71,24 @@ module CX
 
     ###########################################
     
-    class CommandDesc < Struct.new(:class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :examples, :file, :path)
+    class CommandDesc < Struct.new(
+      :class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :examples,
+      :file, :path, :example_runs)
       include Support
-      def initialize *args
-        super
+      
+      def self.from_hash h
+        new(*h.values_at(*CommandDesc.members))
+      end
+      
+      def initialize!
         self.file or raise ArgumentError, "file"
         self.path or raise ArgumentError, "path"
 
+        raise_ TypeError, "class_name #{class_name.inspect}" unless String === class_name
         self.name ||= infer_name(class_name)
-        self.name = self.name.to_sym
-        self.class_name = class_name.to_sym
+
+        raise_ TypeError, "name #{name.inspect}" unless String === name
+        
         self.aliases ||= ""
         self.synopsis ||= ""
         self.description ||= ""
@@ -97,15 +105,31 @@ module CX
         
         name.to_s.sub(/^(.+)-in$/ ){|m| self.aliases.unshift "-#{$1}"}
         name.to_s.sub(/^(.+)-out$/){|m| self.aliases.unshift "#{$1}-"}
-        self.aliases = self.aliases.map(&:to_sym).uniq
-        
+        self.aliases = self.aliases.uniq
+
+        self.example_runs = self.examples.map do | ex |
+          ex_hash = Digest::MD5.hexdigest(ex)
+          dir = "ex/cmd/#{name}/#{ex_hash}"
+          {
+            cmd:  ex,
+            dir:  dir,
+          }
+        end
         self
       rescue => exc
         raise_  "#{exc.message} : #{args.inspect}", exc
-      end         
+      end
 
+      def read_example! e
+        e[:files] ||= { }
+        Dir["#{e[:dir]}/*"].sort.each do | f |
+          e[:files][File.basename(f)] = (File.read(f) rescue nil)
+        end
+        e
+      end
+      
       def infer_name class_name
-        class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase.to_sym
+        class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase
       end
       
       def cls
@@ -119,51 +143,65 @@ module CX
         @cls
       end
     end
+
+    require 'pry'
     
     class YamlGenerator
-      attr_accessor :verbose
+      include Support
       
       def run!
-        yaml = [ ]
+        commands = [ ]
         Dir.glob('lib/cx/xform/**.rb').sort.each do |file|
-          yaml << scan!(file)
-        end
-        yaml = yaml * "\n" + "\n\n"
-        if verbose
-          puts "yaml ::::"
-          lineno = 0
-          yaml.split(/\n/, -1) do | line |
-            puts '%-3d %s' % [lineno += 1, line]
+          scan_blocks!(file) do | block |
+            commands << parse_block!(block)
           end
-          puts "::::"
         end
-        CommandFactory.new.load!(yaml) # Verify before write.
+        yaml = YAML.dump(commands.map(&:to_h))
+        CommandFactory.new.load!(yaml)
         File.write(COMMANDS_YML, yaml)
       end
+
+      def parse_block! block
+        data =
+        begin
+          YAML.load(block, symbolize_names: true)
+        rescue => e
+          log.error e.inspect
+          log.error "YAML block ::::\n#{block}\n::::"
+          raise e
+        end
+        class_name = data.keys.first.to_s
+        info = data.values.first
+        info[:class_name] = class_name
+        info[:options] ||= info[:opts] # ???
+        command = CommandDesc.from_hash(info).initialize!
+        # pp(cmd: command)
+        command
+      end
       
-      def scan! file
-        block = lines = nil
-        emit_block = lambda do | |
+      def scan_blocks! file, &blk
+        block = nil
+        emit = lambda do | |
           if block
-            lines = (lines || []) + block
-            lines << "  file: #{file.inspect}"
-            lines << "  path: #{file.gsub(%r{^lib/|\.rb$}, '').inspect}"
+            block << "  file: #{file.inspect}"
+            block << "  path: #{file.gsub(%r{^lib/|\.rb$}, '').inspect}"
+            blk.call(block * "\n" + "\n\n")
+            block = nil
           end
         end
         File.readlines(file).each do | line |
           case line
           when /^\s*# :COMMAND:/
-            emit_block[]
+            emit[]
             block = [ ]
           when /^\s*# (.*)/
             block << $1 if block
           else
-            emit_block[]
-            block = nil
+            emit[]
           end
         end
-        emit_block[]
-        lines || []
+        emit[]
+        self
       end
     end
   end

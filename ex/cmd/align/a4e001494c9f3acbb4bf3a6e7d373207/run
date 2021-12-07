@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+dir='ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207'
+cp -p ex/data/*.* "$dir"
+cd "$dir" || exit 9
+set -x
+(
+  cx in SOME.csv // -h // parse // align
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | tee diff
+[[ ! -s diff ]]

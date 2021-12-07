@@ -6,9 +6,11 @@ require 'cx/xform'
 # :COMMAND:
 # Align:
 #   aliases:
-#   synopsis: Aligns fields based on column max_size.
+#   synopsis: Aligns fields based on column max_size and alignment.
 #   args: []
-#   opts: {}
+#   opts:
+#   examples:
+#     - 'cx in SOME.csv // -h // parse // align'
 
 module CX
   module Xform
@@ -16,9 +18,9 @@ module CX
       include SelectColumns, Xform
 
       def call input, env
-        set_cols! input.header
-        input.each do | row |
-          align_row row
+        set_cols! column_args!(input).or_all!.columns
+        input.map_columns!(@cols) do | r, c, v |
+          align_col c, v, nil
         end
         @cols = @c_mw = @c_fmt = nil
         input
@@ -40,13 +42,14 @@ module CX
         self
       end
 
-      def align_row row, fill = nil
-        @cols.map do |c|
-          align_col row[c.to_i].to_s, c, fill
+      def align_row row, fill
+        @cols.map.with_index do |c, i|
+          align_col c, row[i], fill
         end
       end
 
-      def align_col v, c, fill
+      def align_col c, v, fill
+        old_v = v
         mw = @c_mw[c]
         case fill
         when :header
@@ -61,8 +64,20 @@ module CX
           mw = c.meta.align_ == :right ? mw : - mw
           v = @c_fmt[mw] % v
         end
+        # pp(c: c, old_v: old_v, v: v, fill: fill)
+        # binding.pry
         v
       end
+
+      def center v, width, pad = ' '
+        v = v.to_s
+        l = (width - v.size) / 2
+        r = width - l
+        PAD[pad][l] + v + PAD[pad][r]
+      end
+      PAD = Hash.new{|h1, p|
+        h1[p] = Hash.new{|h2, i| h[i] = (p * i).freeze}
+      }
     end
   end
 end

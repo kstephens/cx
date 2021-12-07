@@ -3,6 +3,8 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
+require 'cx/xform/align'
+
 
 # :COMMAND:
 # MarkdownOut:
@@ -17,23 +19,22 @@ require 'cx/xform/record'
 module CX
   module Xform
     class MarkdownOut
-      include OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOut
       
       def call input, env
         title = opts[:title] # TODO
-        @cols = input.header.ordered
+        cols = column_args!(input).or_all!.columns
         align = Align.new
-        align.set_cols!(@cols)
+        align.set_cols!(cols)
         output = make_output
         if include_header?
-          output << format_row(align, @cols.map(&:to_s), :header)
-          output << format_row(align, @cols.map{|_| '---'}, '-')
+          output << format_row(align, cols.map(&:to_s), :header)
+          output << format_row(align, cols.map{|_| '---'}, '-')
         end
         input.each do | row |
-          output << format_row(align, row.vals(@cols), nil)
+          output << format_row(align, row.vals(cols), nil)
         end
-        @cols = nil
-        env[:content_type] ||= 'text/markdown' # 2016 RFC7763 at IETF
+        env[:content_type] ||= 'text/markdown' # IETF RFC7763 2016
         output
       end
 
@@ -42,7 +43,7 @@ module CX
         row = align.align_row(row, fill)
         [ '| '.dup << (row * ' | ') << " |\n" ]
       end
-    end    
+    end
   end
 end
 

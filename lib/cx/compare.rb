@@ -11,7 +11,7 @@ module CX
       when a.equals?(b)
         0
       else
-        a <=> b
+        (a <=> b rescue nil) || a.to_s <=> b.to_s
       end
     rescue
       0

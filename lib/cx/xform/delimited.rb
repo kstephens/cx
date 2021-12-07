@@ -41,12 +41,13 @@ module CX
         output = make_output
         output.header.first.meta.type = :String
         input.each do | r |
-          output <<
-            [
-              columns.map{|c| format_value(r[c])} * @field_sep << @record_sep
-            ]
+          output << [ generate_record(columns, r) ]
         end
         output
+      end
+      
+      def generate_record columns, r
+        columns.map{|c| format_value(r[c])} * @field_sep << @record_sep
       end
     end
   end

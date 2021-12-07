@@ -8,6 +8,8 @@ require 'cx/xform'
 #   synopsis: Evaluates Ruby code for each row.
 #   args: []
 #   opts:
+#   examples:
+#     - 'bin/cx in a/SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-'
 
 module CX
   module Xform

@@ -61,7 +61,7 @@ END
 
       # FIXME!!!
       it "Sort : numerically" do
-        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | Coerce | build(Sort, "x_:-")), <<'END', size: 5
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | Parse | MetaIn | build(Sort, "x_:-")), <<'END', size: 5
 |id,a,b,b4,X %|
 |1005,-38,oub,1.6,9|
 |1002,77,ymt,0.4,48|
@@ -104,8 +104,8 @@ END
 END
       end
 
-      it "Replace | MetaIn" do
-        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | MetaTable), <<'END', size: 5
+      it "Replace | Parse | MetaIn" do
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | Parse | MetaIn | MetaOut), <<'END', size: 5
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
 |id,id,true,0,0,Integer,4,4,1001,1005,0,0,,,right,Integer,Integer|
 |a,a,true,1,1,,2,3,-62,84,0,0,,,right,Integer,Integer|
@@ -126,8 +126,8 @@ END
 END
       end
 
-      it "Replace | MetaIn | Coerce | MetaTable" do
-        assert_pipeline (Pipeline | build(Replace, "x_:%;") | MetaIn | Coerce | build(MetaIn, "--clear-type") | MetaTable), <<'END', size: 5
+      it "Replace | Parse | MetaIn | Coerce | MetaOut" do
+        assert_pipeline (Pipeline | build(Replace, "x_:%;") | Parse | MetaIn | Coerce | build(MetaIn, "--clear-type") | MetaOut), <<'END', size: 5
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
 |id,id,true,0,0,,4,4,1001,1005,0,0,,,right,Integer,Integer|
 |a,a,true,1,1,,2,3,-62,84,0,0,,,right,Integer,Integer|
@@ -260,7 +260,7 @@ END
       end
 
       it "Transpose" do
-        assert_pipeline Pipeline | MetaTable | Transpose, <<'END', size: 5
+        assert_pipeline Pipeline | MetaOut | Transpose, <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5,_COL_6|
 |name,id,a,b,b4,X %|
 |name_,id,a,b,b4,x_|
@@ -283,7 +283,7 @@ END
       end
       
       it "Transpose : --no-include-header" do
-        assert_pipeline Pipeline | MetaTable | build(Transpose, "--no-include-header"), <<'END', size: 5
+        assert_pipeline Pipeline | MetaOut | build(Transpose, "--no-include-header"), <<'END', size: 5
 |_COL_1,_COL_2,_COL_3,_COL_4,_COL_5|
 |id,a,b,b4,X %|
 |id,a,b,b4,x_|
@@ -305,8 +305,8 @@ END
 END
       end
 
-      it "MetaTable" do
-        assert_pipeline MetaTable, <<'END', size: 100
+      it "MetaOut" do
+        assert_pipeline MetaOut, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
 |id,id,true,0,0,Integer,4,4,1001,1100,0,0,,,right,Integer,Integer|
 |a,a,true,1,1,,1,4,-100,95,0,0,,,right,Integer,Integer|
@@ -316,8 +316,8 @@ END
 END
       end
       
-      it "MetaTable | MetaTable" do
-        assert_pipeline Pipeline | MetaTable | MetaTable, <<'END', size: 100
+      it "MetaOut | MetaOut" do
+        assert_pipeline Pipeline | MetaOut | MetaOut, <<'END', size: 100
 |name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred|
 |name,name,true,0,0,Symbol,1,3,X %,id,0,0,,,,Symbol,Symbol|
 |name_,name_,true,1,1,Symbol,1,2,a,x_,0,0,,,,Symbol,Symbol|

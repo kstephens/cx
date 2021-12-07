@@ -30,7 +30,7 @@ require 'cx/html_markup'
 module CX
   module Xform
     class HTMLOut
-      include OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOut
       def initialize!
         super
         @raw_columns = Set.new((opts[:raw] || '')
@@ -64,7 +64,7 @@ module CX
       def call_ input, env, out
         @input, @env = input, env
         @header = input.header
-        @cols = header.ordered
+        @cols = column_args!(input).or_all!.columns
         @colspan = 1 + cols.size
         @right = {class: 'cx-right'}
         # @h = XMLWriter.new(out, indent: opts[:indent])

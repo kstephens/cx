@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+dir='ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2'
+cp -p ex/data/*.* "$dir"
+cd "$dir" || exit 9
+set -x
+(
+  cx in SOME.csv // csv- --separator="\x09"
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | tee diff
+[[ ! -s diff ]]

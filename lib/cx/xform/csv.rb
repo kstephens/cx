@@ -22,6 +22,8 @@ require 'cx/xform/csv_safe'
 #   inverse: [ '-csv' ]
 #   args: []
 #   opts: {}
+#   examples:
+#     - cx in SOME.csv // csv- --separator="\x09"
 
 module CX
   module Xform

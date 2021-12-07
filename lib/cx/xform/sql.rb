@@ -19,8 +19,10 @@ require 'cx/xform/record'
 #     temporary: CREATE TEMPORARY TABLE statement.
 #     insert: Emit INSERT INTO statements.
 #     varchar-size: 'VARCHAR(size). Default: 255.'
+#   examples:
+#     - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
+#     - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
 #
-
 
 module CX
   module Xform
@@ -37,7 +39,8 @@ module CX
         @header = input.header
         @output = make_output
         @table = opts[:table] || @header.meta.name or raise_ "unspecifed table name"
-
+        @varchar_size = opts.fetch(:varchar_size, 255)
+        
         do_actions!
 
         env[:content_type] = 'text/plain' # application/x-sql ?
@@ -106,7 +109,7 @@ END
           Float   => "FLOAT",
           Integer => "INT",
           Boolean => "CHAR(1)",
-          String  => "VARCHAR(#{col.meta.max_size || 255})",
+          String  => "VARCHAR(#{@varchar_size})",
           Object  => "TEXT",
         }
         # cls = Typing.first_superclass(sql_types.keys, type)

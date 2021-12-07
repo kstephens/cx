@@ -10,6 +10,7 @@ require 'cx/typed_accessor'
 
 module CX
   class Meta
+    include Support
     extend CX::TypedAccessor
     
     ATTRS =
@@ -110,9 +111,7 @@ module CX
 
     def infer!
       types.delete(NilClass)
-      if types.size == 1
-        self.type_inferred = types.first
-      end
+      self.type_inferred = infer_type(types) unless types.empty?
       self.align_inferred = :right if type_inferred && type_inferred <= ::Numeric
       self
     end
@@ -181,6 +180,29 @@ module CX
     def type_object
       @type_object ||= Type[type_] unless type_.nil?
     end
+
+    def infer_type types
+      ts = types.to_a
+      t1 = ts.shift
+      t1 = ts.inject(t1){|t1, t2| type_lcm(t1, t2)}
+      # pp(infer_types: types, result: t1) if debug?
+      t1
+    end
+
+    def type_lcm t1, t2, ignore = nil
+      TYPE_LCM[[t1, t2, ignore]] ||=
+        begin
+          _ignore = (ignore || []) + IGNORE
+          ((t1.ancestors - _ignore) & (t2.ancestors - _ignore))
+            .reject{|m| m.class == Module}
+            .sort
+            .first
+        end
+    end
+    
+    TYPE_LCM = { }
+    EMPTY_Array = [].freeze
+    IGNORE = [ NilClass ]
   end
 end
 

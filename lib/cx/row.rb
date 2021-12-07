@@ -63,6 +63,12 @@ module CX
       end
       self
     end
+    def map_vals! cols = nil
+      (cols || @header).each do |c|
+        _set(c, yield(_get(c)))
+      end
+      self
+    end
 
     def size  ; @header.size        ; end
     def first ; _get(@header.first) ; end

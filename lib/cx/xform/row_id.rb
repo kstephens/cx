@@ -12,6 +12,8 @@ require 'cx/xform'
 #     name:       'Name of column: default __rowid__.'
 #     type:       'Type: "integer" or "uuid".'
 #     start:      'Start of integer ids: default 1'
+#   examples:
+#     - 'cx in SOME.csv // -h // row-id --start=100 // h-'
 
 module CX
   module Xform

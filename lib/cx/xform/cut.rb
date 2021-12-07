@@ -9,6 +9,10 @@ require 'cx/xform'
 #   synopsis: Cut columns.
 #   args: []
 #   opts: {}
+#   examples:
+#     - 'cx in SOME.csv // -h // cut a,d    // h-'
+#     - 'cx in SOME.csv // -h // cut d,@    // h-'
+#     - 'cx in SOME.csv // -h // cut @,b:-  // h-'
 
 module CX
   module Xform

@@ -33,7 +33,7 @@ module CX
     
     Error::Support.raise_cls = ::CX::Error
 
-    attr_accessor :progname, :argv, :args, :opts, :env, :pipeline, :exit_code
+    attr_accessor :progname, :argv, :args, :opts, :env, :factory, :pipeline, :exit_code
 
     def initialize argv
       @verbose = false
@@ -76,17 +76,23 @@ module CX
     end
 
     def parse_argv!
-      @env[:main][:env_argv] = @env_args = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
-      @env[:main][:full_argv] = (full_argv = @env_args + @argv).dup
-      @env[:main][:parsed_args] = @parsed_args = Args.new.parse!(full_argv, no_args: true)
-      @env[:main][:args] = @args = full_argv
-      @env[:main][:opts] = @opts = @parsed_args.opts
-      @env[:main][:verbose] = @opts[:verbose]
-      @env[:main][:debug] = @debug = @opts[:debug]
+      env[:main][:env_argv] = @env_args = Shellwords.shellsplit(ENV['CX_OPTS'] || '')
+      env[:main][:full_argv] = (@full_argv = @env_args + @argv).dup
+      env[:main][:parsed_args] = @parsed_args = Args.new.parse!(@full_argv, no_args: true)
+      env[:main][:args] = @args = @full_argv
+      env[:main][:opts] = @opts = @parsed_args.opts
+      env[:main][:verbose] = opts[:verbose]
+      env[:main][:debug] = @debug = opts[:debug]
+      env[:main][:info]  = opts[:info]
       
-      CX::Debug.debug = @debug
-      log.level = Logger::INFO  if @verbose
-      log.level = Logger::DEBUG if @debug
+      CX::Debug.debug = debug
+      CX::Debug.verbose = verbose
+      
+      level = Logger::WARN
+      level = Logger::INFO if verbose || opts[:info]
+      level = Logger::DEBUG if debug
+      log.level = level
+
       self
     end
     
@@ -138,7 +144,7 @@ module CX
         msg << (["\nbacktrace ::::"] + exc.backtrace.reverse + ["::::"]).join("\n")
       end
       log.error msg
-      @exit_code = @env[:main][:exit_code]
+      @exit_code = env[:main][:exit_code]
       self
     ensure
       env[:main][:t1] = Time.now
@@ -159,8 +165,8 @@ module CX
       @pipeline = parse_pipeline! @args
 
       @pipeline.default_io!
-      @pipeline.default_input_format!(@env[:main][:defaults][:input_format])
-      @pipeline.default_output_format!(@env[:main][:defaults][:output_format])
+      @pipeline.default_input_format!(env[:main][:defaults][:input_format])
+      @pipeline.default_output_format!(env[:main][:defaults][:output_format])
       
       pp(pipeline: @pipeline) if @debug
       raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?

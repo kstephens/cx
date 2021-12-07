@@ -1,279 +1,576 @@
-Align:
-  aliases:
-  synopsis: Aligns fields based on column max_size.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/align.rb"
-  path: "cx/xform/align"
-Cat:
-  aliases:
-  synopsis: 'Concatenates rows from multiple pipelines.'
-  args: [ pipelines, ... ]
-  file: "lib/cx/xform/cat.rb"
-  path: "cx/xform/cat"
-
-Coerce:
-  aliases: 
-  synopsis: Coerce columns by inferred types.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/coerce.rb"
-  path: "cx/xform/coerce"
-
-CsvIn:
-  aliases:
-  synopsis: Parses CSV lines.
-  suffixes: [ .csv ]
-  inverse: [ 'csv-' ]
-  args: []
-  opts: {}
-  file: "lib/cx/xform/csv.rb"
-  path: "cx/xform/csv"
-CsvOut:
-  aliases:
-  synopsis: Generates CSV lines.
-  suffixes: [ .csv ]
-  inverse: [ '-csv' ]
-  args: []
-  opts: {}
-  file: "lib/cx/xform/csv.rb"
-  path: "cx/xform/csv"
-
-Cut:
-  aliases: 
-  synopsis: Cut columns.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/cut.rb"
-  path: "cx/xform/cut"
-
-DelimitedIn:
-  aliases: [ -d ]
-  synopsis: Parse delimited records.
-  inverse: [ d- ]
-  args: []
-  opts:
-    field-sep:   'Default: ",".'
-    record-sep:  'Default: system newline.'
-  file: "lib/cx/xform/delimited.rb"
-  path: "cx/xform/delimited"
-DelimitedOut:
-  aliases: [ d- ]
-  synopsis: Generate delimited records.
-  inverse: [ -d ]
-  args: []
-  opts:
-    field-sep:   'Default: ",".'
-    record-sep:  'Default: system newline.'
-    multi-sep:   'Separator for enumerable values.  Default: ";".'
-  file: "lib/cx/xform/delimited.rb"
-  path: "cx/xform/delimited"
-EmptyToNull:
-  name: empty-null
-  aliases: 
-  synopsis: Empty fields are converted to NULL.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/empty_to_null.rb"
-  path: "cx/xform/empty_to_null"
-Eval:
-  synopsis: Evaluates Ruby code for each row.
-  args: []
-  opts:
-  file: "lib/cx/xform/eval.rb"
-  path: "cx/xform/eval"
-Grep:
-  aliases: g
-  synopsis: Filters by regex.
-  args: []
-  opts:
-  file: "lib/cx/xform/grep.rb"
-  path: "cx/xform/grep"
-HeaderIn:
-  aliases: [ -h ]
-  synopsis: Interprets first row as a column name header.
-  inverse: [ 'h-' ]
-  args: []
-  opts:
-  file: "lib/cx/xform/header.rb"
-  path: "cx/xform/header"
-HeaderOut:
-  aliases: [ h- ]
-  synopsis: Emits column names as first row.
-  inverse: [ '-h' ]
-  args: []
-  opts:
-    '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'
-  file: "lib/cx/xform/header.rb"
-  path: "cx/xform/header"
-Help:
-  aliases:
-  synopsis: 'This documentation.'
-  args: [ command ]
-  file: "lib/cx/xform/help.rb"
-  path: "cx/xform/help"
-HtmlOut:
-  aliases: html,htm
-  synopsis: 'Emits HTML.'
-  suffixes: [ .html, .htm ]
-  args: []
-  opts:
-    raw:        'Comma-separated list of columns that contain raw HTML.'
-    filtering:  'Adds a filtering input box.'
-    title:      'Sets the HTML `title`.'
-    table-only: 'Emit the HTML `table` only.'
-    indent:     'Spaces to indent.  Default: 1'
-    filtering:  'Enable filtering.  Default: true'
-    sorting:    'Enable sorting.  Default: true'
-    styled:     'Enable styling.  Default: true'
-    head:       'Additional raw HTML at foot of <head>.'
-    body-head:  'Additional raw HTML at head of <body>.'
-    body-foot:  'Additional raw HTML at foot of <body>.'
-  file: "lib/cx/xform/html.rb"
-  path: "cx/xform/html"
-IoIn:
-  aliases: [in, i]
-  synopsis: Read from a file.
-  args: [ filename, ... ]
-  opts: {}
-  file: "lib/cx/xform/io.rb"
-  path: "cx/xform/io"
-IoOut:
-  aliases: [out, o]
-  synopsis: Write records to a file.
-  args: [ filename, ... ]
-  opts: {}
-  file: "lib/cx/xform/io.rb"
-  path: "cx/xform/io"
-MarkdownOut:
-  aliases: [ md, md-, markdown ]
-  synopsis: Generate Markdown table lines.
-  suffixes: [ .md ]
-  args: []
-  opts:
-    title: Output title.
-    include-header: Include a header.
-  file: "lib/cx/xform/markdown.rb"
-  path: "cx/xform/markdown"
-MetaIn:
-  aliases:
-  synopsis: Calculates various column metadata.
-  args: []
-  opts: {}
-  examples:
-  file: "lib/cx/xform/meta.rb"
-  path: "cx/xform/meta"
-MetaOut:
-  aliases:
-  synopsis: Generate a table of column metadata.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/meta.rb"
-  path: "cx/xform/meta"
-Nop:
-  aliases: noop
-  synopsis: Does nothing -- output is same as input.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/nop.rb"
-  path: "cx/xform/nop"
-Parse:
-  aliases: 
-  synopsis: Parse strings into richer types..
-  args: []
-  opts: {}
-  file: "lib/cx/xform/parse.rb"
-  path: "cx/xform/parse"
-
-Quote:
-  aliases: q
-  synopsis: Quote string values that would be ambigous or unprintable.
-  args: []
-  opts:
-    mode: "maybe, everything, always"
-    strings-only: Ignore non-strings.
-  file: "lib/cx/xform/quote.rb"
-  path: "cx/xform/quote"
-
-Region:
-  aliases: range
-  synopsis: Select a range of rows.
-  args: []
-  opts:
-  file: "lib/cx/xform/region.rb"
-  path: "cx/xform/region"
-Replace:
-  aliases: sub
-  synopsis: Replace by regex.
-  args: []
-  opts:
-  file: "lib/cx/xform/replace.rb"
-  path: "cx/xform/replace"
-Reverse:
-  aliases:
-  synopsis: Reverse order of rows.
-  args: []
-  opts:
-  file: "lib/cx/xform/reverse.rb"
-  path: "cx/xform/reverse"
-RowId:
-  aliases:
-  synopsis: Inserts a row id column.
-  args: []
-  opts:
-    name:       'Name of column: default __rowid__.'
-    type:       'Type: "integer" or "uuid".'
-    start:      'Start of integer ids: default 1'
-  file: "lib/cx/xform/row_id.rb"
-  path: "cx/xform/row_id"
-Sort:
-  aliases: s
-  synopsis: Sorts by specified columns.
-  args: []
-  opts:
-  file: "lib/cx/xform/sort.rb"
-  path: "cx/xform/sort"
-SqlOut:
-  aliases: sql-
-  synopsis: Generates CSV lines.
-  args: []
-  opts:
-    table: Table name.
-    transaction: Emit a TRANSACTION block.
-    rollback: Emit a ROLLBACK statement.
-    commit: Emit a COMMIT statement.
-    create: Emit a CREATE TABLE statement.
-    temporary: CREATE TEMPORARY TABLE statement.
-    insert: Emit INSERT INTO statements.
-    varchar-size: 'VARCHAR(size). Default: 255.'
-  file: "lib/cx/xform/sql.rb"
-  path: "cx/xform/sql"
-Strip:
-  aliases: trim
-  synopsis: Strip leading and trailing whitespace.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/strip.rb"
-  path: "cx/xform/strip"
-Tee:
-  aliases: t
-  synopsis: 'Send input to multiple output pipelines.'
-  args: [ pipelines, ... ]
-  file: "lib/cx/xform/tee.rb"
-  path: "cx/xform/tee"
-Transpose:
-  aliases:
-  synopsis: Transpose rows and columns.
-  args: []
-  opts:
-    include-header: Include header in first column.
-  file: "lib/cx/xform/transpose.rb"
-  path: "cx/xform/transpose"
-TypeInference:
-  aliases: [ -types, types ]
-  synopsis: Infer types from field strings.
-  args: []
-  opts: {}
-  file: "lib/cx/xform/type_inference.rb"
-  path: "cx/xform/type_inference"
-
+---
+- :class_name: Align
+  :name: align
+  :aliases: []
+  :synopsis: Aligns fields based on column max_size and alignment.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // parse // align
+  :file: lib/cx/xform/align.rb
+  :path: cx/xform/align
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // parse // align
+    :dir: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207
+- :class_name: Cat
+  :name: cat
+  :aliases: []
+  :synopsis: Concatenates rows from multiple pipelines.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/cat.rb
+  :path: cx/xform/cat
+  :example_runs: []
+- :class_name: Coerce
+  :name: coerce
+  :aliases: []
+  :synopsis: Coerce columns by inferred types.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/coerce.rb
+  :path: cx/xform/coerce
+  :example_runs: []
+- :class_name: CsvIn
+  :name: csv-in
+  :aliases:
+  - "-csv"
+  :synopsis: Parses CSV lines.
+  :description: ''
+  :suffixes:
+  - ".csv"
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/csv.rb
+  :path: cx/xform/csv
+  :example_runs: []
+- :class_name: CsvOut
+  :name: csv-out
+  :aliases:
+  - csv-
+  :synopsis: Generates CSV lines.
+  :description: ''
+  :suffixes:
+  - ".csv"
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // csv- --separator="\x09"
+  :file: lib/cx/xform/csv.rb
+  :path: cx/xform/csv
+  :example_runs:
+  - :cmd: cx in SOME.csv // csv- --separator="\x09"
+    :dir: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2
+- :class_name: Cut
+  :name: cut
+  :aliases: []
+  :synopsis: Cut columns.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // cut a,d    // h-
+  - cx in SOME.csv // -h // cut d,@    // h-
+  - cx in SOME.csv // -h // cut @,b:-  // h-
+  :file: lib/cx/xform/cut.rb
+  :path: cx/xform/cut
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // cut a,d    // h-
+    :dir: ex/cmd/cut/1787b086601757a79c77b266221e7c47
+  - :cmd: cx in SOME.csv // -h // cut d,@    // h-
+    :dir: ex/cmd/cut/12de8da185ae87a985a0e88291501a32
+  - :cmd: cx in SOME.csv // -h // cut @,b:-  // h-
+    :dir: ex/cmd/cut/87e60097c8150295ce031bc857971e71
+- :class_name: DelimitedIn
+  :name: delimited-in
+  :aliases:
+  - "-delimited"
+  - "-d"
+  :synopsis: Parse delimited records.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :field-sep: 'Default: ",".'
+    :record-sep: 'Default: system newline.'
+  :examples: []
+  :file: lib/cx/xform/delimited.rb
+  :path: cx/xform/delimited
+  :example_runs: []
+- :class_name: DelimitedOut
+  :name: delimited-out
+  :aliases:
+  - delimited-
+  - d-
+  :synopsis: Generate delimited records.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :field-sep: 'Default: ",".'
+    :record-sep: 'Default: system newline.'
+    :multi-sep: 'Separator for enumerable values.  Default: ";".'
+  :examples: []
+  :file: lib/cx/xform/delimited.rb
+  :path: cx/xform/delimited
+  :example_runs: []
+- :class_name: EmptyToNull
+  :name: empty-null
+  :aliases: []
+  :synopsis: Empty fields are converted to NULL.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/empty_to_null.rb
+  :path: cx/xform/empty_to_null
+  :example_runs: []
+- :class_name: Eval
+  :name: eval
+  :aliases: []
+  :synopsis: Evaluates Ruby code for each row.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - bin/cx in a/SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
+  :file: lib/cx/xform/eval.rb
+  :path: cx/xform/eval
+  :example_runs:
+  - :cmd: bin/cx in a/SOME.csv // -h // parse // eval "row.map_vals!(&:class)" //
+      h-
+    :dir: ex/cmd/eval/c396b1536ea537981e11f617422a073c
+- :class_name: Grep
+  :name: grep
+  :aliases:
+  - g
+  :synopsis: Filters by regex.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // grep d:f
+  - cx in SOME.csv // -h // grep d:a
+  - cx in SOME.csv // -h // grep d:^a
+  - cx in SOME.csv // -h // grep "d:!;f"
+  :file: lib/cx/xform/grep.rb
+  :path: cx/xform/grep
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // grep d:f
+    :dir: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee
+  - :cmd: cx in SOME.csv // -h // grep d:a
+    :dir: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53
+  - :cmd: cx in SOME.csv // -h // grep d:^a
+    :dir: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1
+  - :cmd: cx in SOME.csv // -h // grep "d:!;f"
+    :dir: ex/cmd/grep/bd1568d0356d03abf7a5f9658e7cb963
+- :class_name: HeaderIn
+  :name: header-in
+  :aliases:
+  - "-header"
+  - "-h"
+  :synopsis: Interprets first row as a column name header.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -csv // -h // csv-
+  :file: lib/cx/xform/header.rb
+  :path: cx/xform/header
+  :example_runs:
+  - :cmd: cx in SOME.csv // -csv // -h // csv-
+    :dir: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6
+- :class_name: HeaderOut
+  :name: header-out
+  :aliases:
+  - header-
+  - h-
+  :synopsis: Emits column names as first row.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :--meta-columns=meta-column,...: Emit each meta-column for each column.
+  :examples:
+  - cx in SOME.csv // -csv // -h // h- // csv-
+  :file: lib/cx/xform/header.rb
+  :path: cx/xform/header
+  :example_runs:
+  - :cmd: cx in SOME.csv // -csv // -h // h- // csv-
+    :dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
+- :class_name: Help
+  :name: help
+  :aliases: []
+  :synopsis: This documentation.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/help.rb
+  :path: cx/xform/help
+  :example_runs: []
+- :class_name: HtmlOut
+  :name: html-out
+  :aliases:
+  - html-
+  - html
+  - htm
+  :synopsis: Emits HTML.
+  :description: ''
+  :suffixes:
+  - ".html"
+  - ".htm"
+  :arguments:
+  - "..."
+  :options:
+    :raw: Comma-separated list of columns that contain raw HTML.
+    :filtering: 'Enable filtering.  Default: true'
+    :title: Sets the HTML `title`.
+    :table-only: Emit the HTML `table` only.
+    :indent: 'Spaces to indent.  Default: 1'
+    :sorting: 'Enable sorting.  Default: true'
+    :styled: 'Enable styling.  Default: true'
+    :head: Additional raw HTML at foot of <head>.
+    :body-head: Additional raw HTML at head of <body>.
+    :body-foot: Additional raw HTML at foot of <body>.
+  :examples: []
+  :file: lib/cx/xform/html.rb
+  :path: cx/xform/html
+  :example_runs: []
+- :class_name: IoIn
+  :name: io-in
+  :aliases:
+  - "-io"
+  - in
+  - i
+  :synopsis: Read from a file.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/io.rb
+  :path: cx/xform/io
+  :example_runs: []
+- :class_name: IoOut
+  :name: io-out
+  :aliases:
+  - io-
+  - out
+  - o
+  :synopsis: Write records to a file.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/io.rb
+  :path: cx/xform/io
+  :example_runs: []
+- :class_name: MarkdownOut
+  :name: markdown-out
+  :aliases:
+  - markdown-
+  - md
+  - md-
+  - markdown
+  :synopsis: Generate Markdown table lines.
+  :description: ''
+  :suffixes:
+  - ".md"
+  :arguments:
+  - "..."
+  :options:
+    :title: Output title.
+    :include-header: Include a header.
+  :examples: []
+  :file: lib/cx/xform/markdown.rb
+  :path: cx/xform/markdown
+  :example_runs: []
+- :class_name: MetaIn
+  :name: meta-in
+  :aliases:
+  - "-meta"
+  :synopsis: Calculates various column metadata.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // -meta // h-
+  :file: lib/cx/xform/meta.rb
+  :path: cx/xform/meta
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // -meta // h-
+    :dir: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4
+- :class_name: MetaOut
+  :name: meta-out
+  :aliases:
+  - meta-
+  :synopsis: Generate a table of column metadata.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // -meta // meta- // h-
+  - cx in SOME.csv // -h // parse // -meta // meta- // h-
+  :file: lib/cx/xform/meta.rb
+  :path: cx/xform/meta
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // -meta // meta- // h-
+    :dir: ex/cmd/meta-out/aa27246b1b6172a4d5f5d039498d33ab
+  - :cmd: cx in SOME.csv // -h // parse // -meta // meta- // h-
+    :dir: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7
+- :class_name: Nop
+  :name: nop
+  :aliases:
+  - noop
+  :synopsis: Does nothing -- output is same as input.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/nop.rb
+  :path: cx/xform/nop
+  :example_runs: []
+- :class_name: Parse
+  :name: parse
+  :aliases: []
+  :synopsis: Parse strings into richer types.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // parse // align // h-
+  :file: lib/cx/xform/parse.rb
+  :path: cx/xform/parse
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // parse // align // h-
+    :dir: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f
+- :class_name: Quote
+  :name: quote
+  :aliases:
+  - q
+  :synopsis: Quote string values that would be ambigous or unprintable.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :mode: maybe, everything, always
+    :strings-only: Ignore non-strings.
+  :examples: []
+  :file: lib/cx/xform/quote.rb
+  :path: cx/xform/quote
+  :example_runs: []
+- :class_name: Region
+  :name: region
+  :aliases:
+  - range
+  :synopsis: Select a range of rows.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/region.rb
+  :path: cx/xform/region
+  :example_runs: []
+- :class_name: Replace
+  :name: replace
+  :aliases:
+  - sub
+  :synopsis: Replace by regex.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/replace.rb
+  :path: cx/xform/replace
+  :example_runs: []
+- :class_name: Reverse
+  :name: reverse
+  :aliases: []
+  :synopsis: Reverse order of rows.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/reverse.rb
+  :path: cx/xform/reverse
+  :example_runs: []
+- :class_name: RowId
+  :name: row-id
+  :aliases: []
+  :synopsis: Inserts a row id column.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :name: 'Name of column: default __rowid__.'
+    :type: 'Type: "integer" or "uuid".'
+    :start: 'Start of integer ids: default 1'
+  :examples:
+  - cx in SOME.csv // -h // row-id --start=100 // h-
+  :file: lib/cx/xform/row_id.rb
+  :path: cx/xform/row_id
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // row-id --start=100 // h-
+    :dir: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594
+- :class_name: Sort
+  :name: sort
+  :aliases:
+  - s
+  :synopsis: Sorts by specified columns.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples:
+  - cx in SOME.csv // -h // sort d  // h-
+  - cx in SOME.csv // -h // sort    // h-
+  - cx in SOME.csv // -h //            sort a    // h-
+  - cx in SOME.csv // -h // parse   // sort a    // h-
+  - cx in SOME.csv // -h // parse   // sort a:-  // h-
+  :file: lib/cx/xform/sort.rb
+  :path: cx/xform/sort
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // sort d  // h-
+    :dir: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329
+  - :cmd: cx in SOME.csv // -h // sort    // h-
+    :dir: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3
+  - :cmd: cx in SOME.csv // -h //            sort a    // h-
+    :dir: ex/cmd/sort/f1ed5ce85355b6792ba01dd1ef3ef140
+  - :cmd: cx in SOME.csv // -h // parse   // sort a    // h-
+    :dir: ex/cmd/sort/8b415137e527241d0f38ac1f8921f282
+  - :cmd: cx in SOME.csv // -h // parse   // sort a:-  // h-
+    :dir: ex/cmd/sort/42ba5d3bda9beb7453eb8e0518bfaf2f
+- :class_name: SqlOut
+  :name: sql-out
+  :aliases:
+  - sql-
+  :synopsis: Generates CSV lines.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :table: Table name.
+    :transaction: Emit a TRANSACTION block.
+    :rollback: Emit a ROLLBACK statement.
+    :commit: Emit a COMMIT statement.
+    :create: Emit a CREATE TABLE statement.
+    :temporary: CREATE TEMPORARY TABLE statement.
+    :insert: Emit INSERT INTO statements.
+    :varchar-size: 'VARCHAR(size). Default: 255.'
+  :examples:
+  - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
+  - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
+  :file: lib/cx/xform/sql.rb
+  :path: cx/xform/sql
+  :example_runs:
+  - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
+    :dir: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd
+  - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
+    :dir: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2
+- :class_name: Strip
+  :name: strip
+  :aliases:
+  - trim
+  :synopsis: Strip leading and trailing whitespace.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/strip.rb
+  :path: cx/xform/strip
+  :example_runs: []
+- :class_name: Tee
+  :name: tee
+  :aliases:
+  - t
+  :synopsis: Send input to multiple output pipelines.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/tee.rb
+  :path: cx/xform/tee
+  :example_runs: []
+- :class_name: Transpose
+  :name: transpose
+  :aliases: []
+  :synopsis: Transpose rows and columns.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options:
+    :include-header: Include header in first column.
+  :examples: []
+  :file: lib/cx/xform/transpose.rb
+  :path: cx/xform/transpose
+  :example_runs: []
+- :class_name: TypeInference
+  :name: type-inference
+  :aliases:
+  - "-types"
+  - types
+  :synopsis: Infer types from field strings.
+  :description: ''
+  :suffixes: []
+  :arguments:
+  - "..."
+  :options: {}
+  :examples: []
+  :file: lib/cx/xform/type_inference.rb
+  :path: cx/xform/type_inference
+  :example_runs: []

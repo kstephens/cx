@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+dir='ex/cmd/cut/12de8da185ae87a985a0e88291501a32'
+cp -p ex/data/*.* "$dir"
+cd "$dir" || exit 9
+set -x
+(
+  cx in SOME.csv // -h // cut d,@    // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | tee diff
+[[ ! -s diff ]]

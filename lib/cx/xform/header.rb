@@ -10,6 +10,9 @@ require 'cx/xform'
 #   inverse: [ 'h-' ]
 #   args: []
 #   opts:
+#   examples:
+#     - 'cx in SOME.csv // -csv // -h // csv-'
+
 
 # :COMMAND:
 # HeaderOut:
@@ -19,6 +22,8 @@ require 'cx/xform'
 #   args: []
 #   opts:
 #     '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'
+#   examples:
+#     - 'cx in SOME.csv // -csv // -h // h- // csv-'
 
 module CX
   module Xform

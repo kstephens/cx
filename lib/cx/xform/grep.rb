@@ -10,6 +10,11 @@ require 'cx/column_args'
 #   synopsis: Filters by regex.
 #   args: []
 #   opts:
+#   examples:
+#     - 'cx in SOME.csv // -h // grep d:f'
+#     - 'cx in SOME.csv // -h // grep d:a'
+#     - 'cx in SOME.csv // -h // grep d:^a'
+#     - 'cx in SOME.csv // -h // grep "d:!;f"'
 
 module CX
   module Xform
@@ -28,7 +33,7 @@ module CX
     def rx_pred arg
       c = arg.column or raise_ ArgumentError, c.inspect
       rx = Regexp.new(arg.args[-1] || '')
-      if arg.opts[:negate]
+      if arg.opts[:negate] || args.opts[:order] == -1
         lambda do | row |
           ! rx.match?(row[c].to_s)
         end

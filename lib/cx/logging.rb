@@ -31,9 +31,21 @@ module CX
       end
     end
 
-    def puts *args
-      $stderr.puts(*args)
-      nil
+    #def puts *args
+    #  $stderr.puts(*args)
+    #  nil
+    #end
+      
+    def pp *args
+      log.debug { pps(*args) }
+    end
+    
+    def pps *args
+      ::PP.pp(*args, String.new).chomp
+    end
+    
+    def ppss expr
+      pps(expr).strip
     end
   end
 end
