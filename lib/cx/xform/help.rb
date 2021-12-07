@@ -210,7 +210,7 @@ cd "$dir" || exit 9
 ) >actual
 echo $! > exit
 [[ -f expected ]] || cp actual expected
-diff -u expected actual > diff
+diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]
 END
         File.chmod(0755, run)

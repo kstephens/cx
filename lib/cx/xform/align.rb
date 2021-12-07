@@ -71,13 +71,12 @@ module CX
 
       def center v, width, pad = ' '
         v = v.to_s
-        l = (width - v.size) / 2
-        r = width - l
-        PAD[pad][l] + v + PAD[pad][r]
+        w = width - v.size
+        w = 0 if w < 0
+        l = w / 2
+        r = width - l - v.size
+        (pad * l) + v + (pad * r)
       end
-      PAD = Hash.new{|h1, p|
-        h1[p] = Hash.new{|h2, i| h[i] = (p * i).freeze}
-      }
     end
   end
 end

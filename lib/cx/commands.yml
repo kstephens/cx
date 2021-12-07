@@ -450,23 +450,32 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :title
-    description: Output title.
-    default: 
+    description: 'Output title (caption).  Default: none.'
+    default: none.
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :include-header
-    description: Include a header.
-    default: 
+    description: 'Include a header.  Default: true.'
+    default: true.
     values: []
   has_column_args: 
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // markdown
+  - cx in SOME.csv // -h // parse // md
+  - cx in SOME.csv // -h // parse // md --title=SOME.CSV
+  - cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
   file: lib/cx/xform/markdown.rb
   path: cx/xform/markdown
   example_runs:
   - :cmd: cx in SOME.csv // -h // markdown
     :dir: ex/cmd/markdown-out/4c41287ef511faaa35a77fe0b2aeee19
+  - :cmd: cx in SOME.csv // -h // parse // md
+    :dir: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a
+  - :cmd: cx in SOME.csv // -h // parse // md --title=SOME.CSV
+    :dir: ex/cmd/markdown-out/fc1b8f07e7d36436e8bd1a6cb7d68060
+  - :cmd: cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
+    :dir: ex/cmd/markdown-out/5a037567093d704b4b53cbb44b03aff8
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MetaIn
   name: meta-in

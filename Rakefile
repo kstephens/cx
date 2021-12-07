@@ -14,25 +14,8 @@ task :coverage do
 end
 
 task :readme do
-  File.write "README.md", <<"END"
-# CX
-
-Transforms and processes columnar data as CSV, JSON, EDN, etc.
-
-## Installation
-
-```
-gem install cx
-```
-
-## Examples
-
-```
-#{File.read("lib/cx/examples.txt")}
-```
-
-END
-
+  sh "bin/cx --debug help --run-examples --make-help > tmp/README.md"
+  sh "mv tmp/README.md ."
 end
 
 desc "Run JS tests"
