@@ -12,9 +12,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // parse // align
-    :dir: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207
   file: lib/cx/xform/align.rb
   lineno: 6
   path: cx/xform/align
@@ -31,9 +28,6 @@
   has_pipeline_args: 
   examples:
   - cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
-  example_runs:
-  - :cmd: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
-    :dir: ex/cmd/cat/b8b717f72e993ffbe386264497487a99
   file: lib/cx/xform/cat.rb
   lineno: 5
   path: cx/xform/cat
@@ -49,7 +43,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/coerce.rb
   lineno: 8
   path: cx/xform/coerce
@@ -67,7 +60,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/csv.rb
   lineno: 8
   path: cx/xform/csv
@@ -86,9 +78,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // csv- --separator="\x09"
-  example_runs:
-  - :cmd: cx in SOME.csv // csv- --separator="\x09"
-    :dir: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2
   file: lib/cx/xform/csv.rb
   lineno: 17
   path: cx/xform/csv
@@ -109,17 +98,6 @@
   - cx in SOME.csv // -h // cut 'a,*' // h-
   - cx in SOME.csv // -h // cut 'd,*' // h-
   - cx in SOME.csv // -h // cut '*,b:-' // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // cut a,d // h-
-    :dir: ex/cmd/cut/b366159605ecd3e99fd7b549470401ec
-  - :cmd: cx in SOME.csv // -h // cut b a c // h-
-    :dir: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12
-  - :cmd: cx in SOME.csv // -h // cut 'a,*' // h-
-    :dir: ex/cmd/cut/3c679831eae5514a2451f3a06ca1b640
-  - :cmd: cx in SOME.csv // -h // cut 'd,*' // h-
-    :dir: ex/cmd/cut/916d5d62b18832110b9046889c90e634
-  - :cmd: cx in SOME.csv // -h // cut '*,b:-' // h-
-    :dir: ex/cmd/cut/b52a288dcedb5747b63340ccb022abdb
   file: lib/cx/xform/cut.rb
   lineno: 6
   path: cx/xform/cut
@@ -147,7 +125,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/delimited.rb
   lineno: 7
   path: cx/xform/delimited
@@ -180,7 +157,6 @@
   has_column_args: true
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/delimited.rb
   lineno: 17
   path: cx/xform/delimited
@@ -196,7 +172,6 @@
   has_column_args: true
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/empty_to_null.rb
   lineno: 6
   path: cx/xform/empty_to_null
@@ -214,12 +189,6 @@
   examples:
   - cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
   - cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
-    :dir: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320
-  - :cmd: cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" //
-      h-
-    :dir: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb
   file: lib/cx/xform/eval.rb
   lineno: 6
   path: cx/xform/eval
@@ -240,15 +209,6 @@
   - cx in SOME.csv // -h // grep d:a
   - cx in SOME.csv // -h // grep d:^a
   - cx in SOME.csv // -h // grep "d:!;f"
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // grep d:f
-    :dir: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee
-  - :cmd: cx in SOME.csv // -h // grep d:a
-    :dir: ex/cmd/grep/035ce77b4b8729cd13a3d5fbae67ef53
-  - :cmd: cx in SOME.csv // -h // grep d:^a
-    :dir: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1
-  - :cmd: cx in SOME.csv // -h // grep "d:!;f"
-    :dir: ex/cmd/grep/bd1568d0356d03abf7a5f9658e7cb963
   file: lib/cx/xform/grep.rb
   lineno: 7
   path: cx/xform/grep
@@ -267,9 +227,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // csv-
-  example_runs:
-  - :cmd: cx in SOME.csv // -csv // -h // csv-
-    :dir: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6
   file: lib/cx/xform/header.rb
   lineno: 6
   path: cx/xform/header
@@ -295,9 +252,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // h- // csv-
-  example_runs:
-  - :cmd: cx in SOME.csv // -csv // -h // h- // csv-
-    :dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
   file: lib/cx/xform/header.rb
   lineno: 17
   path: cx/xform/header
@@ -314,9 +268,8 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/help.rb
-  lineno: 8
+  lineno: 6
   path: cx/xform/help
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: HtmlOut
@@ -385,7 +338,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/html.rb
   lineno: 11
   path: cx/xform/html
@@ -406,7 +358,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/io.rb
   lineno: 7
   path: cx/xform/io
@@ -427,7 +378,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/io.rb
   lineno: 14
   path: cx/xform/io
@@ -447,9 +397,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // jira
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // jira
-    :dir: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31
   file: lib/cx/xform/jira.rb
   lineno: 8
   path: cx/xform/jira
@@ -484,15 +431,6 @@
   - cx in SOME.csv // -h // parse // md
   - cx in SOME.csv // -h // parse // md --title=SOME.CSV
   - cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // markdown
-    :dir: ex/cmd/markdown-out/4c41287ef511faaa35a77fe0b2aeee19
-  - :cmd: cx in SOME.csv // -h // parse // md
-    :dir: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a
-  - :cmd: cx in SOME.csv // -h // parse // md --title=SOME.CSV
-    :dir: ex/cmd/markdown-out/fc1b8f07e7d36436e8bd1a6cb7d68060
-  - :cmd: cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
-    :dir: ex/cmd/markdown-out/5a037567093d704b4b53cbb44b03aff8
   file: lib/cx/xform/markdown.rb
   lineno: 9
   path: cx/xform/markdown
@@ -510,9 +448,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // -meta // h-
-    :dir: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4
   file: lib/cx/xform/meta.rb
   lineno: 6
   path: cx/xform/meta
@@ -531,11 +466,6 @@
   examples:
   - cx in SOME.csv // -h // -meta // meta- // h-
   - cx in SOME.csv // -h // parse // -meta // meta- // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // -meta // meta- // h-
-    :dir: ex/cmd/meta-out/aa27246b1b6172a4d5f5d039498d33ab
-  - :cmd: cx in SOME.csv // -h // parse // -meta // meta- // h-
-    :dir: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7
   file: lib/cx/xform/meta.rb
   lineno: 15
   path: cx/xform/meta
@@ -555,15 +485,6 @@
   - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
     //  meta- // cut name,order,max_size,align // md
   - cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' //
-      md
-    :dir: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48
-  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
-      //  meta- // cut name,order,max_size,align // md
-    :dir: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708
-  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
-    :dir: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54
   file: lib/cx/xform/meta.rb
   lineno: 25
   path: cx/xform/meta
@@ -580,7 +501,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/nop.rb
   lineno: 6
   path: cx/xform/nop
@@ -597,9 +517,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // parse // align // h-
-    :dir: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f
   file: lib/cx/xform/parse.rb
   lineno: 8
   path: cx/xform/parse
@@ -626,7 +543,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/quote.rb
   lineno: 7
   path: cx/xform/quote
@@ -643,7 +559,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/region.rb
   lineno: 6
   path: cx/xform/region
@@ -660,7 +575,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/replace.rb
   lineno: 7
   path: cx/xform/replace
@@ -678,9 +592,6 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // reverse // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // reverse // h-
-    :dir: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9
   file: lib/cx/xform/reverse.rb
   lineno: 9
   path: cx/xform/reverse
@@ -714,13 +625,6 @@
   - cx in SOME.csv // -h // row-id --start=100 // h-
   - cx in SOME.csv // -h // row-id --name=id // h-
   - cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // row-id --start=100 // h-
-    :dir: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594
-  - :cmd: cx in SOME.csv // -h // row-id --name=id // h-
-    :dir: ex/cmd/row-id/6e4c935e554250c3f1e77e9fdfe779e1
-  - :cmd: cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
-    :dir: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250
   file: lib/cx/xform/row_id.rb
   lineno: 7
   path: cx/xform/row_id
@@ -742,17 +646,6 @@
   - cx in SOME.csv // -h //            sort a    // h-
   - cx in SOME.csv // -h // parse   // sort a    // h-
   - cx in SOME.csv // -h // parse   // sort a:-  // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // sort d  // h-
-    :dir: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329
-  - :cmd: cx in SOME.csv // -h // sort    // h-
-    :dir: ex/cmd/sort/314dd2df677294d78952f56d8b3d91f3
-  - :cmd: cx in SOME.csv // -h //            sort a    // h-
-    :dir: ex/cmd/sort/f1ed5ce85355b6792ba01dd1ef3ef140
-  - :cmd: cx in SOME.csv // -h // parse   // sort a    // h-
-    :dir: ex/cmd/sort/8b415137e527241d0f38ac1f8921f282
-  - :cmd: cx in SOME.csv // -h // parse   // sort a:-  // h-
-    :dir: ex/cmd/sort/42ba5d3bda9beb7453eb8e0518bfaf2f
   file: lib/cx/xform/sort.rb
   lineno: 8
   path: cx/xform/sort
@@ -811,11 +704,6 @@
   examples:
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
-    :dir: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd
-  - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
-    :dir: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2
   file: lib/cx/xform/sql.rb
   lineno: 8
   path: cx/xform/sql
@@ -832,7 +720,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/strip.rb
   lineno: 6
   path: cx/xform/strip
@@ -851,7 +738,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/tee.rb
   lineno: 5
   path: cx/xform/tee
@@ -874,11 +760,6 @@
   examples:
   - cx in SOME.csv // -h // transpose // h-
   - cx in SOME.csv // -h // transpose --no-include-header // h-
-  example_runs:
-  - :cmd: cx in SOME.csv // -h // transpose // h-
-    :dir: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb
-  - :cmd: cx in SOME.csv // -h // transpose --no-include-header // h-
-    :dir: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50
   file: lib/cx/xform/transpose.rb
   lineno: 6
   path: cx/xform/transpose
@@ -896,7 +777,6 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  example_runs: []
   file: lib/cx/xform/type_inference.rb
   lineno: 7
   path: cx/xform/type_inference

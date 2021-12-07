@@ -49,6 +49,7 @@ module CX
     def register! cmd
       register_name! cmd, cmd.name
       @all << cmd
+      @all.sort_by!(&:name)
       cmd.aliases
       cmd.aliases.each{|a| register_name! cmd, a}
     end
@@ -74,7 +75,7 @@ module CX
       :class_name, :name, :aliases, :synopsis, :description,
       :suffixes, :arguments, :options,
       :has_column_args, :has_pipeline_args,
-      :examples, :example_runs,
+      :examples,
       :file, :lineno, :path)
       include Support
 
@@ -145,15 +146,6 @@ module CX
         name.to_s.sub(/^(.+)-in$/ ){|m| self.aliases.unshift "-#{$1}"}
         name.to_s.sub(/^(.+)-out$/){|m| self.aliases.unshift "#{$1}-"}
         self.aliases = self.aliases.uniq
-
-        self.example_runs = self.examples.map do | ex |
-          ex_hash = Digest::MD5.hexdigest(ex)
-          dir = "ex/cmd/#{name}/#{ex_hash}"
-          {
-            cmd:  ex,
-            dir:  dir,
-          }
-        end
         self
       rescue => exc
         raise_  "#{exc.message} : #{args.inspect}", exc

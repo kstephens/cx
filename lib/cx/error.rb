@@ -39,10 +39,10 @@ module CX
           exc_to_raise.data   = data_for_error rescue nil
         rescue
         end
-        
+
         if debug?
           pp(exc_to_raise: exc_to_raise, exc: exc, msg: msg, backtrace: backtrace && backtrace.reverse)
-          binding.pry
+          # binding.pry
         end
         
         if backtrace

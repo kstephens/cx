@@ -3,6 +3,7 @@ require 'cx/error'
 require 'cx/debug'
 require 'cx/inspect'
 require 'cx/logging'
+require 'cx/random'
 
 module CX
   module Support

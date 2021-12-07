@@ -9,18 +9,18 @@ module CX
     include Support, StructSupport
 
     def self.yaml_file_for_dir dir ; "#{dir}/example.yml" ; end
+    BASE_DIR = 'ex/cmd'
     
     def initialize *args
       super
-      self.base_dir   ||= 'ex/cmd'
-      raise "no base_dir" unless base_dir
+      self.base_dir   ||= BASE_DIR
       self.dir_name   ||= example && Digest::MD5.hexdigest(example)
       self.dir        ||= "#{base_dir}/#{command}/#{dir_name}"
       self.yaml_file  ||= self.class.yaml_file_for_dir(dir)
-      self.files      ||= Contents.new.set_dir!(dir)
+      self.files      ||= Files.new.set_dir!(dir)
     end
 
-    class Contents < Struct.new(:run, :exit, :output, :expected, :actual, :diff)
+    class Files < Struct.new(:run, :exit, :output, :expected, :actual, :diff)
       include Support, StructSupport
 
       def set_dir! dir
@@ -60,8 +60,9 @@ module CX
       File.write(yaml_file, YAML.dump(self))
     end
 
-    def self.load! dir
-      YAML.load(File.read(yaml_file_for_dir dir))
+    def self.load! opts
+      e = new_from_hash(opts)
+      YAML.load(File.read(e.yaml_file))
     end
     
     def run!
@@ -91,38 +92,74 @@ END
     end
     
     def self.examples_with_diffs
-      base_dir = "ex/cmd"
-      Dir["#{base_dir}/*/*/diff"].sort.map do | diff |
+      Dir["#{BASE_DIR}/*/*/diff"].sort.map do | diff |
         dir = File.dirname(diff)
-        ex = CX::Example.load!(dir)
+        ex = CX::Example.load!(dir: dir)
         ex.contents.diff.empty? ? nil : ex
       end.compact
+    end
+
+    class Runner
+      include Support
+      
+      attr_accessor :commands, :factory
+
+      def factory
+        @factory ||= CommandFactory.new.load!
+      end
+
+      def commands
+        @commands ||= factory.all.sort_by(&:name)
+      end
+
+      def run!
+        commands.each do | cmd |
+          log.delimited "command : #{cmd.name} ================== " do 
+            cmd.examples.each do | example |
+              log.delimited "example : #{example}" do 
+                run_example! cmd, example
+              end
+            end
+          end
+        end
+      end
+
+      def run_example! command, example
+        example = Example.new_from_hash(
+          command:    command.name,
+          example:    example,
+        )
+        example.run!
+        example.show!
+      end
     end
     
     def self.diffs!
       extend Logging
       CX::Logging.log.level = ::Logger::INFO
       examples = examples_with_diffs
-      log.info "  ### { diffs!"
-      examples.each do | ex |
-        log.info "    ### { #{ex.command} : #{ex.example}"
-        ex.contents
-        ex.show!
-        s = <<"END"
+      log.delimited "diffs!" do
+        examples.each do | ex |
+          log.delimited "#{ex.command} : #{ex.example}" do
+            ex.contents
+            ex.show!
+            s = <<"END"
   ### to accept actual:
   #{ex.accept_command}
 END
-        $stderr.puts s
-        log.info "    ### } #{ex.command} : #{ex.example}"
+            $stderr.puts s
+          end
+        end
       end
       
-      log.info "    ### { accept #######################################"
-      examples.each do | ex |
-        $stderr.puts "#{ex.accept_command}  # #{e.command} : #{e.example}"
+      log.info "diffs #{examples.size}"
+      unless examples.empty?
+        log.delimited "accept" do
+          examples.each do | ex |
+            $stderr.puts "#{ex.accept_command}  # #{e.command} : #{e.example}"
+          end
+        end
       end
-      log.info "    ### } accept #######################################"
-      log.info "  ### } diffs!"
-
     end
   end
 end

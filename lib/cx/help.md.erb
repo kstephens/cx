@@ -1,0 +1,123 @@
+# Overview
+
+CX processes a pipeline of commands which transform tabular data.
+
+A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
+
+Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
+
+# Commands
+
+## Options
+
+Command and global options:
+
+   Syntax           | Semantic 
+--------------------|--------------------------------
+`--FLAG`            | Enable.
+`--no-FLAG`         | Disable (false).
+`--OPTION=VALUE`    | Sets option.
+`--`                | Terminates all option parsing.
+
+## Arguments
+
+Most commands take one or more column arguments:
+
+    Syntax              | Semantic
+------------------------|--------------------------------
+`COLUMN`                | Name or index.
+`COLUMN:-`              | Reverse order or removal.
+`COLUMN:+`              | Forward order or addition.
+`COLUMN:!`              | Negation.
+`COLUMN:arg1;arg2...`   | Processing arguments.
+`COLUMN:opt1=val1;...`  | Processing options.
+
+For most commands, all columns are processed when column arguments are given.
+
+The column name  `"*"` implies all columns; see `cut` for examples.
+
+# Global Options
+
+  Syntax            | Semantic
+--------------------|-------------------------
+`--debug`           | Enable debugging info.
+`--verbose`         | Enable verbose info.  
+`--help`            | Print this document.    
+
+# Example Data
+
+<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
+```
+# <%= File.basename file %>
+<%= File.read(file) %>
+```
+
+<% end %>
+
+# Commands
+
+<% commands.each do | c | %>
+## `<%= c.name %>`
+
+<%= c.synopsis %>
+
+<% unless c.aliases.empty? %>
+Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
+<% end %>
+
+Invocation:
+
+<span style='border-style: solid; padding: 0.5em;'>
+`<%= c.name %>` \
+<% if c.has_column_args? %>
+*column-args* *...* \
+<% end %> \
+<% unless c.options.empty? %>
+*[* \
+<% c.options.each do |o| %>
+<%= o.brief %> \
+<% end %> \
+*]* \
+<% c.arguments.each do |n| %>
+`<%= n %>` \
+<% end %> \
+<% if c.has_pipeline_args? %> \
+*[* `{{` *pipeline* `}}` *...* \
+<% end %>
+</span>
+
+<% unless c.options.empty? %>
+  Options                   |  Description
+----------------------------|------------------------------- \
+<% c.options.each do | o | %>
+<span style='white-space: nowrap;'><%= code(o.brief) %></span> | <%= o.description %> \
+<% end %>
+<% end %>
+
+<%= c.description unless c.description.empty? %>
+
+<% unless c.examples.empty? %>
+  Examples:
+
+<% c.examples.each do | e |
+   e = Example.load!(command: c.name, example: e) %>
+```
+$ <%= e.example %>
+<%= e.contents.actual %>
+```
+<% end %>
+<% end %>
+<% end %>
+<% end %>
+
+# Installation
+
+```
+git clone https://github.com/kstephens/cx.git
+gem install cx
+```
+
+# Attribution
+
+Copyright 2020 - Kurt Stephens 
+
