@@ -9,6 +9,7 @@ require 'cx/xform'
 #   aliases: 
 #   synopsis: Empty fields are converted to NULL.
 #   args: []
+#   has_column_args: true
 #   opts: {}
 
 module CX

@@ -40,8 +40,7 @@ module CX
     end
 
     def load_commands! commands
-      commands.each do | info |
-        cmd = CommandDesc.from_hash(info)
+      commands.each do | cmd |
         register! cmd
       end
       self
@@ -72,9 +71,42 @@ module CX
     ###########################################
     
     class CommandDesc < Struct.new(
-      :class_name, :name, :aliases, :synopsis, :description, :suffixes, :arguments, :options, :examples,
+      :class_name, :name, :aliases, :synopsis, :description,
+      :suffixes, :arguments, :options,
+      :has_column_args, :has_pipeline_args,
+      :examples,
       :file, :path, :example_runs)
       include Support
+
+      class Option < Struct.new(:name, :description, :default, :values)
+        def initialize *args
+          super
+
+          if (n = name.to_s).sub!(/=(.+)$/, '')
+            self.values ||= $1
+          end
+          self.name = n.to_sym
+          
+          if description =~ /Default:\s*(.+)/
+            self.default ||= $1.strip
+          end
+          self.values = values.split(/,/) if String === values
+          self.values ||= [ ]
+        end
+        
+        def self.from_hash h
+          new(*h.values_at(*members))
+        end
+        
+        def brief
+          case
+          when self.default || ! self.values.empty?
+            "--#{name}=..."
+          else
+            "--#{name}"
+          end
+        end
+      end
       
       def self.from_hash h
         new(*h.values_at(*CommandDesc.members))
@@ -93,9 +125,16 @@ module CX
         self.synopsis ||= ""
         self.description ||= ""
         self.suffixes ||= [ ]
-        self.arguments ||= ['...']
+        self.arguments ||= [ ]
         self.options ||= { }
         self.examples ||= [ ]
+        
+        if Hash === options
+          self.options = options.map do | (name, desc) |
+            Option.new(name, desc)
+          end
+        end
+        
         unless Array === self.aliases
           self.aliases = self.aliases.split(/\s*,\s*/).map(&:strip)
         end
@@ -131,7 +170,15 @@ module CX
       def infer_name class_name
         class_name.to_s.gsub(/([a-z])([A-Z])/){|m| "#{$1}-#{$2}"}.downcase
       end
-      
+
+      def has_column_args?
+        self.has_column_args ||= Xform::SelectColumns === cls
+      end
+
+      def has_pipeline_args?
+        self.has_pipeline_args ||= Xform::PipelineArgs === cls
+      end
+
       def cls
         unless @cls
           unless @cls = (CX::Xform.const_get(class_name) rescue nil)
@@ -156,7 +203,7 @@ module CX
             commands << parse_block!(block)
           end
         end
-        yaml = YAML.dump(commands.map(&:to_h))
+        yaml = YAML.dump(commands)
         CommandFactory.new.load!(yaml)
         File.write(COMMANDS_YML, yaml)
       end
@@ -173,7 +220,8 @@ module CX
         class_name = data.keys.first.to_s
         info = data.values.first
         info[:class_name] = class_name
-        info[:options] ||= info[:opts] # ???
+        info[:options]   ||= info[:opts] # ???
+        info[:arguments] ||= info[:args] # ???
         command = CommandDesc.from_hash(info).initialize!
         # pp(cmd: command)
         command

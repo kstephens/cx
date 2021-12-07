@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/sort/42ba5d3bda9beb7453eb8e0518bfaf2f'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // parse   // sort a:-  // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

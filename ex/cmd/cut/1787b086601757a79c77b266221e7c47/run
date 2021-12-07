@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 dir='ex/cmd/cut/1787b086601757a79c77b266221e7c47'
 cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
-set -x
+[[ -n "$CX_VERBOSE" ]] && set -x
 (
   cx in SOME.csv // -h // cut a,d    // h-
 ) >actual

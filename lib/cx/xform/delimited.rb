@@ -20,6 +20,7 @@ require 'cx/xform/record'
 #   synopsis: Generate delimited records.
 #   inverse: [ -d ]
 #   args: []
+#   has_column_args: true
 #   opts:
 #     field-sep:   'Default: ",".'
 #     record-sep:  'Default: system newline.'

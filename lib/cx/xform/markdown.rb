@@ -15,6 +15,9 @@ require 'cx/xform/align'
 #   opts:
 #     title: Output title.
 #     include-header: Include a header.
+#   examples:
+#     - 'cx in SOME.csv // -h // markdown'
+
 
 module CX
   module Xform

@@ -36,6 +36,8 @@ module CX
     attr_accessor :progname, :argv, :args, :opts, :env, :factory, :pipeline, :exit_code
 
     def initialize argv
+      now = Time.now
+      @t0 = $cx_t0 || now
       @verbose = false
       @progname = File.basename($0)
       @exit_code = 0
@@ -53,10 +55,15 @@ module CX
           opts: :UNKNOWN,
           debug: false,
           verbose: false,
-          t0: $cx_t0 || Time.now,
-          t1: nil,
-          t_elapsed: nil,
           exit_code: 0,
+          #
+          started_at: @t0,
+          main_started_at: now,
+          main_finished_at: nil,
+          start_elapsed_ms: ((now - @t0) * 1000).to_i,
+          total_elapsed_ms: nil,
+          main_elapsed_ms: nil,
+          #
           defaults: {
           },
           trace: {
@@ -95,8 +102,28 @@ module CX
 
       self
     end
-    
+
     def run!
+      go!
+    rescue => exc
+      msg = progname.dup
+      reason = exc.reason rescue nil
+      data = exc.data rescue nil
+      msg << exc.message
+      msg << "\nreason: #{reason}" if reason
+      msg << "\nin: #{data}" if data
+      if debug?
+        msg << (["\nbacktrace ::::"] + exc.backtrace.reverse + ["::::"]).join("\n")
+      end
+      log.error msg
+      @exit_code = env[:main][:exit_code]
+      self
+    ensure
+      $stderr.puts pps(env: env) if opts[:show_env]
+      GC.start(full_mark: true, immediate_sweep: true) if @full_gc
+    end
+    
+    def go!
       parse_argv!
 
       @factory = factory = CommandFactory.new.load!
@@ -130,35 +157,16 @@ module CX
       env[:main][:pipeline] = @pipeline
       # pp(pipeline_argv: @pipeline.pipeline_argv) if debug?
 
-      go!
+      @pipeline.call(Table.new, env)
 
-      self
-    rescue => exc
-      msg = progname.dup
-      reason = exc.reason rescue nil
-      data = exc.data rescue nil
-      msg << exc.message
-      msg << "\nreason: #{reason}" if reason
-      msg << "\nin: #{data}" if data
-      if debug?
-        msg << (["\nbacktrace ::::"] + exc.backtrace.reverse + ["::::"]).join("\n")
-      end
-      log.error msg
-      @exit_code = env[:main][:exit_code]
       self
     ensure
-      env[:main][:t1] = Time.now
-      env[:main][:t_elapsed] = env[:main][:t1] - env[:main][:t0]
-      if opts[:show_env]
-        pp(env: env)
-      end
-      GC.start(full_mark: true, immediate_sweep: true) if @full_gc
-    end
-
-    # Starts application command pipeline.
-    def go!
-      @pipeline.call(Table.new, env)
-      self
+      now = Time.now
+      (h = env[:main]).
+        update(main_finished_at: now,
+               total_elapsed_ms: ((now - @t0) * 1000).to_i,
+               main_elapsed_ms:  ((now - h[:main_started_at]) * 1000).to_i,
+              )
     end
 
     def setup_pipeline!

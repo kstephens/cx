@@ -21,7 +21,7 @@ require 'cx/xform'
 #   inverse: [ '-h' ]
 #   args: []
 #   opts:
-#     '--meta-columns=meta-column,...': 'Emit each meta-column for each column.'
+#     'meta-columns=meta-column,...': 'Emit each meta-column for each column.'
 #   examples:
 #     - 'cx in SOME.csv // -csv // -h // h- // csv-'
 
@@ -39,7 +39,7 @@ module CX
     end
     
     class HeaderOut
-      include Xform
+      include SelectColumns, Xform
       def initialize!
         super
         @meta_columns = (opts[:meta_columns] || "").

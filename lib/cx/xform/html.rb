@@ -23,13 +23,13 @@ require 'cx/html_markup'
 #     filtering:  'Enable filtering.  Default: true'
 #     sorting:    'Enable sorting.  Default: true'
 #     styled:     'Enable styling.  Default: true'
-#     head:       'Additional raw HTML at foot of <head>.'
-#     body-head:  'Additional raw HTML at head of <body>.'
-#     body-foot:  'Additional raw HTML at foot of <body>.'
+#     head:       'Additional raw HTML at foot of `head`.'
+#     body-head:  'Additional raw HTML at head of `body`.'
+#     body-foot:  'Additional raw HTML at foot of `body`.'
 
 module CX
   module Xform
-    class HTMLOut
+    class HtmlOut
       include SelectColumns, OutputFormat, RecordOut
       def initialize!
         super

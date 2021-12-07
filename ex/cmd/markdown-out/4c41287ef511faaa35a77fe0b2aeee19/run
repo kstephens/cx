@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/markdown-out/4c41287ef511faaa35a77fe0b2aeee19'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // markdown
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

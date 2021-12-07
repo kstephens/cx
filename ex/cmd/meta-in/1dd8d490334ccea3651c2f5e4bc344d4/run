@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // -meta // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual > diff
+[[ ! -s diff ]]

@@ -53,6 +53,9 @@ module CX
         opts.fetch(:include_header, true)
       end
     end
+
+    module PipelineArgs
+    end
     
     module SelectColumns
       attr_accessor :column_argv, :column_args, :selected_columns

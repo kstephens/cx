@@ -4,14 +4,17 @@ require 'cx/xform'
 
 # :COMMAND:
 # Cat:
-#   aliases:
-#   synopsis: 'Concatenates rows from multiple pipelines.'
-#   args: [ pipelines, ... ]
+#   aliases: [ ]
+#   synopsis: 'Concatenates rows from multiple pipelines.  Columns are shared.'
+#   args: [ ]
+#   options: { }
+#   examples:
+#     - 'cx in OTHER.csv // -h // cat {{ cx in DUPLICATES // -h }} // h-'
 
 module CX
   module Xform
     class Cat
-      include Xform
+      include PipelineArgs, Xform
       
       def call input, env
         input_xforms = args.select{|x| Xform::Pipeline === x}

@@ -31,6 +31,10 @@ module CX
       @header = nil
     end
 
+    def inspect_content modes
+      args.map(&:inspect) * ', '
+    end
+    
     def each &blk
       @args.each(&blk)
     end

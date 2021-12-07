@@ -39,9 +39,10 @@ module CX
       def make_help!
         File.unlink(help_file) rescue nil
       end
-      
+
+      attr_reader :doc
       def help_doc!
-        doc = String.new
+        @doc = String.new
         doc << <<'END'
 # Overview
 
@@ -93,22 +94,37 @@ END
 
         doc << "# Example Data\n\n"
         Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file |
-          doc << "```\n"
-          doc << " $ cat #{File.basename file} \n"
-          doc << File.read(file)
-          doc << "```\n\n"
+          code_block do
+            doc << " $ cat #{File.basename file} \n"
+            doc << File.read(file)
+          end
+          doc << "\n"
         end
 
         doc << "# Commands\n\n"
         commands.each do | c |
           doc << "## `#{c.name}`\n\n"
-          doc << c.synopsis
-          doc << "\n\nAliases: " << c.aliases.map{|x| code x}.join(', ') << ".\n" unless c.aliases.empty?
+          doc << c.synopsis << "\n"
+          doc << "\nAliases: " << c.aliases.map{|x| code x}.join(', ') << ".\n" unless c.aliases.empty?
+
+          doc << "\nInvocation: \n\n"
+          doc << "`$ cx` *...* `//` `#{c.name}` "
+          doc << '*column-args* *...* ' if c.has_column_args?
+          unless c.options.empty?
+            doc << '*[* '
+            c.options.each do |o|
+              doc << code(o.brief) << ' '
+            end
+            doc << '*]* '
+          end
+          doc << c.arguments.map{|n| code(n)} * ' '
+          doc << '*[* `{{` *pipeline* `}}` *...* ' if c.has_pipeline_args?
+          doc << "\n"
 
           unless c.options.empty?
             doc << "\nOptions:\n\n"
-            c.options.each do | name, desc |
-              doc << "* " << code('--' + name.to_s) << " - " << desc.to_s << "\n"
+            c.options.each do | o |
+              doc << "* " << code(o.brief) << ' - ' << o.description << "\n"
             end
           end
 
@@ -149,6 +165,12 @@ END
         '`' + x.to_s + '`'
       end
 
+      def code_block x = nil
+        doc << "\n```\n"
+        block_given? ? yield : (doc << x)
+        doc << "\n```\n"
+      end
+
       def commands
         factory.all.sort_by(&:name)
       end
@@ -157,38 +179,45 @@ END
 
       def run_examples!
         commands.each do | cmd |
+          log.info "  ### #{cmd.name} BEGIN #################################################"
           cmd.example_runs.each do | ex |
+            log.info "    ----------------------------------------------------"
             run_example! cmd, ex
+            log.info "    ----------------------------------------------------\n"
           end
+          log.info "  ### #{cmd.name} END   ##################################################\n"
         end
       end
 
       def run_example! command, e
         # pp(example: e)
         dir, cmd = e.values_at(:dir, :cmd)
-        log.info "run \n#{pps e}"
+        log.info "run #{command.name} : #{cmd}"
+        log.info "dir #{dir}"
         FileUtils.mkdir_p(dir)
         File.write("#{dir}/cmd", cmd)
         File.write(run = "#{dir}/run", <<"END")
 #!/usr/bin/env bash
 dir='#{dir}'
 cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
-set -x
+[[ -n "$CX_VERBOSE" ]] && set -x
 (
   #{cmd}
 ) >actual
 echo $! > exit
 [[ -f expected ]] || cp actual expected
-diff -u expected actual | tee diff
+diff -u expected actual > diff
 [[ ! -s diff ]]
 END
         File.chmod(0755, run)
         e[:success] = system run
         command.read_example! e
-        log.info "run: \n#{e.slice(:cmd, :success)}"
-        log.info "output: \n#{e[:files]['output']}"
-        e
+        ok =  e[:success]
+        log.info "run #{command.name} : #{cmd} : ok #{ok}"
+        log.info "actual: ::::\n#{e[:files]['actual']}\n::::"
+        log.info "output: ::::\n#{e[:files]['output']}\n::::"
       end
     end
   end

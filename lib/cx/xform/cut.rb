@@ -9,10 +9,14 @@ require 'cx/xform'
 #   synopsis: Cut columns.
 #   args: []
 #   opts: {}
+#   has_column_args: true
 #   examples:
-#     - 'cx in SOME.csv // -h // cut a,d    // h-'
-#     - 'cx in SOME.csv // -h // cut d,@    // h-'
-#     - 'cx in SOME.csv // -h // cut @,b:-  // h-'
+#     - cx in SOME.csv // -h // cut a,d
+#     - cx in SOME.csv // -h // cut b a c
+#     - cx in SOME.csv // -h // cut c:-
+#     - cx in SOME.csv // -h // cut 'a,*'
+#     - cx in SOME.csv // -h // cut 'd,*'
+#     - cx in SOME.csv // -h // cut '*,b:-'
 
 module CX
   module Xform
@@ -20,24 +24,23 @@ module CX
       include SelectColumns, Xform
       
       def call input, env
+        # Split args by ','
+        args.map!{|a| a.split(/\s*,\s*/)}.flatten!
+        
         column_args!(input).or_all!
         column_args.bound.each do | ca |
-          # pp(ca: ca)
-          ca.column = nil if (ca.opts[:order] || 0) < 0
+          ca.column = nil if ca.opts[:negate] || (ca.opts[:order] || 0) < 0
         end
 
-        # pp(args: args, col_args: col_args)
         columns = column_args.bound.map(&:column)
         
-        output_columns = columns.map(&:dup)
-        output_columns.each(&:clear!)
+        output_columns = columns.map(&:dup).each(&:clear!)
         header = Header.new(output_columns)
         output = Table.new([], header)
         input.each do | r |
-          o = columns.map do | c |
+          output << columns.map do | c |
             r[c]
           end
-          output << o
         end
         output
       end

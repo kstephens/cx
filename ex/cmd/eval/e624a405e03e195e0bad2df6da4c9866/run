@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+dir='ex/cmd/eval/e624a405e03e195e0bad2df6da4c9866'
+cp -p ex/data/*.* "$dir"
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in a/SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
+) >actual
+echo $! > exit
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | tee diff
+[[ ! -s diff ]]

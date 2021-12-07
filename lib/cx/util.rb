@@ -23,6 +23,23 @@ module CX
   M = Mutex.new
 end
 
+  module Timing
+    def with_timing h_ = nil
+      h = h_ || { }
+      h[:t0] = time_now
+      begin
+        result = yield h
+        h_ && h_[:result] = result
+        result
+      ensure
+        h[:elapsed_ms] = (((h[:t1] = time_now) - h[:t0]) * 1000).to_i
+      end
+    end
+    def time_now
+      Time.now
+    end
+  end
+  
 ######################################
 
 class ThreadSafe < BasicObject
