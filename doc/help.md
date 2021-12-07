@@ -727,6 +727,26 @@ Examples:
 |                    2 | 12    | 11    | abc   |
 ```
 
+```
+ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md 
+| name  | order | max_size | align |
+| ----- | ----: | -------: | ----- |
+| b     |     1 |        2 |       |
+| c     |     2 |        2 |       |
+| d     |     3 |        3 |       |
+| a     |     9 |       20 | right |
+```
+
+```
+ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md 
+| newname | a     | b     | d     |
+| ------- | ----- | ----- | ----- |
+| 3       | 1     | ab    | foo   |
+| 6       | 24    | 44    | bar   |
+| 9       | 134   | 5     | baz   |
+| 11      | 2     | 12    | abc   |
+```
+
 
 ## `sort`
 

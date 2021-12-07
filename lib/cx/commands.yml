@@ -552,10 +552,18 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
+  - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
+    //  meta- // cut name,order,max_size,align // md
+  - cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
   example_runs:
   - :cmd: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' //
       md
     :dir: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48
+  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
+      //  meta- // cut name,order,max_size,align // md
+    :dir: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708
+  - :cmd: cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
+    :dir: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54
   file: lib/cx/xform/meta.rb
   lineno: 25
   path: cx/xform/meta

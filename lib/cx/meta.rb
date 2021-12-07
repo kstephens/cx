@@ -51,10 +51,24 @@ module CX
       to_h.inspect
     end
 
+    def column! c
+      @name  = c.name
+      @name_ = c.name_
+      @index = c.index
+      @order = c.order
+      self
+    end
+
+    def update_column! c
+      c.name = @name
+      c.order = @order
+      column! c
+    end
+    
+    
     def clear! c = nil
       if c
-        @name  = c.name
-        @name_ = c.name_
+        column! c
       end
       @types = Set.new
       @type_inferred = @align_inferred = nil

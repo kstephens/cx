@@ -30,7 +30,8 @@ require 'cx/xform'
 #   opts: {}
 #   examples:
 #     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md"
-
+#     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md"
+#     - "cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md"
 
 module CX
   module Xform
@@ -102,7 +103,10 @@ module CX
 
       def call input, env
         column_args!(input).bound.each do | ca |
-          ca.column.meta.update(ca.opts)
+          c = ca.column
+          c.name = ca.opts[:name] if ca.opts[:name]
+          c.meta.update(ca.opts)
+          c.meta.update_column! c
         end
         input
       end
