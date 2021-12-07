@@ -2,7 +2,7 @@
 command: sql-out
 example: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/run
   exit: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/exit
   output: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd/output

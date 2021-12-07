@@ -3,7 +3,7 @@ command: eval
 example: cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" //
   h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb/run
   exit: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb/exit
   output: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb/output

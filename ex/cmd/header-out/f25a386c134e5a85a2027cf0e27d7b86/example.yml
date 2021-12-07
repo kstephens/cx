@@ -2,7 +2,7 @@
 command: header-out
 example: cx in SOME.csv // -csv // -h // h- // csv-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/run
   exit: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/exit
   output: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/output

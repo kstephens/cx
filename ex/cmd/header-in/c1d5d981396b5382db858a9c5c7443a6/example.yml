@@ -2,7 +2,7 @@
 command: header-in
 example: cx in SOME.csv // -csv // -h // csv-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6/run
   exit: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6/exit
   output: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6/output

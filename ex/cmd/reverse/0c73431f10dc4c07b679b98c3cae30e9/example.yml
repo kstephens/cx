@@ -2,7 +2,7 @@
 command: reverse
 example: cx in SOME.csv // -h // reverse // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/run
   exit: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/exit
   output: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/output

@@ -2,7 +2,7 @@
 command: markdown-out
 example: cx in SOME.csv // -h // parse // md
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/run
   exit: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/exit
   output: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/output

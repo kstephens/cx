@@ -2,7 +2,7 @@
 command: cat
 example: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/run
   exit: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/exit
   output: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/output

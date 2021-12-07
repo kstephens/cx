@@ -2,7 +2,7 @@
 command: align
 example: cx in SOME.csv // -h // parse // align
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/run
   exit: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/exit
   output: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/output

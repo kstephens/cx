@@ -2,7 +2,7 @@
 command: grep
 example: cx in SOME.csv // -h // grep d:f
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/run
   exit: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/exit
   output: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/output

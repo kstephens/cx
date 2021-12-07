@@ -2,7 +2,7 @@
 command: jira-out
 example: cx in SOME.csv // -h // jira
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/run
   exit: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/exit
   output: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/output

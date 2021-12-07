@@ -2,7 +2,7 @@
 command: row-id
 example: cx in SOME.csv // -h // row-id --start=100 // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/run
   exit: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/exit
   output: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/output

@@ -3,7 +3,7 @@ command: set-meta
 example: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
   //  meta- // cut name,order,max_size,align // md
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/run
   exit: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/exit
   output: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/output

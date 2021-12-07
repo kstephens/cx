@@ -2,7 +2,7 @@
 command: cut
 example: cx in SOME.csv // -h // cut b a c // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/run
   exit: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/exit
   output: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12/output

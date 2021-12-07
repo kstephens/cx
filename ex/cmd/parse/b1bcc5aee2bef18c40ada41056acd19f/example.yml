@@ -2,7 +2,7 @@
 command: parse
 example: cx in SOME.csv // -h // parse // align // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/run
   exit: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/exit
   output: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f/output

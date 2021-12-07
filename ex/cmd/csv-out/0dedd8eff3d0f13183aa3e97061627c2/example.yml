@@ -2,7 +2,7 @@
 command: csv-out
 example: cx in SOME.csv // csv- --separator="\x09"
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/run
   exit: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/exit
   output: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2/output

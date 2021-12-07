@@ -2,7 +2,7 @@
 command: set-meta
 example: cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/run
   exit: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/exit
   output: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/output

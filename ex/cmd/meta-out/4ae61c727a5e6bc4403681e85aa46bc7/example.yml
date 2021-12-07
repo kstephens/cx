@@ -2,7 +2,7 @@
 command: meta-out
 example: cx in SOME.csv // -h // parse // -meta // meta- // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7/run
   exit: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7/exit
   output: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7/output

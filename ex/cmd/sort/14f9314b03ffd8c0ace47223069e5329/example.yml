@@ -2,7 +2,7 @@
 command: sort
 example: cx in SOME.csv // -h // sort d  // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/run
   exit: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/exit
   output: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/output

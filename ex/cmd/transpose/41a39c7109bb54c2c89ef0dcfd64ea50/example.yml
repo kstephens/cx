@@ -2,7 +2,7 @@
 command: transpose
 example: cx in SOME.csv // -h // transpose --no-include-header // h-
 success: true
-files: !ruby/struct:CX::Example::Contents
+files: !ruby/struct:CX::Example::Files
   run: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/run
   exit: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/exit
   output: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50/output
