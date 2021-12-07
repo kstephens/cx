@@ -838,13 +838,19 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :include-header
-    description: Include header in first column.
-    default: 
+    description: 'Include header in first column.  Default: true'
+    default: 'true'
     values: []
   has_column_args: 
   has_pipeline_args: 
-  examples: []
-  example_runs: []
+  examples:
+  - cx in SOME.csv // -h // transpose // h-
+  - cx in SOME.csv // -h // transpose --no-include-header // h-
+  example_runs:
+  - :cmd: cx in SOME.csv // -h // transpose // h-
+    :dir: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb
+  - :cmd: cx in SOME.csv // -h // transpose --no-include-header // h-
+    :dir: ex/cmd/transpose/41a39c7109bb54c2c89ef0dcfd64ea50
   file: lib/cx/xform/transpose.rb
   lineno: 6
   path: cx/xform/transpose

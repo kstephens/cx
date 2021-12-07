@@ -839,11 +839,32 @@ Transpose rows and columns.
 
 Invocation: 
 
-`transpose` *[* `--include-header` *]* 
+`transpose` *[* `--include-header=...` *]* 
 
 Options:
 
-* `--include-header` - Include header in first column.
+* `--include-header=...` - Include header in first column.  Default: true
+
+Examples:
+
+```
+ $ cx in SOME.csv // -h // transpose // h- 
+_COL_1,_COL_2,_COL_3,_COL_4,_COL_5
+a,1,24,134,2
+b,ab,44,5,12
+c,3,6,9,11
+d,foo,bar,baz,abc
+```
+
+```
+ $ cx in SOME.csv // -h // transpose --no-include-header // h- 
+_COL_1,_COL_2,_COL_3,_COL_4
+1,24,134,2
+ab,44,5,12
+3,6,9,11
+foo,bar,baz,abc
+```
+
 
 ## `type-inference`
 

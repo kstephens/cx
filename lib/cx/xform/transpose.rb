@@ -9,7 +9,10 @@ require 'cx/xform'
 #   synopsis: Transpose rows and columns.
 #   args: []
 #   opts:
-#     include-header: Include header in first column.
+#     include-header: 'Include header in first column.  Default: true'
+#   examples:
+#     - 'cx in SOME.csv // -h // transpose // h-'
+#     - 'cx in SOME.csv // -h // transpose --no-include-header // h-'
 
 module CX
   module Xform
