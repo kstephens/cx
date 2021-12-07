@@ -11,12 +11,11 @@ require 'cx/xform'
 #   opts: {}
 #   has_column_args: true
 #   examples:
-#     - cx in SOME.csv // -h // cut a,d
-#     - cx in SOME.csv // -h // cut b a c
-#     - cx in SOME.csv // -h // cut c:-
-#     - cx in SOME.csv // -h // cut 'a,*'
-#     - cx in SOME.csv // -h // cut 'd,*'
-#     - cx in SOME.csv // -h // cut '*,b:-'
+#     - cx in SOME.csv // -h // cut a,d // h-
+#     - cx in SOME.csv // -h // cut b a c // h-
+#     - cx in SOME.csv // -h // cut 'a,*' // h-
+#     - cx in SOME.csv // -h // cut 'd,*' // h-
+#     - cx in SOME.csv // -h // cut '*,b:-' // h-
 
 module CX
   module Xform

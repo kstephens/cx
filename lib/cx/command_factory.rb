@@ -74,8 +74,8 @@ module CX
       :class_name, :name, :aliases, :synopsis, :description,
       :suffixes, :arguments, :options,
       :has_column_args, :has_pipeline_args,
-      :examples,
-      :file, :path, :example_runs)
+      :examples, :example_runs,
+      :file, :lineno, :path)
       include Support
 
       class Option < Struct.new(:name, :description, :default, :values)
@@ -204,8 +204,10 @@ module CX
           end
         end
         yaml = YAML.dump(commands)
-        CommandFactory.new.load!(yaml)
+        factory = CommandFactory.new.load!(yaml)
+        log.info "Parsed #{COMMANDS_YML} #{factory.all.size} commands"
         File.write(COMMANDS_YML, yaml)
+        log.info "Wrote #{COMMANDS_YML} #{File.size(COMMANDS_YML)} bytes"
       end
 
       def parse_block! block
@@ -223,25 +225,29 @@ module CX
         info[:options]   ||= info[:opts] # ???
         info[:arguments] ||= info[:args] # ???
         command = CommandDesc.from_hash(info).initialize!
-        # pp(cmd: command)
+        log.info "#{self.class} : #{command.file}:#{command.lineno} : found #{command.class_name} #{command.name}"
         command
       end
       
       def scan_blocks! file, &blk
-        block = nil
+        block = block_lineno = nil
+        lineno = 0
         emit = lambda do | |
           if block
             block << "  file: #{file.inspect}"
+            block << "  lineno: #{block_lineno}"
             block << "  path: #{file.gsub(%r{^lib/|\.rb$}, '').inspect}"
             blk.call(block * "\n" + "\n\n")
             block = nil
           end
         end
         File.readlines(file).each do | line |
+          lineno += 1
           case line
           when /^\s*# :COMMAND:/
             emit[]
             block = [ ]
+            block_lineno = lineno
           when /^\s*# (.*)/
             block << $1 if block
           else

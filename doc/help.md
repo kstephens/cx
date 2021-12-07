@@ -195,7 +195,8 @@ Invocation:
 Examples:
 
 ```
- $ cx in SOME.csv // -h // cut a,d 
+ $ cx in SOME.csv // -h // cut a,d // h- 
+a,d
 1,foo
 24,bar
 134,baz
@@ -203,7 +204,8 @@ Examples:
 ```
 
 ```
- $ cx in SOME.csv // -h // cut b a c 
+ $ cx in SOME.csv // -h // cut b a c // h- 
+b,a,c
 ab,1,3
 44,24,6
 5,134,9
@@ -211,15 +213,8 @@ ab,1,3
 ```
 
 ```
- $ cx in SOME.csv // -h // cut c:- 
-
-
-
-
-```
-
-```
- $ cx in SOME.csv // -h // cut 'a,*' 
+ $ cx in SOME.csv // -h // cut 'a,*' // h- 
+a,b,c,d
 1,ab,3,foo
 24,44,6,bar
 134,5,9,baz
@@ -227,7 +222,8 @@ ab,1,3
 ```
 
 ```
- $ cx in SOME.csv // -h // cut 'd,*' 
+ $ cx in SOME.csv // -h // cut 'd,*' // h- 
+d,a,b,c
 foo,1,ab,3
 bar,24,44,6
 baz,134,5,9
@@ -235,7 +231,8 @@ abc,2,12,11
 ```
 
 ```
- $ cx in SOME.csv // -h // cut '*,b:-' 
+ $ cx in SOME.csv // -h // cut '*,b:-' // h- 
+a,c,d
 1,3,foo
 24,6,bar
 134,9,baz

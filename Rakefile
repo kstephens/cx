@@ -47,8 +47,9 @@ end
 desc "Generate lib/cx/commands.yml"
 XFORM_FILES = Rake::FileList.new("lib/cx/xform/*.rb")
 task :commands_yml => "lib/cx/commands.yml"
-file "lib/cx/commands.yml" => XFORM_FILES do
+file "lib/cx/commands.yml" => XFORM_FILES + [ 'Rakefile', 'lib/cx/command_factory.rb' ] do
   require 'cx/command_factory'
+  CX::Logging.log.level = ::Logger::DEBUG
   CX::CommandFactory::YamlGenerator.new.run!
 end
 

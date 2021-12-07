@@ -12,11 +12,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align
-  file: lib/cx/xform/align.rb
-  path: cx/xform/align
   example_runs:
   - :cmd: cx in SOME.csv // -h // parse // align
     :dir: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207
+  file: lib/cx/xform/align.rb
+  lineno: 6
+  path: cx/xform/align
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Cat
   name: cat
@@ -30,11 +31,12 @@
   has_pipeline_args: 
   examples:
   - cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
-  file: lib/cx/xform/cat.rb
-  path: cx/xform/cat
   example_runs:
   - :cmd: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
     :dir: ex/cmd/cat/b8b717f72e993ffbe386264497487a99
+  file: lib/cx/xform/cat.rb
+  lineno: 5
+  path: cx/xform/cat
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Coerce
   name: coerce
@@ -47,9 +49,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/coerce.rb
-  path: cx/xform/coerce
   example_runs: []
+  file: lib/cx/xform/coerce.rb
+  lineno: 8
+  path: cx/xform/coerce
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: CsvIn
   name: csv-in
@@ -64,9 +67,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/csv.rb
-  path: cx/xform/csv
   example_runs: []
+  file: lib/cx/xform/csv.rb
+  lineno: 8
+  path: cx/xform/csv
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: CsvOut
   name: csv-out
@@ -82,11 +86,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // csv- --separator="\x09"
-  file: lib/cx/xform/csv.rb
-  path: cx/xform/csv
   example_runs:
   - :cmd: cx in SOME.csv // csv- --separator="\x09"
     :dir: ex/cmd/csv-out/0dedd8eff3d0f13183aa3e97061627c2
+  file: lib/cx/xform/csv.rb
+  lineno: 17
+  path: cx/xform/csv
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Cut
   name: cut
@@ -99,27 +104,25 @@
   has_column_args: true
   has_pipeline_args: 
   examples:
-  - cx in SOME.csv // -h // cut a,d
-  - cx in SOME.csv // -h // cut b a c
-  - cx in SOME.csv // -h // cut c:-
-  - cx in SOME.csv // -h // cut 'a,*'
-  - cx in SOME.csv // -h // cut 'd,*'
-  - cx in SOME.csv // -h // cut '*,b:-'
-  file: lib/cx/xform/cut.rb
-  path: cx/xform/cut
+  - cx in SOME.csv // -h // cut a,d // h-
+  - cx in SOME.csv // -h // cut b a c // h-
+  - cx in SOME.csv // -h // cut 'a,*' // h-
+  - cx in SOME.csv // -h // cut 'd,*' // h-
+  - cx in SOME.csv // -h // cut '*,b:-' // h-
   example_runs:
-  - :cmd: cx in SOME.csv // -h // cut a,d
-    :dir: ex/cmd/cut/d56f63be7cdb06d724261bc6b9f5962a
-  - :cmd: cx in SOME.csv // -h // cut b a c
-    :dir: ex/cmd/cut/b2e5da35aa7f82d58dc1541505c2beb7
-  - :cmd: cx in SOME.csv // -h // cut c:-
-    :dir: ex/cmd/cut/ea54c987efb7be815b25e7358df2abc1
-  - :cmd: cx in SOME.csv // -h // cut 'a,*'
-    :dir: ex/cmd/cut/6e4080c8a14cdd960e77ba0a775833f8
-  - :cmd: cx in SOME.csv // -h // cut 'd,*'
-    :dir: ex/cmd/cut/505d0e6f586fd00e6ba2d16c49348487
-  - :cmd: cx in SOME.csv // -h // cut '*,b:-'
-    :dir: ex/cmd/cut/97eb8675d1c481886c775ca8bc0866e9
+  - :cmd: cx in SOME.csv // -h // cut a,d // h-
+    :dir: ex/cmd/cut/b366159605ecd3e99fd7b549470401ec
+  - :cmd: cx in SOME.csv // -h // cut b a c // h-
+    :dir: ex/cmd/cut/1543ea9818cca0217bfa095b32087a12
+  - :cmd: cx in SOME.csv // -h // cut 'a,*' // h-
+    :dir: ex/cmd/cut/3c679831eae5514a2451f3a06ca1b640
+  - :cmd: cx in SOME.csv // -h // cut 'd,*' // h-
+    :dir: ex/cmd/cut/916d5d62b18832110b9046889c90e634
+  - :cmd: cx in SOME.csv // -h // cut '*,b:-' // h-
+    :dir: ex/cmd/cut/b52a288dcedb5747b63340ccb022abdb
+  file: lib/cx/xform/cut.rb
+  lineno: 6
+  path: cx/xform/cut
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: DelimitedIn
   name: delimited-in
@@ -144,9 +147,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/delimited.rb
-  path: cx/xform/delimited
   example_runs: []
+  file: lib/cx/xform/delimited.rb
+  lineno: 7
+  path: cx/xform/delimited
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: DelimitedOut
   name: delimited-out
@@ -176,9 +180,10 @@
   has_column_args: true
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/delimited.rb
-  path: cx/xform/delimited
   example_runs: []
+  file: lib/cx/xform/delimited.rb
+  lineno: 17
+  path: cx/xform/delimited
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: EmptyToNull
   name: empty-null
@@ -191,9 +196,10 @@
   has_column_args: true
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/empty_to_null.rb
-  path: cx/xform/empty_to_null
   example_runs: []
+  file: lib/cx/xform/empty_to_null.rb
+  lineno: 6
+  path: cx/xform/empty_to_null
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Eval
   name: eval
@@ -208,14 +214,15 @@
   examples:
   - cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
   - cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
-  file: lib/cx/xform/eval.rb
-  path: cx/xform/eval
   example_runs:
   - :cmd: cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
     :dir: ex/cmd/eval/8133205e0a466c30ed4c5d2c40c8d320
   - :cmd: cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" //
       h-
     :dir: ex/cmd/eval/c3345924b94df4a295506d4d88a46cfb
+  file: lib/cx/xform/eval.rb
+  lineno: 6
+  path: cx/xform/eval
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep
   name: grep
@@ -233,8 +240,6 @@
   - cx in SOME.csv // -h // grep d:a
   - cx in SOME.csv // -h // grep d:^a
   - cx in SOME.csv // -h // grep "d:!;f"
-  file: lib/cx/xform/grep.rb
-  path: cx/xform/grep
   example_runs:
   - :cmd: cx in SOME.csv // -h // grep d:f
     :dir: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee
@@ -244,6 +249,9 @@
     :dir: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1
   - :cmd: cx in SOME.csv // -h // grep "d:!;f"
     :dir: ex/cmd/grep/bd1568d0356d03abf7a5f9658e7cb963
+  file: lib/cx/xform/grep.rb
+  lineno: 7
+  path: cx/xform/grep
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: HeaderIn
   name: header-in
@@ -259,11 +267,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // csv-
-  file: lib/cx/xform/header.rb
-  path: cx/xform/header
   example_runs:
   - :cmd: cx in SOME.csv // -csv // -h // csv-
     :dir: ex/cmd/header-in/c1d5d981396b5382db858a9c5c7443a6
+  file: lib/cx/xform/header.rb
+  lineno: 6
+  path: cx/xform/header
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: HeaderOut
   name: header-out
@@ -286,11 +295,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // h- // csv-
-  file: lib/cx/xform/header.rb
-  path: cx/xform/header
   example_runs:
   - :cmd: cx in SOME.csv // -csv // -h // h- // csv-
     :dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
+  file: lib/cx/xform/header.rb
+  lineno: 17
+  path: cx/xform/header
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Help
   name: help
@@ -304,9 +314,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/help.rb
-  path: cx/xform/help
   example_runs: []
+  file: lib/cx/xform/help.rb
+  lineno: 7
+  path: cx/xform/help
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: HtmlOut
   name: html-out
@@ -374,9 +385,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/html.rb
-  path: cx/xform/html
   example_runs: []
+  file: lib/cx/xform/html.rb
+  lineno: 11
+  path: cx/xform/html
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: IoIn
   name: io-in
@@ -394,9 +406,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/io.rb
-  path: cx/xform/io
   example_runs: []
+  file: lib/cx/xform/io.rb
+  lineno: 7
+  path: cx/xform/io
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: IoOut
   name: io-out
@@ -414,9 +427,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/io.rb
-  path: cx/xform/io
   example_runs: []
+  file: lib/cx/xform/io.rb
+  lineno: 14
+  path: cx/xform/io
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: JiraOut
   name: jira-out
@@ -433,11 +447,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // jira
-  file: lib/cx/xform/jira.rb
-  path: cx/xform/jira
   example_runs:
   - :cmd: cx in SOME.csv // -h // jira
     :dir: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31
+  file: lib/cx/xform/jira.rb
+  lineno: 8
+  path: cx/xform/jira
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MarkdownOut
   name: markdown-out
@@ -469,8 +484,6 @@
   - cx in SOME.csv // -h // parse // md
   - cx in SOME.csv // -h // parse // md --title=SOME.CSV
   - cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
-  file: lib/cx/xform/markdown.rb
-  path: cx/xform/markdown
   example_runs:
   - :cmd: cx in SOME.csv // -h // markdown
     :dir: ex/cmd/markdown-out/4c41287ef511faaa35a77fe0b2aeee19
@@ -480,6 +493,9 @@
     :dir: ex/cmd/markdown-out/fc1b8f07e7d36436e8bd1a6cb7d68060
   - :cmd: cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
     :dir: ex/cmd/markdown-out/5a037567093d704b4b53cbb44b03aff8
+  file: lib/cx/xform/markdown.rb
+  lineno: 9
+  path: cx/xform/markdown
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MetaIn
   name: meta-in
@@ -494,11 +510,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // h-
-  file: lib/cx/xform/meta.rb
-  path: cx/xform/meta
   example_runs:
   - :cmd: cx in SOME.csv // -h // -meta // h-
     :dir: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4
+  file: lib/cx/xform/meta.rb
+  lineno: 6
+  path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MetaOut
   name: meta-out
@@ -514,13 +531,14 @@
   examples:
   - cx in SOME.csv // -h // -meta // meta- // h-
   - cx in SOME.csv // -h // parse // -meta // meta- // h-
-  file: lib/cx/xform/meta.rb
-  path: cx/xform/meta
   example_runs:
   - :cmd: cx in SOME.csv // -h // -meta // meta- // h-
     :dir: ex/cmd/meta-out/aa27246b1b6172a4d5f5d039498d33ab
   - :cmd: cx in SOME.csv // -h // parse // -meta // meta- // h-
     :dir: ex/cmd/meta-out/4ae61c727a5e6bc4403681e85aa46bc7
+  file: lib/cx/xform/meta.rb
+  lineno: 15
+  path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Nop
   name: nop
@@ -534,9 +552,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/nop.rb
-  path: cx/xform/nop
   example_runs: []
+  file: lib/cx/xform/nop.rb
+  lineno: 6
+  path: cx/xform/nop
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Parse
   name: parse
@@ -550,11 +569,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align // h-
-  file: lib/cx/xform/parse.rb
-  path: cx/xform/parse
   example_runs:
   - :cmd: cx in SOME.csv // -h // parse // align // h-
     :dir: ex/cmd/parse/b1bcc5aee2bef18c40ada41056acd19f
+  file: lib/cx/xform/parse.rb
+  lineno: 8
+  path: cx/xform/parse
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Quote
   name: quote
@@ -578,9 +598,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/quote.rb
-  path: cx/xform/quote
   example_runs: []
+  file: lib/cx/xform/quote.rb
+  lineno: 7
+  path: cx/xform/quote
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Region
   name: region
@@ -594,9 +615,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/region.rb
-  path: cx/xform/region
   example_runs: []
+  file: lib/cx/xform/region.rb
+  lineno: 6
+  path: cx/xform/region
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Replace
   name: replace
@@ -610,9 +632,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/replace.rb
-  path: cx/xform/replace
   example_runs: []
+  file: lib/cx/xform/replace.rb
+  lineno: 7
+  path: cx/xform/replace
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Reverse
   name: reverse
@@ -627,11 +650,12 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // reverse // h-
-  file: lib/cx/xform/reverse.rb
-  path: cx/xform/reverse
   example_runs:
   - :cmd: cx in SOME.csv // -h // reverse // h-
     :dir: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9
+  file: lib/cx/xform/reverse.rb
+  lineno: 9
+  path: cx/xform/reverse
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: RowId
   name: row-id
@@ -662,8 +686,6 @@
   - cx in SOME.csv // -h // row-id --start=100 // h-
   - cx in SOME.csv // -h // row-id --name=id // h-
   - cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
-  file: lib/cx/xform/row_id.rb
-  path: cx/xform/row_id
   example_runs:
   - :cmd: cx in SOME.csv // -h // row-id --start=100 // h-
     :dir: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594
@@ -671,6 +693,9 @@
     :dir: ex/cmd/row-id/6e4c935e554250c3f1e77e9fdfe779e1
   - :cmd: cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
     :dir: ex/cmd/row-id/7b4c46b6feb221003f76bf308c57a250
+  file: lib/cx/xform/row_id.rb
+  lineno: 7
+  path: cx/xform/row_id
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Sort
   name: sort
@@ -689,8 +714,6 @@
   - cx in SOME.csv // -h //            sort a    // h-
   - cx in SOME.csv // -h // parse   // sort a    // h-
   - cx in SOME.csv // -h // parse   // sort a:-  // h-
-  file: lib/cx/xform/sort.rb
-  path: cx/xform/sort
   example_runs:
   - :cmd: cx in SOME.csv // -h // sort d  // h-
     :dir: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329
@@ -702,6 +725,9 @@
     :dir: ex/cmd/sort/8b415137e527241d0f38ac1f8921f282
   - :cmd: cx in SOME.csv // -h // parse   // sort a:-  // h-
     :dir: ex/cmd/sort/42ba5d3bda9beb7453eb8e0518bfaf2f
+  file: lib/cx/xform/sort.rb
+  lineno: 8
+  path: cx/xform/sort
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: SqlOut
   name: sql-out
@@ -757,13 +783,14 @@
   examples:
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
-  file: lib/cx/xform/sql.rb
-  path: cx/xform/sql
   example_runs:
   - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
     :dir: ex/cmd/sql-out/52a9e31a24a15e7b2c8c39216dcf9dcd
   - :cmd: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
     :dir: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2
+  file: lib/cx/xform/sql.rb
+  lineno: 8
+  path: cx/xform/sql
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Strip
   name: strip
@@ -777,9 +804,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/strip.rb
-  path: cx/xform/strip
   example_runs: []
+  file: lib/cx/xform/strip.rb
+  lineno: 6
+  path: cx/xform/strip
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Tee
   name: tee
@@ -795,9 +823,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/tee.rb
-  path: cx/xform/tee
   example_runs: []
+  file: lib/cx/xform/tee.rb
+  lineno: 5
+  path: cx/xform/tee
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Transpose
   name: transpose
@@ -815,9 +844,10 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/transpose.rb
-  path: cx/xform/transpose
   example_runs: []
+  file: lib/cx/xform/transpose.rb
+  lineno: 6
+  path: cx/xform/transpose
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: TypeInference
   name: type-inference
@@ -832,6 +862,7 @@
   has_column_args: 
   has_pipeline_args: 
   examples: []
-  file: lib/cx/xform/type_inference.rb
-  path: cx/xform/type_inference
   example_runs: []
+  file: lib/cx/xform/type_inference.rb
+  lineno: 7
+  path: cx/xform/type_inference
