@@ -24,6 +24,7 @@ module CX
         unless @document = (File.read(help_file) rescue nil)
           make_document!
           File.write(help_file, @document)
+          log.info "wrote help_file : #{help_file}"
         end
       end
       @document
@@ -49,9 +50,12 @@ module CX
 
       doc
     end
-      
+
+    def no_wrap x
+      "<span style='white-space: nowrap;>'#{x}</span>"
+    end
     def code x
-      "`#{x}`"
+      "<code>#{x}</code>"
     end
 
     def run_examples!

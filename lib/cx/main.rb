@@ -175,13 +175,13 @@ module CX
       @pipeline.default_input_format!(env[:main][:defaults][:input_format])
       @pipeline.default_output_format!(env[:main][:defaults][:output_format])
       
-      pp(pipeline: @pipeline) if @debug
+      # pp(pipeline: @pipeline) if debug?
       raise_ "empty pipeline #{self.args.inspect}" if pipeline.empty?
       self
     end
     
     def parse_pipeline! pipeline_args
-      pp(pipeline_args!: pipeline_args) if @debug
+      # pp(pipeline_args!: pipeline_args) if @debug
       @builder = PipelineBuilder.new
       @builder.factory = @factory
       @builder.parse!(pipeline_args)

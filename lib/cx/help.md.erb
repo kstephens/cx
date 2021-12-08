@@ -6,11 +6,9 @@ A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`"
 
 Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
 
-# Commands
 
-## Options
+# Options
 
-Command and global options:
 
    Syntax           | Semantic 
 --------------------|--------------------------------
@@ -19,9 +17,9 @@ Command and global options:
 `--OPTION=VALUE`    | Sets option.
 `--`                | Terminates all option parsing.
 
-## Arguments
+# Arguments
 
-Most commands take one or more column arguments:
+Some commands take one or more column arguments:
 
     Syntax              | Semantic
 ------------------------|--------------------------------
@@ -34,7 +32,7 @@ Most commands take one or more column arguments:
 
 For most commands, all columns are processed when column arguments are given.
 
-The column name  `"*"` implies all columns; see `cut` for examples.
+The column name  `"*"` implies all columns.
 
 # Global Options
 
@@ -45,6 +43,8 @@ The column name  `"*"` implies all columns; see `cut` for examples.
 `--help`            | Print this document.    
 
 # Example Data
+
+See examples below for usage.
 
 <% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
 ```
@@ -59,38 +59,34 @@ The column name  `"*"` implies all columns; see `cut` for examples.
 <% commands.each do | c | %>
 ## `<%= c.name %>`
 
+`<%= c.name %>` \
+<% unless c.options.empty? %>
+*[* \
+<% c.options.each do |o| %>
+<%= no_wrap code(o.brief) %> \
+<% end %> \
+*]* \
+<% c.arguments.each do |n| %>
+<%= no_wrap code(n) %> \
+<% end %> \
+<% if c.has_column_args? %>
+*[* *column-args *...* *]* \
+<% end %> \
+<% if c.has_pipeline_args? %> \
+*[* `{{` *pipeline* `}}` *...* *]* \
+<% end %>
+
 <%= c.synopsis %>
 
 <% unless c.aliases.empty? %>
 Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% end %>
 
-Invocation:
-
-<span style='border-style: solid; padding: 0.5em;'>
-`<%= c.name %>` \
-<% if c.has_column_args? %>
-*column-args* *...* \
-<% end %> \
-<% unless c.options.empty? %>
-*[* \
-<% c.options.each do |o| %>
-<%= o.brief %> \
-<% end %> \
-*]* \
-<% c.arguments.each do |n| %>
-`<%= n %>` \
-<% end %> \
-<% if c.has_pipeline_args? %> \
-*[* `{{` *pipeline* `}}` *...* \
-<% end %>
-</span>
-
 <% unless c.options.empty? %>
   Options                   |  Description
 ----------------------------|------------------------------- \
 <% c.options.each do | o | %>
-<span style='white-space: nowrap;'><%= code(o.brief) %></span> | <%= o.description %> \
+<%= no_wrap code(o.brief) %> | <%= o.description %> \
 <% end %>
 <% end %>
 
