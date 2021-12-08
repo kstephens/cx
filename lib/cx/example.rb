@@ -6,7 +6,7 @@ require 'shellwords'
 require 'yaml'
 
 module CX
-  class Example < Struct.new(:command, :example, :success, :files, :contents, :dir, :dir_name, :base_dir, :yaml_file)
+  class Example < Struct.new(:command, :example, :exit_code, :success, :files, :contents, :dir, :dir_name, :base_dir, :yaml_file)
     include Support, StructSupport
 
     def self.yaml_file_for_dir dir ; "#{dir}/example.yml" ; end
@@ -21,7 +21,7 @@ module CX
       self.files      ||= Files.new.set_dir!(dir)
     end
 
-    class Files < Struct.new(:run, :exit, :stderr, :expected, :actual, :diff)
+    class Files < Struct.new(:run, :stderr, :expected, :actual, :diff)
       include Support, StructSupport
 
       def set_dir! dir
@@ -69,7 +69,7 @@ cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x
 (
   #{example};
-  echo $! > exit
+  echo $! > exit_code
 ) 2> stderr > actual
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
@@ -82,23 +82,31 @@ END
       argv = Shellwords.split(example)
       # pp(argv: argv)
       raise "Unexpected example arg list : #{argv.inspect}" unless argv.shift == 'cx'
-      argv = %w(--debug) + argv
+      # argv = %w(--debug) + argv
       write_files!
       main = CX::Main.new(argv)
       log.delimited "RUNNING LOCALLY" do
         log.info "run #{command} : #{example}"
         log.info "dir #{dir}"
-        pid = Process.fork do
-          Dir.chdir(dir) do
+        Dir["ex/data/*.*"].each{|f| FileUtils.cp f, dir}
+        pid = nil
+        Dir.chdir(dir) do
+          pid = Process.fork do
             $stdin.reopen("/dev/null", "r")
             $stdout.reopen("actual", "w")
             $stderr.reopen("stderr", "w")
-            main.run!
-            if ! File.exist?("expected")
-              FileUtil.copy('actual', 'expected')
+            begin
+              main.run!
+            ensure
+              $stdout.flush rescue nil
+              $stderr.flush rescue nil
             end
             exit!(main.exit_code)
           end
+          if ! File.exist?('expected')
+            FileUtils.copy('actual', 'expected')
+          end
+          system 'diff -u expected actual | (read _; read _; cat) > diff'
         end
         
         log.info "waiting for pid #{pid}"
@@ -106,7 +114,7 @@ END
         result = $?
         log.info "finished pid #{pid} : #{result.inspect}"
         read!
-        self.success = result.exitstatus == 0
+        self.success = (self.exit_code = result.exitstatus) == 0
         log_members
         contents.log_members
         self.contents = nil
