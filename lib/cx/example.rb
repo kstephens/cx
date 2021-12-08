@@ -92,6 +92,7 @@ END
         pid = nil
         Dir.chdir(dir) do
           pid = Process.fork do
+            CX::Random.init! 1
             $stdin.reopen("/dev/null", "r")
             $stdout.reopen("actual", "w")
             $stderr.reopen("stderr", "w")

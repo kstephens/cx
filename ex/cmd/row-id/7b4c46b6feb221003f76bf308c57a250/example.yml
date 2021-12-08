@@ -39,10 +39,10 @@ contents: !ruby/struct:CX::Example::Files
     6a890449-2328-4a8c-93e8-80daaee9392f,2,12,11,abc
   actual: |
     uuid,a,b,c,d
-    c320f647-f05a-4f1a-ad62-d9e353b16400,1,ab,3,foo
-    47449ec9-9a05-4058-8942-74d62dbcde69,24,44,6,bar
-    b727c768-9240-4677-8e7e-5842db10486f,134,5,9,baz
-    0d6ee32f-e554-424a-9686-3970600b1d73,2,12,11,abc
+    4ce19f1a-a12f-0c89-0429-311871528c45,1,ab,3,foo
+    035fb7a3-1142-14a1-1a68-e5d97aeb3594,24,44,6,bar
+    292172a7-b6b9-6ed5-46bc-c9486137efdb,134,5,9,baz
+    40bf24bd-85f1-a061-752b-bcd099c8eceb,2,12,11,abc
   diff: |
     @@ -1,5 +0,0 @@
     -uuid,a,b,c,d

@@ -6,8 +6,12 @@ module CX
       attr_accessor :random, :seed, :use_seed
     end
 
-    self.use_seed = (ENV['CX_RANDOM_SEED'] || 0).to_i.nonzero?
-    self.seed = use_seed && use_seed > 1 ? use_seed : 1638854222 # Arbitrary
+    def self.init! x = nil
+      self.use_seed = x || (ENV['CX_RANDOM_SEED'] || 0).to_i.nonzero?
+      self.seed = use_seed && use_seed > 1 ? use_seed : 1638854222 # Arbitrary
+      self.random = nil
+    end
+    init!
     
     def self.random
       @random ||=
