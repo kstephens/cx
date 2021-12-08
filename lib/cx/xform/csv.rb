@@ -32,6 +32,7 @@ module CX
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})
+        self
       end
 
       def parse_record str

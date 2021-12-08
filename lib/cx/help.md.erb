@@ -40,18 +40,6 @@ The column name  `"*"` implies all columns.
 `--verbose`         | Enable verbose info.  
 `--help`            | Print this document.    
 
-# Example Data
-
-See examples below for usage.
-
-<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
-```
-# <%= File.basename file %>
-<%= File.read(file) %>
-```
-
-<% end %>
-
 # Commands
 
 <% commands.each do | c | %>
@@ -111,6 +99,16 @@ $ <%= e.example %>
 git clone https://github.com/kstephens/cx.git
 gem install cx
 ```
+
+# Example Data
+
+<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
+```
+# <%= File.basename file %>
+<%= File.read(file) %>
+```
+
+<% end %>
 
 # Attribution
 

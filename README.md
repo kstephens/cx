@@ -40,59 +40,6 @@ The column name  `"*"` implies all columns.
 `--verbose`         | Enable verbose info.  
 `--help`            | Print this document.    
 
-# Example Data
-
-See examples below for usage.
-
-```
-# DUPLICATES.csv
-x,y,z
-1,2,3
-4,5,6
-1,2,3
-5,5,3
-
-```
-
-```
-# EMOS.csv
-2,12,11,abc
-134,5,9,baz
-24,44,6,bar
-1,ab,3,foo
-a,b,c,d
-
-```
-
-```
-# HAS-UNUSED-COLUMNS.csv
-e,f,g,h
-1,ab,,foo
-24,,,bar
-,5,,baz
-,12,,abc
-
-```
-
-```
-# OTHER.csv
-x,y
-1,2
-2,3
-5,9
-
-```
-
-```
-# SOME.csv
-a,b,c,d
-1,ab,3,foo
-24,44,6,bar
-134,5,9,baz
-2,12,11,abc
-
-```
-
 # Commands
 
 ## `align`
@@ -640,13 +587,139 @@ Select a range of rows.
 
 Aliases: <span style='white-space: nowrap;>'<code>range</code></span>
 
+  Examples:
+
+```
+$ cx in RANDOM.csv // -h // region -1            // h-
+id,a,b,c,X %
+1100,-27,ylb ,39.6,39%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 2,4,6         // h-
+id,a,b,c,X %
+1002,77,ymt,0.4,48%
+1004,-62,rcz ,1.2,127%
+1006,67,hjn,"",187%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 11..14        // h-
+id,a,b,c,X %
+1011,39,axr,"",97%
+1012,-38,wky,4.4,60%
+1013,73,dmm ,4.8,197%
+1014,48,gys,5.2,49%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 11...14       // h-
+id,a,b,c,X %
+1011,39,axr,"",97%
+1012,-38,wky,4.4,60%
+1013,73,dmm ,4.8,197%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 9..1          // h-
+id,a,b,c,X %
+1009,-99,ali,3.2,191%
+1008,-21,qeg,2.8,135%
+1007,-72,xgv ,2.4,55%
+1006,67,hjn,"",187%
+1005,-38,oub,1.6,9%
+1004,-62,rcz ,1.2,127%
+1003,84,yis,0.8,12%
+1002,77,ymt,0.4,48%
+1001,79,ekl ,"",133%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region -9..-1        // h-
+id,a,b,c,X %
+1092,-74,rjz,36.4,76%
+1093,-51,fzi,36.8,193%
+1094,-27,okd ,37.2,21%
+1095,87,azt,37.6,57%
+1096,-9,ywj,"",127%
+1097,-88,jte ,38.4,170%
+1098,56,gns,38.8,64%
+1099,-4,sod,39.2,151%
+1100,-27,ylb ,39.6,39%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 2,4,10..15    // h-
+id,a,b,c,X %
+1002,77,ymt,0.4,48%
+1004,-62,rcz ,1.2,127%
+1010,-71,jtj ,3.6,25%
+1011,39,axr,"",97%
+1012,-38,wky,4.4,60%
+1013,73,dmm ,4.8,197%
+1014,48,gys,5.2,49%
+1015,-92,ndu,5.6,80%
+
+```
+
 ## `replace`
 
 `replace`
+*[*
+<span style='white-space: nowrap;>'<code>--search=</code></span>
+<span style='white-space: nowrap;>'<code>--replace=</code></span>
+<span style='white-space: nowrap;>'<code>--global</code></span>*]*
 
 Replace by regex.
 
 Aliases: <span style='white-space: nowrap;>'<code>sub</code></span>
+
+  Options                   |  Description
+----------------------------|-------------------------------
+<span style='white-space: nowrap;>'<code>--search=</code></span> | Search for in all columns.
+<span style='white-space: nowrap;>'<code>--replace=</code></span> | Replace matches with.
+<span style='white-space: nowrap;>'<code>--global</code></span> | Replace all occurances.
+
+  Examples:
+
+```
+$ cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
+id,a,b,c,X %
+1001,79,ekl ,"",133
+1002,77,ymt,0.4,48
+1003,84,yis,0.8,12
+1004,-62,rcz ,1.2,127
+1005,-38,oub,1.6,9
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-
+id,a,b,c,X %
+_001,79,ekl ,"",_33%
+_002,77,ymt,0.4,48%
+_003,84,yis,0.8,_2%
+_004,-62,rcz ,_.2,_27%
+_005,-38,oub,_.6,9%
+
+```
+
+```
+$ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global // h-
+id,a,b,c,X %
+00,79,ekl ,"",33%
+002,77,ymt,0.4,48%
+003,84,yis,0.8,2%
+004,-62,rcz ,.2,27%
+005,-38,oub,.6,9%
+
+```
 
 ## `reverse`
 
@@ -930,5 +1003,164 @@ foo,bar,baz,abc
 Infer types from field strings.
 
 Aliases: <span style='white-space: nowrap;>'<code>-types</code></span>, <span style='white-space: nowrap;>'<code>types</code></span>
+
+```
+# DUPLICATES.csv
+x,y,z
+1,2,3
+4,5,6
+1,2,3
+5,5,3
+
+```
+
+```
+# EMOS.csv
+2,12,11,abc
+134,5,9,baz
+24,44,6,bar
+1,ab,3,foo
+a,b,c,d
+
+```
+
+```
+# HAS-UNUSED-COLUMNS.csv
+e,f,g,h
+1,ab,,foo
+24,,,bar
+,5,,baz
+,12,,abc
+
+```
+
+```
+# OTHER.csv
+x,y
+1,2
+2,3
+5,9
+
+```
+
+```
+# RANDOM.csv
+id,a,b,c,X %
+1001,79,ekl ,"",133%
+1002,77,ymt,0.4,48%
+1003,84,yis,0.8,12%
+1004,-62,rcz ,1.2,127%
+1005,-38,oub,1.6,9%
+1006,67,hjn,"",187%
+1007,-72,xgv ,2.4,55%
+1008,-21,qeg,2.8,135%
+1009,-99,ali,3.2,191%
+1010,-71,jtj ,3.6,25%
+1011,39,axr,"",97%
+1012,-38,wky,4.4,60%
+1013,73,dmm ,4.8,197%
+1014,48,gys,5.2,49%
+1015,-92,ndu,5.6,80%
+1016,-44,ndr ,"",26%
+1017,-71,ewo,6.4,173%
+1018,26,cwc,6.8,186%
+1019,-72,cag ,7.2,50%
+1020,51,iws,7.6,145%
+1021,18,ypl,"",143%
+1022,29,jer ,8.4,184%
+1023,-82,pmc,8.8,63%
+1024,-71,ohv,9.2,185%
+1025,-11,dut ,9.6,98%
+1026,-69,zwq,"",124%
+1027,-47,znc,10.4,200%
+1028,-4,ngr ,10.8,38%
+1029,16,ynb,11.2,58%
+1030,-52,mwc,11.6,89%
+1031,-49,qcg ,"",169%
+1032,-57,man,12.4,150%
+1033,15,pyz,12.8,51%
+1034,73,qhh ,13.2,58%
+1035,-5,brj,13.6,72%
+1036,2,mec,"",95%
+1037,-63,dnp ,14.4,101%
+1038,-28,xxj,14.8,66%
+1039,-63,ggv,15.2,83%
+1040,84,nit ,15.6,13%
+1041,57,gwh,"",108%
+1042,-25,cop,16.4,81%
+1043,-19,jgi ,16.8,68%
+1044,89,qji,17.2,148%
+1045,-7,ypx,17.6,64%
+1046,-96,lak ,"",13%
+1047,-96,kfb,18.4,133%
+1048,-7,dac,18.8,54%
+1049,-59,kmf ,19.2,194%
+1050,2,mwf,19.6,192%
+1051,5,kkm,"",138%
+1052,-51,fqv ,20.4,7%
+1053,8,rli,20.8,68%
+1054,14,yno,21.2,81%
+1055,1,yzl ,21.6,101%
+1056,0,hst,"",183%
+1057,56,ydn,22.4,88%
+1058,57,eyd ,22.8,7%
+1059,63,kyc,23.2,1%
+1060,79,yaq,23.6,124%
+1061,28,njo ,"",182%
+1062,16,xxz,24.4,36%
+1063,60,hxh,24.8,15%
+1064,-81,dwn ,25.2,103%
+1065,-48,jvf,25.6,146%
+1066,-37,emd,"",140%
+1067,-2,prq ,26.4,186%
+1068,-56,unw,26.8,134%
+1069,95,qkc,27.2,47%
+1070,9,pcx ,27.6,45%
+1071,53,odm,"",128%
+1072,-99,kty,28.4,166%
+1073,-15,rvs ,28.8,54%
+1074,-76,wgq,29.2,43%
+1075,-100,gwp,29.6,87%
+1076,23,mfa ,"",173%
+1077,-80,fin,30.4,161%
+1078,-53,ner,30.8,29%
+1079,-64,yde ,31.2,94%
+1080,-63,gzh,31.6,188%
+1081,44,mhj,"",124%
+1082,-29,qce ,32.4,20%
+1083,95,kbs,32.8,156%
+1084,9,igk,33.2,119%
+1085,-70,pwi ,33.6,38%
+1086,6,ukh,"",119%
+1087,-24,qdc,34.4,101%
+1088,-68,rzb ,34.8,142%
+1089,-72,zqw,35.2,73%
+1090,41,lzz,35.6,112%
+1091,17,nvh ,"",79%
+1092,-74,rjz,36.4,76%
+1093,-51,fzi,36.8,193%
+1094,-27,okd ,37.2,21%
+1095,87,azt,37.6,57%
+1096,-9,ywj,"",127%
+1097,-88,jte ,38.4,170%
+1098,56,gns,38.8,64%
+1099,-4,sod,39.2,151%
+1100,-27,ylb ,39.6,39%
+
+```
+
+```
+# SOME.csv
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+
+```
+
+# Attribution
+
+Copyright 2020 - Kurt Stephens 
 
 

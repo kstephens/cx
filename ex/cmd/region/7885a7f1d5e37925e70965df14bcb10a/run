@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir='ex/cmd/region/7885a7f1d5e37925e70965df14bcb10a'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in RANDOM.csv // -h // region 11..14        // h-;
+  echo $! > exit_code
+) 2> stderr > actual
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]

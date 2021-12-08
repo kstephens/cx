@@ -17,8 +17,8 @@ module CX
       ints = (-100  .. 100).to_a
       strs = ("aaa" .. "zzz").to_a
       vals = (1 .. 200).map{|x| "#{x}%"}
-      rand = Random.new(12345678)
-      header = Header.new([:id, :a, :b, :b, :"X %"])
+      rand = ::Random.new(12345678)
+      header = Header.new([:id, :a, :b, :c, :"X %"])
       table = Table.new([], header)
       header[:id].meta.type = ::Integer
       header[:"X %"].meta.type = ::Numeric

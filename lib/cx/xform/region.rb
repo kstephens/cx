@@ -9,6 +9,15 @@ require 'cx/xform'
 #   synopsis: Select a range of rows.
 #   args: []
 #   opts: {}
+#   examples:
+#     - 'cx in RANDOM.csv // -h // region -1            // h-'
+#     - 'cx in RANDOM.csv // -h // region 2,4,6         // h-'
+#     - 'cx in RANDOM.csv // -h // region 11..14        // h-'
+#     - 'cx in RANDOM.csv // -h // region 11...14       // h-'
+#     - 'cx in RANDOM.csv // -h // region 9..1          // h-'
+#     - 'cx in RANDOM.csv // -h // region -9..-1        // h-'
+#     - 'cx in RANDOM.csv // -h // region 2,4,10..15    // h-'
+
 
 module CX
   module Xform

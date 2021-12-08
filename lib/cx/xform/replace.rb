@@ -10,6 +10,13 @@ require 'cx/column_args'
 #   synopsis: Replace by regex.
 #   args: []
 #   opts:
+#     search=: Search for in all columns.
+#     replace=: Replace matches with.
+#     global: Replace all occurances.
+#   examples:
+#     - 'cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-'
+#     - 'cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-'
+#     - 'cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global // h-'
 
 module CX
   module Xform

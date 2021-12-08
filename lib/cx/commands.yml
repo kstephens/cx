@@ -566,7 +566,14 @@
   options: []
   has_column_args: 
   has_pipeline_args: 
-  examples: []
+  examples:
+  - cx in RANDOM.csv // -h // region -1            // h-
+  - cx in RANDOM.csv // -h // region 2,4,6         // h-
+  - cx in RANDOM.csv // -h // region 11..14        // h-
+  - cx in RANDOM.csv // -h // region 11...14       // h-
+  - cx in RANDOM.csv // -h // region 9..1          // h-
+  - cx in RANDOM.csv // -h // region -9..-1        // h-
+  - cx in RANDOM.csv // -h // region 2,4,10..15    // h-
   file: lib/cx/xform/region.rb
   lineno: 6
   path: cx/xform/region
@@ -579,10 +586,29 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :search=
+    description: Search for in all columns.
+    default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :replace=
+    description: Replace matches with.
+    default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :global
+    description: Replace all occurances.
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
-  examples: []
+  examples:
+  - cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
+  - cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-
+  - cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global
+    // h-
   file: lib/cx/xform/replace.rb
   lineno: 7
   path: cx/xform/replace
