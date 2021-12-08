@@ -20,7 +20,14 @@ module CX
     def members_map member = self.class.members
       members.map{|k| [k, yield(k, self[k])]}.to_h
     end
-      
+
+    def log_members members = self.class.members
+      members.each do | n |
+        log.info "%-12s : %s" % [n, with_newlines(self[n])]
+      end
+      self
+    end
+
     module ClassMethods
       def new_from_hash h
         new(*values_from_hash(h))

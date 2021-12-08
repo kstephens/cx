@@ -16,9 +16,20 @@ module CX
 
       def call input, env
         help = CX::Help.new
-        help.run_examples!   if opts[:run_examples]
-        help.make_document!  if opts[:make_help]
-        doc = help.document
+        doc = ''
+        args.push 'show' if args.empty?
+        args.each do | arg |
+          case arg
+          when 'run-examples'
+            help.run_examples!
+          when 'make-help'
+            help.make_document!
+          when 'show'
+            doc = help.document
+          else
+            raise "Unknown argument #{arg.inspect}"
+          end
+        end
         Table.new([[doc]], Header.new([:HELP]))
       end
     end

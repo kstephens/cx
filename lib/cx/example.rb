@@ -2,6 +2,7 @@ require 'cx'
 require 'cx/struct'
 require 'digest/md5'
 require 'fileutils'
+require 'shellwords'
 require 'yaml'
 
 module CX
@@ -20,7 +21,7 @@ module CX
       self.files      ||= Files.new.set_dir!(dir)
     end
 
-    class Files < Struct.new(:run, :exit, :output, :expected, :actual, :diff)
+    class Files < Struct.new(:run, :exit, :stderr, :expected, :actual, :diff)
       include Support, StructSupport
 
       def set_dir! dir
@@ -31,30 +32,21 @@ module CX
       def read
         self.class.new_from_map{|file| File.read(self[file]) rescue nil}
       end
-
-      def show!
-        self.class.members.each do | n |
-          log.info "%-12s : %s" % [n, with_newlines(self[n])]
-        end
-        self
-      end
     end
 
     def contents
       @contents ||= files.read
+    end
+    
+    def read!
+      @contents = files.read
+      self
     end
 
     def accept_command
       "mv #{files.actual} #{files.expected}"
     end
 
-    def show!
-      self.class.members.each do | n |
-        log.info "%-12s : %s" % [n, with_newlines(self[n])]
-      end
-      self
-    end
-    
     def save!
       log.info "Saved #{yaml_file}"
       File.write(yaml_file, YAML.dump(self))
@@ -64,10 +56,8 @@ module CX
       e = new_from_hash(opts)
       YAML.load(File.read(e.yaml_file))
     end
-    
-    def run!
-      log.info "run #{command} : #{example}"
-      log.info "dir #{dir}"
+
+    def write_files!
       FileUtils.mkdir_p(dir)
       File.write(files.run, <<"END")
 #!/usr/bin/env bash
@@ -80,14 +70,48 @@ cd "$dir" || exit 9
 (
   #{example};
   echo $! > exit
-) >actual
+) 2> stderr > actual
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]
 END
       File.chmod(0755, files.run)
-      self.success = system("#{files.run} </dev/null")
-      save!
+    end
+    
+    def run!
+      argv = Shellwords.split(example)
+      # pp(argv: argv)
+      raise "Unexpected example arg list : #{argv.inspect}" unless argv.shift == 'cx'
+      argv = %w(--debug) + argv
+      write_files!
+      main = CX::Main.new(argv)
+      log.delimited "RUNNING LOCALLY" do
+        log.info "run #{command} : #{example}"
+        log.info "dir #{dir}"
+        pid = Process.fork do
+          Dir.chdir(dir) do
+            $stdin.reopen("/dev/null", "r")
+            $stdout.reopen("actual", "w")
+            $stderr.reopen("stderr", "w")
+            main.run!
+            if ! File.exist?("expected")
+              FileUtil.copy('actual', 'expected')
+            end
+            exit!(main.exit_code)
+          end
+        end
+        
+        log.info "waiting for pid #{pid}"
+        Process.wait(pid)
+        result = $?
+        log.info "finished pid #{pid} : #{result.inspect}"
+        read!
+        self.success = result.exitstatus == 0
+        log_members
+        contents.log_members
+        self.contents = nil
+        save!
+      end
       self
     end
     
@@ -130,7 +154,7 @@ END
           example:    example,
         )
         example.run!
-        example.show!
+        example.log_members
       end
     end
     
@@ -142,7 +166,7 @@ END
         examples.each do | ex |
           log.delimited "#{ex.command} : #{ex.example}" do
             ex.contents
-            ex.show!
+            ex.log_members
             s = <<"END"
   ### to accept actual:
   #{ex.accept_command}

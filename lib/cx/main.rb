@@ -35,6 +35,8 @@ module CX
 
     attr_accessor :progname, :argv, :args, :opts, :env, :factory, :pipeline, :exit_code
 
+    Logging.log.level = Logger::WARN
+
     def initialize argv
       now = Time.now
       @t0 = $cx_t0 || now
@@ -76,7 +78,6 @@ module CX
           },
         },
       }
-      log.level = Logger::WARN
     end
 
     def parse_argv!
@@ -101,8 +102,9 @@ module CX
     end
 
     def run!
-      go!
+      run_unsafe!
     rescue => exc
+      # binding.pry if debug?
       msg = progname.dup
       reason = exc.reason rescue nil
       data = exc.data rescue nil
@@ -119,8 +121,8 @@ module CX
       $stderr.puts pps(env: env) if opts[:show_env]
       GC.start(full_mark: true, immediate_sweep: true) if @full_gc
     end
-    
-    def go!
+
+    def run_unsafe!
       parse_argv!
 
       @factory = factory = CommandFactory.new.load!
