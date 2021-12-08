@@ -741,6 +741,16 @@ a,b,c,d
 
 ```
 
+```
+$ cx in SOME.csv // reverse
+2,12,11,abc
+134,5,9,baz
+24,44,6,bar
+1,ab,3,foo
+a,b,c,d
+
+```
+
 ## `row-id`
 
 `row-id`

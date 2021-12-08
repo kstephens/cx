@@ -115,8 +115,8 @@ END
             FileUtils.copy('actual', 'expected')
           end
           system 'diff -u expected actual | (read _; read _; cat) > diff'
-          Dir["ex/data/*.*"].each{|f| File.unlink("#{dir}/#{File.basename(f)}")}
         end
+        Dir["ex/data/*.*"].each{|f| File.unlink("#{dir}/#{File.basename(f)}")}
         
         read!
         self.success = (self.exit_code = wait_status.exitstatus) == 0

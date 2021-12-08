@@ -14,6 +14,7 @@ require 'cx/xform'
 #   opts:
 #   examples:
 #     - cx in SOME.csv // -h // reverse // h-
+#     - cx in SOME.csv // reverse
 
 
 module CX

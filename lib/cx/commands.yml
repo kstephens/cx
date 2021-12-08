@@ -626,6 +626,7 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // reverse // h-
+  - cx in SOME.csv // reverse
   file: lib/cx/xform/reverse.rb
   lineno: 9
   path: cx/xform/reverse
