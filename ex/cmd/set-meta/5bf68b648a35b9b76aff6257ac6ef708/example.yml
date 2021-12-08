@@ -2,10 +2,10 @@
 command: set-meta
 example: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
   //  meta- // cut name,order,max_size,align // md
-success: false
+exit_code: 0
+success: true
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/run
-  exit: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/exit
   stderr: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/stderr
   expected: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/expected
   actual: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/actual
@@ -26,48 +26,19 @@ contents: !ruby/struct:CX::Example::Files
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
       cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md;
-      echo $! > exit
+      echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  exit: 
-  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
-    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
-    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
-    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
-    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
-    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
-    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
-    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
-    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
-    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
-    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
-    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
-    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>\n  [\"in\",\n
-    \  \"SOME.csv\",\n   \"//\",\n   \"-h\",\n   \"//\",\n   \"-meta\",\n   \"//\",\n
-    \  \"set-meta\",\n   \"a:max_size=20;align=right;order=9\",\n   \"//\",\n   \"meta-\",\n
-    \  \"//\",\n   \"cut\",\n   \"name,order,max_size,align\",\n   \"//\",\n   \"md\"]}\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"HeaderIn\" : require \"cx/xform/header\"\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"Cut\" : require \"cx/xform/cut\"\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"MarkdownOut\" : require
-    \"cx/xform/markdown\"\n# cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline 1322013220
-    [#<CX::Xform::IoIn 1304013040 \"SOME.csv\"> | #<CX::Xform::CsvIn 1306013060> |
-    #<CX::Xform::HeaderIn 1308013080> | #<CX::Xform::MetaIn 1310013100> | #<CX::Xform::SetMeta
-    1312013120> | #<CX::Xform::MetaOut 1314013140> | #<CX::Xform::Cut 1316013160>
-    | #<CX::Xform::MarkdownOut 1318013180> | #<CX::Xform::IoOut 1320013200 nil>]>}\n"
-  expected: 
+  stderr: ''
+  expected: |
+    | name  | order | max_size | align |
+    | ----- | ----: | -------: | ----- |
+    | b     |     1 |        2 |       |
+    | c     |     2 |        2 |       |
+    | d     |     3 |        3 |       |
+    | a     |     9 |       20 | right |
   actual: |
     | name  | order | max_size | align |
     | ----- | ----: | -------: | ----- |
@@ -75,4 +46,11 @@ contents: !ruby/struct:CX::Example::Files
     | c     |     2 |        2 |       |
     | d     |     3 |        3 |       |
     | a     |     9 |       20 | right |
-  diff: 
+  diff: |
+    @@ -1,6 +0,0 @@
+    -| name  | order | max_size | align |
+    -| ----- | ----: | -------: | ----- |
+    -| b     |     1 |        2 |       |
+    -| c     |     2 |        2 |       |
+    -| d     |     3 |        3 |       |
+    -| a     |     9 |       20 | right |

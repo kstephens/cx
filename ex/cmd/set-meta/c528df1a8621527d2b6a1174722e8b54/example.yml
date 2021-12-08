@@ -1,10 +1,10 @@
 --- !ruby/struct:CX::Example
 command: set-meta
 example: cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
-success: false
+exit_code: 0
+success: true
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/run
-  exit: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/exit
   stderr: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/stderr
   expected: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/expected
   actual: ex/cmd/set-meta/c528df1a8621527d2b6a1174722e8b54/actual
@@ -25,46 +25,19 @@ contents: !ruby/struct:CX::Example::Files
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
       cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md;
-      echo $! > exit
+      echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  exit: 
-  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
-    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
-    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
-    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
-    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
-    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
-    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
-    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
-    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
-    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
-    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
-    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
-    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>\n  [\"in\",\n
-    \  \"SOME.csv\",\n   \"//\",\n   \"-h\",\n   \"//\",\n   \"-meta\",\n   \"//\",\n
-    \  \"set-meta\",\n   \"c:name=newname;order=-1\",\n   \"//\",\n   \"md\"]}\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"HeaderIn\" : require \"cx/xform/header\"\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"MarkdownOut\" : require
-    \"cx/xform/markdown\"\n# cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline 1350013500
-    [#<CX::Xform::IoIn 1336013360 \"SOME.csv\"> | #<CX::Xform::CsvIn 1338013380> |
-    #<CX::Xform::HeaderIn 1340013400> | #<CX::Xform::MetaIn 1342013420> | #<CX::Xform::SetMeta
-    1344013440> | #<CX::Xform::MarkdownOut 1346013460> | #<CX::Xform::IoOut 1348013480
-    nil>]>}\n"
-  expected: 
+  stderr: ''
+  expected: |
+    | newname | a     | b     | d     |
+    | ------- | ----- | ----- | ----- |
+    | 3       | 1     | ab    | foo   |
+    | 6       | 24    | 44    | bar   |
+    | 9       | 134   | 5     | baz   |
+    | 11      | 2     | 12    | abc   |
   actual: |
     | newname | a     | b     | d     |
     | ------- | ----- | ----- | ----- |
@@ -72,4 +45,11 @@ contents: !ruby/struct:CX::Example::Files
     | 6       | 24    | 44    | bar   |
     | 9       | 134   | 5     | baz   |
     | 11      | 2     | 12    | abc   |
-  diff: 
+  diff: |
+    @@ -1,6 +0,0 @@
+    -| newname | a     | b     | d     |
+    -| ------- | ----- | ----- | ----- |
+    -| 3       | 1     | ab    | foo   |
+    -| 6       | 24    | 44    | bar   |
+    -| 9       | 134   | 5     | baz   |
+    -| 11      | 2     | 12    | abc   |

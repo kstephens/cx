@@ -1,10 +1,10 @@
 --- !ruby/struct:CX::Example
 command: sql-out
 example: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
-success: false
+exit_code: 0
+success: true
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/run
-  exit: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/exit
   stderr: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/stderr
   expected: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/expected
   actual: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/actual
@@ -25,45 +25,21 @@ contents: !ruby/struct:CX::Example::Files
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
       cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert;
-      echo $! > exit
+      echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  exit: 
-  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
-    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
-    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
-    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
-    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
-    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
-    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
-    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
-    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
-    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
-    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
-    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
-    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>\n  [\"in\",\n
-    \  \"SOME.csv\",\n   \"//\",\n   \"-h\",\n   \"//\",\n   \"parse\",\n   \"//\",\n
-    \  \"sql-\",\n   \"--table=SOME_TABLE\",\n   \"--insert\"]}\n# cx : DEBUG  : CX::CommandFactory::CommandDesc
-    : load \"HeaderIn\" : require \"cx/xform/header\"\n# cx : DEBUG  : CX::CommandFactory::CommandDesc
-    : load \"Parse\" : require \"cx/xform/parse\"\n# cx : DEBUG  : CX::CommandFactory::CommandDesc
-    : load \"SqlOut\" : require \"cx/xform/sql\"\n# cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline
-    1576015760 [#<CX::Xform::IoIn 1564015640 \"SOME.csv\"> | #<CX::Xform::CsvIn 1566015660>
-    | #<CX::Xform::HeaderIn 1568015680> | #<CX::Xform::Parse 1570015700> | #<CX::Xform::SqlOut
-    1572015720> | #<CX::Xform::IoOut 1574015740 nil>]>}\n"
-  expected: 
+  stderr: ''
+  expected: |+
+    INSERT INTO SOME_TABLE
+      (a, b, c, d)
+    VALUES
+      (1, 'ab', 3, 'foo'),
+      (24, 44, 6, 'bar'),
+      (134, 5, 9, 'baz'),
+      (2, 12, 11, 'abc');
+
   actual: |+
     INSERT INTO SOME_TABLE
       (a, b, c, d)
@@ -73,4 +49,13 @@ contents: !ruby/struct:CX::Example::Files
       (134, 5, 9, 'baz'),
       (2, 12, 11, 'abc');
 
-  diff: 
+  diff: |
+    @@ -1,8 +0,0 @@
+    -INSERT INTO SOME_TABLE
+    -  (a, b, c, d)
+    -VALUES
+    -  (1, 'ab', 3, 'foo'),
+    -  (24, 44, 6, 'bar'),
+    -  (134, 5, 9, 'baz'),
+    -  (2, 12, 11, 'abc');
+    -

@@ -7,7 +7,7 @@ cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x
 (
   cx in SOME.csv // -h // jira;
-  echo $! > exit
+  echo $! > exit_code
 ) 2> stderr > actual
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff

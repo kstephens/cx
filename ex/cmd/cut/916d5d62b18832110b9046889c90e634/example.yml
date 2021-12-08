@@ -1,10 +1,10 @@
 --- !ruby/struct:CX::Example
 command: cut
 example: cx in SOME.csv // -h // cut 'd,*' // h-
-success: false
+exit_code: 0
+success: true
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/cut/916d5d62b18832110b9046889c90e634/run
-  exit: ex/cmd/cut/916d5d62b18832110b9046889c90e634/exit
   stderr: ex/cmd/cut/916d5d62b18832110b9046889c90e634/stderr
   expected: ex/cmd/cut/916d5d62b18832110b9046889c90e634/expected
   actual: ex/cmd/cut/916d5d62b18832110b9046889c90e634/actual
@@ -25,48 +25,28 @@ contents: !ruby/struct:CX::Example::Files
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
       cx in SOME.csv // -h // cut 'd,*' // h-;
-      echo $! > exit
+      echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  exit: 
-  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
-    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
-    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
-    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
-    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
-    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
-    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
-    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
-    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
-    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
-    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
-    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
-    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>\n  [\"in\",
-    \"SOME.csv\", \"//\", \"-h\", \"//\", \"cut\", \"d,*\", \"//\", \"h-\"]}\n# cx
-    : DEBUG  : CX::CommandFactory::CommandDesc : load \"HeaderIn\" : require \"cx/xform/header\"\n#
-    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"Cut\" : require \"cx/xform/cut\"\n#
-    cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline 52605260 [#<CX::Xform::IoIn
-    51205120 \"SOME.csv\"> | #<CX::Xform::CsvIn 51405140> | #<CX::Xform::HeaderIn
-    51605160> | #<CX::Xform::Cut 51805180> | #<CX::Xform::HeaderOut 52005200> | #<CX::Xform::CsvOut
-    52205220> | #<CX::Xform::IoOut 52405240 nil>]>}\n"
-  expected: 
+  stderr: ''
+  expected: |
+    d,a,b,c
+    foo,1,ab,3
+    bar,24,44,6
+    baz,134,5,9
+    abc,2,12,11
   actual: |
     d,a,b,c
     foo,1,ab,3
     bar,24,44,6
     baz,134,5,9
     abc,2,12,11
-  diff: 
+  diff: |
+    @@ -1,5 +0,0 @@
+    -d,a,b,c
+    -foo,1,ab,3
+    -bar,24,44,6
+    -baz,134,5,9
+    -abc,2,12,11

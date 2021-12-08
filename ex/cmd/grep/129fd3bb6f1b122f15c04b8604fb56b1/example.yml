@@ -1,10 +1,10 @@
 --- !ruby/struct:CX::Example
 command: grep
 example: cx in SOME.csv // -h // grep d:^a
-success: false
+exit_code: 0
+success: true
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1/run
-  exit: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1/exit
   stderr: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1/stderr
   expected: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1/expected
   actual: ex/cmd/grep/129fd3bb6f1b122f15c04b8604fb56b1/actual
@@ -25,44 +25,18 @@ contents: !ruby/struct:CX::Example::Files
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
       cx in SOME.csv // -h // grep d:^a;
-      echo $! > exit
+      echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  exit: 
-  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
-    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
-    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
-    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
-    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
-    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
-    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
-    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
-    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
-    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
-    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
-    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
-    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
-    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
-    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
-    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>[\"in\",
-    \"SOME.csv\", \"//\", \"-h\", \"//\", \"grep\", \"d:^a\"]}\n# cx : DEBUG  : CX::CommandFactory::CommandDesc
-    : load \"HeaderIn\" : require \"cx/xform/header\"\n# cx : DEBUG  : CX::CommandFactory::CommandDesc
-    : load \"Grep\" : require \"cx/xform/grep\"\n# cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline
-    72007200 [#<CX::Xform::IoIn 70807080 \"SOME.csv\"> | #<CX::Xform::CsvIn 71007100>
-    | #<CX::Xform::HeaderIn 71207120> | #<CX::Xform::Grep 71407140> | #<CX::Xform::CsvOut
-    71607160> | #<CX::Xform::IoOut 71807180 nil>]>}\n"
-  expected: 
+  stderr: ''
+  expected: '2,12,11,abc
+
+'
   actual: '2,12,11,abc
 
 '
-  diff: 
+  diff: |
+    @@ -1 +0,0 @@
+    -2,12,11,abc
