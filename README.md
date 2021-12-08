@@ -56,7 +56,6 @@ $ cx in SOME.csv // -h // parse // align
    24,44   ,    6,bar  
   134,5    ,    9,baz  
     2,12   ,   11,abc  
-
 ```
 
 ## `cat`
@@ -77,7 +76,6 @@ x,y,z
 4,5,6
 1,2,3
 5,5,3
-
 ```
 
 ## `coerce`
@@ -111,7 +109,6 @@ a	b	c	d
 24	44	6	bar
 134	5	9	baz
 2	12	11	abc
-
 ```
 
 ## `cut`
@@ -130,7 +127,6 @@ a,d
 24,bar
 134,baz
 2,abc
-
 ```
 
 ```
@@ -140,7 +136,6 @@ ab,1,3
 44,24,6
 5,134,9
 12,2,11
-
 ```
 
 ```
@@ -150,7 +145,6 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ```
@@ -160,7 +154,6 @@ foo,1,ab,3
 bar,24,44,6
 baz,134,5,9
 abc,2,12,11
-
 ```
 
 ```
@@ -170,7 +163,6 @@ a,c,d
 24,6,bar
 134,9,baz
 2,11,abc
-
 ```
 
 ## `delimited-in`
@@ -230,7 +222,6 @@ Integer,String,Integer,String
 Integer,Integer,Integer,String
 Integer,Integer,Integer,String
 Integer,Integer,Integer,String
-
 ```
 
 ```
@@ -240,7 +231,6 @@ a,b,c,d,a_to_power_of_c
 24,44,6,bar,191102976
 134,5,9,baz,13929745610903012864
 2,12,11,abc,2048
-
 ```
 
 ## `grep`
@@ -257,7 +247,6 @@ Aliases: g
 ```
 $ cx in SOME.csv // -h // grep d:f
 1,ab,3,foo
-
 ```
 
 ```
@@ -265,13 +254,11 @@ $ cx in SOME.csv // -h // grep d:a
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ```
 $ cx in SOME.csv // -h // grep d:^a
 2,12,11,abc
-
 ```
 
 ```
@@ -279,7 +266,6 @@ $ cx in SOME.csv // -h // grep "d:!;f"
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ## `header-in`
@@ -298,7 +284,6 @@ $ cx in SOME.csv // -csv // -h // csv-
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ## `header-out`
@@ -324,7 +309,6 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ```
@@ -336,7 +320,6 @@ max_value,134,ab,11,foo
 "",24,44,6,bar
 "",134,5,9,baz
 "",2,12,11,abc
-
 ```
 
 ## `help`
@@ -422,7 +405,6 @@ $ cx in SOME.csv // -h // jira
 |24|44|6|bar|
 |134|5|9|baz|
 |2|12|11|abc|
-
 ```
 
 ## `markdown-out`
@@ -451,7 +433,6 @@ $ cx in SOME.csv // -h // markdown
 | 24    | 44    | 6     | bar   |
 | 134   | 5     | 9     | baz   |
 | 2     | 12    | 11    | abc   |
-
 ```
 
 ```
@@ -462,7 +443,6 @@ $ cx in SOME.csv // -h // parse // md
 |    24 | 44    |     6 | bar   |
 |   134 | 5     |     9 | baz   |
 |     2 | 12    |    11 | abc   |
-
 ```
 
 ```
@@ -474,7 +454,6 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV
 |   134 | 5     |     9 | baz   |
 |     2 | 12    |    11 | abc   |
 [ SOME.CSV ]
-
 ```
 
 ```
@@ -484,7 +463,6 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 |   134 | 5     |     9 | baz   |
 |     2 | 12    |    11 | abc   |
 [ SOME.CSV ]
-
 ```
 
 ## `meta-in`
@@ -504,7 +482,6 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 ## `meta-out`
@@ -524,7 +501,6 @@ a,a,true,0,0,,1,3,1,24,0,0,,,,String,
 b,b,true,1,1,,1,2,12,ab,0,0,,,,String,
 c,c,true,2,2,,1,2,11,9,0,0,,,,String,
 d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,
-
 ```
 
 ```
@@ -534,7 +510,6 @@ a,a,true,0,0,Integer,1,3,1,134,0,0,,,,Integer,
 b,b,true,1,1,Object,1,2,ab,ab,0,0,,,,String;Integer,
 c,c,true,2,2,Integer,1,2,3,11,0,0,,,,Integer,
 d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,
-
 ```
 
 ## `nop`
@@ -560,7 +535,6 @@ a,b,c,d
    24,44   ,    6,bar  
   134,5    ,    9,baz  
     2,12   ,   11,abc  
-
 ```
 
 ## `quote`
@@ -593,7 +567,6 @@ Aliases: range
 $ cx in RANDOM.csv // -h // region -1            // h-
 id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
-
 ```
 
 ```
@@ -602,7 +575,6 @@ id,a,b,c,X %
 1002,77,ymt,0.4,48%
 1004,-62,rcz ,1.2,127%
 1006,67,hjn,"",187%
-
 ```
 
 ```
@@ -612,7 +584,6 @@ id,a,b,c,X %
 1012,-38,wky,4.4,60%
 1013,73,dmm ,4.8,197%
 1014,48,gys,5.2,49%
-
 ```
 
 ```
@@ -621,7 +592,6 @@ id,a,b,c,X %
 1011,39,axr,"",97%
 1012,-38,wky,4.4,60%
 1013,73,dmm ,4.8,197%
-
 ```
 
 ```
@@ -636,7 +606,6 @@ id,a,b,c,X %
 1003,84,yis,0.8,12%
 1002,77,ymt,0.4,48%
 1001,79,ekl ,"",133%
-
 ```
 
 ```
@@ -651,7 +620,6 @@ id,a,b,c,X %
 1098,56,gns,38.8,64%
 1099,-4,sod,39.2,151%
 1100,-27,ylb ,39.6,39%
-
 ```
 
 ```
@@ -665,7 +633,6 @@ id,a,b,c,X %
 1013,73,dmm ,4.8,197%
 1014,48,gys,5.2,49%
 1015,-92,ndu,5.6,80%
-
 ```
 
 ## `replace`
@@ -696,7 +663,6 @@ id,a,b,c,X %
 1003,84,yis,0.8,12
 1004,-62,rcz ,1.2,127
 1005,-38,oub,1.6,9
-
 ```
 
 ```
@@ -707,7 +673,6 @@ _002,77,ymt,0.4,48%
 _003,84,yis,0.8,_2%
 _004,-62,rcz ,_.2,_27%
 _005,-38,oub,_.6,9%
-
 ```
 
 ```
@@ -718,7 +683,6 @@ id,a,b,c,X %
 003,84,yis,0.8,2%
 004,-62,rcz ,.2,27%
 005,-38,oub,.6,9%
-
 ```
 
 ## `reverse`
@@ -738,7 +702,6 @@ a,b,c,d
 134,5,9,baz
 24,44,6,bar
 1,ab,3,foo
-
 ```
 
 ```
@@ -748,7 +711,6 @@ $ cx in SOME.csv // reverse
 24,44,6,bar
 1,ab,3,foo
 a,b,c,d
-
 ```
 
 ## `row-id`
@@ -776,7 +738,6 @@ __rowid__,a,b,c,d
 101,24,44,6,bar
 102,134,5,9,baz
 103,2,12,11,abc
-
 ```
 
 ```
@@ -786,7 +747,6 @@ id,a,b,c,d
 2,24,44,6,bar
 3,134,5,9,baz
 4,2,12,11,abc
-
 ```
 
 ```
@@ -796,7 +756,6 @@ uuid,a,b,c,d
 035fb7a3-1142-14a1-1a68-e5d97aeb3594,24,44,6,bar
 292172a7-b6b9-6ed5-46bc-c9486137efdb,134,5,9,baz
 40bf24bd-85f1-a061-752b-bcd099c8eceb,2,12,11,abc
-
 ```
 
 ## `set-meta`
@@ -815,7 +774,6 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
 |                   24 | 44    | 6     | bar   |
 |                  134 | 5     | 9     | baz   |
 |                    2 | 12    | 11    | abc   |
-
 ```
 
 ```
@@ -826,7 +784,6 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' 
 | c     |     2 |        2 |       |
 | d     |     3 |        3 |       |
 | a     |     9 |       20 | right |
-
 ```
 
 ```
@@ -837,7 +794,6 @@ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 | 6       | 24    | 44    | bar   |
 | 9       | 134   | 5     | baz   |
 | 11      | 2     | 12    | abc   |
-
 ```
 
 ## `sort`
@@ -857,7 +813,6 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 1,ab,3,foo
-
 ```
 
 ```
@@ -867,7 +822,6 @@ a,b,c,d
 134,5,9,baz
 2,12,11,abc
 24,44,6,bar
-
 ```
 
 ```
@@ -877,7 +831,6 @@ a,b,c,d
 134,5,9,baz
 2,12,11,abc
 24,44,6,bar
-
 ```
 
 ```
@@ -887,7 +840,6 @@ a,b,c,d
 2,12,11,abc
 24,44,6,bar
 134,5,9,baz
-
 ```
 
 ```
@@ -897,7 +849,6 @@ a,b,c,d
 24,44,6,bar
 2,12,11,abc
 1,ab,3,foo
-
 ```
 
 ## `sql-out`
@@ -993,7 +944,6 @@ a,1,24,134,2
 b,ab,44,5,12
 c,3,6,9,11
 d,foo,bar,baz,abc
-
 ```
 
 ```
@@ -1003,7 +953,6 @@ _COL_1,_COL_2,_COL_3,_COL_4
 ab,44,5,12
 3,6,9,11
 foo,bar,baz,abc
-
 ```
 
 ## `type-inference`
@@ -1021,7 +970,6 @@ x,y,z
 4,5,6
 1,2,3
 5,5,3
-
 ```
 
 ```
@@ -1031,7 +979,6 @@ x,y,z
 24,44,6,bar
 1,ab,3,foo
 a,b,c,d
-
 ```
 
 ```
@@ -1041,7 +988,6 @@ e,f,g,h
 24,,,bar
 ,5,,baz
 ,12,,abc
-
 ```
 
 ```
@@ -1050,7 +996,6 @@ x,y
 1,2
 2,3
 5,9
-
 ```
 
 ```
@@ -1156,7 +1101,6 @@ id,a,b,c,X %
 1098,56,gns,38.8,64%
 1099,-4,sod,39.2,151%
 1100,-27,ylb ,39.6,39%
-
 ```
 
 ```
@@ -1166,7 +1110,6 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
-
 ```
 
 # Attribution

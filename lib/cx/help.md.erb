@@ -86,8 +86,7 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% c.examples.each do | e | %>
 ```
 $ <%= e.example %>
-<%= e.contents.actual %>
-```
+<%= e.contents.actual %>```
 <% end # examples.each %>
 <% end # unless c.examples.empty? %>
 
@@ -105,8 +104,7 @@ gem install cx
 <% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
 ```
 # <%= File.basename file %>
-<%= File.read(file) %>
-```
+<%= File.read(file) %>```
 
 <% end %>
 
