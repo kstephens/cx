@@ -92,7 +92,7 @@ Coerce columns by inferred types.
 
 Parses CSV lines.
 
-Aliases: <span style='white-space: nowrap;>'<code>-csv</code></span>
+Aliases: -csv
 
 ## `csv-out`
 
@@ -100,7 +100,7 @@ Aliases: <span style='white-space: nowrap;>'<code>-csv</code></span>
 
 Generates CSV lines.
 
-Aliases: <span style='white-space: nowrap;>'<code>csv-</code></span>
+Aliases: csv-
 
   Examples:
 
@@ -177,36 +177,36 @@ a,c,d
 
 `delimited-in`
 *[*
-<span style='white-space: nowrap;>'<code>--field-sep=...</code></span>
-<span style='white-space: nowrap;>'<code>--record-sep=...</code></span>*]*
+--field-sep=...
+--record-sep=...*]*
 
 Parse delimited records.
 
-Aliases: <span style='white-space: nowrap;>'<code>-delimited</code></span>, <span style='white-space: nowrap;>'<code>-d</code></span>
+Aliases: -delimited, -d
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--field-sep=...</code></span> | Default: ",".
-<span style='white-space: nowrap;>'<code>--record-sep=...</code></span> | Default: system newline.
+--field-sep=... | Default: ",".
+--record-sep=... | Default: system newline.
 
 ## `delimited-out`
 
 `delimited-out`
 *[*
-<span style='white-space: nowrap;>'<code>--field-sep=...</code></span>
-<span style='white-space: nowrap;>'<code>--record-sep=...</code></span>
-<span style='white-space: nowrap;>'<code>--multi-sep=...</code></span>*]*
+--field-sep=...
+--record-sep=...
+--multi-sep=...*]*
 *[* *column-args *...* *]*
 
 Generate delimited records.
 
-Aliases: <span style='white-space: nowrap;>'<code>delimited-</code></span>, <span style='white-space: nowrap;>'<code>d-</code></span>
+Aliases: delimited-, d-
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--field-sep=...</code></span> | Default: ",".
-<span style='white-space: nowrap;>'<code>--record-sep=...</code></span> | Default: system newline.
-<span style='white-space: nowrap;>'<code>--multi-sep=...</code></span> | Separator for enumerable values.  Default: ";".
+--field-sep=... | Default: ",".
+--record-sep=... | Default: system newline.
+--multi-sep=... | Separator for enumerable values.  Default: ";".
 
 ## `empty-null`
 
@@ -250,7 +250,7 @@ a,b,c,d,a_to_power_of_c
 
 Filters by regex.
 
-Aliases: <span style='white-space: nowrap;>'<code>g</code></span>
+Aliases: g
 
   Examples:
 
@@ -288,7 +288,7 @@ $ cx in SOME.csv // -h // grep "d:!;f"
 
 Interprets first row as a column name header.
 
-Aliases: <span style='white-space: nowrap;>'<code>-header</code></span>, <span style='white-space: nowrap;>'<code>-h</code></span>
+Aliases: -header, -h
 
   Examples:
 
@@ -305,15 +305,15 @@ $ cx in SOME.csv // -csv // -h // csv-
 
 `header-out`
 *[*
-<span style='white-space: nowrap;>'<code>--meta-columns=...</code></span>*]*
+--meta-columns=...*]*
 
 Emits column names as first row.
 
-Aliases: <span style='white-space: nowrap;>'<code>header-</code></span>, <span style='white-space: nowrap;>'<code>h-</code></span>
+Aliases: header-, h-
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--meta-columns=...</code></span> | Emit a row for each meta-column containing the meta value for that column..
+--meta-columns=... | Emit a row for each meta-column containing the meta value for that column..
 
   Examples:
 
@@ -342,9 +342,9 @@ max_value,134,ab,11,foo
 ## `help`
 
 `help`
-<span style='white-space: nowrap;>'<code>show</code></span>
-<span style='white-space: nowrap;>'<code>run-examples</code></span>
-<span style='white-space: nowrap;>'<code>make-help</code></span>
+show
+run-examples
+make-help
 
 Show this documentation.
 
@@ -357,53 +357,53 @@ Subcommands:
 
 `html-out`
 *[*
-<span style='white-space: nowrap;>'<code>--raw</code></span>
-<span style='white-space: nowrap;>'<code>--filtering=...</code></span>
-<span style='white-space: nowrap;>'<code>--title</code></span>
-<span style='white-space: nowrap;>'<code>--table-only</code></span>
-<span style='white-space: nowrap;>'<code>--indent=...</code></span>
-<span style='white-space: nowrap;>'<code>--sorting=...</code></span>
-<span style='white-space: nowrap;>'<code>--styled=...</code></span>
-<span style='white-space: nowrap;>'<code>--head</code></span>
-<span style='white-space: nowrap;>'<code>--body-head</code></span>
-<span style='white-space: nowrap;>'<code>--body-foot</code></span>*]*
+--raw
+--filtering=...
+--title
+--table-only
+--indent=...
+--sorting=...
+--styled=...
+--head
+--body-head
+--body-foot*]*
 
 Emits HTML.
 
-Aliases: <span style='white-space: nowrap;>'<code>html-</code></span>, <span style='white-space: nowrap;>'<code>html</code></span>, <span style='white-space: nowrap;>'<code>htm</code></span>
+Aliases: html-, html, htm
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--raw</code></span> | Comma-separated list of columns that contain raw HTML.
-<span style='white-space: nowrap;>'<code>--filtering=...</code></span> | Enable filtering.  Default: true
-<span style='white-space: nowrap;>'<code>--title</code></span> | Sets the HTML `title`.
-<span style='white-space: nowrap;>'<code>--table-only</code></span> | Emit the HTML `table` only.
-<span style='white-space: nowrap;>'<code>--indent=...</code></span> | Spaces to indent.  Default: 1
-<span style='white-space: nowrap;>'<code>--sorting=...</code></span> | Enable sorting.  Default: true
-<span style='white-space: nowrap;>'<code>--styled=...</code></span> | Enable styling.  Default: true
-<span style='white-space: nowrap;>'<code>--head</code></span> | Additional raw HTML at foot of `head`.
-<span style='white-space: nowrap;>'<code>--body-head</code></span> | Additional raw HTML at head of `body`.
-<span style='white-space: nowrap;>'<code>--body-foot</code></span> | Additional raw HTML at foot of `body`.
+--raw | Comma-separated list of columns that contain raw HTML.
+--filtering=... | Enable filtering.  Default: true
+--title | Sets the HTML `title`.
+--table-only | Emit the HTML `table` only.
+--indent=... | Spaces to indent.  Default: 1
+--sorting=... | Enable sorting.  Default: true
+--styled=... | Enable styling.  Default: true
+--head | Additional raw HTML at foot of `head`.
+--body-head | Additional raw HTML at head of `body`.
+--body-foot | Additional raw HTML at foot of `body`.
 
 ## `io-in`
 
 `io-in`
-<span style='white-space: nowrap;>'<code>filename</code></span>
-<span style='white-space: nowrap;>'<code>...</code></span>
+filename
+...
 
 Read from a file.
 
-Aliases: <span style='white-space: nowrap;>'<code>-io</code></span>, <span style='white-space: nowrap;>'<code>in</code></span>, <span style='white-space: nowrap;>'<code>i</code></span>
+Aliases: -io, in, i
 
 ## `io-out`
 
 `io-out`
-<span style='white-space: nowrap;>'<code>filename</code></span>
-<span style='white-space: nowrap;>'<code>...</code></span>
+filename
+...
 
 Write records to a file.
 
-Aliases: <span style='white-space: nowrap;>'<code>io-</code></span>, <span style='white-space: nowrap;>'<code>out</code></span>, <span style='white-space: nowrap;>'<code>o</code></span>
+Aliases: io-, out, o
 
 ## `jira-out`
 
@@ -411,7 +411,7 @@ Aliases: <span style='white-space: nowrap;>'<code>io-</code></span>, <span style
 
 Generate a Jira table lines.
 
-Aliases: <span style='white-space: nowrap;>'<code>jira-</code></span>, <span style='white-space: nowrap;>'<code>jira</code></span>
+Aliases: jira-, jira
 
   Examples:
 
@@ -429,17 +429,17 @@ $ cx in SOME.csv // -h // jira
 
 `markdown-out`
 *[*
-<span style='white-space: nowrap;>'<code>--title=...</code></span>
-<span style='white-space: nowrap;>'<code>--include-header=...</code></span>*]*
+--title=...
+--include-header=...*]*
 
 Generate Markdown table lines.
 
-Aliases: <span style='white-space: nowrap;>'<code>markdown-</code></span>, <span style='white-space: nowrap;>'<code>md</code></span>, <span style='white-space: nowrap;>'<code>md-</code></span>, <span style='white-space: nowrap;>'<code>markdown</code></span>
+Aliases: markdown-, md, md-, markdown
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--title=...</code></span> | Output title (caption).  Default: none.
-<span style='white-space: nowrap;>'<code>--include-header=...</code></span> | Include a header.  Default: true.
+--title=... | Output title (caption).  Default: none.
+--include-header=... | Include a header.  Default: true.
 
   Examples:
 
@@ -493,7 +493,7 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 
 Calculates various column metadata.
 
-Aliases: <span style='white-space: nowrap;>'<code>-meta</code></span>
+Aliases: -meta
 
   Examples:
 
@@ -513,7 +513,7 @@ a,b,c,d
 
 Generate a table of column metadata.
 
-Aliases: <span style='white-space: nowrap;>'<code>meta-</code></span>
+Aliases: meta-
 
   Examples:
 
@@ -543,7 +543,7 @@ d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,
 
 Does nothing -- output is same as input.
 
-Aliases: <span style='white-space: nowrap;>'<code>noop</code></span>
+Aliases: noop
 
 ## `parse`
 
@@ -567,17 +567,17 @@ a,b,c,d
 
 `quote`
 *[*
-<span style='white-space: nowrap;>'<code>--mode</code></span>
-<span style='white-space: nowrap;>'<code>--strings-only</code></span>*]*
+--mode
+--strings-only*]*
 
 Quote string values that would be ambigous or unprintable.
 
-Aliases: <span style='white-space: nowrap;>'<code>q</code></span>
+Aliases: q
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--mode</code></span> | maybe, everything, always
-<span style='white-space: nowrap;>'<code>--strings-only</code></span> | Ignore non-strings.
+--mode | maybe, everything, always
+--strings-only | Ignore non-strings.
 
 ## `region`
 
@@ -585,7 +585,7 @@ Aliases: <span style='white-space: nowrap;>'<code>q</code></span>
 
 Select a range of rows.
 
-Aliases: <span style='white-space: nowrap;>'<code>range</code></span>
+Aliases: range
 
   Examples:
 
@@ -672,19 +672,19 @@ id,a,b,c,X %
 
 `replace`
 *[*
-<span style='white-space: nowrap;>'<code>--search=</code></span>
-<span style='white-space: nowrap;>'<code>--replace=</code></span>
-<span style='white-space: nowrap;>'<code>--global</code></span>*]*
+--search=
+--replace=
+--global*]*
 
 Replace by regex.
 
-Aliases: <span style='white-space: nowrap;>'<code>sub</code></span>
+Aliases: sub
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--search=</code></span> | Search for in all columns.
-<span style='white-space: nowrap;>'<code>--replace=</code></span> | Replace matches with.
-<span style='white-space: nowrap;>'<code>--global</code></span> | Replace all occurances.
+--search= | Search for in all columns.
+--replace= | Replace matches with.
+--global | Replace all occurances.
 
   Examples:
 
@@ -727,7 +727,7 @@ id,a,b,c,X %
 
 Reverse order of rows.
 
-Aliases: <span style='white-space: nowrap;>'<code>tac</code></span>
+Aliases: tac
 
   Examples:
 
@@ -745,17 +745,17 @@ a,b,c,d
 
 `row-id`
 *[*
-<span style='white-space: nowrap;>'<code>--name=...</code></span>
-<span style='white-space: nowrap;>'<code>--type=...</code></span>
-<span style='white-space: nowrap;>'<code>--start=...</code></span>*]*
+--name=...
+--type=...
+--start=...*]*
 
 Inserts a row id column.
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--name=...</code></span> | Name of id column.  Default: "__rowid__".
-<span style='white-space: nowrap;>'<code>--type=...</code></span> | Type: "integer" or "uuid".  Default: "integer".
-<span style='white-space: nowrap;>'<code>--start=...</code></span> | Start of integer ids.  Default: 1
+--name=... | Name of id column.  Default: "__rowid__".
+--type=... | Type: "integer" or "uuid".  Default: "integer".
+--start=... | Start of integer ids.  Default: 1
 
   Examples:
 
@@ -836,7 +836,7 @@ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 
 Sorts by specified columns.
 
-Aliases: <span style='white-space: nowrap;>'<code>s</code></span>
+Aliases: s
 
   Examples:
 
@@ -894,29 +894,29 @@ a,b,c,d
 
 `sql-out`
 *[*
-<span style='white-space: nowrap;>'<code>--table</code></span>
-<span style='white-space: nowrap;>'<code>--transaction</code></span>
-<span style='white-space: nowrap;>'<code>--rollback</code></span>
-<span style='white-space: nowrap;>'<code>--commit</code></span>
-<span style='white-space: nowrap;>'<code>--create</code></span>
-<span style='white-space: nowrap;>'<code>--temporary</code></span>
-<span style='white-space: nowrap;>'<code>--insert</code></span>
-<span style='white-space: nowrap;>'<code>--varchar-size=...</code></span>*]*
+--table
+--transaction
+--rollback
+--commit
+--create
+--temporary
+--insert
+--varchar-size=...*]*
 
 Generates CSV lines.
 
-Aliases: <span style='white-space: nowrap;>'<code>sql-</code></span>
+Aliases: sql-
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--table</code></span> | Table name.
-<span style='white-space: nowrap;>'<code>--transaction</code></span> | Emit a TRANSACTION block.
-<span style='white-space: nowrap;>'<code>--rollback</code></span> | Emit a ROLLBACK statement.
-<span style='white-space: nowrap;>'<code>--commit</code></span> | Emit a COMMIT statement.
-<span style='white-space: nowrap;>'<code>--create</code></span> | Emit a CREATE TABLE statement.
-<span style='white-space: nowrap;>'<code>--temporary</code></span> | CREATE TEMPORARY TABLE statement.
-<span style='white-space: nowrap;>'<code>--insert</code></span> | Emit INSERT INTO statements.
-<span style='white-space: nowrap;>'<code>--varchar-size=...</code></span> | VARCHAR(size). Default: 255.
+--table | Table name.
+--transaction | Emit a TRANSACTION block.
+--rollback | Emit a ROLLBACK statement.
+--commit | Emit a COMMIT statement.
+--create | Emit a CREATE TABLE statement.
+--temporary | CREATE TEMPORARY TABLE statement.
+--insert | Emit INSERT INTO statements.
+--varchar-size=... | VARCHAR(size). Default: 255.
 
   Examples:
 
@@ -950,29 +950,29 @@ VALUES
 
 Strip leading and trailing whitespace.
 
-Aliases: <span style='white-space: nowrap;>'<code>trim</code></span>
+Aliases: trim
 
 ## `tee`
 
 `tee`
-<span style='white-space: nowrap;>'<code>pipelines</code></span>
-<span style='white-space: nowrap;>'<code>...</code></span>
+pipelines
+...
 
 Send input to multiple output pipelines.
 
-Aliases: <span style='white-space: nowrap;>'<code>t</code></span>
+Aliases: t
 
 ## `transpose`
 
 `transpose`
 *[*
-<span style='white-space: nowrap;>'<code>--include-header=...</code></span>*]*
+--include-header=...*]*
 
 Transpose rows and columns.
 
   Options                   |  Description
 ----------------------------|-------------------------------
-<span style='white-space: nowrap;>'<code>--include-header=...</code></span> | Include header in first column.  Default: true
+--include-header=... | Include header in first column.  Default: true
 
   Examples:
 
@@ -1002,7 +1002,7 @@ foo,bar,baz,abc
 
 Infer types from field strings.
 
-Aliases: <span style='white-space: nowrap;>'<code>-types</code></span>, <span style='white-space: nowrap;>'<code>types</code></span>
+Aliases: -types, types
 
 ```
 # DUPLICATES.csv

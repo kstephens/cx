@@ -75,7 +75,7 @@ module CX
     end
 
     def no_wrap x
-      "<span style='white-space: nowrap;>'#{x}</span>"
+      "<span style='white-space: nowrap;>#{x}</span>"
     end
 
     def run_examples!

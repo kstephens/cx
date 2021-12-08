@@ -15,7 +15,7 @@ end
 
 task :readme do
   sh "bin/cx --debug help make-help show > tmp/README.md"
-  sh "mv tmp/README.md ."
+  sh "sed -E -e 's@<[a-z]+[^>]+>|</[a-z]+>@@g' tmp/README.md > README.md"
 end
 
 desc "Run JS tests"
