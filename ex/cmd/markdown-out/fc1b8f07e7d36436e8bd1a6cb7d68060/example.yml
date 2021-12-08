@@ -47,12 +47,4 @@ contents: !ruby/struct:CX::Example::Files
     |   134 | 5     |     9 | baz   |
     |     2 | 12    |    11 | abc   |
     [ SOME.CSV ]
-  diff: |
-    @@ -1,7 +0,0 @@
-    -| a     | b     | c     | d     |
-    -| ----: | ----- | ----: | ----- |
-    -|     1 | ab    |     3 | foo   |
-    -|    24 | 44    |     6 | bar   |
-    -|   134 | 5     |     9 | baz   |
-    -|     2 | 12    |    11 | abc   |
-    -[ SOME.CSV ]
+  diff: ''

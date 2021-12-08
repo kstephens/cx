@@ -37,6 +37,4 @@ contents: !ruby/struct:CX::Example::Files
   actual: '1,ab,3,foo
 
 '
-  diff: |
-    @@ -1 +0,0 @@
-    -1,ab,3,foo
+  diff: ''

@@ -35,5 +35,4 @@ contents: !ruby/struct:CX::Example::Files
     \   9,baz  \n    2,12   ,   11,abc  \n"
   actual: "a,b,c,d\n    1,ab   ,    3,foo  \n   24,44   ,    6,bar  \n  134,5    ,
     \   9,baz  \n    2,12   ,   11,abc  \n"
-  diff: "@@ -1,5 +0,0 @@\n-a,b,c,d\n-    1,ab   ,    3,foo  \n-   24,44   ,    6,bar
-    \ \n-  134,5    ,    9,baz  \n-    2,12   ,   11,abc  \n"
+  diff: ''

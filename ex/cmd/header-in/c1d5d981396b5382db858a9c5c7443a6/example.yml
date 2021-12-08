@@ -41,9 +41,4 @@ contents: !ruby/struct:CX::Example::Files
     24,44,6,bar
     134,5,9,baz
     2,12,11,abc
-  diff: |
-    @@ -1,4 +0,0 @@
-    -1,ab,3,foo
-    -24,44,6,bar
-    -134,5,9,baz
-    -2,12,11,abc
+  diff: ''

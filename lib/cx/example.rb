@@ -54,7 +54,9 @@ module CX
 
     def self.load! opts
       e = new_from_hash(opts)
-      YAML.load(File.read(e.yaml_file))
+      e = YAML.load(File.read(e.yaml_file))
+      # Logging.log.info "#{opts.inspect} Loaded: #{e.inspect}"
+      e
     end
 
     def write_files!
@@ -89,7 +91,7 @@ END
         log.info "run #{command} : #{example}"
         log.info "dir #{dir}"
         Dir["ex/data/*.*"].each{|f| FileUtils.cp f, dir}
-        pid = nil
+        pid = wait_status = nil
         Dir.chdir(dir) do
           pid = Process.fork do
             CX::Random.init! 1
@@ -104,18 +106,19 @@ END
             end
             exit!(main.exit_code)
           end
+
+          log.info "pid #{pid} : waiting"
+          Process.wait(pid); wait_status = $?
+          log.info "pid #{pid} : finished : #{wait_status.inspect}"
+
           if ! File.exist?('expected')
             FileUtils.copy('actual', 'expected')
           end
           system 'diff -u expected actual | (read _; read _; cat) > diff'
         end
         
-        log.info "waiting for pid #{pid}"
-        Process.wait(pid)
-        result = $?
-        log.info "finished pid #{pid} : #{result.inspect}"
         read!
-        self.success = (self.exit_code = result.exitstatus) == 0
+        self.success = (self.exit_code = wait_status.exitstatus) == 0
         log_members
         contents.log_members
         self.contents = nil
@@ -125,7 +128,7 @@ END
     end
     
     def self.examples_with_diffs
-      Dir["#{BASE_DIR}/*/*/diff"].sort.map do | diff |
+      Dir["#{BASE_DIR}/*/*/actual"].sort.map do | diff |
         dir = File.dirname(diff)
         ex = CX::Example.load!(dir: dir)
         ex.contents.diff.empty? ? nil : ex
@@ -142,7 +145,7 @@ END
       end
 
       def commands
-        @commands ||= factory.all.sort_by(&:name)
+        @commands ||= factory.all
       end
 
       def run!
@@ -189,7 +192,7 @@ END
       unless examples.empty?
         log.delimited "accept" do
           examples.each do | ex |
-            $stderr.puts "#{ex.accept_command}  # #{e.command} : #{e.example}"
+            $stderr.puts "#{ex.accept_command}  # #{ex.command} : #{ex.example}"
           end
         end
       end

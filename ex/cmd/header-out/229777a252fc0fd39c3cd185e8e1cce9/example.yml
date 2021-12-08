@@ -1,0 +1,51 @@
+--- !ruby/struct:CX::Example
+command: header-out
+example: cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value
+  // csv-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/run
+  stderr: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/stderr
+  expected: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/expected
+  actual: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/actual
+  diff: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/diff
+contents: 
+dir: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9
+dir_name: 229777a252fc0fd39c3cd185e8e1cce9
+base_dir: ex/cmd
+yaml_file: ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/header-out/229777a252fc0fd39c3cd185e8e1cce9'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    __META__,a,b,c,d
+    type,Integer,Object,Integer,String
+    max_value,134,ab,11,foo
+    "",1,ab,3,foo
+    "",24,44,6,bar
+    "",134,5,9,baz
+    "",2,12,11,abc
+  actual: |
+    __META__,a,b,c,d
+    type,Integer,Object,Integer,String
+    max_value,134,ab,11,foo
+    "",1,ab,3,foo
+    "",24,44,6,bar
+    "",134,5,9,baz
+    "",2,12,11,abc
+  diff: ''

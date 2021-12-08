@@ -43,10 +43,4 @@ contents: !ruby/struct:CX::Example::Files
     b,ab,44,5,12
     c,3,6,9,11
     d,foo,bar,baz,abc
-  diff: |
-    @@ -1,5 +0,0 @@
-    -_COL_1,_COL_2,_COL_3,_COL_4,_COL_5
-    -a,1,24,134,2
-    -b,ab,44,5,12
-    -c,3,6,9,11
-    -d,foo,bar,baz,abc
+  diff: ''

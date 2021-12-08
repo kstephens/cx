@@ -6,8 +6,14 @@ require 'cx/help'
 # :COMMAND:
 # Help:
 #   aliases:
-#   synopsis: 'This documentation.'
-#   args: [ command ]
+#   synopsis: 'Show this documentation.'
+#   description: |-
+#     Subcommands:
+#     * show         - this documentation (default).
+#     * run-examples - runs all command examples into ex/cmd/.
+#     * make-help    - regenerates this documetation.
+#   args: [ 'show', 'run-examples', 'make-help'  ]
+#
 
 module CX
   module Xform
@@ -30,7 +36,8 @@ module CX
             raise "Unknown argument #{arg.inspect}"
           end
         end
-        Table.new([[doc]], Header.new([:HELP]))
+        rows = doc.split(/\n/, -1).map{|line| [ line << "\n" ]}
+        Table.new(rows, Header.new([:HELP]))
       end
     end
   end

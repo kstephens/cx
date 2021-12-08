@@ -6,9 +6,7 @@ A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`"
 
 Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
 
-
 # Options
-
 
    Syntax           | Semantic 
 --------------------|--------------------------------
@@ -57,17 +55,19 @@ See examples below for usage.
 # Commands
 
 <% commands.each do | c | %>
+<%# log.info "command #{c.name} : #{c.examples.size} examples" %>
 ## `<%= c.name %>`
 
 `<%= c.name %>` \
 <% unless c.options.empty? %>
 *[* \
 <% c.options.each do |o| %>
-<%= no_wrap code(o.brief) %> \
+<%= code(o.brief) %> \
 <% end %> \
 *]* \
+<% end %> \
 <% c.arguments.each do |n| %>
-<%= no_wrap code(n) %> \
+<%= code(n) %> \
 <% end %> \
 <% if c.has_column_args? %>
 *[* *column-args *...* *]* \
@@ -86,7 +86,7 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
   Options                   |  Description
 ----------------------------|------------------------------- \
 <% c.options.each do | o | %>
-<%= no_wrap code(o.brief) %> | <%= o.description %> \
+<%= code(o.brief) %> | <%= o.description %> \
 <% end %>
 <% end %>
 
@@ -95,16 +95,15 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% unless c.examples.empty? %>
   Examples:
 
-<% c.examples.each do | e |
-   e = Example.load!(command: c.name, example: e) %>
+<% c.examples.each do | e | %>
 ```
 $ <%= e.example %>
 <%= e.contents.actual %>
 ```
-<% end %>
-<% end %>
-<% end %>
-<% end %>
+<% end # examples.each %>
+<% end # unless c.examples.empty? %>
+
+<% end # commands %>
 
 # Installation
 

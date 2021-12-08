@@ -1,10 +1,13 @@
-require 'fileutils'
+require 'cx'
 require 'cx/example'
 require 'cx/command_factory'
+require 'fileutils'
 require 'erb'
 
 module CX
   class Help
+    include Support
+    
     attr_accessor :factory
 
     def factory
@@ -12,7 +15,7 @@ module CX
     end
     
     def commands
-      @commands ||= factory.all.sort_by(&:name)
+      @commands ||= factory.all
     end
 
     def help_file
@@ -36,13 +39,29 @@ module CX
       self
     end
 
+    def help_md_erb
+      File.expand_path("../help.md.erb", __FILE__)
+    end
+    
     def make_document
-      md_erb = File.read(File.expand_path("../help.md.erb", __FILE__))
-      compiler = ERB::Compiler.new('<>')
-      code, enc = compiler.compile(md_erb)
-      File.write("tmp/help.md.rb", code)
+      commands.each do | c |
+        c.examples.map! do | example |
+          e = Example.load!(command: c.name, example: example)
+          # log.info "Loaded example: #{e.to_h.inspect}"
+          # log.info "Loaded example content:"
+          # e.contents.log_members
+          e
+        end
+        log.info "LOADED: command #{c.name} : #{c.examples.size} examples"
+      end
+
+      template = File.read(help_md_erb)
+      # compiler = ERB::Compiler.new('<>')
+      # code, enc = compiler.compile(md_erb)
+      # File.write("tmp/help.md.rb", code)
       # puts code; exit!
-      erb = ERB.new(md_erb, "<>")
+      erb = ERB.new(template, "<>")
+      erb.filename = help_md_erb
       doc = erb.result(binding)
 
       doc.gsub!(/(\s*\\\n)+/, '')
@@ -51,15 +70,16 @@ module CX
       doc
     end
 
+    def code x
+      no_wrap "<code>#{x}</code>"
+    end
+
     def no_wrap x
       "<span style='white-space: nowrap;>'#{x}</span>"
     end
-    def code x
-      "<code>#{x}</code>"
-    end
 
     def run_examples!
-      Example::Runner.new.tap{|o| o.commands = commands}.run!
+      Example::Runner.new.run!
     end
 
   end

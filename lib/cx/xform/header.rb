@@ -21,9 +21,10 @@ require 'cx/xform'
 #   inverse: [ '-h' ]
 #   args: []
 #   opts:
-#     'meta-columns=meta-column,...': 'Emit each meta-column for each column.'
+#     'meta-columns=meta-column,...': 'Emit a row for each meta-column containing the meta value for that column..'
 #   examples:
 #     - 'cx in SOME.csv // -csv // -h // h- // csv-'
+#     - 'cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-'
 
 module CX
   module Xform

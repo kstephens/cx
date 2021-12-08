@@ -243,7 +243,8 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :meta-columns
-    description: Emit each meta-column for each column.
+    description: Emit a row for each meta-column containing the meta value for that
+      column..
     default: 
     values:
     - meta-column
@@ -252,6 +253,7 @@
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // h- // csv-
+  - cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-
   file: lib/cx/xform/header.rb
   lineno: 17
   path: cx/xform/header
@@ -259,11 +261,17 @@
   class_name: Help
   name: help
   aliases: []
-  synopsis: This documentation.
-  description: ''
+  synopsis: Show this documentation.
+  description: |-
+    Subcommands:
+    * show         - this documentation (default).
+    * run-examples - runs all command examples into ex/cmd/.
+    * make-help    - regenerates this documetation.
   suffixes: []
   arguments:
-  - command
+  - show
+  - run-examples
+  - make-help
   options: []
   has_column_args: 
   has_pipeline_args: 

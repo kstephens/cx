@@ -5,7 +5,7 @@ RSpec::Core::RakeTask.new(:spec)
 
 task :default => [ :commands_yml, :spec, :js_test, :readme ]
 
-task :build => [ :commands_yml, :'example:run', :readme ]
+task :build => [ :commands_yml, :'examples:run', :readme ]
 
 desc "Run tests under simplecov."
 task :coverage do
@@ -14,7 +14,7 @@ task :coverage do
 end
 
 task :readme do
-  sh "bin/cx --debug help --make-help > tmp/README.md"
+  sh "bin/cx --debug help make-help show > tmp/README.md"
   sh "mv tmp/README.md ."
 end
 
@@ -32,8 +32,7 @@ end
 namespace :examples do
   desc "run examples."
   task :run => [ :commands_yml ] do
-    sh "bin/cx --debug help --run-examples --make-help > tmp/README.md"
-    sh "mv tmp/README.md ."
+    sh "bin/cx --debug help run-examples"
   end
   desc "Show diff of expected vs. actual."
   task :diff do

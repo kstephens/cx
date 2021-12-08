@@ -33,4 +33,4 @@ contents: !ruby/struct:CX::Example::Files
   stderr: ''
   expected: "a\tb\tc\td\n1\tab\t3\tfoo\n24\t44\t6\tbar\n134\t5\t9\tbaz\n2\t12\t11\tabc\n"
   actual: "a\tb\tc\td\n1\tab\t3\tfoo\n24\t44\t6\tbar\n134\t5\t9\tbaz\n2\t12\t11\tabc\n"
-  diff: "@@ -1,5 +0,0 @@\n-a\tb\tc\td\n-1\tab\t3\tfoo\n-24\t44\t6\tbar\n-134\t5\t9\tbaz\n-2\t12\t11\tabc\n"
+  diff: ''

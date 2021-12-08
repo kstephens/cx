@@ -49,13 +49,4 @@ contents: !ruby/struct:CX::Example::Files
       d VARCHAR(255)
     );
 
-  diff: |
-    @@ -1,8 +0,0 @@
-    -CREATE TABLE SOME_TABLE
-    -(
-    -  a INT,
-    -  b TEXT,
-    -  c INT,
-    -  d VARCHAR(255)
-    -);
-    -
+  diff: ''

@@ -43,10 +43,4 @@ contents: !ruby/struct:CX::Example::Files
     Integer,Integer,Integer,String
     Integer,Integer,Integer,String
     Integer,Integer,Integer,String
-  diff: |
-    @@ -1,5 +0,0 @@
-    -a,b,c,d
-    -Integer,String,Integer,String
-    -Integer,Integer,Integer,String
-    -Integer,Integer,Integer,String
-    -Integer,Integer,Integer,String
+  diff: ''
