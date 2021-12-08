@@ -48,11 +48,11 @@ The column name  `"*"` implies all columns.
 
 `<%= c.name %>` \
 <% unless c.options.empty? %>
-*[* \
+ *[* \
 <% c.options.each do |o| %>
 <%= code(o.brief) %> \
 <% end %> \
-*]* \
+ *]* \
 <% end %> \
 <% c.arguments.each do |n| %>
 <%= code(n) %> \

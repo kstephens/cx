@@ -176,9 +176,9 @@ a,c,d
 ## `delimited-in`
 
 `delimited-in`
-*[*
+ *[*
 --field-sep=...
---record-sep=...*]*
+--record-sep=... *]*
 
 Parse delimited records.
 
@@ -192,10 +192,10 @@ Aliases: -delimited, -d
 ## `delimited-out`
 
 `delimited-out`
-*[*
+ *[*
 --field-sep=...
 --record-sep=...
---multi-sep=...*]*
+--multi-sep=... *]*
 *[* *column-args *...* *]*
 
 Generate delimited records.
@@ -304,8 +304,8 @@ $ cx in SOME.csv // -csv // -h // csv-
 ## `header-out`
 
 `header-out`
-*[*
---meta-columns=...*]*
+ *[*
+--meta-columns=... *]*
 
 Emits column names as first row.
 
@@ -356,7 +356,7 @@ Subcommands:
 ## `html-out`
 
 `html-out`
-*[*
+ *[*
 --raw
 --filtering=...
 --title
@@ -366,7 +366,7 @@ Subcommands:
 --styled=...
 --head
 --body-head
---body-foot*]*
+--body-foot *]*
 
 Emits HTML.
 
@@ -428,9 +428,9 @@ $ cx in SOME.csv // -h // jira
 ## `markdown-out`
 
 `markdown-out`
-*[*
+ *[*
 --title=...
---include-header=...*]*
+--include-header=... *]*
 
 Generate Markdown table lines.
 
@@ -566,9 +566,9 @@ a,b,c,d
 ## `quote`
 
 `quote`
-*[*
+ *[*
 --mode
---strings-only*]*
+--strings-only *]*
 
 Quote string values that would be ambigous or unprintable.
 
@@ -671,10 +671,10 @@ id,a,b,c,X %
 ## `replace`
 
 `replace`
-*[*
+ *[*
 --search=
 --replace=
---global*]*
+--global *]*
 
 Replace by regex.
 
@@ -754,10 +754,10 @@ a,b,c,d
 ## `row-id`
 
 `row-id`
-*[*
+ *[*
 --name=...
 --type=...
---start=...*]*
+--start=... *]*
 
 Inserts a row id column.
 
@@ -903,7 +903,7 @@ a,b,c,d
 ## `sql-out`
 
 `sql-out`
-*[*
+ *[*
 --table
 --transaction
 --rollback
@@ -911,7 +911,7 @@ a,b,c,d
 --create
 --temporary
 --insert
---varchar-size=...*]*
+--varchar-size=... *]*
 
 Generates CSV lines.
 
@@ -975,8 +975,8 @@ Aliases: t
 ## `transpose`
 
 `transpose`
-*[*
---include-header=...*]*
+ *[*
+--include-header=... *]*
 
 Transpose rows and columns.
 
