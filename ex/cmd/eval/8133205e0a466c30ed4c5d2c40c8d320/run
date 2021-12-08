@@ -8,7 +8,7 @@ cd "$dir" || exit 9
 (
   cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-;
   echo $! > exit
-) >actual
+) 2> stderr > actual
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]

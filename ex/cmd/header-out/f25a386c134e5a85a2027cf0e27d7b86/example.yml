@@ -1,11 +1,11 @@
 --- !ruby/struct:CX::Example
 command: header-out
 example: cx in SOME.csv // -csv // -h // h- // csv-
-success: true
+success: false
 files: !ruby/struct:CX::Example::Files
   run: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/run
   exit: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/exit
-  output: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/output
+  stderr: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/stderr
   expected: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/expected
   actual: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/actual
   diff: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/diff
@@ -14,3 +14,58 @@ dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
 dir_name: f25a386c134e5a85a2027cf0e27d7b86
 base_dir: ex/cmd
 yaml_file: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // -csv // -h // h- // csv-;
+      echo $! > exit
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  exit: 
+  stderr: "/Users/stephens/local/src/cx/lib/cx/example.rb:99:in `block (3 levels)
+    in run!': uninitialized constant CX::Example::FileUtil (NameError)\nDid you mean?
+    \ FileUtils\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `chdir'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/example.rb:93:in `block (2 levels) in run!'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/example.rb:92:in `fork'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:92:in
+    `block in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in `delimited'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/example.rb:88:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:158:in
+    `run_example!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:146:in `block
+    (4 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
+    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:145:in `block
+    (3 levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in
+    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:144:in `block (2
+    levels) in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/logging.rb:32:in
+    `delimited'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:143:in `block
+    in run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `each'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/example.rb:142:in `run!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/help.rb:62:in
+    `run_examples!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:24:in
+    `block in call'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in
+    `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/help.rb:21:in `call'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:38:in `block in call'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `each'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in
+    `inject'\n\tfrom /Users/stephens/local/src/cx/lib/cx/xform/pipeline.rb:37:in `call'\n\tfrom
+    /Users/stephens/local/src/cx/lib/cx/main.rb:159:in `run_unsafe!'\n\tfrom /Users/stephens/local/src/cx/lib/cx/main.rb:105:in
+    `run!'\n\tfrom bin/cx:17:in `<main>'\n# cx : DEBUG  : {:pipeline_args!=>\n  [\"in\",
+    \"SOME.csv\", \"//\", \"-csv\", \"//\", \"-h\", \"//\", \"h-\", \"//\", \"csv-\"]}\n#
+    cx : DEBUG  : CX::CommandFactory::CommandDesc : load \"HeaderIn\" : require \"cx/xform/header\"\n#
+    cx : DEBUG  : {:pipeline=>\n  #<CX::Xform::Pipeline 81808180 [#<CX::Xform::IoIn
+    80608060 \"SOME.csv\"> | #<CX::Xform::CsvIn 80808080> | #<CX::Xform::HeaderIn
+    81008100> | #<CX::Xform::HeaderOut 81208120> | #<CX::Xform::CsvOut 81408140> |
+    #<CX::Xform::IoOut 81608160 nil>]>}\n"
+  expected: 
+  actual: |
+    a,b,c,d
+    1,ab,3,foo
+    24,44,6,bar
+    134,5,9,baz
+    2,12,11,abc
+  diff: 

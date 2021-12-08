@@ -8,7 +8,7 @@ cd "$dir" || exit 9
 (
   cx in SOME.csv // -h // grep "d:!;f";
   echo $! > exit
-) >actual
+) 2> stderr > actual
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]

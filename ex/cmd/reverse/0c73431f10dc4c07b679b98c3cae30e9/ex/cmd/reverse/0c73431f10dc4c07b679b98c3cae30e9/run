@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir='ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // reverse // h-;
+  echo $! > exit
+) >actual
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]

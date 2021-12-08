@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir='ex/cmd/markdown-out/fc1b8f07e7d36436e8bd1a6cb7d68060'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in SOME.csv // -h // parse // md --title=SOME.CSV;
+  echo $! > exit
+) >actual
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]

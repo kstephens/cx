@@ -1,8 +1,0 @@
-CREATE TABLE SOME_TABLE
-(
-  a INT,
-  b TEXT,
-  c INT,
-  d VARCHAR(255)
-);
-
