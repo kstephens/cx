@@ -157,36 +157,5 @@ module CX
       end
       self
     end
-
-    def weighted_median!
-      self.mid = (count - 1) / 2
-      l_val = values[mid]
-      r_val = values[mid + 1]
-      l_count = count_directional(values, l_val, -1, m)
-      r_count = count_directional(values, r_val,  1, m + 1)
-      raise "l_count = 0" if l_count.zero?
-      raise "r_count = 0" if r_count.zero?
-      self.median = ratio(l_val * l_count + r_val * r_count, l_count + r_count)
-      self
-    end
-    
-    # Is this worth optimizing?
-    # Presumes values are sorted.
-    def count_directional(values, val, dir, b = nil)
-      count = 0
-      b ||= dir > 0 ? 0 : values.size - 1
-      e = dir > 0 ? values.size : -1
-      while b != e
-        break if values[b] == val
-        b += dir
-      end
-      while b != e
-        break if values[b] != val
-        count += 1
-        b += dir
-      end
-      raise unless count == values.count(val)
-      count
-    end
   end
 end
