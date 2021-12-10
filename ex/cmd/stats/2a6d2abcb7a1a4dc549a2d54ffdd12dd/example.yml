@@ -1,0 +1,42 @@
+--- !ruby/struct:CX::Example
+command: stats
+example: cx in stats-data.csv // -h // parse // stats salary // md
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/run
+  stderr: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/stderr
+  expected: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/expected
+  actual: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/actual
+  diff: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/diff
+contents: 
+dir: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd
+dir_name: 2a6d2abcb7a1a4dc549a2d54ffdd12dd
+base_dir: ex/cmd
+yaml_file: ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/stats/2a6d2abcb7a1a4dc549a2d54ffdd12dd'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in stats-data.csv // -h // parse // stats salary // md;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    | salary_count | salary_sum | salary_min | salary_max | salary_mean       | salary_median | salary_stddev    |
+    | -----------: | ---------: | ---------: | ---------: | ----------------: | ------------: | ---------------: |
+    |         17.0 |     1121.0 |       22.0 |      120.0 | 65.94117647058823 |          63.0 | 31.0908925348874 |
+  actual: |
+    | salary_count | salary_sum | salary_min | salary_max | salary_mean       | salary_median | salary_stddev    |
+    | -----------: | ---------: | ---------: | ---------: | ----------------: | ------------: | ---------------: |
+    |         17.0 |     1121.0 |       22.0 |      120.0 | 65.94117647058823 |          63.0 | 31.0908925348874 |
+  diff: ''

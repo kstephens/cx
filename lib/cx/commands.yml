@@ -743,6 +743,25 @@
   lineno: 8
   path: cx/xform/sql
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: Stats
+  name: stats
+  aliases: []
+  synopsis: Collect stats of a group of columns.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in stats-data.csv // -h // parse // stats salary // md
+  - cx in stats-data.csv // -h // parse // stats dept:g salary // md
+  - cx in stats-data.csv // -h // parse // stats job:g salary // md
+  - cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
+  file: lib/cx/xform/stats.rb
+  lineno: 8
+  path: cx/xform/stats
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Strip
   name: strip
   aliases:

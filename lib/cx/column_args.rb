@@ -6,9 +6,15 @@
 require 'cx'
 require 'cx/inspect'
 require 'cx/logging'
+require 'cx/stats'
 
 module CX
-  class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column, :wildcard)
+  class ColumnArg < Struct.new(:name, :index, :opts, :args, :arg_str, :rest_str, :column, :wildcard, :data)
+    def initialize *args
+      super
+      self.data ||= { }
+    end
+    
     def header_column! c
       self.column = c
       self.name = c.name

@@ -151,13 +151,9 @@ module CX
       end
       if count > 1
         bin_l = bins.first
-        bin_r = bins.last
-        pp(bins: bins.map(&:first))
-        pp(bins_range: bins_range, bin_scale: @bin_scale)
         bin_l[0] = bins_range.min   ... bin_l[0].end
+        bin_r = bins.last
         bin_r[0] = bin_r[0].begin   ..  bins_range.max
-        pp(bin_l: bin_l)
-        pp(bin_r: bin_r)
       end
       self
     end

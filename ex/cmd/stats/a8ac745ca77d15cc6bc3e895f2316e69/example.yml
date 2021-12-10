@@ -1,0 +1,44 @@
+--- !ruby/struct:CX::Example
+command: stats
+example: cx in stats-data.csv // -h // parse // stats job:g salary // md
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/run
+  stderr: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/stderr
+  expected: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/expected
+  actual: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/actual
+  diff: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/diff
+contents: 
+dir: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69
+dir_name: a8ac745ca77d15cc6bc3e895f2316e69
+base_dir: ex/cmd
+yaml_file: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in stats-data.csv // -h // parse // stats job:g salary // md;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev      |
+    | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | -----------------: |
+    | a     |         11.0 |      506.0 |       22.0 |       70.0 |        46.0 |          45.0 | 16.387356545381397 |
+    | b     |          6.0 |      615.0 |       85.0 |      120.0 |       102.5 |         104.0 | 13.450526631573451 |
+  actual: |
+    | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev      |
+    | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | -----------------: |
+    | a     |         11.0 |      506.0 |       22.0 |       70.0 |        46.0 |          45.0 | 16.387356545381397 |
+    | b     |          6.0 |      615.0 |       85.0 |      120.0 |       102.5 |         104.0 | 13.450526631573451 |
+  diff: ''

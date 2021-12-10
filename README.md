@@ -905,6 +905,53 @@ VALUES
 
 ```
 
+## `stats`
+
+`stats`
+
+Collect stats of a group of columns.
+
+  Examples:
+
+```
+$ cx in stats-data.csv // -h // parse // stats salary // md
+| salary_count | salary_sum | salary_min | salary_max | salary_mean       | salary_median | salary_stddev    |
+| -----------: | ---------: | ---------: | ---------: | ----------------: | ------------: | ---------------: |
+|         17.0 |     1121.0 |       22.0 |      120.0 | 65.94117647058823 |          63.0 | 31.0908925348874 |
+```
+
+```
+$ cx in stats-data.csv // -h // parse // stats dept:g salary // md
+| dept       | salary_count | salary_sum | salary_min | salary_max | salary_mean        | salary_median | salary_stddev      |
+| ---------- | -----------: | ---------: | ---------: | ---------: | -----------------: | ------------: | -----------------: |
+| sales      |          3.0 |      228.0 |       63.0 |       98.0 |               76.0 |          67.0 | 15.641824275533422 |
+| marketing  |          6.0 |      286.0 |       22.0 |       87.0 | 47.666666666666664 |          33.5 | 27.686739706140113 |
+| tech       |          3.0 |      250.0 |       60.0 |      120.0 |  83.33333333333333 |          70.0 | 26.246692913372705 |
+| accounting |          5.0 |      357.0 |       40.0 |      115.0 |               71.4 |          47.0 | 33.672540741678525 |
+```
+
+```
+$ cx in stats-data.csv // -h // parse // stats job:g salary // md
+| job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev      |
+| ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | -----------------: |
+| a     |         11.0 |      506.0 |       22.0 |       70.0 |        46.0 |          45.0 | 16.387356545381397 |
+| b     |          6.0 |      615.0 |       85.0 |      120.0 |       102.5 |         104.0 | 13.450526631573451 |
+```
+
+```
+$ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
+| dept       | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev     |
+| ---------- | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | ----------------: |
+| sales      | a     |          2.0 |      130.0 |       63.0 |       67.0 |        65.0 |          65.0 |               2.0 |
+| sales      | b     |          1.0 |       98.0 |       98.0 |       98.0 |        98.0 |          98.0 |               0.0 |
+| marketing  | a     |          4.0 |      114.0 |       22.0 |       40.0 |        28.5 |          26.0 |  6.87386354243376 |
+| marketing  | b     |          2.0 |      172.0 |       85.0 |       87.0 |        86.0 |          86.0 |               1.0 |
+| tech       | a     |          2.0 |      130.0 |       60.0 |       70.0 |        65.0 |          65.0 |               5.0 |
+| tech       | b     |          1.0 |      120.0 |      120.0 |      120.0 |       120.0 |         120.0 |               0.0 |
+| accounting | a     |          3.0 |      132.0 |       40.0 |       47.0 |        44.0 |          45.0 | 2.943920288775949 |
+| accounting | b     |          2.0 |      225.0 |      110.0 |      115.0 |       112.5 |         112.5 |               2.5 |
+```
+
 ## `strip`
 
 `strip`
@@ -1110,6 +1157,28 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+```
+
+```
+# stats-data.csv
+dept,job,salary
+sales,a,67
+sales,a,63
+sales,b,98
+marketing,a,25
+marketing,a,27
+marketing,a,22
+marketing,a,40
+marketing,b,87
+marketing,b,85
+tech,a,60
+tech,a,70
+tech,b,120
+accounting,a,45
+accounting,a,47
+accounting,a,40
+accounting,b,110
+accounting,b,115
 ```
 
 # Attribution

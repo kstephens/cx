@@ -1,0 +1,48 @@
+--- !ruby/struct:CX::Example
+command: stats
+example: cx in stats-data.csv // -h // parse // stats dept:g salary // md
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/run
+  stderr: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/stderr
+  expected: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/expected
+  actual: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/actual
+  diff: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/diff
+contents: 
+dir: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0
+dir_name: 752baf2b263bb9b04b52b6141c7c4cb0
+base_dir: ex/cmd
+yaml_file: ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/stats/752baf2b263bb9b04b52b6141c7c4cb0'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in stats-data.csv // -h // parse // stats dept:g salary // md;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    | dept       | salary_count | salary_sum | salary_min | salary_max | salary_mean        | salary_median | salary_stddev      |
+    | ---------- | -----------: | ---------: | ---------: | ---------: | -----------------: | ------------: | -----------------: |
+    | sales      |          3.0 |      228.0 |       63.0 |       98.0 |               76.0 |          67.0 | 15.641824275533422 |
+    | marketing  |          6.0 |      286.0 |       22.0 |       87.0 | 47.666666666666664 |          33.5 | 27.686739706140113 |
+    | tech       |          3.0 |      250.0 |       60.0 |      120.0 |  83.33333333333333 |          70.0 | 26.246692913372705 |
+    | accounting |          5.0 |      357.0 |       40.0 |      115.0 |               71.4 |          47.0 | 33.672540741678525 |
+  actual: |
+    | dept       | salary_count | salary_sum | salary_min | salary_max | salary_mean        | salary_median | salary_stddev      |
+    | ---------- | -----------: | ---------: | ---------: | ---------: | -----------------: | ------------: | -----------------: |
+    | sales      |          3.0 |      228.0 |       63.0 |       98.0 |               76.0 |          67.0 | 15.641824275533422 |
+    | marketing  |          6.0 |      286.0 |       22.0 |       87.0 | 47.666666666666664 |          33.5 | 27.686739706140113 |
+    | tech       |          3.0 |      250.0 |       60.0 |      120.0 |  83.33333333333333 |          70.0 | 26.246692913372705 |
+    | accounting |          5.0 |      357.0 |       40.0 |      115.0 |               71.4 |          47.0 | 33.672540741678525 |
+  diff: ''
