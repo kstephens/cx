@@ -54,9 +54,9 @@ module CX
       return self if count.zero?
       ratio!
       mean!
-      bins!
+      bins! if n_bins
       median!
-      collapse_bins!
+      collapse_bins! if n_bins
       # binding.pry if count == 2
       self
     end
@@ -102,7 +102,6 @@ module CX
     end
 
     def bins!
-      return nil unless n_bins
       self.bins = (1 .. n_bins).map { |_| [] }
       self.bins_range ||= min .. max
       bin_width = bins_range.max - bins_range.min
@@ -145,8 +144,7 @@ module CX
     end
 
     def collapse_bins!
-      return self unless bins
-      self.bins = bins.map.with_index do |vals, i|
+      self.bins = bins.map!.with_index do |vals, i|
         [idx_to_val[i]...idx_to_val[i + 1], vals.tally]
       end
       if count > 1
