@@ -30,44 +30,40 @@ module CX
           group_ca.map{|ca| r[ca.column]}
         end
 
-        group_cols = group_ca.map do | ca |
-          ca.data[:output_col] = ca.column.dup.clear!
-        end
-        
         stats_fields = [:count, :sum, :min, :max, :mean, :median, :stddev]
-        value_cols = values_ca.flat_map do | ca |
-          h = ca.data[:output_cols] = stats_fields.map do | sf |
-            c = Column.new(:"#{ca.column.name}_#{sf}")
-            c.meta.align = :right
-            [ sf, c ]
-          end.to_h
-          h.values
+
+        header = [ ]
+        group_cols = group_ca.map do | ca |
+          header << (out_col = ca.column.dup.clear!)
+          [ ca.column, out_col ]
+        end
+        value_cols = values_ca.map do | ca |
+          [ ca.column,
+            stats_fields.map { | sf |
+              out_col = Column.new(:"#{ca.column.name}_#{sf}").
+                tap{|c| c.meta.align = :right}
+              header << out_col
+              [ out_col,  sf ]
+            } ]
         end
 
-        header = Header.new(group_cols + value_cols)
+        header = Header.new(header)
         output = Table.new([], header)
-        
-        # binding.pry
         
         groups.each do | group, rows |
           out_row = output.make_row []
-          # pp(group: group)
-          # binding.pry
 
-          group_ca.each do | gca |
-            out_row[gca.data[:output_col]] = rows.first[gca.column]
+          group_cols.each do | (in_col, out_col) |
+            out_row[out_col] = rows.first[in_col]
           end
           
-          values_ca.each do | vca |
-            in_col = vca.column
+          value_cols.each do | (in_col, out_cols) |
             values = rows.map{|r| r[in_col]}
-            stats = vca.data[:stats] =
-              ::CX::Stats.new(vca.name, values).complete!
-            vca.data[:output_cols].each do | stats_field, out_col |
+            stats =  ::CX::Stats.new(in_col.name, values).complete!
+            out_cols.each do | (out_col, stats_field) |
               out_row[out_col] = stats[stats_field].to_f
             end
           end
-          # binding.pry
           output << out_row
         end
         MetaIn.new.call(output, env)
