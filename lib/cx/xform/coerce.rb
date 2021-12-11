@@ -21,7 +21,7 @@ module CX
         columns = column_args!(input).or_all!.columns
         
         columns.each do | c |
-          m = c.meta.clear!
+          m = c.meta.begin!
           if type = c.meta.type_object
             input.each do | r |
               new_v = old_v = r[c]
@@ -29,7 +29,7 @@ module CX
               new_v = old_v if new_v.nil?
               m.update!(r[c] = new_v)
             end
-            c.meta.infer!
+            c.meta.end!
           end
         end
         input

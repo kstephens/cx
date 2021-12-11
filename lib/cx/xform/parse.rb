@@ -23,6 +23,7 @@ module CX
         columns = column_args!(input).or_all!.columns
         columns.each do | c |
           m = c.meta_clear!
+          m.begin!
           input.each do | r |
             case new_v = old_v = r[c]
             when nil
@@ -33,7 +34,7 @@ module CX
             end
             m.update!(r[c] = new_v)
           end
-          m.infer!
+          m.end!
           m.type = m.type_inferred if m.type_inferred
         end
         input

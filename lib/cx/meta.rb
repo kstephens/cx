@@ -36,6 +36,8 @@ module CX
     attr_accessor_typed *ATTRS
 
     #####################################
+
+    attr_reader :state
     
     def initialize
       self.visible = true
@@ -45,6 +47,7 @@ module CX
     def initialize_copy orig
       super
       @types = @types.dup
+      @state = nil
     end
 
     def inspect_content mode
@@ -65,7 +68,6 @@ module CX
       column! c
     end
     
-    
     def clear! c = nil
       if c
         column! c
@@ -83,7 +85,30 @@ module CX
       @type = nil
     end
 
+    ####################################################
+    # Processing Lifecycle
+    #
+
+    def begin!
+      case @state
+      when nil, :inactive
+        clear!
+        @state = :active
+      else
+        check_state! :begin!
+      end
+      self
+    end
+
+    def end!
+      check_state! :end!, :active
+      @state = :inactive
+      complete!
+      self
+    end
+    
     def update! v
+      check_state! :update!, :active
       case v
       when nil
         @nulls += 1
@@ -96,14 +121,26 @@ module CX
         min_max_value! v
         @types << v.class
         v = v.to_s
-        @whitespace +=1 if v =~ /\s/
+        @whitespace +=1 if /\s/.match?(v)
         min_max_size! v.size
       end
       v
     end
 
+    def check_state! meth, expected = :UNEXPECTED
+      unless @state == expected
+        raise_ "#{meth} : invalid state : #{@state.inspect} : expected #{expected.inspect}"
+      end
+      self
+    end
+
+    ####################################################
+    ## Update statisitics
+    ##
+    
     def min_max_size! n
       return nil unless n
+      check_state! :type!, :active
       @min_size = n if ! @min_size || @min_size > n
       @max_size = n if ! @max_size || @max_size < n 
       self
@@ -111,6 +148,7 @@ module CX
 
     def min_max_value! val
       return nil if val.nil?
+      check_state! :type!, :active
       @min_value = val if ! @min_value || @min_value > val
       @max_value = val if ! @max_value || @max_value < val
       self
@@ -119,13 +157,16 @@ module CX
     end
 
     def type! type
+      check_state! :type!, :active
       @types << type
       self
     end
 
-    def infer!
+    def complete!
+      check_state! :complete!, :inactive
       types.delete(NilClass)
       self.type_inferred = infer_type(types) unless types.empty?
+      self.types = types.to_a.sort_by{|c| c.name}
       self.align_inferred = :right if type_inferred && type_inferred <= ::Numeric
       self
     end

@@ -53,7 +53,7 @@ module CX
 
         columns.each do |c|
           m = c.meta
-          m.clear!
+          m.begin!
           m.type  = nil if opts[:clear_type]
           m.name  = c.name
           m.name_ = c.name_
@@ -75,10 +75,7 @@ module CX
         end
         
         columns.each do | c |
-          m = c.meta
-          if m.type_inferred && m.type_inferred <= ::Numeric
-            m.align_inferred = :right
-          end
+          m = c.meta.end!
         end
 
         input
