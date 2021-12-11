@@ -112,7 +112,7 @@ module Typing
     Rational => Proc.new{|x| x.to_r},
     Integer  => Proc.new{|x| x.to_i},
     Symbol   => Proc.new{|x| x.to_s.to_sym},
-    Boolean  => Proc.new{|x| x =~ /t/i ? true : false},
+    Boolean  => Proc.new{|x| /t/i.match?(x) },
     String   => Proc.new{|x|
       case x
       when Float, BigDecimal

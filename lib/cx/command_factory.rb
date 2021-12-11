@@ -88,7 +88,7 @@ module CX
           end
           self.name = n.to_sym
           
-          if description =~ /Default:\s*(.+)/
+          if /Default:\s*(.+)/.match?(description)
             self.default ||= $1.strip
           end
           self.values = values.split(/,/) if String === values

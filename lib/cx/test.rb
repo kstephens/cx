@@ -199,11 +199,11 @@ END
           when /^all$/i
             true
           when /^match=(.+)$/
-            name =~ /#{$1}/
+            /#{$1}/.match?(name)
           end
       end
       if ! accept && prompt && (prompt = prompt_user("#{name} diff : Accept? [AY]: "))
-        accept = prompt =~ /^[ay]/i
+        accept = /^[ay]/i.match?(prompt)
       end
       accept
     end

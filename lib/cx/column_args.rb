@@ -71,7 +71,7 @@ module CX
         name = arg_str
         rest_str = ""
       end
-      if name =~ /^(\d+)+$/ && (i = name.to_i) > 0
+      if /^(\d+)+$/.match?(name) && (i = name.to_i) > 0
         index = i - 1
       end
       c = ColumnArg.new(
