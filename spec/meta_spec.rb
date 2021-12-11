@@ -15,6 +15,8 @@ module CX
         expect(subject.min_#{meth}) .to eq(nil)
         expect(subject.max_#{meth}) .to eq(nil)
 
+        subject.begin!
+
         subject.min_max_#{meth}! 5
         expect(subject.min_#{meth}) .to eq(5)
         expect(subject.max_#{meth}) .to eq(5)
@@ -30,6 +32,8 @@ module CX
         subject.min_max_#{meth}! 0
         expect(subject.min_#{meth}) .to eq(0)
         expect(subject.max_#{meth}) .to eq(10)
+
+        subject.end!
       end
     end
 END
@@ -39,11 +43,16 @@ END
       it "works" do
         expect(subject.types) .to eq(Set.new)
 
+        subject.begin!
+
         subject.type! Integer
         expect(subject.types) .to eq(Set.new([Integer]))
 
         subject.type! Float
-        expect(subject.types) .to eq(Set.new([Integer,Float]))
+        expect(subject.types) .to eq(Set.new([Float,Integer]))
+
+        subject.end!
+        expect(subject.types) .to eq([Float,Integer])
       end
     end
 
