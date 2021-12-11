@@ -497,19 +497,19 @@ Aliases: meta-
 ```
 $ cx in SOME.csv // -h // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
-a,a,true,0,0,,1,3,1,24,0,0,,,,String,
-b,b,true,1,1,,1,2,12,ab,0,0,,,,String,
-c,c,true,2,2,,1,2,11,9,0,0,,,,String,
-d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,
+a,a,true,0,0,,1,3,1,24,0,0,,,,String,String
+b,b,true,1,1,,1,2,12,ab,0,0,,,,String,String
+c,c,true,2,2,,1,2,11,9,0,0,,,,String,String
+d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,String
 ```
 
 ```
 $ cx in SOME.csv // -h // parse // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
-a,a,true,0,0,Integer,1,3,1,134,0,0,,,,Integer,
-b,b,true,1,1,Object,1,2,ab,ab,0,0,,,,String;Integer,
-c,c,true,2,2,Integer,1,2,3,11,0,0,,,,Integer,
-d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,
+a,a,true,0,0,Integer,1,3,1,134,0,0,,,right,Integer,Integer
+b,b,true,1,1,Object,1,2,ab,ab,0,0,,,,Integer;String,Object
+c,c,true,2,2,Integer,1,2,3,11,0,0,,,right,Integer,Integer
+d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,String
 ```
 
 ## `nop`
