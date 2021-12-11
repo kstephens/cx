@@ -40,6 +40,11 @@ module CX
       
       def call input, env
         columns = column_args!(input).or_all!.columns
+        output = _call(input, env, columns)
+        output = _call(output, env, output.header.columns)
+      end
+      
+      def _call input, env, columns
         
         header = input.header
 
