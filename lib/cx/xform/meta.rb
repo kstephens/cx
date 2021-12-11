@@ -107,7 +107,7 @@ module CX
         column_args!(input).bound.each do | ca |
           c = ca.column
           c.name = ca.opts[:name] if ca.opts[:name]
-          c.meta.update(ca.opts)
+          c.meta.update_from_hash!(ca.opts)
           c.meta.update_column! c
         end
         input
