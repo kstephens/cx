@@ -171,8 +171,8 @@ module CX
       self
     end
     
-    def update m
-      m.to_h.each do | k, v |
+    def update_from_hash! h
+      h.to_h.each do | k, v |
         send(:"#{k}=", (v.dup rescue v))
       end
       self
@@ -198,8 +198,9 @@ module CX
         type = type.first if Array === type
 
         opts[:align] ||= align_for_type(type)
-        col = Column.new(name).tap{|c| c.meta.update(opts)}
-        col.meta.type = type
+        
+        col = Column.new(name)
+        col.meta.update_from_hash!(opts.merge(type: type))
         header << col
       end
       
