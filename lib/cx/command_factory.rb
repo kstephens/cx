@@ -88,7 +88,7 @@ module CX
           end
           self.name = n.to_sym
           
-          if /Default:\s*(.+)/.match?(description)
+          if description =~ /Default:\s*(.+)/
             self.default ||= $1.strip
           end
           self.values = values.split(/,/) if String === values
@@ -148,7 +148,7 @@ module CX
         self.aliases = self.aliases.uniq
         self
       rescue => exc
-        raise_  "#{exc.message} : #{args.inspect}", exc
+        raise_  "#{exc.message} : #{arguments.inspect}", exc
       end
 
       def read_example! e
