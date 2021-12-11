@@ -134,11 +134,11 @@ module CX
       case
       when count.zero?
       when count.odd?
-        self.mid = count / 2
-        self.median = values[mid]
+        self.mid     = count / 2
+        self.median  = values[mid]
       else
-        self.mid = (count - 1) / 2
-        self.median = ratio(values[mid] + values[mid + 1], 2)
+        self.mid     = count / 2 - 1
+        self.median  = ratio(values[mid] + values[mid + 1], 2)
       end
       self
     end

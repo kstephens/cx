@@ -341,7 +341,6 @@ module CX
         },
         matches(Date_rx),
         Proc.new {|t, v|
-          # binding.pry if v =~ /^2021-/
           case v
           when Date_rx
             Date.parse(v)
