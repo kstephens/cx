@@ -3,7 +3,7 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/column_args'
-require 'cx/compare'
+require 'cx/stats'
 
 # :COMMAND:
 # Stats:
@@ -24,10 +24,14 @@ module CX
       
       def call input, env
         column_args!(input)
-        group_ca, values_ca = column_args.partition{|ca| (ca.args.first || '') =~ /^g/i}
+        group_ca, values_ca = column_args.partition{|ca| /^g/i.match?(ca.args.first || '') }
 
-        groups = input.rows.group_by do | r |
-          group_ca.map{|ca| r[ca.column]}
+        if group_ca.empty?
+          groups = [ input.rows ]
+        else
+          groups = input.rows.group_by do | r |
+            group_ca.map{|ca| r[ca.column]}
+          end.values
         end
 
         stats_fields = [:count, :sum, :min, :max, :mean, :median, :stddev]
@@ -50,7 +54,7 @@ module CX
         header = Header.new(header)
         output = Table.new([], header)
         
-        groups.each do | group, rows |
+        groups.each do | rows |
           out_row = output.make_row []
 
           group_cols.each do | (in_col, out_col) |
