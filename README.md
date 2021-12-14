@@ -200,6 +200,56 @@ Aliases: delimited-, d-
 --record-sep=... | Default: system newline.
 --multi-sep=... | Separator for enumerable values.  Default: ";".
 
+## `edn-in`
+
+`edn-in`
+
+Parses EDN.
+
+Aliases: -edn
+
+  Examples:
+
+```
+$ cx in SOME.edn // -edn // h-
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+```
+
+## `edn-out`
+
+`edn-out`
+
+Emits EDN.
+
+Aliases: edn-
+
+  Examples:
+
+```
+$ cx in SOME.csv // -h // parse // edn-
+[
+{:a 1 :b "ab" :c 3 :d "foo"}
+{:a 24 :b 44 :c 6 :d "bar"}
+{:a 134 :b 5 :c 9 :d "baz"}
+{:a 2 :b 12 :c 11 :d "abc"}
+]
+```
+
+```
+$ cx in SOME.csv // -h // parse // h- // edn- --mode=row
+[
+["a" "b" "c" "d"]
+[1 "ab" 3 "foo"]
+[24 44 6 "bar"]
+[134 5 9 "baz"]
+[2 12 11 "abc"]
+]
+```
+
 ## `empty-null`
 
 `empty-null`
@@ -1196,6 +1246,16 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+```
+
+```
+# SOME.edn
+[
+{:a 1 :b "ab" :c 3 :d "foo"}
+{:a 24 :b 44 :c 6 :d "bar"}
+{:a 134 :b 5 :c 9 :d "baz"}
+{:a 2 :b 12 :c 11 :d "abc"}
+]
 ```
 
 ```

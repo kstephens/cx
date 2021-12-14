@@ -61,7 +61,7 @@ module CX
   
       def row_fn input
         if row_mode?
-          fn = prod do | row |
+          fn = proc do | row |
             row.to_a
           end
         else

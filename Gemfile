@@ -21,5 +21,6 @@ group :development, :test do
   gem 'multi_json'
   # gem 'faraday'
   # gem 'faraday_middleware'
+  gem 'edn'
 end
 

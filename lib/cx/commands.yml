@@ -161,6 +161,41 @@
   lineno: 17
   path: cx/xform/delimited
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: EdnIn
+  name: edn-in
+  aliases:
+  - "-edn"
+  synopsis: Parses EDN.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.edn // -edn // h-
+  file: lib/cx/xform/edn.rb
+  lineno: 8
+  path: cx/xform/edn
+- !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: EdnOut
+  name: edn-out
+  aliases:
+  - edn-
+  synopsis: Emits EDN.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // parse // edn-
+  - cx in SOME.csv // -h // parse // h- // edn- --mode=row
+  file: lib/cx/xform/edn.rb
+  lineno: 17
+  path: cx/xform/edn
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: EmptyToNull
   name: empty-null
   aliases: []
