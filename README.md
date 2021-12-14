@@ -407,6 +407,45 @@ $ cx in SOME.csv // -h // jira
 |2|12|11|abc|
 ```
 
+## `json-in`
+
+`json-in`
+
+Parses JSON.
+
+Aliases: -json
+
+  Examples:
+
+```
+$ cx in SOME.json // -json // h-
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+```
+
+## `json-out`
+
+`json-out`
+
+Emits JSON.
+
+Aliases: json-
+
+  Examples:
+
+```
+$ cx in SOME.csv // -h // parse // json-
+[
+{"a":1,"b":"ab","c":3,"d":"foo"},
+{"a":24,"b":44,"c":6,"d":"bar"},
+{"a":134,"b":5,"c":9,"d":"baz"},
+{"a":2,"b":12,"c":11,"d":"abc"}
+]
+```
+
 ## `markdown-out`
 
 `markdown-out`
@@ -1157,6 +1196,16 @@ a,b,c,d
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
+```
+
+```
+# SOME.json
+[
+{"a":1,"b":"ab","c":3,"d":"foo"},
+{"a":24,"b":44,"c":6,"d":"bar"},
+{"a":134,"b":5,"c":9,"d":"baz"},
+{"a":2,"b":12,"c":11,"d":"abc"}
+]
 ```
 
 ```

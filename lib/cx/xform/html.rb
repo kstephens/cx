@@ -79,6 +79,8 @@ module CX
         end
 
         root!
+        out.flush
+
         @input, @env = @header = @cols = @h = @col_data = nil
         
         env[:content_type] = 'text/html'

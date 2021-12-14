@@ -1,0 +1,46 @@
+--- !ruby/struct:CX::Example
+command: json-in
+example: cx in SOME.json // -json // h-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/run
+  stderr: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/stderr
+  expected: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/expected
+  actual: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/actual
+  diff: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/diff
+contents: 
+dir: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d
+dir_name: ad9acc9e0eed3d963c016ac475aedd6d
+base_dir: ex/cmd
+yaml_file: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.json // -json // h-;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    a,b,c,d
+    1,ab,3,foo
+    24,44,6,bar
+    134,5,9,baz
+    2,12,11,abc
+  actual: |
+    a,b,c,d
+    1,ab,3,foo
+    24,44,6,bar
+    134,5,9,baz
+    2,12,11,abc
+  diff: ''

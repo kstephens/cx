@@ -409,6 +409,40 @@
   lineno: 8
   path: cx/xform/jira
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: JsonIn
+  name: json-in
+  aliases:
+  - "-json"
+  synopsis: Parses JSON.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.json // -json // h-
+  file: lib/cx/xform/json.rb
+  lineno: 8
+  path: cx/xform/json
+- !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: JsonOut
+  name: json-out
+  aliases:
+  - json-
+  synopsis: Emits JSON.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // parse // json-
+  file: lib/cx/xform/json.rb
+  lineno: 17
+  path: cx/xform/json
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MarkdownOut
   name: markdown-out
   aliases:

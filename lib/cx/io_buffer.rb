@@ -20,5 +20,11 @@ module CX
     end
     alias :<< :call
     alias :write :call
+    
+    def flush
+      @out.call @buf[r = 0 .. -1]
+      @buf[r] = ''
+      self
+    end
   end
 end
