@@ -36,10 +36,13 @@
   name: cmd
   aliases:
   - command
-  synopsis: Pipe to/from an external command.
+  - "/"
+  synopsis: Pipe through an external command.
   description: ''
   suffixes: []
-  arguments: []
+  arguments:
+  - command
+  - args...
   options: []
   has_column_args: 
   has_pipeline_args: 
@@ -248,6 +251,7 @@
   name: gnuplot-out
   aliases:
   - gnuplot-
+  - gnuplot
   synopsis: Generate GNUPLOT file.
   description: ''
   suffixes: []
@@ -256,9 +260,9 @@
   has_column_args: 
   has_pipeline_args: 
   examples:
-  - cx in SOME.csv // -h // jira
+  - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
   file: lib/cx/xform/gnuplot.rb
-  lineno: 8
+  lineno: 11
   path: cx/xform/gnuplot
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep

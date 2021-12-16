@@ -10,13 +10,11 @@ require 'cx/xform/cut'
 
 # :COMMAND:
 # GnuplotOut:
-#   aliases: [  ]
+#   aliases: [ gnuplot ]
 #   synopsis: Generate GNUPLOT file.
-#   suffixes: [ ]
-#   args: []
 #   opts: {}
 #   examples:
-#     - 'cx in SOME.csv // -h // jira'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
 
 module CX
   module Xform
@@ -48,22 +46,21 @@ module CX
       def title
         opts[:title] || @env[:title] || @env[:in_file] || ''
       end
-      
+
       def format!
-        case fmt = opts[:format] || 'tty'
-        when /svg/i
-          @output_size ||= [ 1024, 1024 ]
+        @size = opts[:size] and @size = @size.split(/\s+|\s*x\s*|\s*,\s*/, 2).map(&:to_i)
+        case fmt = opts[:format]
+        when nil, /term|tty|console/i
+          @size ||= stty_size
           @output << [ <<"END" ]
-            set terminal #{fmt} size #{@output_size * ','}
-END
-        when /term|tty|console/i
-          @output_size ||= stty_size
-          @output << [ <<"END" ]
-set terminal dumb size #{@output_size * ','}
+set terminal dumb size #{@size * ','}
 set autoscale
 END
         else
-          raise_ "invalid gnuplot format"
+          @size ||= [ 1024, 1024 ]
+          @output << [ <<"END" ]
+            set terminal #{fmt} size #{@size * ','}
+END
         end
       end
 

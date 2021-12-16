@@ -6,9 +6,9 @@ require 'thread'
 
 # :COMMAND:
 # Cmd:
-#   aliases: [ command ]
-#   synopsis: Pipe to/from an external command.
-#   args: []
+#   aliases: [ command, / ]
+#   synopsis: Pipe through an external command.
+#   args: [ command, args... ]
 
 module CX
   module Xform
@@ -22,8 +22,6 @@ module CX
   
       def call input, env
         @column_offset  = (opts[:column_offset]  || 1).to_i
-        @returns_header = (opts[:returns_header] || false)
-        @takes_header   = (opts[:takes_header]   || false)
 
         @command ||= args
         @command = replace_column_arguments(input,  @command)
@@ -31,19 +29,14 @@ module CX
         @output = make_output
         
         @write_fn = lambda do | io |
-          log.debug "write io #{io}"
           input.each do | row |
-            log.debug "WRITE #{row.inspect}"
             io.write(row.to_a.map(&:to_s) * '')
           end
         end
 
         @read_fn = lambda do | io |
-          log.debug "read io #{io}"
           until io.eof?
-            line = io.readline
-            log.debug "READ #{line.inspect}"
-            @output << [ line ] 
+            @output << [ io.readline ] 
           end
         end
         

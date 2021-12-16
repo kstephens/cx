@@ -1,0 +1,84 @@
+--- !ruby/struct:CX::Example
+command: gnuplot-out
+example: cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/run
+  stderr: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/stderr
+  expected: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/expected
+  actual: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/actual
+  diff: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/diff
+contents: 
+dir: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6
+dir_name: b244d71427e1cb62194f7236fb1e96c6
+base_dir: ex/cmd
+yaml_file: ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/gnuplot-out/b244d71427e1cb62194f7236fb1e96c6'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: "\f                                                                                \n
+    \                                                                               \n
+    \                                     plot.csv                                  \n
+    \    120 +------------------------------------------------------------------+
+    \  \n         |      +     +      +      +      +     +      +      +     + *****|
+    \  \n         |                                                 ************A***
+    |   \n     100 |-+                             **A         A*****               +-|
+    \  \n         |                           ****  *        *                       |
+    \  \n      80 |-+                     ****       *       *                     +-|
+    \  \n         |                   ****           *      *                        |
+    \  \n         |                A**               *     *                         |
+    \  \n      60 |-+             *                  *     *                       +-|
+    \  \n y1      |               *                   *   *                          |
+    \  \n      40 |-+            *                    *   *                        +-|
+    \  \n         |  A**        *                     *  *                           |
+    \  \n         |  *  *****   *                     * *                            |
+    \  \n      20 |A+*       **A                       **                          +-|
+    \  \n         |* *                                 A                             |
+    \  \n       0 |-*                                                              +-|
+    \  \n         | *                                                                |
+    \  \n         | A    +     +      +      +      +     +      +      +     +      |
+    \  \n     -20 +------------------------------------------------------------------+
+    \  \n         0      10    20     30     40     50    60     70     80    90    100
+    \ \n                                          x                                     \n
+    \                                                                               \n"
+  actual: "\f                                                                                \n
+    \                                                                               \n
+    \                                     plot.csv                                  \n
+    \    120 +------------------------------------------------------------------+
+    \  \n         |      +     +      +      +      +     +      +      +     + *****|
+    \  \n         |                                                 ************A***
+    |   \n     100 |-+                             **A         A*****               +-|
+    \  \n         |                           ****  *        *                       |
+    \  \n      80 |-+                     ****       *       *                     +-|
+    \  \n         |                   ****           *      *                        |
+    \  \n         |                A**               *     *                         |
+    \  \n      60 |-+             *                  *     *                       +-|
+    \  \n y1      |               *                   *   *                          |
+    \  \n      40 |-+            *                    *   *                        +-|
+    \  \n         |  A**        *                     *  *                           |
+    \  \n         |  *  *****   *                     * *                            |
+    \  \n      20 |A+*       **A                       **                          +-|
+    \  \n         |* *                                 A                             |
+    \  \n       0 |-*                                                              +-|
+    \  \n         | *                                                                |
+    \  \n         | A    +     +      +      +      +     +      +      +     +      |
+    \  \n     -20 +------------------------------------------------------------------+
+    \  \n         0      10    20     30     40     50    60     70     80    90    100
+    \ \n                                          x                                     \n
+    \                                                                               \n"
+  diff: ''
