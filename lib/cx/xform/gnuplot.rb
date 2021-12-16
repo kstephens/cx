@@ -30,21 +30,13 @@ module CX
 
         header!
         
-        plots = ycols.map do | ycol |
-          plot ycol
-        end * '; '
-        # self << plots
-        
         data = input
         data = Cut.new.cut(data, env, @columns)
         @columns = data.header.columns
         data = HeaderOut.new.call(data, env)
         @data = CsvOut.new.call(data, env)
-        
-        ycols.each do | ycol |
-          self << plot(ycol)
-          data! ycol
-        end
+
+        plot!
         
         @env = nil
         @output.tap{|x| @output = nil}
@@ -142,19 +134,31 @@ END
         self << %Q{set xlabel    #{x_label.inspect}} if x_label
       end
       
-      def plot ycol
+      def plot!
+        cmd, datafile = 'plot', '/dev/stdin'
+        plots = []
+        ycols.each do | ycol |
+          plots << %Q{#{cmd} #{plot_y(datafile, ycol)}}
+          cmd, datafile = nil, ''
+        end
+        self << plots * ', '
+        ycols.each do | ycol |
+          data! ycol
+        end
+      end
+      
+      def plot_y datafile, ycol
         ylabel = ycol.to_s
-
         xind = @xcol && @xcol.to_i + 1
         yind = ycol.to_i + 1
         indxs = [ xind, yind ].compact.join(':')
         using = %Q{using #{indxs}}
-        %Q{plot '/dev/stdin' #{using} #{@plot_opts} title #{ylabel.inspect}}
+        %Q{#{datafile.inspect} #{using} #{@plot_opts} title #{ylabel.inspect}}
       end
 
       def data! ycol
         data.each {|r| @output << r }
-        self << ""
+        self << "e"
       end
     end
   end
