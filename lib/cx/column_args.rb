@@ -38,7 +38,11 @@ module CX
     def each &blk
       @args.each(&blk)
     end
-
+    def size  ; @args.size  ; end
+    def first ; @args[0]    ; end
+    def last  ; @args[-1]   ; end
+    def [] i  ; @args[i]    ; end
+    
     def parse! _args
       _args.each do | arg_str |
         @args << parse_arg(arg_str)

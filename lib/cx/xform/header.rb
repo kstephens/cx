@@ -41,14 +41,10 @@ module CX
     
     class HeaderOut
       include SelectColumns, Xform
-      def initialize!
-        super
+      def call input, env
         @meta_columns = (opts[:meta_columns] || "").
           split(/\s*,\s*/).
           map(&:to_sym)
-      end
-      
-      def call input, env
         if @meta_columns.empty?
           output = Table.new([], input.header.dup, input.meta.dup)
           output << input.header.map(&:to_s)

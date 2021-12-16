@@ -42,12 +42,9 @@ module CX
     
     class CsvOut
       include RecordOut
-      def initialize!
-        super
-        @csv = CSVSafe.new(opts || {})
-      end
       
       def call input, env
+        @csv = CSVSafe.new(opts || {})
         @cols = input.header.ordered
         output = make_output
         input.each do | r |

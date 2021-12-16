@@ -32,7 +32,10 @@ module CX
         end
 
         columns = column_args.bound.map(&:column)
-        
+        cut input, env, columns
+      end
+
+      def cut input, env, columns
         output_columns = columns.map(&:dup).each(&:clear!)
         header = Header.new(output_columns)
         output = Table.new([], header)

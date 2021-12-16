@@ -3,6 +3,9 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
+require 'cx/xform/csv'
+require 'cx/xform/header'
+require 'cx/xform/cut'
 
 
 # :COMMAND:
@@ -22,66 +25,64 @@ module CX
       
       def call input, env
         @env = env
-        @columns = column_args!(input).or_all!.columns
+        column_args!(input).or_all!
+        xca = column_args.select{|ca| ca.args[0] == 'x'}.first || column_args[0]
+        yca = column_args.select{|ca| ca.args[0] == 'y'}.first || column_args[1]
+        @x_col = xca ? xca.column : input.header[0]
+        @y_col = yca ? yca.column : input.header[1]
         @output = make_output
         header!
         footer!
-        # csv = HeaderOut.new.call(input, env)
-        csv = CsvOut.new.call(input, env)
-        csv.each do | row |
-          @output << row
-        end
+        data = input
+        data = Cut.new.cut(data, env, [ @x_col, @y_col ])
+        @x_col, @y_col = data.header.columns
+        data = HeaderOut.new.call(data, env)
+        data = CsvOut.new.call(data, env)
+        data.each {|r| @output << r }
         @env = nil
         @output.tap{|x| @output = nil}
       end
 
-      def x_col
-        @columns[0]
+      attr_reader :x_col, :y_col
+
+      def title
+        opts[:title] || @env[:title] || @env[:in_file] || ''
       end
       
-      def y_col
-        @columns[1]
-      end
-
-      def output_format
-        'svg'
-      end
-
       def format!
-        @output_size ||= [ 500, 500 ]
-        @output << [ <<"END" ]
-          set terminal #{output_format} size #{@output_size * ','}
+        case fmt = opts[:format] || 'tty'
+        when /svg/i
+          @output_size ||= [ 1024, 1024 ]
+          @output << [ <<"END" ]
+            set terminal #{fmt} size #{@output_size * ','}
 END
-      end
-
-      def output_format
-        'terminal dumb'
-      end
-      
-      def format!
-        @output_size ||= stty_size
-        @output << [ <<"END" ]
+        when /term|tty|console/i
+          @output_size ||= stty_size
+          @output << [ <<"END" ]
 set terminal dumb size #{@output_size * ','}
 set autoscale
 END
+        else
+          raise_ "invalid gnuplot format"
+        end
       end
 
       def stty_size
         `stty size`.chomp.split(/\s+/,-1).map(&:to_i).reverse
           .tap { |xy| xy[1] -= 2 } # Adjust for shell prompt!
       end
-      
+
       def header!
         format!
         @output << [ <<"END" ]
-set output '/dev/stdout'
-set title '#{@env[:title]}'
-set xlabel '#{x_col}'
-set ylabel '#{y_col}'
-set style data lines
-#set key autotitle columnhead
-#plot for [col=2:3] '/dev/stdin' using 1:col
-plot '/dev/stdin' using 1:2
+set output  '/dev/stdout'
+set title   "#{title}"
+set xlabel  "#{x_col}"
+set ylabel  "#{y_col}"
+set style   data linespoints
+set key     autotitle columnhead
+set datafile separator ","
+plot '/dev/stdin' using 1:2 title "#{title}"
 END
       end
 
