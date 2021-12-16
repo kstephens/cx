@@ -43,14 +43,14 @@ module CX
         super
       end
 
-    def line row
-      case row
-      when Hash
-        clj_map(row, row_delim)
-      else
-        clj_vec(row, row_delim)
+      def line row
+        case row
+        when Hash
+          clj_map(row, row_delim)
+        else
+          clj_vec(row, row_delim)
+        end
       end
-    end
 
       def clj_map row, delim
         delim[0].to_s +
@@ -76,6 +76,14 @@ module CX
           val_xform k
         end
       end
+      def key_string! k
+        case k
+        when String, Symbol
+          k.to_s.inspect
+        else
+          k.to_s
+        end
+      end
       def key_keyword! k
         ":#{k.gsub(/\s+/, '-')}"
       end
@@ -84,6 +92,9 @@ module CX
       end
       def key_downcase! k
         k.downcase
+      end
+      def key_upcase! k
+        k.upcase
       end
       def key_dash! k
         k.gsub(/[^-\w+]/, '-')
