@@ -56,6 +56,17 @@ module CX
 set terminal dumb size #{@size * ','}
 set autoscale
 END
+          @plot_opts = 'pt "#"'
+        when /caca/i
+          @size ||= stty_size
+          @output << [ <<"END" ]
+#set terminal caca format ansi enhanced size #{@size * ','}
+#set terminal caca driver ncurses format caca # enhanced size #{@size * ','}
+#set terminal caca format caca # enhanced size #{@size * ','}
+set terminal caca format utf8 enhanced size #{@size * ','}
+set autoscale
+END
+          # @plot_opts = 'pt "#"'
         else
           @size ||= [ 1024, 1024 ]
           @output << [ <<"END" ]
@@ -78,8 +89,12 @@ set xlabel  "#{x_col}"
 set ylabel  "#{y_col}"
 set style   data linespoints
 set key     autotitle columnhead
+set border  0
+set tics scale 0
+set xtics   nomirror
+set ytics   nomirror
 set datafile separator ","
-plot '/dev/stdin' using 1:2 title "#{title}"
+plot '/dev/stdin' using 1:2 #{@plot_opts}
 END
       end
 
