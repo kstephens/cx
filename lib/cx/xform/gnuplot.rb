@@ -28,16 +28,22 @@ module CX
 
         @output = make_output
 
+        header!
+        
+        plots = ycols.map do | ycol |
+          plot ycol
+        end * '; '
+        # self << plots
+        
         data = input
         data = Cut.new.cut(data, env, @columns)
         @columns = data.header.columns
         data = HeaderOut.new.call(data, env)
         @data = CsvOut.new.call(data, env)
         
-        header!
-        
         ycols.each do | ycol |
-          plot! ycol
+          self << plot(ycol)
+          data! ycol
         end
         
         @env = nil
@@ -136,16 +142,17 @@ END
         self << %Q{set xlabel    #{x_label.inspect}} if x_label
       end
       
-      def plot! ycol
+      def plot ycol
         ylabel = ycol.to_s
 
         xind = @xcol && @xcol.to_i + 1
         yind = ycol.to_i + 1
         indxs = [ xind, yind ].compact.join(':')
         using = %Q{using #{indxs}}
+        %Q{plot '/dev/stdin' #{using} #{@plot_opts} title #{ylabel.inspect}}
+      end
 
-        self << ""
-        self << %Q{plot '/dev/stdin' #{using} #{@plot_opts} title #{ylabel.inspect}}
+      def data! ycol
         data.each {|r| @output << r }
         self << ""
       end
