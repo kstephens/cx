@@ -1,20 +1,26 @@
+# frozen_string_literal: true
+
+require 'cx'
+require 'cx/error'
 require 'open3'
 require 'thread'
 
 module CX
   class IOCommand
-    attr_accessor :write_fn, :read_fn
+    include Error::Support
+    
+    attr_accessor :stdin_fn, :stdout_fn
     
     def initialize *args
-      @write_fn, @read_fn = args
+      @stdin_fn, @stdout_fn = args
     end
     
     def call command
       stdin = stdout = wait_thr = wt = rt = nil
       reraise do
         stdin, stdout, wait_thr = Open3.popen2(*command)
-        wt = with_io(stdin,  @write_fn, "stdin")
-        rt = with_io(stdout, @read_fn,  "stdout")
+        wt = io_thread stdin,   @stdin_fn,   "stdin"
+        rt = io_thread stdout,  @stdout_fn,  "stdout"
         wt.join
         rt.join
         wait_thr.value # Fail on command exit code ???
@@ -32,10 +38,10 @@ module CX
       end
     end
 
-    def with_io io, fn, kind
+    def io_thread io, fn, kind
       Thread.new do
         thr = Thread.current
-        thr[:name] = "#{self.class} #{kind}"
+        thr[:name] = "#{kind}"
         begin
           thr[:result] = fn.call(io)
         rescue
