@@ -3,9 +3,8 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
-require 'cx/xform/csv'
-require 'cx/xform/header'
-require 'cx/xform/cut'
+#require 'color_conversion'
+require 'color'
 
 
 # :COMMAND:
@@ -22,24 +21,18 @@ module CX
       include SelectColumns, OutputFormat, RecordOut
       
       def call input, env
-        @env = env
+        @input, @env = input, env
         @title = opts[:title] || @env[:title] || @env[:in_file] || ''
         @columns = input_columns! input
-
         @output = make_output
 
         header!
-        
-        data = input
-        data = Cut.new.cut(data, env, @columns)
-        @columns = data.header.columns
-        data = HeaderOut.new.call(data, env)
-        @data = CsvOut.new.call(data, env)
-
         plot!
         
         @env = nil
-        @output.tap{|x| @output = nil}
+        @output.tap do |x|
+          @input = @output = nil
+        end
       end
 
       attr_accessor :data, :columns, :xcol, :ycols, :output
@@ -123,9 +116,10 @@ set output    "/dev/stdout"
 set border    0
 set tics      scale 0 nomirror
 set style     data linespoints
-set datafile  separator ","
 set title     #{@title.inspect}
 set ylabel    #{(ycols.map(&:to_s) * ',').inspect}
+set datafile  separator ","
+#set key     autotitle columnhead
 END
 
         format!
@@ -149,15 +143,47 @@ END
       
       def plot_y datafile, ycol
         ylabel = ycol.to_s
-        xind = @xcol && @xcol.to_i + 1
-        yind = ycol.to_i + 1
-        indxs = [ xind, yind ].compact.join(':')
-        using = %Q{using #{indxs}}
-        %Q{#{datafile.inspect} #{using} #{@plot_opts} title #{ylabel.inspect}}
+        using = @xcol ? "1:2" : "1"
+        
+        palette_frac = ycols.index(ycol).to_f / ycols.size
+        
+        rgb = hsvtorgb(palette_frac * 360, 100.0, 50.0)
+        pp(palette_frac: palette_frac, rgb: rgb)
+        # rgb = rgb.map{|x| x * 255.999}
+        # rgb = '#%02X%02X%02X' % rgb
+        linecolor = "linecolor rgb #{rgb.inspect}"
+        %Q{#{datafile.inspect} using #{using} #{@plot_opts} #{linecolor} title #{ylabel.inspect}}
       end
 
+      def hsvtorgb h, s, v
+        pp(h: h, s: s, v: v)
+        case
+        when true
+          c = Color::HSL.from_fraction(h, s, v)
+        when false
+          h, s, v = (h * 360.0), (s * 255.999), (v * 255.999)
+          h, s, v = h.to_i, s.to_i, v.to_i
+        when false
+          h, s, v = (h * 360.0), (s * 1.0), (v * 1.0)
+        end
+        pp(h: h, s: s, v: v)
+        c = Color::HSL.new(h, s, v)
+        pp(c: c, rgb: c.to_rgb)
+        c.html
+      end
+      
       def data! ycol
-        data.each {|r| @output << r }
+        if false
+          xcol = @xcol && @xco.to_s + ','
+          str = "#{xcol}#{ycol}"
+          self << str
+        end
+        
+        @input.each do |r|
+          xcol = @xcol && r[@xcol].to_s + ','
+          str = "#{xcol}#{r[ycol]}"
+          self << str
+        end
         self << "e"
       end
     end

@@ -6,6 +6,8 @@ gemspec
 gem "terminal-table", "~> 1.8"
 gem "awesome_print", "~> 1.9"
 gem "builder", "~> 3.2" # XML
+#gem 'color_conversion'
+gem 'color'
 
 group :development, :test do
   gem "rake", "~> 13.0"
