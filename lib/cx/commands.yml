@@ -32,6 +32,22 @@
   lineno: 5
   path: cx/xform/cat
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: Cmd
+  name: cmd
+  aliases:
+  - command
+  synopsis: Pipe to/from an external command.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples: []
+  file: lib/cx/xform/cmd.rb
+  lineno: 7
+  path: cx/xform/cmd
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Coerce
   name: coerce
   aliases: []
