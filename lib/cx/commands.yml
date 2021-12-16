@@ -228,6 +228,23 @@
   lineno: 6
   path: cx/xform/eval
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: GnuplotOut
+  name: gnuplot-out
+  aliases:
+  - gnuplot-
+  synopsis: Generate GNUPLOT file.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // jira
+  file: lib/cx/xform/gnuplot.rb
+  lineno: 8
+  path: cx/xform/gnuplot
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep
   name: grep
   aliases:
