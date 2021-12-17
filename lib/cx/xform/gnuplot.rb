@@ -110,45 +110,46 @@ END
       end
 
       def header!
-        self << <<"END"
-set output    "/dev/stdout"
-set border    0
-set tics      scale 0 nomirror  # tc "white"
-set style     data linespoints
-set title     #{@title.inspect} # tc "white"
-set ylabel    #{(ycols.map(&:to_s) * ',').inspect}
-set datafile  separator ","
-END
-        self << %Q{set key     autotitle columnhead} if @data_header
-
         format!
 
+        self << <<"END"
+set output "/dev/stdout"
+set border 0
+set tics scale 0 nomirror
+set style data linespoints
+set title  #{@title.inspect}
+set ylabel #{(ycols.map(&:to_s) * ',').inspect}
+END
+        self << %Q{set key autotitle columnhead} if @data_header
+
         x_label = @xcol.to_s if @xcol
-        self << %Q{set xlabel    #{x_label.inspect}} if x_label
+        self << %Q{set xlabel #{x_label.inspect}} if x_label
       end
 
       def plot_separate_data_blocks!
         ycols.each.with_index do | ycol, i |
-          self << ''
           line_style! ycol, i
-          self << "$data_#{i} << EOD"
-          data_ycol! ycol
-          self << 'EOD'
         end
         
+        self << ''
+        self << 'set datafile separator ","'
+        self << "$data << EOD"
+        data!
+        self << 'EOD'
+        self << ''
+        
         plots = ycols.map.with_index do | ycol, i |
-          plot_y("$data_#{i}", ycol, i)
+          plot_y("$data", ycol, i)
         end
-        self << ""
         self << "plot " + plots * ', '
       end
 
       alias :plot! :plot_separate_data_blocks!
       
       def plot_y datafile, ycol, i
-        i += 2
-        using = @xcol ? "1:2" : "1"
-        %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i} #{@plot_opts} title #{ycol.to_s.inspect} }
+        ind = ycol.to_i + 1
+        using = @xcol ? "1:#{ind}" : "#{ind}"
+        %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i + 2} #{@plot_opts} title #{ycol.to_s.inspect}}
       end
 
       def line_style! ycol, i
@@ -171,7 +172,6 @@ END
           r = @columns.map{|c| r[c]}
           self << r * ','
         end
-        self << "e"
       end
       
       def data_ycol! ycol
