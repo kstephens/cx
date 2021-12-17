@@ -6,6 +6,15 @@ A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`"
 
 Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
 
+# Installation
+
+```
+# Install ruby, then:
+$ git clone https://github.com/kstephens/cx.git
+$ cd cx
+$ bundle exec rake install
+```
+
 # Options
 
    Syntax           | Semantic 
