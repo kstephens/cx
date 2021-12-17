@@ -12,6 +12,8 @@ require 'color'
 #   opts: {}
 #   examples:
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot'
 
 module CX
   module Xform

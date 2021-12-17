@@ -1,0 +1,84 @@
+--- !ruby/struct:CX::Example
+command: gnuplot-out
+example: cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/run
+  stderr: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/stderr
+  expected: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/expected
+  actual: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/actual
+  diff: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/diff
+contents: 
+dir: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72
+dir_name: 46ad9d045127fcdd3f222f57f04dbf72
+base_dir: ex/cmd
+yaml_file: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: "\f                                                                                \n
+    \                                                                               \n
+    \                                     plot.csv                                  \n
+    \    100 +                                                                  @
+    \  \n                                                                           #
+    \   \n      90 +                                                         x ######
+    \    \n                                                                         #
+    \     \n      80 +                                                              #
+    \      \n                                                                       #
+    \       \n      70 +                                                            #
+    \        \n                                                                   ##@
+    \         \n      60 +                                                     ####
+    \            \n      50 +                                            @######@#
+    \                \n  x                                                 ##                          \n
+    \     40 +                                        ##                            \n
+    \                                                #                              \n
+    \     30 +                                     ##                               \n
+    \                                          ###@                                 \n
+    \     20 +                            #@###                                     \n
+    \                                  ###                                          \n
+    \     10 +                       ##                                             \n
+    \                   ####@######@#                                               \n
+    \      0 @######@###    +      +       +      +       +      +       +      +
+    \  \n         0      1       2      3       4      5       6      7       8      9
+    \  \n                                                                                \n"
+  actual: "\f                                                                                \n
+    \                                                                               \n
+    \                                     plot.csv                                  \n
+    \    100 +                                                                  @
+    \  \n                                                                           #
+    \   \n      90 +                                                         x ######
+    \    \n                                                                         #
+    \     \n      80 +                                                              #
+    \      \n                                                                       #
+    \       \n      70 +                                                            #
+    \        \n                                                                   ##@
+    \         \n      60 +                                                     ####
+    \            \n      50 +                                            @######@#
+    \                \n  x                                                 ##                          \n
+    \     40 +                                        ##                            \n
+    \                                                #                              \n
+    \     30 +                                     ##                               \n
+    \                                          ###@                                 \n
+    \     20 +                            #@###                                     \n
+    \                                  ###                                          \n
+    \     10 +                       ##                                             \n
+    \                   ####@######@#                                               \n
+    \      0 @######@###    +      +       +      +       +      +       +      +
+    \  \n         0      1       2      3       4      5       6      7       8      9
+    \  \n                                                                                \n"
+  diff: ''

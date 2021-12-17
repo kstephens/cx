@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+dir='ex/cmd/gnuplot-out/7d65e28be7b1612a86021c42768f0051'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_VERBOSE" ]] && set -x
+(
+  cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot;
+  echo $! > exit_code
+) 2> stderr > actual
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]
