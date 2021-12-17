@@ -244,7 +244,7 @@ END
                 )
                 # Clear filter button:
                 if true
-                  h.button({class: 'cx-filter-input-clear', onclick: 'document.getElementById("cx-filter-input").value = ""; cx_filter.filter_rows()'}, 'X')
+                  h.button({class: 'cx-filter-input-clear', onclick: 'cx_filter.clear_filter()'}, 'X')
                 end
                 h.span(class: 'cx-filter-row-count-span') do
                   h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
