@@ -100,6 +100,7 @@ END
         else
           @size ||= [ 1024, 768 ]
           self << %Q{set terminal #{fmt} size #{@size * ','}}
+          #  background rgb "black" leads to invisible text.
         end
       end
 
@@ -112,9 +113,9 @@ END
         self << <<"END"
 set output    "/dev/stdout"
 set border    0
-set tics      scale 0 nomirror
+set tics      scale 0 nomirror  # tc "white"
 set style     data linespoints
-set title     #{@title.inspect}
+set title     #{@title.inspect} # tc "white"
 set ylabel    #{(ycols.map(&:to_s) * ',').inspect}
 set datafile  separator ","
 END
@@ -147,17 +148,22 @@ END
       def plot_y datafile, ycol, i
         i += 2
         using = @xcol ? "1:2" : "1"
-        %Q{#{datafile.inspect} using #{using} with lines title #{ycol.to_s.inspect} linestyle #{i} #{@plot_opts} }
+        %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i} #{@plot_opts} title #{ycol.to_s.inspect} }
       end
 
       def line_style! ycol, i
+        i += 2
+        self << %Q{set style line #{i + 2} linecolor rgbcolor #{rgb_i(i)}}
+      end
+
+      def rgb_i i
         palette_frac = i.to_f / ycols.size
-        rgb = hsvtorgb(palette_frac * 360, 100.0, 50.0)
-        self << %Q{set style line #{i + 2} linecolor rgb #{rgb.inspect} pt #{- i - 2} }
+        # "hsv2rgb(#{palette_frac}, 1.0, 0.85)"
+        hsvtorgb(palette_frac, 1.0, 0.85)
       end
       
       def hsvtorgb h, s, v
-        Color::HSL.new(h, s, v).html
+        Color::HSL.new(h * 360.0, s, v).html.inspect
       end
 
       def data!
