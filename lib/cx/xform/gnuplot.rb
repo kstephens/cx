@@ -144,16 +144,8 @@ END
       
       def plot_separate_data_blocks!
         line_styles!
-
-        cmd, datafile = 'plot', '/dev/stdin'
-        plots = []
         ycols.each.with_index do | ycol, i |
-          plots << %Q{#{cmd} #{plot_y(datafile, ycol, i)}}
-          cmd, datafile = nil, ''
-        end
-        
-        self << plots * ', '
-        ycols.each do | ycol |
+          self << %Q{plot #{plot_y('-', ycol, i)}}
           data_ycol! ycol
         end
       end
@@ -199,6 +191,7 @@ END
           self << str
         end
         self << "e"
+        self << ""
       end
     end
   end
