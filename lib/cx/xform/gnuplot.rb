@@ -9,7 +9,10 @@ require 'color'
 # GnuplotOut:
 #   aliases: [ gnuplot ]
 #   synopsis: Generate GNUPLOT file.
-#   opts: {}
+#   opts:
+#     color: 'Default: false.'
+#     format=: 'term,tty,console,svg,...'
+#     size=: 'WxH'
 #   examples:
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
@@ -106,14 +109,11 @@ set style data linespoints
 set title  #{@title.inspect}
 set ylabel #{(ycols.map(&:to_s) * ',').inspect}
 END
-        self << %Q{set key autotitle columnhead} if @data_header
-
         x_label = @xcol.to_s if @xcol
         self << %Q{set xlabel #{x_label.inspect}} if x_label
       end
 
-      def plot_separate_data_blocks!
-
+      def plot!
         header!
 
         ycols.each.with_index do | ycol, i |
@@ -123,6 +123,7 @@ END
         self << ''
         self << '# Data:'
         self << 'set datafile separator ","'
+        self << "# #{columns.map(&:to_s) * ','}"
         self << "$data << EOD"
         data!
         self << 'EOD'
@@ -131,11 +132,9 @@ END
         plots = ycols.map.with_index do | ycol, i |
           plot_y("$data", ycol, i)
         end
-        self << "plot " + plots * ', '
+        self << "plot " + plots * ", \\\n     "
       end
 
-      alias :plot! :plot_separate_data_blocks!
-      
       def plot_y datafile, ycol, i
         ind = @columns.index(ycol) + 1
         using = @xcol ? "1:#{ind}" : "#{ind}"
@@ -143,18 +142,16 @@ END
       end
 
       def line_style! ycol, i
-        i += 2
         self << %Q{set style line #{i + 2} linecolor rgbcolor #{rgb_i(i)}}
       end
 
       def rgb_i i
-        palette_frac = i.to_f / ycols.size
-        # "hsv2rgb(#{palette_frac}, 1.0, 0.85)"
-        hsvtorgb(palette_frac, 1.0, 0.85)
+        palette_frac = i.to_f / columns.size
+        hsvtorgb(palette_frac, 1.0, 0.50)
       end
       
       def hsvtorgb h, s, v
-        Color::HSL.new(h * 360.0, s, v).html.inspect
+        Color::HSL.new(h * 360.0, s * 100, v * 100).html.inspect
       end
 
       def data!
@@ -165,12 +162,6 @@ END
       end
       
       def data_ycol! ycol
-        if @data_header
-          xcol = @xcol && @xco.to_s + ','
-          str = "#{xcol}#{ycol}"
-          self << str
-        end
-        
         @input.each do |r|
           xcol = @xcol && r[@xcol].to_s + ','
           str = "#{xcol}#{r[ycol]}"

@@ -256,7 +256,22 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :color
+    description: 'Default: false.'
+    default: false.
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :format=
+    description: term,tty,console,svg,...
+    default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :size=
+    description: WxH
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
   examples:
