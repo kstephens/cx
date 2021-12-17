@@ -96,6 +96,9 @@ table.cx-table {
 .cx-filter-input {
   width: 20em;
 }
+.cx-error {
+  background-color: #b08080;
+}
 .cx-filter-row-count-span {
   vertical-align: middle;
   font-size: 80%;
