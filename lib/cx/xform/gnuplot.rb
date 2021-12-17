@@ -73,30 +73,12 @@ module CX
           #  {[no]enhanced}
           #  {mono|ansi|ansi256|ansirgb}
           @size ||= stty_size
-          @output << [ <<"END" ]
+          self << <<"END"
 set terminal dumb size #{@size * ','} aspect 1 enhanced #{opts[:color] ? :ansirgb : :mono}
 set tics nomirror scale 0.5
 set autoscale
 END
           @plot_opts = 'pt "@"'
-        when /caca/i
-          # THIS IS VERY BUGGY:
-          # See http://www.gnuplot.info/docs_5.2/Gnuplot_5.2.pdf:
-          #set terminal caca {{driver | format} {default | <driver> | list}}
-          # {color | monochrome}
-          # {{no}inverted}
-          # {enhanced | noenhanced}
-          # {background <rgb color>}
-          # {title "<plot window title>"}
-          # {size <width>,<height>}
-          # {charset ascii|blocks|unicode}
-          @size ||= stty_size
-          @output << [ <<"END" ]
-# set terminal caca color noinverted background rgb "gray" charset unicode size #{@size * ','}
-set terminal caca driver ncurses inverted enhanced background rgb "white" size #{@size * ','}
-set autoscale
-END
-          # @plot_opts = 'pt "#"'
         else
           @size ||= [ 1024, 768 ]
           self << %Q{set terminal #{fmt} size #{@size * ','}}
