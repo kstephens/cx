@@ -48,7 +48,7 @@
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/cmd.rb
-  lineno: 7
+  lineno: 6
   path: cx/xform/cmd
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Coerce
@@ -262,7 +262,7 @@
   examples:
   - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
   file: lib/cx/xform/gnuplot.rb
-  lineno: 11
+  lineno: 8
   path: cx/xform/gnuplot
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep

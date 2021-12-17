@@ -126,28 +126,20 @@ END
         self << %Q{set xlabel    #{x_label.inspect}} if x_label
       end
 
-      def plot_with_for_loop!
-        line_styles!
-        # ylabel = ycol.to_s
-        if @xcol
-          range   = "2:#{ycols.size + 1}"
-          using   = "1:n"
-        else
-          range   = "#{ycols.size + 1}"
-          using   = "n"
-        end
-        self << %Q{plot for [n=#{range}] '/dev/stdin' using #{using} w lines linestyle n}
-        @columns.each do | c |
-          data!
-        end
-      end
-      
       def plot_separate_data_blocks!
-        line_styles!
         ycols.each.with_index do | ycol, i |
-          self << %Q{plot #{plot_y('-', ycol, i)}}
+          self << ''
+          line_style! ycol, i
+          self << "$data_#{i} << EOD"
           data_ycol! ycol
+          self << 'EOD'
         end
+        
+        plots = ycols.map.with_index do | ycol, i |
+          plot_y("$data_#{i}", ycol, i)
+        end
+        self << ""
+        self << "plot " + plots * ', '
       end
 
       alias :plot! :plot_separate_data_blocks!
@@ -155,15 +147,13 @@ END
       def plot_y datafile, ycol, i
         i += 2
         using = @xcol ? "1:2" : "1"
-        %Q{#{datafile.inspect} using #{using} #{@plot_opts} with lines linestyle #{i} title #{ycol.to_s.inspect}}
+        %Q{#{datafile.inspect} using #{using} with lines title #{ycol.to_s.inspect} linestyle #{i} #{@plot_opts} }
       end
 
-      def line_styles!
-        ycols.each.with_index do| ycol, i |
-          palette_frac = i.to_f / ycols.size
-          rgb = hsvtorgb(palette_frac * 360, 100.0, 50.0)
-          self << %Q{set style line #{i + 2} lc rgb #{rgb.inspect}}
-        end
+      def line_style! ycol, i
+        palette_frac = i.to_f / ycols.size
+        rgb = hsvtorgb(palette_frac * 360, 100.0, 50.0)
+        self << %Q{set style line #{i + 2} linecolor rgb #{rgb.inspect} pt #{- i - 2} }
       end
       
       def hsvtorgb h, s, v
@@ -190,8 +180,6 @@ END
           str = "#{xcol}#{r[ycol]}"
           self << str
         end
-        self << "e"
-        self << ""
       end
     end
   end
