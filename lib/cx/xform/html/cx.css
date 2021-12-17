@@ -3,25 +3,29 @@ body {
   background-color: #000;
   color: #eee;
 }
-table {
+
+table.cx-table {
   border-collapse: collapse;
+  background-color: #000;
 }
-thead th {
+.cx-table thead th {
   background-color: #333;
-}
-tr:hover {
-  background-color: #444;
-}
-tr:nth-child(even) {
-  background-color: #222;
-}
-th {
   padding: 0.5rem 1rem;
 }
-td {
+.cx-table tr:nth-child(odd) {
+  background-color: #111;
+}
+.cx-table tr:nth-child(even) {
+  background-color: #222;
+}
+.cx-table td {
   padding: 0.5rem 1rem;
   border-bottom: 1px solid #555;
 }
+.cx-table tr:hover td {
+  background-color: #444;
+}
+
 a:link {
   color: inherit;
   text-decoration: none;
@@ -61,11 +65,11 @@ div.cx-content {
 table.cx-table {
   position: relative,
 }
-.cx-thead {
+.cx-table .cx-thead {
   position: sticky;
   top: 0;
 }
-.cx-filter-row {
+.cx-table .cx-filter-row {
   position: sticky;
   left: 0; /* needed for sticky? */
 }
