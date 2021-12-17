@@ -24,7 +24,6 @@ module CX
         @columns = input_columns! input
         @output = make_output
 
-        header!
         plot!
         
         @env = nil
@@ -95,10 +94,13 @@ END
         format!
 
         self << <<"END"
+# Style:
 set output "/dev/stdout"
 set border 0
 set tics scale 0 nomirror
 set style data linespoints
+
+# Notation:
 set title  #{@title.inspect}
 set ylabel #{(ycols.map(&:to_s) * ',').inspect}
 END
@@ -109,11 +111,15 @@ END
       end
 
       def plot_separate_data_blocks!
+
+        header!
+
         ycols.each.with_index do | ycol, i |
           line_style! ycol, i
         end
         
         self << ''
+        self << '# Data:'
         self << 'set datafile separator ","'
         self << "$data << EOD"
         data!
@@ -129,7 +135,7 @@ END
       alias :plot! :plot_separate_data_blocks!
       
       def plot_y datafile, ycol, i
-        ind = ycol.to_i + 1
+        ind = @columns.index(ycol) + 1
         using = @xcol ? "1:#{ind}" : "#{ind}"
         %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i + 2} #{@plot_opts} title #{ycol.to_s.inspect}}
       end
