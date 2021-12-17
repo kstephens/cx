@@ -25,7 +25,7 @@ module CX
       when nil
       when Integer
         cols.times do | i |
-          push Column.new(:"_COL_#{i}")
+          push Column.new(:"_COL_#{i + 1}")
         end
       when Enumerable
         cols.each{|x| push x}
@@ -108,7 +108,8 @@ module CX
     end
     
     def alias! c, name
-      @aliases[name] = c.name
+      c = get(c) if Column === c
+      @aliases[name.to_sym] = c
       self
     end
 
