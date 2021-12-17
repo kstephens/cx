@@ -1,8 +1,0 @@
-
-gnuplot> plot "$data_0" using 1:2 with lines title "y1" linestyle 2 pt "@" , "$data_1" using 1:2 with lines title "y2" linestyle 3 pt "@" 
-                                                                    ^
-         line 22: warning: No pointtype specifier allowed, here
-
-gnuplot> plot "$data_0" using 1:2 with lines title "y1" linestyle 2 pt "@" , "$data_1" using 1:2 with lines title "y2" linestyle 3 pt "@" 
-                                                                                                                                   ^
-         line 22: warning: No pointtype specifier allowed, here
