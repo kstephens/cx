@@ -15,17 +15,16 @@ require 'cx/html_markup'
 #   suffixes: [ .html, .htm ]
 #   args: []
 #   opts:
-#     raw:        'Comma-separated list of columns that contain raw HTML.'
-#     filtering:  'Adds a filtering input box.'
 #     title:      'Sets the HTML `title`.'
 #     table-only: 'Emit the HTML `table` only.'
-#     indent:     'Spaces to indent.  Default: 1'
 #     filtering:  'Enable filtering.  Default: true'
 #     sorting:    'Enable sorting.  Default: true'
 #     styled:     'Enable styling.  Default: true'
+#     raw:        'Comma-separated list of columns that contain raw HTML.'
 #     head:       'Additional raw HTML at foot of `head`.'
 #     body-head:  'Additional raw HTML at head of `body`.'
 #     body-foot:  'Additional raw HTML at foot of `body`.'
+#     indent:     'Spaces to indent.  Default: 1'
 
 module CX
   module Xform
