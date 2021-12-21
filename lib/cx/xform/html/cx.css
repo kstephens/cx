@@ -58,6 +58,9 @@ table.cx-table {
 
 /** cell alignment *****************************************/
 
+.cx-numeric {
+  text-align: right;
+}
 .cx-right {
   text-align: right;
 }
