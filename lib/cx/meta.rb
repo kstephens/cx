@@ -167,8 +167,12 @@ module CX
       types.delete(NilClass)
       self.type_inferred = infer_type(types) unless types.empty?
       self.types = types.to_a.sort_by{|c| c.name}
-      self.align_inferred = :right if type_inferred && type_inferred <= ::Numeric
+      self.align_inferred = :right if numeric?
       self
+    end
+
+    def numeric? type = type_inferred
+      type && type <= ::Numeric
     end
     
     def update_from_hash! h
@@ -212,7 +216,7 @@ module CX
     end
     
     def align_for_type type
-      type && type <= ::Numeric ? :right : nil
+      numeric?(type) ? :right : nil
     end
 
     def type_
