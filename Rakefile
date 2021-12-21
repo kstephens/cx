@@ -3,7 +3,7 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => [ :commands_yml, :spec, :js_test, :readme ]
+task :default => [ :minify, :commands_yml, :spec, :js_test, :readme ]
 
 task :build => [ :commands_yml, :'examples:run', :readme ]
 
@@ -38,6 +38,20 @@ namespace :examples do
   task :diff do
     require 'cx/example'
     CX::Example.diffs!
+  end
+end
+
+desc "Minifiy"
+task :minify do
+  ['js', 'css'].each do | suffix |
+    Dir["lib/**/*.#{suffix}"].
+      reject do |f|
+        f =~ %r{vendor|test|\.min\.#{suffix}$}
+      end.
+      sort.each do | f |
+      min_f = f.sub(/\.#{suffix}$/, ".min.#{suffix}")
+      sh "minify --#{suffix} < '#{f}' > '#{min_f}'"
+      end
   end
 end
   
