@@ -383,16 +383,6 @@
   arguments: []
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :raw
-    description: Comma-separated list of columns that contain raw HTML.
-    default: 
-    values: []
-  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :filtering
-    description: 'Enable filtering.  Default: true'
-    default: 'true'
-    values: []
-  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :title
     description: Sets the HTML `title`.
     default: 
@@ -403,9 +393,9 @@
     default: 
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :indent
-    description: 'Spaces to indent.  Default: 1'
-    default: '1'
+    name: :filtering
+    description: 'Enable filtering.  Default: true'
+    default: 'true'
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :sorting
@@ -416,6 +406,11 @@
     name: :styled
     description: 'Enable styling.  Default: true'
     default: 'true'
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :raw
+    description: Comma-separated list of columns that contain raw HTML.
+    default: 
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :head
@@ -431,6 +426,11 @@
     name: :body-foot
     description: Additional raw HTML at foot of `body`.
     default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :indent
+    description: 'Spaces to indent.  Default: 1'
+    default: '1'
     values: []
   has_column_args: 
   has_pipeline_args: 
