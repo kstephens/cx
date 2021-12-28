@@ -19,13 +19,8 @@ module CX
       
       def call input, env
         erb_file = args[0] or raise_ "Missing ERB filename"
-        # binding.pry
         
         template = File.read(erb_file)
-        # compiler = ERB::Compiler.new('<>')
-        # code, enc = compiler.compile(md_erb)
-        # File.write("tmp/help.md.rb", code)
-        # puts code; exit!
         @erb = ERB.new(template,
           trim_mode: opts.fetch(:erb_options, "-"),
           # eoutvar: 'self',
@@ -43,11 +38,6 @@ module CX
         @output.tap{ || @output = nil }
       end
 
-      def << str
-        @output << [ str.to_s + "\n" ]
-        self
-      end
-      
       def evaluate! input, env
         @erb.result(binding)
       end
