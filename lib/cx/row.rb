@@ -102,6 +102,13 @@ module CX
       end
     end
 
+    def fetch k, v = UNSPECIFIED
+      v = _fetch(@header.get(k), v)
+      raise KeyError, "key not found: #{k.inspect}" if v.equal?(UNSPECIFIED)
+      v
+    end
+    UNSPECIFIED = Object.new
+    
     def vals x
       x.map{|k| _get(k)}
     end
@@ -141,6 +148,11 @@ module CX
       def _set k, v
         @data[k.to_i] = v
       end
+      def _fetch k, v
+        k = k.to_i
+        k = @data.size + k if k < 0
+        0 <= k && k < @data.size ? @data[k] : v
+      end
     end
     
     module HashRow
@@ -149,6 +161,10 @@ module CX
       end
       def _set k, v
         @data[k.to_sym] = v
+      end
+      def _fetch k, v
+        k = k.to_sym
+        @data.key?(k) ? @data[k] : v
       end
     end
   end
