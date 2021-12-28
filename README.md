@@ -865,6 +865,15 @@ id,a,b,c,X %
 1015,-92,ndu,5.6,80%
 ```
 
+## `remove-empty`
+
+`remove-empty`
+*[* *column-args *...* *]*
+
+Empty columns and rows are removed.
+
+Aliases: compact
+
 ## `replace`
 
 `replace`

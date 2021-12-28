@@ -720,6 +720,22 @@
   lineno: 6
   path: cx/xform/region
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: RemoveEmpty
+  name: remove-empty
+  aliases:
+  - compact
+  synopsis: Empty columns and rows are removed.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: true
+  has_pipeline_args: 
+  examples: []
+  file: lib/cx/xform/remove_empty.rb
+  lineno: 9
+  path: cx/xform/remove_empty
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Replace
   name: replace
   aliases:

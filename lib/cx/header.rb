@@ -114,7 +114,9 @@ module CX
     end
 
     def add_column! c
-      raise_ ArgumentError if @columns.include?(c)
+      raise_ ArgumentError, "#{self.inspect} already contains #{c.inspect}" if @columns.include?(c)
+      # raise_ ArgumentError, "#{c.inspect} already belongs to #{c.header.inspect}" if c.header
+      c = c.dup if c.header
       c.index ||= (@columns.map(&:to_i).max || -1) + 1
       c.order ||= @columns.last ? @columns.last.order + 1 : 0
       c.name = available_name(c, c.name || :_COL_)
