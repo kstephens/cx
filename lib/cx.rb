@@ -2,7 +2,9 @@ require "cx/version"
 
 module CX
   def self.base_dir ; BASE_DIR ; end
-  BASE_DIR = File.expand_path('../..', __FILE__)
+  BASE_DIR = File.expand_path('../..', __FILE__).freeze
+  def self.lib_dir  ; LIB_DIR  ; end
+  LIB_DIR  = File.expand_path('..', __FILE__).freeze
   def self.supress_warnings new_flags = nil
     save = $VERBOSE
     begin

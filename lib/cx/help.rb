@@ -19,7 +19,7 @@ module CX
     end
 
     def help_file
-      "#{CX.base_dir}/doc/help.md"
+      "#{CX.lib_dir}/cx/doc/help.md"
     end
 
     def document
@@ -40,7 +40,7 @@ module CX
     end
 
     def help_md_erb
-      File.expand_path("../help.md.erb", __FILE__)
+      "#{help_file}.erb"
     end
     
     def make_document
