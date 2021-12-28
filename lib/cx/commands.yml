@@ -48,7 +48,7 @@
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/cmd.rb
-  lineno: 7
+  lineno: 6
   path: cx/xform/cmd
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Coerce
@@ -256,13 +256,30 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :color
+    description: 'Default: false.'
+    default: false.
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :format=
+    description: term,tty,console,svg,...
+    default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :size=
+    description: WxH
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
   examples:
   - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
+  - cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
+  - cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
   file: lib/cx/xform/gnuplot.rb
-  lineno: 11
+  lineno: 8
   path: cx/xform/gnuplot
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Grep
@@ -366,16 +383,6 @@
   arguments: []
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :raw
-    description: Comma-separated list of columns that contain raw HTML.
-    default: 
-    values: []
-  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :filtering
-    description: 'Enable filtering.  Default: true'
-    default: 'true'
-    values: []
-  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :title
     description: Sets the HTML `title`.
     default: 
@@ -386,9 +393,9 @@
     default: 
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :indent
-    description: 'Spaces to indent.  Default: 1'
-    default: '1'
+    name: :filtering
+    description: 'Enable filtering.  Default: true'
+    default: 'true'
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :sorting
@@ -399,6 +406,11 @@
     name: :styled
     description: 'Enable styling.  Default: true'
     default: 'true'
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :raw
+    description: Comma-separated list of columns that contain raw HTML.
+    default: 
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :head
@@ -414,6 +426,11 @@
     name: :body-foot
     description: Additional raw HTML at foot of `body`.
     default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :indent
+    description: 'Spaces to indent.  Default: 1'
+    default: '1'
     values: []
   has_column_args: 
   has_pipeline_args: 

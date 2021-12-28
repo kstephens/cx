@@ -1,27 +1,11 @@
+/** generic *****************************************/
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: #000;
   color: #eee;
 }
-table {
-  border-collapse: collapse;
-}
-thead th {
-  background-color: #333;
-}
-tr:hover {
-  background-color: #444;
-}
-tr:nth-child(even) {
-  background-color: #222;
-}
-th {
-  padding: 0.5rem 1rem;
-}
-td {
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid #555;
-}
+
 a:link {
   color: inherit;
   text-decoration: none;
@@ -39,13 +23,43 @@ a:hover {
   text-decoration: underline;
 }
 
-/*******************************************/
+/** cx-content *****************************************/
 
 .cx-title {
   text-align: center;
 }
 div.cx-content {
   display: inline-block;
+}
+
+/** cx-table *****************************************/
+
+table.cx-table {
+  border-collapse: collapse;
+  background-color: #000;
+}
+.cx-table thead th {
+  background-color: #333;
+  padding: 0.5rem 1rem;
+}
+.cx-table tr:nth-child(odd) {
+  background-color: #111;
+}
+.cx-table tr:nth-child(even) {
+  background-color: #222;
+}
+.cx-table td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #555;
+}
+.cx-table tr:hover td {
+  background-color: #444;
+}
+
+/** cell alignment *****************************************/
+
+.cx-numeric {
+  text-align: right;
 }
 .cx-right {
   text-align: right;
@@ -61,15 +75,14 @@ div.cx-content {
 table.cx-table {
   position: relative,
 }
-.cx-thead {
+.cx-table .cx-thead {
   position: sticky;
   top: 0;
 }
-.cx-filter-row {
+.cx-table .cx-filter-row {
   position: sticky;
   left: 0; /* needed for sticky? */
 }
-
 .cx-filter-input-clear {
   background-color: inherit; /* black; */
   color: red;
@@ -83,14 +96,13 @@ table.cx-table {
   margin: 4px 2px;
   cursor: pointer;
 }
-
 .cx-filter-input {
   width: 20em;
-  /* float: left; /* needed for sticky? */
 }
-
+.cx-error {
+  background-color: #b08080;
+}
 .cx-filter-row-count-span {
-  /* float: right; */
   vertical-align: middle;
   font-size: 80%;
 }

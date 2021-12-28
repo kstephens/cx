@@ -6,6 +6,15 @@ A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`"
 
 Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
 
+# Installation
+
+```
+# Install ruby, then:
+$ git clone https://github.com/kstephens/cx.git
+$ cd cx
+$ bundle exec rake install
+```
+
 # Options
 
    Syntax           | Semantic 
@@ -296,10 +305,20 @@ a,b,c,d,a_to_power_of_c
 ## `gnuplot-out`
 
 `gnuplot-out`
+ *[*
+--color=...
+--format=
+--size= *]*
 
 Generate GNUPLOT file.
 
 Aliases: gnuplot-, gnuplot
+
+  Options                   |  Description
+----------------------------|-------------------------------
+--color=... | Default: false.
+--format= | term,tty,console,svg,...
+--size= | WxH
 
   Examples:
 
@@ -308,25 +327,83 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                                                                 
                                                                                 
                                       plot.csv                                  
-     120 +------------------------------------------------------------------+   
-         |      +     +      +      +      +     +      +      +     + *****|   
-         |                                                 ************A*** |   
-     100 |-+                             **A         A*****               +-|   
-         |                           ****  *        *                       |   
-      80 |-+                     ****       *       *                     +-|   
-         |                   ****           *      *                        |   
-         |                A**               *     *                         |   
-      60 |-+             *                  *     *                       +-|   
- y1      |               *                   *   *                          |   
-      40 |-+            *                    *   *                        +-|   
-         |  A**        *                     *  *                           |   
-         |  *  *****   *                     * *                            |   
-      20 |A+*       **A                       **                          +-|   
-         |* *                                 A                             |   
-       0 |-*                                                              +-|   
-         | *                                                                |   
-         | A    +     +      +      +      +     +      +      +     +      |   
-     -20 +------------------------------------------------------------------+   
+     160 +                                                                      
+          @                                                                     
+     140 +#                                                       y1 ******     
+           #@                                                     y2 ######     
+     120 + @ ##                                                                 
+               ##                                                ***********@   
+     100 +       ##                      **@         @***********               
+                   ##              ******  *        *                           
+      80 +           #@###@####****         *      *                            
+                          @**  ########     *      *                            
+      60 +               *             ####@##@######@#####                     
+                        *                    *   *         ############         
+      40 +  @**         *                    *  *                      #####@   
+            *  *****   *                     *  *                               
+      20 +@ *       **@                       **                                
+          **                                  @                                 
+       0 + *                                                                    
+           @                                                                    
+     -20 +      +     +      +      +      +     +      +      +     +      +   
+         0      10    20     30     40     50    60     70     80    90    100  
+                                          x                                     
+                                                                                
+```
+
+```
+$ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
+                                                                                
+                                                                                
+                                      plot.csv                                  
+     100 +                                                                  @   
+                                                                           *    
+      90 +                                                         x ******     
+                                                                         *      
+      80 +                                                              *       
+                                                                       *        
+      70 +                                                            *         
+                                                                   **@          
+      60 +                                                     ****             
+      50 +                                            @******@*                 
+  x                                                 **                          
+      40 +                                        **                            
+                                                 *                              
+      30 +                                     **                               
+                                           ***@                                 
+      20 +                            *@***                                     
+                                   ***                                          
+      10 +                       **                                             
+                    ****@******@*                                               
+       0 @******@***    +      +       +      +       +      +       +      +   
+         0      1       2      3       4      5       6      7       8      9   
+                                                                                
+```
+
+```
+$ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
+                                                                                
+                                                                                
+                                      plot.csv                                  
+     160 +                                                                      
+          @                                                                     
+          *                                                       y2 ******     
+     140 +*                                                                     
+           *@                                                                   
+           ***                                                                  
+     120 + @  *                                                                 
+               *                                                                
+                *                                                               
+ y2  100 +       **                                                             
+                   *                                                            
+                    *                                                           
+      80 +           *  **@**                                                   
+                      @*     ****                                               
+                                 ****                                           
+      60 +                           ****    *@***                              
+                                         **@*     ***@*****                     
+                                                           ************         
+      40 +      +     +      +      +      +     +      +      +     + *****@   
          0      10    20     30     40     50    60     70     80    90    100  
                                           x                                     
                                                                                 
@@ -439,16 +516,16 @@ Subcommands:
 
 `html-out`
  *[*
---raw
---filtering=...
 --title
 --table-only
---indent=...
+--filtering=...
 --sorting=...
 --styled=...
+--raw
 --head
 --body-head
---body-foot *]*
+--body-foot
+--indent=... *]*
 
 Emits HTML.
 
@@ -456,16 +533,16 @@ Aliases: html-, html, htm
 
   Options                   |  Description
 ----------------------------|-------------------------------
---raw | Comma-separated list of columns that contain raw HTML.
---filtering=... | Enable filtering.  Default: true
 --title | Sets the HTML `title`.
 --table-only | Emit the HTML `table` only.
---indent=... | Spaces to indent.  Default: 1
+--filtering=... | Enable filtering.  Default: true
 --sorting=... | Enable sorting.  Default: true
 --styled=... | Enable styling.  Default: true
+--raw | Comma-separated list of columns that contain raw HTML.
 --head | Additional raw HTML at foot of `head`.
 --body-head | Additional raw HTML at head of `body`.
 --body-foot | Additional raw HTML at foot of `body`.
+--indent=... | Spaces to indent.  Default: 1
 
 ## `io-in`
 

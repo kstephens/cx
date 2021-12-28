@@ -15,17 +15,16 @@ require 'cx/html_markup'
 #   suffixes: [ .html, .htm ]
 #   args: []
 #   opts:
-#     raw:        'Comma-separated list of columns that contain raw HTML.'
-#     filtering:  'Adds a filtering input box.'
 #     title:      'Sets the HTML `title`.'
 #     table-only: 'Emit the HTML `table` only.'
-#     indent:     'Spaces to indent.  Default: 1'
 #     filtering:  'Enable filtering.  Default: true'
 #     sorting:    'Enable sorting.  Default: true'
 #     styled:     'Enable styling.  Default: true'
+#     raw:        'Comma-separated list of columns that contain raw HTML.'
 #     head:       'Additional raw HTML at foot of `head`.'
 #     body-head:  'Additional raw HTML at head of `body`.'
 #     body-foot:  'Additional raw HTML at foot of `body`.'
+#     indent:     'Spaces to indent.  Default: 1'
 
 module CX
   module Xform
@@ -75,7 +74,8 @@ module CX
 
         cols.each do | c |
           data = col_data[c]
-          data[:class] = right[:class] if c.meta.align_ == :right
+          data[:class] = [:left, :center, :right].include?(c.meta.align_) ? "cx-#{c.meta.align_}" : ''
+          data[:class] += ' cx-numeric' if c.meta.numeric?
         end
 
         root!
@@ -108,7 +108,7 @@ module CX
               h.title(x);
             end
             if @styled
-              h.css! h.file_content!('cx.css')
+              h.css! h.file_content!('cx.min.css')
             end
             h.html! h.file_content!('head.html')
             optional_content(:head) {|x| raw!(x) }
@@ -168,7 +168,9 @@ module CX
             "data-filter-name-full" => c.name.to_s)
         end
         if @sorting
-          a = a.merge("data-sort-method" => :number) if c.meta.align_ == :right
+          if c.meta.numeric?
+            a = a.merge("data-sort-method" => :number)
+          end
         end
         
         names = [ c.name, c.name_ ].map(&:to_s).sort.uniq.map(&:inspect).join(', ')
@@ -202,21 +204,11 @@ END
         row_tooltip = "#{row_idx} / #{input.size}"
         # row_tooltipe << ": #{r[inds[0]]}" # TODO: make this optional
         h.tr(title: row_tooltip) do
-          row_id = "r#{row_idx}"
-          # link to row:
-          # FIXME: scrolls row to top of frame which is under the thead!!!
-          if false
-            h.td(right.merge(id: row_id)) do
-              h.a({href: "\##{row_id}"}, row_idx)
-            end
-          else
-            # h.td((right.merge(id: row_id)}, row_idx);
-            h.td(right, row_idx);
-          end
+          # Row index column:
+          h.td(right, row_idx);
           
           cols.each do | c |
             attrs = col_data[c].merge(title: "#{row_tooltip} - #{c.name}")
-
             h.indent!(false) do
               h.td(attrs) do
                 if @raw_columns.include?(c.name)
@@ -243,9 +235,7 @@ END
                   placeholder: "#{UNICODE[:search]} Filter..."
                 )
                 # Clear filter button:
-                if true
-                  h.button({class: 'cx-filter-input-clear', onclick: 'document.getElementById("cx-filter-input").value = ""; cx_filter.filter_rows()'}, 'X')
-                end
+                h.button({class: 'cx-filter-input-clear', onclick: 'cx_filter.clear_filter()'}, 'X')
                 h.span(class: 'cx-filter-row-count-span') do
                   h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
                   h.text!(' / ')
@@ -260,8 +250,8 @@ END
       def table_footer!
         if @filtering
           h.js! h.file_content!("vendor/zepto.min.js")
-          h.js! h.file_content!("parser_combinator.js")
-          h.js! h.file_content!("filter.js")
+          h.js! h.file_content!("parser_combinator.min.js")
+          h.js! h.file_content!("filter.min.js")
         end
         if @sorting
           h.js! h.file_content!("vendor/tablesort.js")
@@ -302,6 +292,8 @@ END
           x.map{|x| render(x)} * ';'
         # when Symbol
           # x.inspect
+        when BigDecimal
+          x.to_s('F')
         when String
           case
           when false ## @quote_strings

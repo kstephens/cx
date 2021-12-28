@@ -3,17 +3,20 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
-#require 'color_conversion'
 require 'color'
-
 
 # :COMMAND:
 # GnuplotOut:
 #   aliases: [ gnuplot ]
 #   synopsis: Generate GNUPLOT file.
-#   opts: {}
+#   opts:
+#     color: 'Default: false.'
+#     format=: 'term,tty,console,svg,...'
+#     size=: 'WxH'
 #   examples:
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot'
 
 module CX
   module Xform
@@ -26,7 +29,6 @@ module CX
         @columns = input_columns! input
         @output = make_output
 
-        header!
         plot!
         
         @env = nil
@@ -75,33 +77,16 @@ module CX
           #  {[no]enhanced}
           #  {mono|ansi|ansi256|ansirgb}
           @size ||= stty_size
-          @output << [ <<"END" ]
+          self << <<"END"
 set terminal dumb size #{@size * ','} aspect 1 enhanced #{opts[:color] ? :ansirgb : :mono}
 set tics nomirror scale 0.5
 set autoscale
 END
           @plot_opts = 'pt "@"'
-        when /caca/i
-          # THIS IS VERY BUGGY:
-          # See http://www.gnuplot.info/docs_5.2/Gnuplot_5.2.pdf:
-          #set terminal caca {{driver | format} {default | <driver> | list}}
-          # {color | monochrome}
-          # {{no}inverted}
-          # {enhanced | noenhanced}
-          # {background <rgb color>}
-          # {title "<plot window title>"}
-          # {size <width>,<height>}
-          # {charset ascii|blocks|unicode}
-          @size ||= stty_size
-          @output << [ <<"END" ]
-# set terminal caca color noinverted background rgb "gray" charset unicode size #{@size * ','}
-set terminal caca driver ncurses inverted enhanced background rgb "white" size #{@size * ','}
-set autoscale
-END
-          # @plot_opts = 'pt "#"'
         else
-          @size ||= [ 1024, 1024 ]
+          @size ||= [ 1024, 768 ]
           self << %Q{set terminal #{fmt} size #{@size * ','}}
+          #  background rgb "black" leads to invisible text.
         end
       end
 
@@ -111,80 +96,77 @@ END
       end
 
       def header!
-        self << <<"END"
-set output    "/dev/stdout"
-set border    0
-set tics      scale 0 nomirror
-set style     data linespoints
-set title     #{@title.inspect}
-set ylabel    #{(ycols.map(&:to_s) * ',').inspect}
-set datafile  separator ","
-#set key     autotitle columnhead
-END
-
         format!
 
+        self << <<"END"
+# Style:
+set output "/dev/stdout"
+set border 0
+set tics scale 0 nomirror
+set style data linespoints
+
+# Notation:
+set title  #{@title.inspect}
+set ylabel #{(ycols.map(&:to_s) * ',').inspect}
+END
         x_label = @xcol.to_s if @xcol
-        self << %Q{set xlabel    #{x_label.inspect}} if x_label
-      end
-      
-      def plot!
-        cmd, datafile = 'plot', '/dev/stdin'
-        plots = []
-        ycols.each do | ycol |
-          plots << %Q{#{cmd} #{plot_y(datafile, ycol)}}
-          cmd, datafile = nil, ''
-        end
-        self << plots * ', '
-        ycols.each do | ycol |
-          data! ycol
-        end
-      end
-      
-      def plot_y datafile, ycol
-        ylabel = ycol.to_s
-        using = @xcol ? "1:2" : "1"
-        
-        palette_frac = ycols.index(ycol).to_f / ycols.size
-        
-        rgb = hsvtorgb(palette_frac * 360, 100.0, 50.0)
-        pp(palette_frac: palette_frac, rgb: rgb)
-        # rgb = rgb.map{|x| x * 255.999}
-        # rgb = '#%02X%02X%02X' % rgb
-        linecolor = "linecolor rgb #{rgb.inspect}"
-        %Q{#{datafile.inspect} using #{using} #{@plot_opts} #{linecolor} title #{ylabel.inspect}}
+        self << %Q{set xlabel #{x_label.inspect}} if x_label
       end
 
-      def hsvtorgb h, s, v
-        pp(h: h, s: s, v: v)
-        case
-        when true
-          c = Color::HSL.from_fraction(h, s, v)
-        when false
-          h, s, v = (h * 360.0), (s * 255.999), (v * 255.999)
-          h, s, v = h.to_i, s.to_i, v.to_i
-        when false
-          h, s, v = (h * 360.0), (s * 1.0), (v * 1.0)
-        end
-        pp(h: h, s: s, v: v)
-        c = Color::HSL.new(h, s, v)
-        pp(c: c, rgb: c.to_rgb)
-        c.html
-      end
-      
-      def data! ycol
-        if false
-          xcol = @xcol && @xco.to_s + ','
-          str = "#{xcol}#{ycol}"
-          self << str
+      def plot!
+        header!
+
+        ycols.each.with_index do | ycol, i |
+          line_style! ycol, i
         end
         
+        self << ''
+        self << '# Data:'
+        self << 'set datafile separator ","'
+        self << "# #{columns.map(&:to_s) * ','}"
+        self << "$data << EOD"
+        data!
+        self << 'EOD'
+        self << ''
+        
+        plots = ycols.map.with_index do | ycol, i |
+          plot_y("$data", ycol, i)
+        end
+        self << "plot " + plots * ", \\\n     "
+      end
+
+      def plot_y datafile, ycol, i
+        ind = @columns.index(ycol) + 1
+        using = @xcol ? "1:#{ind}" : "#{ind}"
+        %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i + 2} #{@plot_opts} title #{ycol.to_s.inspect}}
+      end
+
+      def line_style! ycol, i
+        self << %Q{set style line #{i + 2} linecolor rgbcolor #{rgb_i(i)}}
+      end
+
+      def rgb_i i
+        palette_frac = i.to_f / columns.size
+        hsvtorgb(palette_frac, 1.0, 0.50)
+      end
+      
+      def hsvtorgb h, s, v
+        Color::HSL.new(h * 360.0, s * 100, v * 100).html.inspect
+      end
+
+      def data!
+        @input.each do |r|
+          r = @columns.map{|c| r[c]}
+          self << r * ','
+        end
+      end
+      
+      def data_ycol! ycol
         @input.each do |r|
           xcol = @xcol && r[@xcol].to_s + ','
           str = "#{xcol}#{r[ycol]}"
           self << str
         end
-        self << "e"
       end
     end
   end

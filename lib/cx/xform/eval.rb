@@ -41,7 +41,7 @@ module CX
             :keep!
           end # throw is false
         end
-        input
+        MetaIn.new.call(input, env)
       end
     end
   
