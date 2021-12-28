@@ -276,6 +276,21 @@ $ cx in SOME.csv // -h // parse // h- // edn- --mode=row
 
 Empty fields are converted to NULL.
 
+## `erb-out`
+
+`erb-out`
+template.erb
+
+Evaluates ERB in the context of input table.
+
+Aliases: erb-, erb
+
+  Examples:
+
+```
+$ cx in SOME.csv // -csv // -h // erb SOME.erb
+```
+
 ## `eval`
 
 `eval`
@@ -1224,6 +1239,32 @@ foo,bar,baz,abc
 Infer types from field strings.
 
 Aliases: -types, types
+
+## `uniq`
+
+`uniq`
+
+Emit only rows with uniq columns.
+
+  Examples:
+
+```
+$ cx in SOME.csv // -h // uniq d  // h-
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+```
+
+```
+$ cx in SOME.csv // -h // uniq    // h-
+a,b,c,d
+1,ab,3,foo
+24,44,6,bar
+134,5,9,baz
+2,12,11,abc
+```
 
 ```
 # DUPLICATES.csv

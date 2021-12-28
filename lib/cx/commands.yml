@@ -230,6 +230,25 @@
   lineno: 6
   path: cx/xform/empty_to_null
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: ErbOut
+  name: erb-out
+  aliases:
+  - erb-
+  - erb
+  synopsis: Evaluates ERB in the context of input table.
+  description: ''
+  suffixes: []
+  arguments:
+  - template.erb
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -csv // -h // erb SOME.erb
+  file: lib/cx/xform/erb.rb
+  lineno: 6
+  path: cx/xform/erb
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Eval
   name: eval
   aliases: []
@@ -957,3 +976,20 @@
   file: lib/cx/xform/type_inference.rb
   lineno: 7
   path: cx/xform/type_inference
+- !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: Uniq
+  name: uniq
+  aliases: []
+  synopsis: Emit only rows with uniq columns.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // uniq d  // h-
+  - cx in SOME.csv // -h // uniq    // h-
+  file: lib/cx/xform/uniq.rb
+  lineno: 9
+  path: cx/xform/uniq

@@ -1,0 +1,36 @@
+--- !ruby/struct:CX::Example
+command: erb-out
+example: cx in SOME.csv // -csv // -h // erb SOME.erb
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/run
+  stderr: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/stderr
+  expected: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/expected
+  actual: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/actual
+  diff: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/diff
+contents: 
+dir: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46
+dir_name: 2bcd0bad478d24e20ce43c58b6b27a46
+base_dir: ex/cmd
+yaml_file: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // -csv // -h // erb SOME.erb;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: "# cx : ERROR  : cxNo such file or directory @ rb_sysopen - erb\n"
+  expected: ''
+  actual: ''
+  diff: ''
