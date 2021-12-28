@@ -9,8 +9,9 @@ module CX
       @term  = term
       @buf   = String.new
     end
+    
     def call x
-      @buf << x.to_str
+      @buf << x.to_s
       while i = @buf.index(@term)
         # pp @buf[r = 0 .. i]
         @out.call @buf[r = 0 .. i]
@@ -25,6 +26,11 @@ module CX
       @out.call @buf[r = 0 .. -1]
       @buf[r] = ''
       self
+    end
+
+    def close
+      flush
+      @buf = nil
     end
   end
 end
