@@ -25,7 +25,7 @@ module CX
           if type = c.meta.type_object
             input.each do | r |
               new_v = old_v = r[c]
-              new_v = type_object.coerce(old_v)
+              new_v = type.coerce(old_v)
               new_v = old_v if new_v.nil?
               m.update!(r[c] = new_v)
             end
