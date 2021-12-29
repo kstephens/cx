@@ -37,6 +37,7 @@ module CX
     
     def replace_fn header, col_arg
       search  = col_arg.args[0] || opts[:search]
+      return NOP unless search
       replace = col_arg.args[1] || opts[:replace] || ''
       rx = Regexp.new(search)
 
@@ -44,11 +45,15 @@ module CX
       
       c = col_arg.column
       lambda do | row |
-        old_v = row[c].to_s
-        new_v = global ? old_v.gsub(rx, replace) : old_v.sub(rx, replace)
-        row[c] = new_v
+        unless (old_v = row[c]).nil?
+          old_v = old_v.to_s
+          new_v = global ? old_v.gsub(rx, replace) : old_v.sub(rx, replace)
+          row[c] = new_v
+        end
       end
     end
+
+    NOP = Proc.new{ |row| }
   end
 end
 
