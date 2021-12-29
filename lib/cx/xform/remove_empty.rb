@@ -20,7 +20,6 @@ module CX
     class RemoveEmpty
       include SelectColumns, Xform
       def call input, env
-        # input = Strip.new.call(input, env)
         input = EmptyToNull.new.call(input, env)
         input = MetaIn.new.call(input, env)
         columns = column_args!(input).or_all!.columns
@@ -30,11 +29,7 @@ module CX
             header << col
           end
         end
-        # pp(input_header: input.header.map(&:meta))
-        # pp(size: input.size)
         output = Table.new(nil, header)
-        # binding.pry
-        # pp(header: header)
         input.each do | in_row |
           out_row = header.map{|c| in_row[c.to_sym] }
           pp(out_row: out_row)
