@@ -61,8 +61,8 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
       raw! "\n"
       comment!("#{msg} : END")
       raw! "\n"
+      self
     end
-    self
   end
 
   def file_content! name
@@ -70,12 +70,13 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
   end
 
   def _read_content! name
-    str = ::File.read("#{@file_content_path}/#{name}")
-    def str.file val = nil
-      @from_file = val unless val.nil?
-      @from_file
+    if str = (::File.read("#{@file_content_path}/#{name}") rescue nil)
+      def str.file val = nil
+        @from_file = val unless val.nil?
+        @from_file
+      end
+      str.file(name)
     end
-    str.file(name)
     str
   end
 
