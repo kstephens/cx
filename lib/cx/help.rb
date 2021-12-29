@@ -23,12 +23,8 @@ module CX
     end
 
     def document
-      unless @document
-        unless @document = (File.read(help_file) rescue nil)
-          make_document!
-          File.write(help_file, @document)
-          log.info "wrote help_file : #{help_file}"
-        end
+      unless @document ||= (File.read(help_file) rescue nil)
+        make_document!
       end
       @document
     end
@@ -36,6 +32,8 @@ module CX
     def make_document!
       File.unlink(help_file) rescue nil
       @document = make_document
+      File.write(help_file, @document)
+      log.info "wrote help_file : #{help_file} : #{@document.size} bytes"
       self
     end
 
