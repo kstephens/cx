@@ -21,6 +21,7 @@ module CX
             r[c] = v.strip
           end
         end
+        input = MetaIn.new.call(input, env)
         input
       end
     end

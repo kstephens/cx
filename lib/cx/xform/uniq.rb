@@ -38,6 +38,7 @@ module CX
             output << row
           end
         end
+        output = MetaIn.new.call(output, env)
         output
       end
     
@@ -55,6 +56,7 @@ module CX
         exlempares.each do | k, r |
           output << (header.map{|c| row[c]} << counts[k])
         end
+        output = MetaIn.new.call(output, env)
         output
       end
     end
