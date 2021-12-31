@@ -41,7 +41,7 @@ module CX
       when Hash
         extend HashRow
       else
-        raise_ "unexpected data #{@data.class}"
+        raise_ TypeError, "unexpected data class : #{@data.class}"
       end
     end
     
@@ -63,6 +63,7 @@ module CX
       end
       self
     end
+    
     def map_vals! cols = nil
       (cols || @header).each do |c|
         _set(c, yield(_get(c)))
@@ -109,8 +110,16 @@ module CX
     end
     UNSPECIFIED = Object.new
     
-    def vals x
-      x.map{|k| _get(k)}
+    def vals cols
+      if block_given?
+        cols.each{ |k| yield _get(k) }
+      else
+        cols.map{|k| _get(k)}
+      end
+    end
+    
+    def values_at *cols
+      vals cols
     end
 
     def keys

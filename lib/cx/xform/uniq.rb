@@ -45,16 +45,16 @@ module CX
       def uniq_count input, env, columns
         output = Table.new(input.header.dup)
         output.header << :COUNT
-        found = { }
+        examples = { }
         counts = Hash.new{|h, k| h[k] = 0}
         input.each do | row |
-          k = columns.map{|c| row[c]}
+          k = row.vals(columns)
           counts[k] += 1
-          found[k] ||= row
+          examples[k] ||= row.vals(input.header)
         end
         header = output.header
-        exlempares.each do | k, r |
-          output << (header.map{|c| row[c]} << counts[k])
+        examples.each do | k, example |
+          output << (example << counts[k])
         end
         output = MetaIn.new.call(output, env)
         output

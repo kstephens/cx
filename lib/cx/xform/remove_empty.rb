@@ -31,8 +31,7 @@ module CX
         end
         output = Table.new(nil, header)
         input.each do | in_row |
-          out_row = header.map{|c| in_row[c.to_sym] }
-          pp(out_row: out_row)
+          out_row = in_row.vals(header)
           unless out_row.all?(&:nil?)
             output << out_row
           end
