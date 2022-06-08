@@ -45,7 +45,6 @@ module CX
         when '-', nil
           open default_io, mode, env, &blk
         when IO, StringIO
-          
           env[:in_file] = env[:out_file] = nil
           case mode
           when /[wa]/
@@ -105,20 +104,25 @@ module CX
       def call input, env
         open(@io, "w", env) do | ioh |
           # io.write("=== BEGIN ===========================\n")
-          n_bytes = 0
+          @n_bytes = 0
+          log.info { "#{self} input dims = #{input.header.columns.size} x  #{input.size}" }
           input.each do | r |
-            r.each do | _c, v |
-              v = v.to_s
-              n_bytes += v.size
-              ioh.write(v)
-            end
+            __write_row! r, ioh
           end
-          update_stats! env, :out, env[:out_file], n_bytes
+          update_stats! env, :out, env[:out_file], @n_bytes
           # io.write("=== END   ===========================\n\n")
         end
         input
       end
       def default_io ; $stdout ; end
+      # ??? WTF: calling for each row drastically speed things up!
+      def __write_row! r, ioh
+        r.each do | _c, v |
+          v = v.to_s
+          @n_bytes += v.size
+          ioh.write(v)
+        end
+      end
     end
   end
 end
