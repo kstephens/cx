@@ -106,18 +106,30 @@ Coerce columns by inferred types.
 ## `csv-in`
 
 `csv-in`
+ *[*
+<span style='white-space: nowrap;><code>--separator</code></span> *]*
 
 Parses CSV lines.
 
 Aliases: <span style='white-space: nowrap;><code>-csv</code></span>
 
+  Options                   |  Description
+----------------------------|-------------------------------
+<span style='white-space: nowrap;><code>--separator</code></span> | Column separator: defaults to ",".
+
 ## `csv-out`
 
 `csv-out`
+ *[*
+<span style='white-space: nowrap;><code>--separator</code></span> *]*
 
 Generates CSV lines.
 
 Aliases: <span style='white-space: nowrap;><code>csv-</code></span>
+
+  Options                   |  Description
+----------------------------|-------------------------------
+<span style='white-space: nowrap;><code>--separator</code></span> | Column separator: defaults to ",".
 
   Examples:
 

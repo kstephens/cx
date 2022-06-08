@@ -75,7 +75,12 @@
   suffixes:
   - ".csv"
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :separator
+    description: 'Column separator: defaults to ",".'
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
   examples: []
@@ -92,13 +97,18 @@
   suffixes:
   - ".csv"
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :separator
+    description: 'Column separator: defaults to ",".'
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // csv- --separator="\x09"
   file: lib/cx/xform/csv.rb
-  lineno: 17
+  lineno: 18
   path: cx/xform/csv
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Cut

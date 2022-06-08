@@ -9,7 +9,8 @@ require 'csv'
 
 module CX
   # Fall-back for non-compliant CSV formats.
-module CSVSafe
+  module CSVSafe
+    include Logging
   extend self
 
   def init_more!
@@ -27,6 +28,7 @@ module CSVSafe
         @sep = v
       end
     end
+    @sep_default = @sep || ','
   end
   
   def csv_parse_line line, ri = nil
@@ -36,19 +38,19 @@ module CSVSafe
       # HUH??? #<ArgumentError: wrong number of arguments (given 2, expected 1)>
       # ::CSV.parse_line(line, @csv_parse_options)
       if @sep
-        row = line.chomp.split(@sep, 9999)
+        row = line.chomp.split(@sep, -1)
       else
         row = ::CSV.parse_line(line)
       end
     rescue ::CSV::MalformedCSVError => exc
-      $stderr.puts "  # cx : WARN: Removing \" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
+      log.warn "CSV parse : fallback : removing \" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
       line = line.gsub('"', '')
       begin
         # ::CSV.parse_line(line, @csv_parse_options)
         row = ::CSV.parse_line(line)
       rescue ::CSV::MalformedCSVError
-        $stderr.puts "  # cx : WARN: Falling back to split on \",\" : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
-        row = line.split(',', -1)
+        log.warn "CSV parse : fallback : split on #{@sep_default.inspect} : #{exc.inspect} : #{ri.inspect} : #{line.inspect}"
+        row = line.chomp.split(@sep_default, -1)
       end
     end
     row.map!{|s| csv_unescape_value(s)}

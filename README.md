@@ -106,18 +106,30 @@ Coerce columns by inferred types.
 ## `csv-in`
 
 `csv-in`
+ *[*
+--separator *]*
 
 Parses CSV lines.
 
 Aliases: -csv
 
+  Options                   |  Description
+----------------------------|-------------------------------
+--separator | Column separator: defaults to ",".
+
 ## `csv-out`
 
 `csv-out`
+ *[*
+--separator *]*
 
 Generates CSV lines.
 
 Aliases: csv-
+
+  Options                   |  Description
+----------------------------|-------------------------------
+--separator | Column separator: defaults to ",".
 
   Examples:
 

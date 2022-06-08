@@ -28,7 +28,7 @@ module CX
         exc_cls ||= raise_cls
         
         msg_ = String.new
-        msg_ << "#{describe_self_for_error}"
+        msg_ << describe_self_for_error
         msg_ << " : " << msg.to_s if msg
         msg_ << " : #{exc.class} : #{exc.message}" if exc
         
