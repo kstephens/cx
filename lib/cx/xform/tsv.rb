@@ -27,15 +27,15 @@ require 'cx/xform/csv'
 module CX
   module Xform
     class TsvIn < CsvIn
-      def call input, env
-        opts[:separator] ||= "\x09"
+      def initialize!
+        opts[:separator] = "\x09"
         super
       end
     end
     
     class TsvOut < CsvOut
-      def call input, env
-        opts[:separator] ||= "\x09"
+      def initialize!
+        opts[:separator] = "\x09"
         super
       end
     end

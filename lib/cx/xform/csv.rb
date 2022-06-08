@@ -31,6 +31,7 @@ module CX
   module Xform
     class CsvIn
       include RecordIn
+      
       def initialize!
         super
         @csv = CSVSafe.new(opts || {})
