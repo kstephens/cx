@@ -68,6 +68,7 @@ module CX
         @right = {class: 'cx-right'}
         # @h = XMLWriter.new(out, indent: opts[:indent])
         @h = CX::HtmlMarkup.new(target: out, indent: @indent)
+        # @h = @h_measured = CX::Measured.proxy(@h)
         @h.file_content_path = File.expand_path("../html", __FILE__)
         @h.attrs_enabled = @styled || @sorting || @filtering
         @col_data = Hash.new{|h, k| h[k] = {}}
@@ -84,6 +85,11 @@ module CX
         @input, @env = @header = @cols = @h = @col_data = nil
         
         env[:content_type] = 'text/html'
+        
+        if @h_measured
+          require 'awesome_print'
+          @h_measured.__measurements__.print
+        end
       end
 
       #########################################

@@ -35,7 +35,16 @@ module CX
       
       def call table, env
         @xforms.inject(table) do |table, app|
-          app.call(table, env)
+          case
+          when false
+            Measured.print!(app){ |p| p.call(table, env)}
+          when false
+            Measured.measure!(name: app.class.name) do
+              app.call(table, env)
+            end
+          else
+            app.call(table, env)
+          end
         end
       end
 

@@ -23,6 +23,7 @@ require 'shellwords'
 require 'tempfile'
 require 'thread'
 require 'pp'
+require 'cx/measured'
 
 ######################################
 
