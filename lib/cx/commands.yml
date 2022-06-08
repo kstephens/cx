@@ -976,6 +976,41 @@
   lineno: 6
   path: cx/xform/transpose
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: TsvIn
+  name: tsv-in
+  aliases:
+  - "-tsv"
+  synopsis: Parses TSV lines.
+  description: ''
+  suffixes:
+  - ".tsv"
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples: []
+  file: lib/cx/xform/tsv.rb
+  lineno: 7
+  path: cx/xform/tsv
+- !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: TsvOut
+  name: tsv-out
+  aliases:
+  - tsv-
+  synopsis: Generates TSV lines.
+  description: ''
+  suffixes:
+  - ".tsv"
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // tsv-
+  file: lib/cx/xform/tsv.rb
+  lineno: 16
+  path: cx/xform/tsv
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: TypeInference
   name: type-inference
   aliases:
