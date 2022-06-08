@@ -1269,6 +1269,33 @@ ab,44,5,12
 foo,bar,baz,abc
 ```
 
+## `tsv-in`
+
+`tsv-in`
+
+Parses TSV lines.
+
+Aliases: -tsv
+
+## `tsv-out`
+
+`tsv-out`
+
+Generates TSV lines.
+
+Aliases: tsv-
+
+  Examples:
+
+```
+$ cx in SOME.csv // tsv-
+a	b	c	d
+1	ab	3	foo
+24	44	6	bar
+134	5	9	baz
+2	12	11	abc
+```
+
 ## `type-inference`
 
 `type-inference`
