@@ -61,6 +61,10 @@ module CX
     def first    ; @rows.first          ; end
     def last     ; @rows[-1]            ; end
 
+    def dimensions
+      [ header.columns.size, size ]
+    end
+    
     def each &blk
       @rows.each(&blk)
       self

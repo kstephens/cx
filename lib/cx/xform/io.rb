@@ -105,7 +105,7 @@ module CX
         open(@io, "w", env) do | ioh |
           # io.write("=== BEGIN ===========================\n")
           @n_bytes = 0
-          log.info { "#{self} input dims = #{input.header.columns.size} x  #{input.size}" }
+          log.info { "#{self} input dims = #{input.dimensions}" }
           input.each do | r |
             __write_row! r, ioh
           end
