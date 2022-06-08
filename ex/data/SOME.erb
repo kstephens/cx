@@ -1,0 +1,9 @@
+=== HEADER ===
+columns = <%= input.header.columns.map(&:to_s) * ', ' %>
+size    = <%= input.size %>
+
+<% input.rows.each.with_index do | r, i | -%>
+  Row <%= i %> : <%= r.to_a * ', ' %>
+<% end -%>
+=== FOOTER ===
+

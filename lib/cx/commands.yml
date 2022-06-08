@@ -240,7 +240,12 @@
   suffixes: []
   arguments:
   - template.erb
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :--erb-options
+    description: See ERB doc trim_mode.
+    default: 
+    values: []
   has_column_args: 
   has_pipeline_args: 
   examples:

@@ -30,7 +30,28 @@ contents: !ruby/struct:CX::Example::Files
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  stderr: "# cx : ERROR  : cxNo such file or directory @ rb_sysopen - erb\n"
+  stderr: ''
   expected: ''
-  actual: ''
-  diff: ''
+  actual: |+
+    === HEADER ===
+    columns = a, b, c, d
+    size    = 4
+
+      Row 0 : 1, ab, 3, foo
+      Row 1 : 24, 44, 6, bar
+      Row 2 : 134, 5, 9, baz
+      Row 3 : 2, 12, 11, abc
+    === FOOTER ===
+
+  diff: |
+    @@ -0,0 +1,10 @@
+    +=== HEADER ===
+    +columns = a, b, c, d
+    +size    = 4
+    +
+    +  Row 0 : 1, ab, 3, foo
+    +  Row 1 : 24, 44, 6, bar
+    +  Row 2 : 134, 5, 9, baz
+    +  Row 3 : 2, 12, 11, abc
+    +=== FOOTER ===
+    +

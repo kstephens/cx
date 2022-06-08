@@ -9,6 +9,7 @@ require 'cx/xform'
 #   synopsis: Evaluates ERB in the context of input table.
 #   args: [template.erb]
 #   opts:
+#     --erb-options: See ERB doc trim_mode.
 #   examples:
 #     - 'cx in SOME.csv // -csv // -h // erb SOME.erb'
 
@@ -20,7 +21,7 @@ module CX
       def call input, env
         erb_file = args[0] or raise_ "Missing ERB filename"
         
-        template = File.read(erb_file)
+        template = File.read(erb_file) or raise_ "Cannot read #{erb_file.inspect}"
         @erb = ERB.new(template,
           trim_mode: opts.fetch(:erb_options, "-"),
           # eoutvar: 'self',
@@ -30,7 +31,9 @@ module CX
 
         @output = make_output
         data = evaluate!(input, env)
-        data.split("\n", -1) do | line |
+        data = data.split("\n", -1)
+        data.pop if data[-1] == '' # 
+        data.each do | line |
           @output << [ line << "\n" ]
         end
 

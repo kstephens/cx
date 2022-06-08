@@ -279,16 +279,32 @@ Empty fields are converted to NULL.
 ## `erb-out`
 
 `erb-out`
+ *[*
+----erb-options *]*
 template.erb
 
 Evaluates ERB in the context of input table.
 
 Aliases: erb-, erb
 
+  Options                   |  Description
+----------------------------|-------------------------------
+----erb-options | See ERB doc trim_mode.
+
   Examples:
 
 ```
 $ cx in SOME.csv // -csv // -h // erb SOME.erb
+=== HEADER ===
+columns = a, b, c, d
+size    = 4
+
+  Row 0 : 1, ab, 3, foo
+  Row 1 : 24, 44, 6, bar
+  Row 2 : 134, 5, 9, baz
+  Row 3 : 2, 12, 11, abc
+=== FOOTER ===
+
 ```
 
 ## `eval`
@@ -1432,6 +1448,19 @@ a,b,c,d
 {:a 134 :b 5 :c 9 :d "baz"}
 {:a 2 :b 12 :c 11 :d "abc"}
 ]
+```
+
+```
+# SOME.erb
+=== HEADER ===
+columns = <%= input.header.columns.map(&:to_s) * ', ' %>
+size    = <%= input.size %>
+
+<% input.rows.each.with_index do | r, i | -%>
+  Row <%= i %> : <%= r.to_a * ', ' %>
+<% end -%>
+=== FOOTER ===
+
 ```
 
 ```
