@@ -1,0 +1,46 @@
+--- !ruby/struct:CX::Example
+command: cut
+example: cx in SOME.csv // -h // cut -1,-2 // h-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/run
+  stderr: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/stderr
+  expected: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/expected
+  actual: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/actual
+  diff: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/diff
+contents: 
+dir: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148
+dir_name: fee4f094a99a2e7c1d6ebaa843897148
+base_dir: ex/cmd
+yaml_file: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // -h // cut -1,-2 // h-;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    d,c
+    foo,3
+    bar,6
+    baz,9
+    abc,11
+  actual: |
+    d,c
+    foo,3
+    bar,6
+    baz,9
+    abc,11
+  diff: ''

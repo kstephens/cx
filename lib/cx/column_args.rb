@@ -75,8 +75,8 @@ module CX
         name = arg_str
         rest_str = ""
       end
-      if /^(\d+)+$/.match?(name) && (i = name.to_i) > 0
-        index = i - 1
+      if /^(-?\d+)$/.match?(name) and i = name.to_i and ! i.zero?
+        index = i
       end
       c = ColumnArg.new(
         index ? nil : name.to_sym,
@@ -95,12 +95,22 @@ module CX
     def bind! header
       @header = header
       @args.each do | ca |
-        if ca.column ||=
-            (ca.index && header.ordered[ca.index]) ||
-            header.get(ca.name) ||
-            header.find{|c| c.name_ == ca.name}
-          ca.index = ca.column.order
-        end
+        col = nil
+        ca.column ||=
+          case
+          when ca.index && ca.index > 0
+            header.ordered[ca.index - 1]
+          when ca.index && ca.index < 0
+            header.ordered[header.ordered.size + ca.index]
+          when ca.index
+            log.error "invalid column index : #{ca.arg_str.inspect}"
+            nil
+          when col = header.get(ca.name)
+            col
+          when col = header.find{|c| c.name_ == ca.name}
+            col
+          end
+        ca.column and ca.index = ca.column.order
       end
       self
     end

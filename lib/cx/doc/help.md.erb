@@ -30,16 +30,22 @@ Some commands take one or more column arguments:
 
     Syntax              | Semantic
 ------------------------|--------------------------------
-`COLUMN`                | Name or index.
+`COLUMN`                | Column name or index number.
 `COLUMN:-`              | Reverse order or removal.
 `COLUMN:+`              | Forward order or addition.
 `COLUMN:!`              | Negation.
 `COLUMN:arg1;arg2...`   | Processing arguments.
 `COLUMN:opt1=val1;...`  | Processing options.
 
+A `COLUMN` can be a name or an index number.
+
+Index numbers are non-zero.  Positive values are 1-origin: e.g. `2` is the second column, `-2` is the second to the last column.
+
 For most commands, all columns are processed when column arguments are given.
 
 The column name  `"*"` implies all columns.
+
+See the `cut` command for examples.
 
 # Global Options
 
