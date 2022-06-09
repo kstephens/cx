@@ -132,9 +132,9 @@ Synopsis: Parses CSV lines.
 
 Aliases: <code>-csv</code>
 
- Options                      | Description                           | Default | Values |
-------------------------------|---------------------------------------|---------|--------|
- <code>--separator=...</code> | Column separator: defaults to `","``. |         |        |
+ Options                      | Description                          | Default | Values |
+------------------------------|--------------------------------------|---------|--------|
+ <code>--separator=...</code> | Column separator: defaults to `","`. |         |        |
 
 ## `csv-out`
 
@@ -146,9 +146,9 @@ Synopsis: Generates CSV lines.
 
 Aliases: <code>csv-</code>
 
- Options                      | Description                           | Default | Values |
-------------------------------|---------------------------------------|---------|--------|
- <code>--separator=...</code> | Column separator: defaults to `","``. |         |        |
+ Options                      | Description                          | Default | Values |
+------------------------------|--------------------------------------|---------|--------|
+ <code>--separator=...</code> | Column separator: defaults to `","`. |         |        |
 
   Examples:
 
