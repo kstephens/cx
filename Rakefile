@@ -69,21 +69,7 @@ task :new_class do
   file = ENV['file']
   raise if File.exist? file
   FileUtils.mkdir_p(File.dirname(file))
-  File.write(file, <<'END')
-# coding: utf-8
-# frozen_string_literal: true
-# encoding: UTF-8
-# -*- coding: utf-8 -*-
-
-require 'cx'
-require 'cx/xform'
-
-module CX
-  module Xform
-  end
-end
-
-END
+  File.write(file, File.read('lib/cx/doc/xform-template.rb.erb'))
   sh "git add '#{file}'"
   # sh "dotfiles emacs '#{file}'"
 end

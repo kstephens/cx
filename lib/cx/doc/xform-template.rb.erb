@@ -1,0 +1,46 @@
+# coding: utf-8
+# frozen_string_literal: true
+# encoding: UTF-8
+# -*- coding: utf-8 -*-
+
+require 'cx'
+require 'cx/xform'
+
+# :COMMAND:
+# ClassName:
+#   name: NAME                 # optional: inferred from ClassName
+#   aliases: [ ALIASES, ... ]
+#   synopsis: 'SYNOPSIS'
+#   suffixes: [ .SUFFIX, ... ]
+#   has_column_args:           # false, true
+#   has_pipeline_args:         # false, true
+#   arguments: []
+#   options::
+#     OPTION=:     'OPTION-WITH-ARGUMENT-DESCRIPTION.  Default: DEFAULT'
+#     FLAG:        'FLAG-DESCRIPTION.'
+
+module CX
+  module Xform
+    class ClassName # < SuperClass
+      # Mixins:
+      #   Basic:
+      # include Xform, SelectColumns, PipelineArgs
+      #   Input:
+      # include RecordIn, RecordOut, StructuredIn
+      #   Outputs:
+      # include OutputFormat, RecordOut, StructuredOut
+
+      def initialize!
+        ...
+        self
+      end
+
+      def call input, env
+        output = ...
+        ...
+        output
+      end
+    end
+  end
+end
+
