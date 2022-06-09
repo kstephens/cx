@@ -20,7 +20,7 @@ $ bundle exec rake install
 
 # Options
 
-   Syntax           | Semantic                           |
+Syntax              | Semantic                           |
 --------------------|------------------------------------|
 `--FLAG`            | Enable.                            |
 `--no-FLAG`         | Disable (false).                   |
@@ -31,7 +31,7 @@ $ bundle exec rake install
 
 Some commands take one or more column arguments:
 
-    Syntax              | Semantic                       |
+Syntax                  | Semantic                       |
 ------------------------|--------------------------------|
 `COLUMN`                | Column name or index number.   |
 `COLUMN:-`              | Reverse order or removal.      |
