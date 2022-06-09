@@ -20,7 +20,8 @@ require 'cx/html_markup'
 #     filtering:  'Enable filtering.  Default: true'
 #     sorting:    'Enable sorting.  Default: true'
 #     styled:     'Enable styling.  Default: true'
-#     raw:        'Comma-separated list of columns that contain raw HTML.'
+#     raw:        'Comma-separated list of columns containing raw HTML.'
+#     link:       'Comma-separated list of columns containing URLS.'
 #     head:       'Additional raw HTML at foot of `head`.'
 #     body-head:  'Additional raw HTML at head of `body`.'
 #     body-foot:  'Additional raw HTML at foot of `body`.'
@@ -36,7 +37,10 @@ module CX
           .strip.split(/\s*,\s*/, -1)
           .map(&:to_sym)
           .uniq)
-        self
+        @link_columns = Set.new((opts[:link] || '')
+          .strip.split(/\s*,\s*/, -1)
+          .map(&:to_sym)
+          .uniq)
         @indent      = opts.fetch(:indent, 1).to_i
         @coerce      = opts[:coerce_to_string] || proc{|x| x}
         @table_only  = opts.fetch(:table_only, false)
@@ -45,6 +49,7 @@ module CX
         @sorting     = opts.fetch(:sorting, true)
         @sorting     = false if @table_only
         @styled      = opts.fetch(:styled, true)
+        self
       end
 
       def call input, env
@@ -217,10 +222,17 @@ END
             attrs = col_data[c].merge(title: "#{row_tooltip} - #{c.name}")
             h.indent!(false) do
               h.td(attrs) do
-                if @raw_columns.include?(c.name)
-                  raw!(r[c])
+                v = r[c]
+                case
+                when @raw_columns.include?(c.name)
+                  raw!(v)
+                when @link_columns.include?(c.name)
+                  v = render(v)
+                  h.a(href: v) do
+                    text!(v)
+                  end
                 else
-                  text!(render(r[c]))
+                  text!(render(v))
                 end
               end
             end

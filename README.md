@@ -565,6 +565,7 @@ Subcommands:
 --sorting=...
 --styled=...
 --raw
+--link
 --head
 --body-head
 --body-foot
@@ -581,7 +582,8 @@ Aliases: html-, html, htm
 --filtering=... | Enable filtering.  Default: true
 --sorting=... | Enable sorting.  Default: true
 --styled=... | Enable styling.  Default: true
---raw | Comma-separated list of columns that contain raw HTML.
+--raw | Comma-separated list of columns containing raw HTML.
+--link | Comma-separated list of columns containing URLS.
 --head | Additional raw HTML at foot of `head`.
 --body-head | Additional raw HTML at head of `body`.
 --body-foot | Additional raw HTML at foot of `body`.

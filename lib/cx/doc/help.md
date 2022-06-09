@@ -565,6 +565,7 @@ Subcommands:
 <span style='white-space: nowrap;><code>--sorting=...</code></span>
 <span style='white-space: nowrap;><code>--styled=...</code></span>
 <span style='white-space: nowrap;><code>--raw</code></span>
+<span style='white-space: nowrap;><code>--link</code></span>
 <span style='white-space: nowrap;><code>--head</code></span>
 <span style='white-space: nowrap;><code>--body-head</code></span>
 <span style='white-space: nowrap;><code>--body-foot</code></span>
@@ -581,7 +582,8 @@ Aliases: <span style='white-space: nowrap;><code>html-</code></span>, <span styl
 <span style='white-space: nowrap;><code>--filtering=...</code></span> | Enable filtering.  Default: true
 <span style='white-space: nowrap;><code>--sorting=...</code></span> | Enable sorting.  Default: true
 <span style='white-space: nowrap;><code>--styled=...</code></span> | Enable styling.  Default: true
-<span style='white-space: nowrap;><code>--raw</code></span> | Comma-separated list of columns that contain raw HTML.
+<span style='white-space: nowrap;><code>--raw</code></span> | Comma-separated list of columns containing raw HTML.
+<span style='white-space: nowrap;><code>--link</code></span> | Comma-separated list of columns containing URLS.
 <span style='white-space: nowrap;><code>--head</code></span> | Additional raw HTML at foot of `head`.
 <span style='white-space: nowrap;><code>--body-head</code></span> | Additional raw HTML at head of `body`.
 <span style='white-space: nowrap;><code>--body-foot</code></span> | Additional raw HTML at foot of `body`.

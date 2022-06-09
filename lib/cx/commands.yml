@@ -443,7 +443,12 @@
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :raw
-    description: Comma-separated list of columns that contain raw HTML.
+    description: Comma-separated list of columns containing raw HTML.
+    default: 
+    values: []
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :link
+    description: Comma-separated list of columns containing URLS.
     default: 
     values: []
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
