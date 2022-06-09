@@ -20,25 +20,25 @@ $ bundle exec rake install
 
 # Options
 
-   Syntax           | Semantic 
---------------------|--------------------------------
-`--FLAG`            | Enable.
-`--no-FLAG`         | Disable (false).
-`--OPTION=VALUE`    | Sets option.
-`--`                | Terminates all option parsing.
+   Syntax           | Semantic                           |
+--------------------|------------------------------------|
+`--FLAG`            | Enable.                            |
+`--no-FLAG`         | Disable (false).                   |
+`--OPTION=VALUE`    | Sets option.                       |
+`--`                | Terminates all option parsing.     |
 
-# Arguments
+# Column Arguments
 
 Some commands take one or more column arguments:
 
-    Syntax              | Semantic
-------------------------|--------------------------------
-`COLUMN`                | Column name or index number.
-`COLUMN:-`              | Reverse order or removal.
-`COLUMN:+`              | Forward order or addition.
-`COLUMN:!`              | Negation.
-`COLUMN:arg1;arg2...`   | Processing arguments.
-`COLUMN:opt1=val1;...`  | Processing options.
+    Syntax              | Semantic                       |
+------------------------|--------------------------------|
+`COLUMN`                | Column name or index number.   |
+`COLUMN:-`              | Reverse order or removal.      |
+`COLUMN:+`              | Forward order or addition.     |
+`COLUMN:!`              | Negation.                      |
+`COLUMN:arg1;arg2...`   | Processing arguments.          |
+`COLUMN:opt1=val1;...`  | Processing options.            |
 
 A `COLUMN` can be a name or an index number.
 
@@ -48,15 +48,15 @@ For most commands, all columns are processed when column arguments are given.
 
 The column name  `"*"` implies all columns.
 
-See the `cut` command for examples.
+See the `cut`, `grep`, `sort` and `uniq` commands for examples.
 
 # Global Options
 
-  Syntax            | Semantic
---------------------|-------------------------
-`--debug`           | Enable debugging info.
-`--verbose`         | Enable verbose info.  
-`--help`            | Print this document.    
+  Syntax            | Semantic                |
+--------------------|-------------------------|
+`--debug`           | Enable debugging info.  |
+`--verbose`         | Enable verbose info.    |
+`--help`            | Print this document.    |
 
 # Commands
 
@@ -108,12 +108,12 @@ x,y,z
 ## `cmd`
 
 `cmd`
-`command`
-`args...`
+     `command`      
+     `args...`      
 
 Synopsis: Pipe through an external command.
 
-Aliases: `command`, `/`
+Aliases:      `command`      ,      `/`      
 
 ## `coerce`
 
@@ -126,29 +126,29 @@ Synopsis: Coerce columns by inferred types.
 
 `csv-in`
  *[*
-`--separator=...` *]*
+     `--separator=...`       *]*
 
 Synopsis: Parses CSV lines.
 
-Aliases: `-csv`
+Aliases:      `-csv`      
 
  Options                      | Description                          | Default | Values |
 ------------------------------|--------------------------------------|---------|--------|
- `--separator=...` | Column separator: defaults to `","`. |         |        |
+      `--separator=...`       | Column separator: defaults to `","`. |         |        |
 
 ## `csv-out`
 
 `csv-out`
  *[*
-`--separator=...` *]*
+     `--separator=...`       *]*
 
 Synopsis: Generates CSV lines.
 
-Aliases: `csv-`
+Aliases:      `csv-`      
 
  Options                      | Description                          | Default | Values |
 ------------------------------|--------------------------------------|---------|--------|
- `--separator=...` | Column separator: defaults to `","`. |         |        |
+      `--separator=...`       | Column separator: defaults to `","`. |         |        |
 
   Examples:
 
@@ -257,36 +257,36 @@ abc,11
 
 `delimited-in`
  *[*
-`--field-sep=...`
-`--record-sep=...` *]*
+     `--field-sep=...`      
+     `--record-sep=...`       *]*
 
 Synopsis: Parse delimited records.
 
-Aliases: `-delimited`, `-d`
+Aliases:      `-delimited`      ,      `-d`      
 
  Options                       | Description | Default        | Values |
 -------------------------------|-------------|----------------|--------|
- `--field-sep=...`  |             | ","            |        |
- `--record-sep=...` |             | system newline |        |
+      `--field-sep=...`        |             | ","            |        |
+      `--record-sep=...`       |             | system newline |        |
 
 ## `delimited-out`
 
 `delimited-out`
  *[*
-`--field-sep=...`
-`--record-sep=...`
-`--multi-sep=...` *]*
+     `--field-sep=...`      
+     `--record-sep=...`      
+     `--multi-sep=...`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Generate delimited records.
 
-Aliases: `delimited-`, `d-`
+Aliases:      `delimited-`      ,      `d-`      
 
  Options                       | Description                      | Default        | Values |
 -------------------------------|----------------------------------|----------------|--------|
- `--field-sep=...`  |                                  | ","            |        |
- `--record-sep=...` |                                  | system newline |        |
- `--multi-sep=...`  | Separator for enumerable values. | ";"            |        |
+      `--field-sep=...`        |                                  | ","            |        |
+      `--record-sep=...`       |                                  | system newline |        |
+      `--multi-sep=...`        | Separator for enumerable values. | ";"            |        |
 
 ## `edn-in`
 
@@ -294,7 +294,7 @@ Aliases: `delimited-`, `d-`
 
 Synopsis: Parses EDN.
 
-Aliases: `-edn`
+Aliases:      `-edn`      
 
   Examples:
 
@@ -317,7 +317,7 @@ a,b,c,d
 
 Synopsis: Emits EDN.
 
-Aliases: `edn-`
+Aliases:      `edn-`      
 
   Examples:
 
@@ -359,16 +359,16 @@ Synopsis: Empty fields are converted to NULL.
 
 `erb-out`
  *[*
-`----erb-options` *]*
-`template.erb`
+     `--erb-options=...`       *]*
+     `template.erb`      
 
 Synopsis: Evaluates ERB in the context of input table.
 
-Aliases: `erb-`, `erb`
+Aliases:      `erb-`      ,      `erb`      
 
- Options                      | Description            | Default | Values |
-------------------------------|------------------------|---------|--------|
- `----erb-options` | See ERB doc trim_mode. |         |        |
+ Options                        | Description            | Default | Values |
+--------------------------------|------------------------|---------|--------|
+      `--erb-options=...`       | See ERB doc trim_mode. |         |        |
 
   Examples:
 
@@ -426,20 +426,20 @@ a,b,c,d,a_to_power_of_c
 
 `gnuplot-out`
  *[*
-`--color=...`
-`--format=...`
-`--size=...` *]*
+     `--color=...`      
+     `--format=...`      
+     `--size=...`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Generate GNUPLOT file.
 
-Aliases: `gnuplot-`, `gnuplot`
+Aliases:      `gnuplot-`      ,      `gnuplot`      
 
  Options                   | Description              | Default | Values |
 ---------------------------|--------------------------|---------|--------|
- `--color=...`  |                          | false   |        |
- `--format=...` | term,tty,console,svg,... |         |        |
- `--size=...`   | WxH                      |         |        |
+      `--color=...`        |                          | false   |        |
+      `--format=...`       | term,tty,console,svg,... |         |        |
+      `--size=...`         | WxH                      |         |        |
 
   Examples:
 
@@ -545,7 +545,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
 
 Synopsis: Filters by regex.
 
-Aliases: `g`
+Aliases:      `g`      
 
   Examples:
 
@@ -589,7 +589,7 @@ $ cx in SOME.csv // -h // grep "d:!;f"
 
 Synopsis: Interprets first row as a column name header.
 
-Aliases: `-header`, `-h`
+Aliases:      `-header`      ,      `-h`      
 
   Examples:
 
@@ -609,15 +609,15 @@ $ cx in SOME.csv // -csv // -h // csv-
 
 `header-out`
  *[*
-`--meta-columns=...` *]*
+     `--meta-columns=...`       *]*
 
 Synopsis: Emits column names as first row.
 
-Aliases: `header-`, `h-`
+Aliases:      `header-`      ,      `h-`      
 
  Options                         | Description                                                                 | Default | Values           |
 ---------------------------------|-----------------------------------------------------------------------------|---------|------------------|
- `--meta-columns=...` | Emit a row for each meta-column containing the meta value for that column.. |         | meta-column, ... |
+      `--meta-columns=...`       | Emit a row for each meta-column containing the meta value for that column.. |         | meta-column, ... |
 
   Examples:
 
@@ -650,9 +650,9 @@ max_value,134,ab,11,foo
 ## `help`
 
 `help`
-`show`
-`run-examples`
-`make-help`
+     `show`      
+     `run-examples`      
+     `make-help`      
 
 Synopsis: Show this documentation.
 
@@ -665,56 +665,56 @@ Subcommands:
 
 `html-out`
  *[*
-`--title=...`
-`--table-only`
-`--filtering=...`
-`--sorting=...`
-`--styled=...`
-`--raw=...`
-`--link=...`
-`--head=...`
-`--body-head=...`
-`--body-foot=...`
-`--indent=...` *]*
+     `--title=...`      
+     `--table-only`      
+     `--filtering=...`      
+     `--sorting=...`      
+     `--styled=...`      
+     `--raw=...`      
+     `--link=...`      
+     `--head=...`      
+     `--body-head=...`      
+     `--body-foot=...`      
+     `--indent=...`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Emits HTML.
 
-Aliases: `html-`, `html`, `htm`
+Aliases:      `html-`      ,      `html`      ,      `htm`      
 
  Options                      | Description                                          | Default | Values |
 ------------------------------|------------------------------------------------------|---------|--------|
- `--title=...`     | Sets the HTML `title`.                               |         |        |
- `--table-only`    | Emit the HTML `table` only.                          |         |        |
- `--filtering=...` | Enable filtering.                                    | `true`  |        |
- `--sorting=...`   | Enable sorting.                                      | `true`  |        |
- `--styled=...`    | Enable styling.                                      | `true`  |        |
- `--raw=...`       | Comma-separated list of columns containing raw HTML. |         |        |
- `--link=...`      | Comma-separated list of columns containing URLS.     |         |        |
- `--head=...`      | Additional raw HTML at foot of `head`.               |         |        |
- `--body-head=...` | Additional raw HTML at head of `body`.               |         |        |
- `--body-foot=...` | Additional raw HTML at foot of `body`.               |         |        |
- `--indent=...`    | Spaces to indent.                                    | `1`     |        |
+      `--title=...`           | Sets the HTML `title`.                               |         |        |
+      `--table-only`          | Emit the HTML `table` only.                          |         |        |
+      `--filtering=...`       | Enable filtering.                                    | `true`  |        |
+      `--sorting=...`         | Enable sorting.                                      | `true`  |        |
+      `--styled=...`          | Enable styling.                                      | `true`  |        |
+      `--raw=...`             | Comma-separated list of columns containing raw HTML. |         |        |
+      `--link=...`            | Comma-separated list of columns containing URLS.     |         |        |
+      `--head=...`            | Additional raw HTML at foot of `head`.               |         |        |
+      `--body-head=...`       | Additional raw HTML at head of `body`.               |         |        |
+      `--body-foot=...`       | Additional raw HTML at foot of `body`.               |         |        |
+      `--indent=...`          | Spaces to indent.                                    | `1`     |        |
 
 ## `io-in`
 
 `io-in`
-`filename`
-`...`
+     `filename`      
+     `...`      
 
 Synopsis: Read from a file.
 
-Aliases: `-io`, `in`, `i`
+Aliases:      `-io`      ,      `in`      ,      `i`      
 
 ## `io-out`
 
 `io-out`
-`filename`
-`...`
+     `filename`      
+     `...`      
 
 Synopsis: Write records to a file.
 
-Aliases: `io-`, `out`, `o`
+Aliases:      `io-`      ,      `out`      ,      `o`      
 
 ## `jira-out`
 
@@ -723,7 +723,7 @@ Aliases: `io-`, `out`, `o`
 
 Synopsis: Generate a Jira table lines.
 
-Aliases: `jira-`, `jira`
+Aliases:      `jira-`      ,      `jira`      
 
   Examples:
 
@@ -746,7 +746,7 @@ $ cx in SOME.csv // -h // jira
 
 Synopsis: Parses JSON.
 
-Aliases: `-json`
+Aliases:      `-json`      
 
   Examples:
 
@@ -769,7 +769,7 @@ a,b,c,d
 
 Synopsis: Emits JSON.
 
-Aliases: `json-`
+Aliases:      `json-`      
 
   Examples:
 
@@ -791,18 +791,18 @@ $ cx in SOME.csv // -h // parse // json-
 
 `markdown-out`
  *[*
-`--title=...`
-`--include-header=...` *]*
+     `--title=...`      
+     `--include-header=...`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Generate Markdown table lines.
 
-Aliases: `markdown-`, `md`, `md-`, `markdown`
+Aliases:      `markdown-`      ,      `md`      ,      `md-`      ,      `markdown`      
 
  Options                           | Description             | Default | Values |
 -----------------------------------|-------------------------|---------|--------|
- `--title=...`          | Output title (caption). | none    |        |
- `--include-header=...` | Include a header.       | true    |        |
+      `--title=...`                | Output title (caption). | none    |        |
+      `--include-header=...`       | Include a header.       | true    |        |
 
   Examples:
 
@@ -863,7 +863,7 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 
 Synopsis: Calculates various column metadata.
 
-Aliases: `-meta`
+Aliases:      `-meta`      
 
   Examples:
 
@@ -887,7 +887,7 @@ a,b,c,d
 
 Synopsis: Generate a table of column metadata.
 
-Aliases: `meta-`
+Aliases:      `meta-`      
 
   Examples:
 
@@ -921,7 +921,7 @@ d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,String
 
 Synopsis: Does nothing -- output is same as input.
 
-Aliases: `noop`
+Aliases:      `noop`      
 
 ## `parse`
 
@@ -949,18 +949,18 @@ a,b,c,d
 
 `quote`
  *[*
-`--mode=...`
-`--strings-only` *]*
+     `--mode=...`      
+     `--strings-only`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Quote string values that would be ambigous or unprintable.
 
-Aliases: `q`
+Aliases:      `q`      
 
  Options                     | Description         | Default | Values                    |
 -----------------------------|---------------------|---------|---------------------------|
- `--mode=...`     | When to quote.      | "maybe" | maybe, everything, always |
- `--strings-only` | Ignore non-strings. |         |                           |
+      `--mode=...`           | When to quote.      | "maybe" | maybe, everything, always |
+      `--strings-only`       | Ignore non-strings. |         |                           |
 
 ## `region`
 
@@ -968,7 +968,7 @@ Aliases: `q`
 
 Synopsis: Select a range of rows.
 
-Aliases: `range`
+Aliases:      `range`      
 
   Examples:
 
@@ -1067,26 +1067,26 @@ id,a,b,c,X %
 
 Synopsis: Empty columns and rows are removed.
 
-Aliases: `compact`
+Aliases:      `compact`      
 
 ## `replace`
 
 `replace`
  *[*
-`--search=...`
-`--replace=...`
-`--global` *]*
+     `--search=...`      
+     `--replace=...`      
+     `--global`       *]*
 *[* *column-args ...* *]*
 
 Synopsis: Replace by regex.
 
-Aliases: `sub`
+Aliases:      `sub`      
 
  Options                    | Description                | Default | Values |
 ----------------------------|----------------------------|---------|--------|
- `--search=...`  | Search for in all columns. |         |        |
- `--replace=...` | Replace matches with.      |         |        |
- `--global`      | Replace all occurances.    |         |        |
+      `--search=...`        | Search for in all columns. |         |        |
+      `--replace=...`       | Replace matches with.      |         |        |
+      `--global`            | Replace all occurances.    |         |        |
 
   Examples:
 
@@ -1134,7 +1134,7 @@ id,a,b,c,X %
 
 Synopsis: Reverse order of rows.
 
-Aliases: `tac`
+Aliases:      `tac`      
 
   Examples:
 
@@ -1166,17 +1166,17 @@ a,b,c,d
 
 `row-id`
  *[*
-`--name=...`
-`--type=...`
-`--start=...` *]*
+     `--name=...`      
+     `--type=...`      
+     `--start=...`       *]*
 
 Synopsis: Inserts a row id column.
 
  Options                  | Description                | Default     | Values |
 --------------------------|----------------------------|-------------|--------|
- `--name=...`  | Name of id column.         | "__rowid__" |        |
- `--type=...`  | Type: "integer" or "uuid". | "integer"   |        |
- `--start=...` | Start of integer ids.      | 1           |        |
+      `--name=...`        | Name of id column.         | "__rowid__" |        |
+      `--type=...`        | Type: "integer" or "uuid". | "integer"   |        |
+      `--start=...`       | Start of integer ids.      | 1           |        |
 
   Examples:
 
@@ -1269,7 +1269,7 @@ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 
 Synopsis: Sorts by specified columns.
 
-Aliases: `s`
+Aliases:      `s`      
 
   Examples:
 
@@ -1334,29 +1334,29 @@ a,b,c,d
 
 `sql-out`
  *[*
-`--table=...`
-`--transaction`
-`--rollback`
-`--commit`
-`--create`
-`--temporary`
-`--insert`
-`--varchar-size=...` *]*
+     `--table=...`      
+     `--transaction`      
+     `--rollback`      
+     `--commit`      
+     `--create`      
+     `--temporary`      
+     `--insert`      
+     `--varchar-size=...`       *]*
 
 Synopsis: Generates CSV lines.
 
-Aliases: `sql-`
+Aliases:      `sql-`      
 
  Options                         | Description                       | Default | Values |
 ---------------------------------|-----------------------------------|---------|--------|
- `--table=...`        | Table name.                       |         |        |
- `--transaction`      | Emit a TRANSACTION block.         |         |        |
- `--rollback`         | Emit a ROLLBACK statement.        |         |        |
- `--commit`           | Emit a COMMIT statement.          |         |        |
- `--create`           | Emit a CREATE TABLE statement.    |         |        |
- `--temporary`        | CREATE TEMPORARY TABLE statement. |         |        |
- `--insert`           | Emit INSERT INTO statements.      |         |        |
- `--varchar-size=...` | VARCHAR(size).                    | 255     |        |
+      `--table=...`              | Table name.                       |         |        |
+      `--transaction`            | Emit a TRANSACTION block.         |         |        |
+      `--rollback`               | Emit a ROLLBACK statement.        |         |        |
+      `--commit`                 | Emit a COMMIT statement.          |         |        |
+      `--create`                 | Emit a CREATE TABLE statement.    |         |        |
+      `--temporary`              | CREATE TEMPORARY TABLE statement. |         |        |
+      `--insert`                 | Emit INSERT INTO statements.      |         |        |
+      `--varchar-size=...`       | VARCHAR(size).                    | 255     |        |
 
   Examples:
 
@@ -1455,29 +1455,29 @@ $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 
 Synopsis: Strip leading and trailing whitespace.
 
-Aliases: `trim`
+Aliases:      `trim`      
 
 ## `tee`
 
 `tee`
-`pipelines`
-`...`
+     `pipelines`      
+     `...`      
 
 Synopsis: Send input to multiple output pipelines.
 
-Aliases: `t`
+Aliases:      `t`      
 
 ## `transpose`
 
 `transpose`
  *[*
-`--include-header=...` *]*
+     `--include-header=...`       *]*
 
 Synopsis: Transpose rows and columns.
 
  Options                           | Description                     | Default | Values |
 -----------------------------------|---------------------------------|---------|--------|
- `--include-header=...` | Include header in first column. | true    |        |
+      `--include-header=...`       | Include header in first column. | true    |        |
 
   Examples:
 
@@ -1511,7 +1511,7 @@ foo,bar,baz,abc
 
 Synopsis: Parses TSV lines.
 
-Aliases: `-tsv`
+Aliases:      `-tsv`      
 
 ## `tsv-out`
 
@@ -1519,7 +1519,7 @@ Aliases: `-tsv`
 
 Synopsis: Generates TSV lines.
 
-Aliases: `tsv-`
+Aliases:      `tsv-`      
 
   Examples:
 
@@ -1543,7 +1543,7 @@ a	b	c	d
 
 Synopsis: Infer types from field strings.
 
-Aliases: `-types`, `types`
+Aliases:      `-types`      ,      `types`      
 
 ## `uniq`
 

@@ -20,25 +20,25 @@ $ bundle exec rake install
 
 # Options
 
-   Syntax           | Semantic 
---------------------|--------------------------------
-`--FLAG`            | Enable.
-`--no-FLAG`         | Disable (false).
-`--OPTION=VALUE`    | Sets option.
-`--`                | Terminates all option parsing.
+   Syntax           | Semantic                           |
+--------------------|------------------------------------|
+`--FLAG`            | Enable.                            |
+`--no-FLAG`         | Disable (false).                   |
+`--OPTION=VALUE`    | Sets option.                       |
+`--`                | Terminates all option parsing.     |
 
-# Arguments
+# Column Arguments
 
 Some commands take one or more column arguments:
 
-    Syntax              | Semantic
-------------------------|--------------------------------
-`COLUMN`                | Column name or index number.
-`COLUMN:-`              | Reverse order or removal.
-`COLUMN:+`              | Forward order or addition.
-`COLUMN:!`              | Negation.
-`COLUMN:arg1;arg2...`   | Processing arguments.
-`COLUMN:opt1=val1;...`  | Processing options.
+    Syntax              | Semantic                       |
+------------------------|--------------------------------|
+`COLUMN`                | Column name or index number.   |
+`COLUMN:-`              | Reverse order or removal.      |
+`COLUMN:+`              | Forward order or addition.     |
+`COLUMN:!`              | Negation.                      |
+`COLUMN:arg1;arg2...`   | Processing arguments.          |
+`COLUMN:opt1=val1;...`  | Processing options.            |
 
 A `COLUMN` can be a name or an index number.
 
@@ -48,15 +48,15 @@ For most commands, all columns are processed when column arguments are given.
 
 The column name  `"*"` implies all columns.
 
-See the `cut` command for examples.
+See the `cut`, `grep`, `sort` and `uniq` commands for examples.
 
 # Global Options
 
-  Syntax            | Semantic
---------------------|-------------------------
-`--debug`           | Enable debugging info.
-`--verbose`         | Enable verbose info.  
-`--help`            | Print this document.    
+  Syntax            | Semantic                |
+--------------------|-------------------------|
+`--debug`           | Enable debugging info.  |
+`--verbose`         | Enable verbose info.    |
+`--help`            | Print this document.    |
 
 # Commands
 

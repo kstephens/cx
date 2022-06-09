@@ -268,11 +268,11 @@
   - template.erb
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :--erb-options
+    name: :erb-options
     description: See ERB doc trim_mode.
     default: 
     values: []
-    has_value: false
+    has_value: true
     has_default: false
   has_column_args: 
   has_pipeline_args: 

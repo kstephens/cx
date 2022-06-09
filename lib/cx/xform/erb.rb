@@ -9,7 +9,7 @@ require 'cx/xform'
 #   synopsis: Evaluates ERB in the context of input table.
 #   args: [template.erb]
 #   opts:
-#     --erb-options: See ERB doc trim_mode.
+#     erb-options=: See ERB doc trim_mode.
 #   examples:
 #     - 'cx in SOME.csv // -csv // -h // erb SOME.erb'
 
