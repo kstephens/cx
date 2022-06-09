@@ -82,7 +82,7 @@ module CX
     end
 
     def code x
-      no_wrap "<code>#{x}</code>"
+      no_wrap "\`#{x}\`"
     end
 
     def no_wrap x
