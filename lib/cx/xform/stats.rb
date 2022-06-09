@@ -9,6 +9,7 @@ require 'cx/stats'
 # Stats:
 #   aliases: [ ]
 #   synopsis: Collect stats of a group of columns.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:

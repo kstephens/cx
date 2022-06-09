@@ -8,9 +8,10 @@ require 'cx/column_args'
 # Quote:
 #   aliases: q
 #   synopsis: Quote string values that would be ambigous or unprintable.
+#   has_column_args: true
 #   args: []
 #   opts:
-#     mode: "maybe, everything, always"
+#     mode=maybe,everything,always : 'When to quote.  Default: "maybe"'
 #     strings-only: Ignore non-strings.
 
 module CX

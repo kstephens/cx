@@ -13,7 +13,7 @@ require 'cx/xform/csv_safe'
 #   inverse: [ 'csv-' ]
 #   args: []
 #   opts:
-#     separator: 'Column separator: defaults to ",".'
+#     separator=: 'Column separator: defaults to `","``.'
 
 # :COMMAND:
 # CsvOut:
@@ -23,7 +23,7 @@ require 'cx/xform/csv_safe'
 #   inverse: [ '-csv' ]
 #   args: []
 #   opts:
-#     separator: 'Column separator: defaults to ",".'
+#     separator=: 'Column separator: defaults to `","``.'
 #   examples:
 #     - cx in SOME.csv // csv- --separator="\x09"
 

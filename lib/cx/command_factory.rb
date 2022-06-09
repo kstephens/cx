@@ -77,22 +77,32 @@ module CX
       :has_column_args, :has_pipeline_args,
       :examples,
       :file, :lineno, :path)
+
       include Support
 
-      class Option < Struct.new(:name, :description, :default, :values)
+      class Option < Struct.new(:name, :description, :default, :values, :has_value, :has_default)
+        alias :has_value?    :has_value
+        alias :has_default?  :has_default
+
         def initialize *args
           super
 
-          if (n = name.to_s).sub!(/=(.+)$/, '')
+          self.has_value = self.has_default = false
+          
+          if (n = name.to_s).sub!(/=(.*)$/, '')
+            self.has_value = true
             self.values ||= $1
           end
           self.name = n.to_sym
           
-          if description =~ /Default:\s*(.+)/
-            self.default ||= $1.strip
-          end
-          self.values = values.split(/,/) if String === values
+          self.values = values.split(/,\s*/) if String === values
           self.values ||= [ ]
+          self.has_value ||= ! values.empty?
+
+          if description.sub!(/\s*Default:\s*(.+)\.?/, '')
+            self.has_default = true
+            self.default = $1.strip.sub(/\.\s*$/, '')
+          end
         end
         
         def self.from_hash h
@@ -101,12 +111,13 @@ module CX
         
         def brief
           case
-          when self.default || ! self.values.empty?
+          when self.has_value? || self.default
             "--#{name}=..."
           else
             "--#{name}"
           end
         end
+
       end
       
       def self.from_hash h
@@ -212,15 +223,25 @@ module CX
           raise e
         end
         class_name = data.keys.first.to_s
-        info = data.values.first
+        @info = info = data.values.first
         info[:class_name] = class_name
-        info[:options]   ||= info[:opts] # ???
-        info[:arguments] ||= info[:args] # ???
+        deprecated! :options    , :opts
+        deprecated! :arguments  , :args
         command = CommandDesc.from_hash(info).initialize!
-        log.info "#{self.class} : #{command.file}:#{command.lineno} : found #{command.class_name} : #{command.name} : #{command.aliases}"
+        log.info "#{self.class} : #{command.file}:#{command.lineno} : found #{command.class_name} : name #{command.name} : aliases #{command.aliases}"
         command
       end
-      
+
+      def deprecated! preferred, deprecated
+        @info[preferred] ||=
+          begin
+            if @info.key?(deprecated)
+              log.warn "#{self.class} : DEPRECATED : command #{@info[:name]} : has #{deprecated.inspect} key : change to #{preferred.inspect}"  
+            end
+            @info[deprecated]
+          end
+      end
+
       def scan_blocks! file, &blk
         block = block_lineno = nil
         lineno = 0

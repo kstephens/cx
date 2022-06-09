@@ -9,6 +9,8 @@ require 'color'
 # GnuplotOut:
 #   aliases: [ gnuplot ]
 #   synopsis: Generate GNUPLOT file.
+#   has_column_args: true
+#   args: []
 #   opts:
 #     color: 'Default: false.'
 #     format=: 'term,tty,console,svg,...'

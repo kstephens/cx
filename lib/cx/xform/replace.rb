@@ -8,6 +8,7 @@ require 'cx/column_args'
 # Replace:
 #   aliases: sub
 #   synopsis: Replace by regex.
+#   has_column_args: true
 #   args: []
 #   opts:
 #     search=: Search for in all columns.

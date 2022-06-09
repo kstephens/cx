@@ -7,6 +7,7 @@ require 'cx/xform'
 # MetaIn:
 #   aliases:
 #   synopsis: Calculates various column metadata.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:
@@ -16,6 +17,7 @@ require 'cx/xform'
 # MetaOut:
 #   aliases:
 #   synopsis: Generate a table of column metadata.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:
@@ -26,6 +28,7 @@ require 'cx/xform'
 # SetMeta:
 #   aliases:
 #   synopsis: Set column meta.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:
@@ -45,7 +48,6 @@ module CX
       end
       
       def _call input, env, columns
-        
         header = input.header
 
         m = header.meta

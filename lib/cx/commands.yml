@@ -8,7 +8,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align
@@ -59,7 +59,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/coerce.rb
@@ -78,9 +78,11 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :separator
-    description: 'Column separator: defaults to ",".'
+    description: 'Column separator: defaults to `","``.'
     default: 
     values: []
+    has_value: true
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples: []
@@ -100,9 +102,11 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :separator
-    description: 'Column separator: defaults to ",".'
+    description: 'Column separator: defaults to `","``.'
     default: 
     values: []
+    has_value: true
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -145,14 +149,18 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :field-sep
-    description: 'Default: ",".'
-    default: '",".'
+    description: ''
+    default: '","'
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :record-sep
-    description: 'Default: system newline.'
-    default: system newline.
+    description: ''
+    default: system newline
     values: []
+    has_value: false
+    has_default: true
   has_column_args: 
   has_pipeline_args: 
   examples: []
@@ -172,19 +180,25 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :field-sep
-    description: 'Default: ",".'
-    default: '",".'
+    description: ''
+    default: '","'
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :record-sep
-    description: 'Default: system newline.'
-    default: system newline.
+    description: ''
+    default: system newline
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :multi-sep
-    description: 'Separator for enumerable values.  Default: ";".'
-    default: '";".'
+    description: Separator for enumerable values.
+    default: '";"'
     values: []
+    has_value: false
+    has_default: true
   has_column_args: true
   has_pipeline_args: 
   examples: []
@@ -258,6 +272,8 @@
     description: See ERB doc trim_mode.
     default: 
     values: []
+    has_value: false
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -295,20 +311,26 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :color
-    description: 'Default: false.'
-    default: false.
+    description: ''
+    default: 'false'
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :format=
+    name: :format
     description: term,tty,console,svg,...
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :size=
+    name: :size
     description: WxH
     default: 
     values: []
-  has_column_args: 
+    has_value: true
+    has_default: false
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
@@ -374,6 +396,8 @@
     values:
     - meta-column
     - "..."
+    has_value: true
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -423,57 +447,79 @@
     description: Sets the HTML `title`.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :table-only
     description: Emit the HTML `table` only.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :filtering
-    description: 'Enable filtering.  Default: true'
-    default: 'true'
+    description: Enable filtering.
+    default: "`true`"
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :sorting
-    description: 'Enable sorting.  Default: true'
-    default: 'true'
+    description: Enable sorting.
+    default: "`true`"
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :styled
-    description: 'Enable styling.  Default: true'
-    default: 'true'
+    description: Enable styling.
+    default: "`true`"
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :raw
     description: Comma-separated list of columns containing raw HTML.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :link
     description: Comma-separated list of columns containing URLS.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :head
     description: Additional raw HTML at foot of `head`.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :body-head
     description: Additional raw HTML at head of `body`.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :body-foot
     description: Additional raw HTML at foot of `body`.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :indent
-    description: 'Spaces to indent.  Default: 1'
-    default: '1'
+    description: Spaces to indent.
+    default: "`1`"
     values: []
-  has_column_args: 
+    has_value: true
+    has_default: true
+  has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/html.rb
@@ -531,7 +577,7 @@
   - ".jira.txt"
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // jira
@@ -588,15 +634,19 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :title
-    description: 'Output title (caption).  Default: none.'
-    default: none.
+    description: Output title (caption).
+    default: none
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :include-header
-    description: 'Include a header.  Default: true.'
-    default: true.
+    description: Include a header.
+    default: 'true'
     values: []
-  has_column_args: 
+    has_value: false
+    has_default: true
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // markdown
@@ -616,7 +666,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // h-
@@ -633,13 +683,13 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // meta- // h-
   - cx in SOME.csv // -h // parse // -meta // meta- // h-
   file: lib/cx/xform/meta.rb
-  lineno: 15
+  lineno: 16
   path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: SetMeta
@@ -650,7 +700,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
@@ -658,7 +708,7 @@
     //  meta- // cut name,order,max_size,align // md
   - cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
   file: lib/cx/xform/meta.rb
-  lineno: 25
+  lineno: 27
   path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Nop
@@ -685,7 +735,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align // h-
@@ -704,15 +754,22 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :mode
-    description: maybe, everything, always
-    default: 
-    values: []
+    description: When to quote.
+    default: '"maybe"'
+    values:
+    - maybe
+    - everything
+    - always
+    has_value: true
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :strings-only
     description: Ignore non-strings.
     default: 
     values: []
-  has_column_args: 
+    has_value: false
+    has_default: false
+  has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/quote.rb
@@ -768,21 +825,27 @@
   arguments: []
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :search=
+    name: :search
     description: Search for in all columns.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
-    name: :replace=
+    name: :replace
     description: Replace matches with.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :global
     description: Replace all occurances.
     default: 
     values: []
-  has_column_args: 
+    has_value: false
+    has_default: false
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
@@ -821,19 +884,25 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :name
-    description: 'Name of id column.  Default: "__rowid__".'
-    default: '"__rowid__".'
+    description: Name of id column.
+    default: '"__rowid__"'
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :type
-    description: 'Type: "integer" or "uuid".  Default: "integer".'
-    default: '"integer".'
+    description: 'Type: "integer" or "uuid".'
+    default: '"integer"'
     values: []
+    has_value: false
+    has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :start
-    description: 'Start of integer ids.  Default: 1'
+    description: Start of integer ids.
     default: '1'
     values: []
+    has_value: false
+    has_default: true
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -853,7 +922,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // sort d  // h-
@@ -879,41 +948,57 @@
     description: Table name.
     default: 
     values: []
+    has_value: true
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :transaction
     description: Emit a TRANSACTION block.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :rollback
     description: Emit a ROLLBACK statement.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :commit
     description: Emit a COMMIT statement.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :create
     description: Emit a CREATE TABLE statement.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :temporary
     description: CREATE TEMPORARY TABLE statement.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :insert
     description: Emit INSERT INTO statements.
     default: 
     values: []
+    has_value: false
+    has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :varchar-size
-    description: 'VARCHAR(size). Default: 255.'
-    default: '255.'
+    description: VARCHAR(size).
+    default: '255'
     values: []
+    has_value: true
+    has_default: true
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -931,7 +1016,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in stats-data.csv // -h // parse // stats salary // md
@@ -951,7 +1036,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/strip.rb
@@ -986,9 +1071,11 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :include-header
-    description: 'Include header in first column.  Default: true'
+    description: Include header in first column.
     default: 'true'
     values: []
+    has_value: false
+    has_default: true
   has_column_args: 
   has_pipeline_args: 
   examples:
@@ -1043,7 +1130,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/type_inference.rb
@@ -1058,7 +1145,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // uniq d  // h-

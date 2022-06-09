@@ -16,6 +16,8 @@ require 'cx/xform'
 #     - cx in SOME.csv // -h // cut 'a,*' // h-
 #     - cx in SOME.csv // -h // cut 'd,*' // h-
 #     - cx in SOME.csv // -h // cut '*,b:-' // h-
+#     - cx in SOME.csv // -h // cut 2,1 // h-
+#     - cx in SOME.csv // -h // cut -1,-2 // h-
 
 module CX
   module Xform

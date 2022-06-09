@@ -1,17 +1,20 @@
 # Overview
 
-CX processes a pipeline of commands which transform tabular data.
+CX transforms tabular data through a pipeline of commands.
 
-A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
+Pipeline commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
 
-Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
+Some commands have subpipelines arguments delimited by "`{{`" and "`}}`".
 
 # Installation
 
 ```
-# Install ruby, then:
+# Install ruby 2.7.1+
+$ rbenv install 2.7.1
+$ rbenv shell 2.7.1
 $ git clone https://github.com/kstephens/cx.git
 $ cd cx
+$ npm install -g minify
 $ bundle exec rake install
 ```
 
@@ -30,16 +33,22 @@ Some commands take one or more column arguments:
 
     Syntax              | Semantic
 ------------------------|--------------------------------
-`COLUMN`                | Name or index.
+`COLUMN`                | Column name or index number.
 `COLUMN:-`              | Reverse order or removal.
 `COLUMN:+`              | Forward order or addition.
 `COLUMN:!`              | Negation.
 `COLUMN:arg1;arg2...`   | Processing arguments.
 `COLUMN:opt1=val1;...`  | Processing options.
 
+A `COLUMN` can be a name or an index number.
+
+Index numbers are non-zero.  Positive values are 1-origin: e.g. `2` is the second column, `-2` is the second to the last column.
+
 For most commands, all columns are processed when column arguments are given.
 
 The column name  `"*"` implies all columns.
+
+See the `cut` command for examples.
 
 # Global Options
 
@@ -54,12 +63,15 @@ The column name  `"*"` implies all columns.
 ## `align`
 
 `align`
+*[* *column-args ...* *]*
 
-Aligns fields based on column max_size and alignment.
+Synopsis: Aligns fields based on column max_size and alignment.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // align
     1,ab   ,    3,foo  
    24,44   ,    6,bar  
@@ -67,15 +79,19 @@ $ cx in SOME.csv // -h // parse // align
     2,12   ,   11,abc  
 ```
 
+--------------------------
+
 ## `cat`
 
 `cat`
 
-Concatenates rows from multiple pipelines.  Columns are shared.
+Synopsis: Concatenates rows from multiple pipelines.  Columns are shared.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
 x,y,z
 1,2,
@@ -87,53 +103,58 @@ x,y,z
 5,5,3
 ```
 
+--------------------------
+
 ## `cmd`
 
 `cmd`
 command
 args...
 
-Pipe through an external command.
+Synopsis: Pipe through an external command.
 
 Aliases: command, /
 
 ## `coerce`
 
 `coerce`
+*[* *column-args ...* *]*
 
-Coerce columns by inferred types.
+Synopsis: Coerce columns by inferred types.
 
 ## `csv-in`
 
 `csv-in`
  *[*
---separator *]*
+--separator=... *]*
 
-Parses CSV lines.
+Synopsis: Parses CSV lines.
 
 Aliases: -csv
 
-  Options                   |  Description
-----------------------------|-------------------------------
---separator | Column separator: defaults to ",".
+ Options                      | Description                           | Default | Values |
+------------------------------|---------------------------------------|---------|--------|
+ --separator=... | Column separator: defaults to `","``. |         |        |
 
 ## `csv-out`
 
 `csv-out`
  *[*
---separator *]*
+--separator=... *]*
 
-Generates CSV lines.
+Synopsis: Generates CSV lines.
 
 Aliases: csv-
 
-  Options                   |  Description
-----------------------------|-------------------------------
---separator | Column separator: defaults to ",".
+ Options                      | Description                           | Default | Values |
+------------------------------|---------------------------------------|---------|--------|
+ --separator=... | Column separator: defaults to `","``. |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // csv- --separator="\x09"
 a	b	c	d
 1	ab	3	foo
@@ -142,16 +163,20 @@ a	b	c	d
 2	12	11	abc
 ```
 
+--------------------------
+
 ## `cut`
 
 `cut`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Cut columns.
+Synopsis: Cut columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut a,d // h-
 a,d
 1,foo
@@ -160,7 +185,9 @@ a,d
 2,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut b a c // h-
 b,a,c
 ab,1,3
@@ -169,7 +196,9 @@ ab,1,3
 12,2,11
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut 'a,*' // h-
 a,b,c,d
 1,ab,3,foo
@@ -178,7 +207,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut 'd,*' // h-
 d,a,b,c
 foo,1,ab,3
@@ -187,7 +218,9 @@ baz,134,5,9
 abc,2,12,11
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut '*,b:-' // h-
 a,c,d
 1,3,foo
@@ -196,6 +229,30 @@ a,c,d
 2,11,abc
 ```
 
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // cut 2,1 // h-
+b,a
+ab,1
+44,24
+5,134
+12,2
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // cut -1,-2 // h-
+d,c
+foo,3
+bar,6
+baz,9
+abc,11
+```
+
+--------------------------
+
 ## `delimited-in`
 
 `delimited-in`
@@ -203,14 +260,14 @@ a,c,d
 --field-sep=...
 --record-sep=... *]*
 
-Parse delimited records.
+Synopsis: Parse delimited records.
 
 Aliases: -delimited, -d
 
-  Options                   |  Description
-----------------------------|-------------------------------
---field-sep=... | Default: ",".
---record-sep=... | Default: system newline.
+ Options                       | Description | Default        | Values |
+-------------------------------|-------------|----------------|--------|
+ --field-sep=...  |             | ","            |        |
+ --record-sep=... |             | system newline |        |
 
 ## `delimited-out`
 
@@ -219,29 +276,31 @@ Aliases: -delimited, -d
 --field-sep=...
 --record-sep=...
 --multi-sep=... *]*
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Generate delimited records.
+Synopsis: Generate delimited records.
 
 Aliases: delimited-, d-
 
-  Options                   |  Description
-----------------------------|-------------------------------
---field-sep=... | Default: ",".
---record-sep=... | Default: system newline.
---multi-sep=... | Separator for enumerable values.  Default: ";".
+ Options                       | Description                      | Default        | Values |
+-------------------------------|----------------------------------|----------------|--------|
+ --field-sep=...  |                                  | ","            |        |
+ --record-sep=... |                                  | system newline |        |
+ --multi-sep=...  | Separator for enumerable values. | ";"            |        |
 
 ## `edn-in`
 
 `edn-in`
 
-Parses EDN.
+Synopsis: Parses EDN.
 
 Aliases: -edn
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.edn // -edn // h-
 a,b,c,d
 1,ab,3,foo
@@ -250,17 +309,21 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `edn-out`
 
 `edn-out`
 
-Emits EDN.
+Synopsis: Emits EDN.
 
 Aliases: edn-
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // edn-
 [
 {:a 1 :b "ab" :c 3 :d "foo"}
@@ -270,7 +333,9 @@ $ cx in SOME.csv // -h // parse // edn-
 ]
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // h- // edn- --mode=row
 [
 ["a" "b" "c" "d"]
@@ -281,12 +346,14 @@ $ cx in SOME.csv // -h // parse // h- // edn- --mode=row
 ]
 ```
 
+--------------------------
+
 ## `empty-null`
 
 `empty-null`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Empty fields are converted to NULL.
+Synopsis: Empty fields are converted to NULL.
 
 ## `erb-out`
 
@@ -295,17 +362,19 @@ Empty fields are converted to NULL.
 ----erb-options *]*
 template.erb
 
-Evaluates ERB in the context of input table.
+Synopsis: Evaluates ERB in the context of input table.
 
 Aliases: erb-, erb
 
-  Options                   |  Description
-----------------------------|-------------------------------
-----erb-options | See ERB doc trim_mode.
+ Options                      | Description            | Default | Values |
+------------------------------|------------------------|---------|--------|
+ ----erb-options | See ERB doc trim_mode. |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // erb SOME.erb
 === HEADER ===
 columns = a, b, c, d
@@ -319,15 +388,19 @@ size    = 4
 
 ```
 
+--------------------------
+
 ## `eval`
 
 `eval`
 
-Evaluates Ruby code for each row.
+Synopsis: Evaluates Ruby code for each row.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
 a,b,c,d
 Integer,String,Integer,String
@@ -336,7 +409,9 @@ Integer,Integer,Integer,String
 Integer,Integer,Integer,String
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
 a,b,c,d,a_to_power_of_c
 1,ab,3,foo,1
@@ -345,27 +420,32 @@ a,b,c,d,a_to_power_of_c
 2,12,11,abc,2048
 ```
 
+--------------------------
+
 ## `gnuplot-out`
 
 `gnuplot-out`
  *[*
 --color=...
---format=
---size= *]*
+--format=...
+--size=... *]*
+*[* *column-args ...* *]*
 
-Generate GNUPLOT file.
+Synopsis: Generate GNUPLOT file.
 
 Aliases: gnuplot-, gnuplot
 
-  Options                   |  Description
-----------------------------|-------------------------------
---color=... | Default: false.
---format= | term,tty,console,svg,...
---size= | WxH
+ Options                   | Description              | Default | Values |
+---------------------------|--------------------------|---------|--------|
+ --color=...  |                          | false   |        |
+ --format=... | term,tty,console,svg,... |         |        |
+ --size=...   | WxH                      |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                                                                 
                                                                                 
@@ -379,7 +459,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
      100 +       ##                      **@         @***********               
                    ##              ******  *        *                           
       80 +           #@###@####****         *      *                            
-                          @**  ########     *      *                            
+y1,y2                     @**  ########     *      *                            
       60 +               *             ####@##@######@#####                     
                         *                    *   *         ############         
       40 +  @**         *                    *  *                      #####@   
@@ -394,7 +474,9 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                                                                 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                                                                 
                                                                                 
@@ -423,7 +505,9 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                                                                 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
                                                                                 
                                                                                 
@@ -452,52 +536,66 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
                                                                                 
 ```
 
+--------------------------
+
 ## `grep`
 
 `grep`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Filters by regex.
+Synopsis: Filters by regex.
 
 Aliases: g
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:f
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:a
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:^a
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep "d:!;f"
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `header-in`
 
 `header-in`
 
-Interprets first row as a column name header.
+Synopsis: Interprets first row as a column name header.
 
 Aliases: -header, -h
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // csv-
 1,ab,3,foo
 24,44,6,bar
@@ -505,23 +603,27 @@ $ cx in SOME.csv // -csv // -h // csv-
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `header-out`
 
 `header-out`
  *[*
 --meta-columns=... *]*
 
-Emits column names as first row.
+Synopsis: Emits column names as first row.
 
 Aliases: header-, h-
 
-  Options                   |  Description
-----------------------------|-------------------------------
---meta-columns=... | Emit a row for each meta-column containing the meta value for that column..
+ Options                         | Description                                                                 | Default | Values           |
+---------------------------------|-----------------------------------------------------------------------------|---------|------------------|
+ --meta-columns=... | Emit a row for each meta-column containing the meta value for that column.. |         | meta-column, ... |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // h- // csv-
 a,b,c,d
 1,ab,3,foo
@@ -530,7 +632,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-
 __META__,a,b,c,d
 type,Integer,Object,Integer,String
@@ -541,6 +645,8 @@ max_value,134,ab,11,foo
 "",2,12,11,abc
 ```
 
+--------------------------
+
 ## `help`
 
 `help`
@@ -548,7 +654,7 @@ show
 run-examples
 make-help
 
-Show this documentation.
+Synopsis: Show this documentation.
 
 Subcommands:
 * show         - this documentation (default).
@@ -559,35 +665,36 @@ Subcommands:
 
 `html-out`
  *[*
---title
+--title=...
 --table-only
 --filtering=...
 --sorting=...
 --styled=...
---raw
---link
---head
---body-head
---body-foot
+--raw=...
+--link=...
+--head=...
+--body-head=...
+--body-foot=...
 --indent=... *]*
+*[* *column-args ...* *]*
 
-Emits HTML.
+Synopsis: Emits HTML.
 
 Aliases: html-, html, htm
 
-  Options                   |  Description
-----------------------------|-------------------------------
---title | Sets the HTML `title`.
---table-only | Emit the HTML `table` only.
---filtering=... | Enable filtering.  Default: true
---sorting=... | Enable sorting.  Default: true
---styled=... | Enable styling.  Default: true
---raw | Comma-separated list of columns containing raw HTML.
---link | Comma-separated list of columns containing URLS.
---head | Additional raw HTML at foot of `head`.
---body-head | Additional raw HTML at head of `body`.
---body-foot | Additional raw HTML at foot of `body`.
---indent=... | Spaces to indent.  Default: 1
+ Options                      | Description                                          | Default | Values |
+------------------------------|------------------------------------------------------|---------|--------|
+ --title=...     | Sets the HTML `title`.                               |         |        |
+ --table-only    | Emit the HTML `table` only.                          |         |        |
+ --filtering=... | Enable filtering.                                    | `true`  |        |
+ --sorting=...   | Enable sorting.                                      | `true`  |        |
+ --styled=...    | Enable styling.                                      | `true`  |        |
+ --raw=...       | Comma-separated list of columns containing raw HTML. |         |        |
+ --link=...      | Comma-separated list of columns containing URLS.     |         |        |
+ --head=...      | Additional raw HTML at foot of `head`.               |         |        |
+ --body-head=... | Additional raw HTML at head of `body`.               |         |        |
+ --body-foot=... | Additional raw HTML at foot of `body`.               |         |        |
+ --indent=...    | Spaces to indent.                                    | `1`     |        |
 
 ## `io-in`
 
@@ -595,7 +702,7 @@ Aliases: html-, html, htm
 filename
 ...
 
-Read from a file.
+Synopsis: Read from a file.
 
 Aliases: -io, in, i
 
@@ -605,21 +712,24 @@ Aliases: -io, in, i
 filename
 ...
 
-Write records to a file.
+Synopsis: Write records to a file.
 
 Aliases: io-, out, o
 
 ## `jira-out`
 
 `jira-out`
+*[* *column-args ...* *]*
 
-Generate a Jira table lines.
+Synopsis: Generate a Jira table lines.
 
 Aliases: jira-, jira
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // jira
 ||a||b||c||d||
 |1|ab|3|foo|
@@ -628,17 +738,21 @@ $ cx in SOME.csv // -h // jira
 |2|12|11|abc|
 ```
 
+--------------------------
+
 ## `json-in`
 
 `json-in`
 
-Parses JSON.
+Synopsis: Parses JSON.
 
 Aliases: -json
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.json // -json // h-
 a,b,c,d
 1,ab,3,foo
@@ -647,17 +761,21 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `json-out`
 
 `json-out`
 
-Emits JSON.
+Synopsis: Emits JSON.
 
 Aliases: json-
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // json-
 [
 {"a":1,"b":"ab","c":3,"d":"foo"},
@@ -667,25 +785,30 @@ $ cx in SOME.csv // -h // parse // json-
 ]
 ```
 
+--------------------------
+
 ## `markdown-out`
 
 `markdown-out`
  *[*
 --title=...
 --include-header=... *]*
+*[* *column-args ...* *]*
 
-Generate Markdown table lines.
+Synopsis: Generate Markdown table lines.
 
 Aliases: markdown-, md, md-, markdown
 
-  Options                   |  Description
-----------------------------|-------------------------------
---title=... | Output title (caption).  Default: none.
---include-header=... | Include a header.  Default: true.
+ Options                           | Description             | Default | Values |
+-----------------------------------|-------------------------|---------|--------|
+ --title=...          | Output title (caption). | none    |        |
+ --include-header=... | Include a header.       | true    |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // markdown
 | a     | b     | c     | d     |
 | ----- | ----- | ----- | ----- |
@@ -695,7 +818,9 @@ $ cx in SOME.csv // -h // markdown
 | 2     | 12    | 11    | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md
 | a     | b     | c     | d     |
 | ----: | ----- | ----: | ----- |
@@ -705,7 +830,9 @@ $ cx in SOME.csv // -h // parse // md
 |     2 | 12    |    11 | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md --title=SOME.CSV
 | a     | b     | c     | d     |
 | ----: | ----- | ----: | ----- |
@@ -716,7 +843,9 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV
 [ SOME.CSV ]
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 |     1 | ab    |     3 | foo   |
 |    24 | 44    |     6 | bar   |
@@ -725,17 +854,22 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 [ SOME.CSV ]
 ```
 
+--------------------------
+
 ## `meta-in`
 
 `meta-in`
+*[* *column-args ...* *]*
 
-Calculates various column metadata.
+Synopsis: Calculates various column metadata.
 
 Aliases: -meta
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // h-
 a,b,c,d
 1,ab,3,foo
@@ -744,17 +878,22 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `meta-out`
 
 `meta-out`
+*[* *column-args ...* *]*
 
-Generate a table of column metadata.
+Synopsis: Generate a table of column metadata.
 
 Aliases: meta-
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
 a,a,true,0,0,,1,3,1,24,0,0,,,,String,String
@@ -763,7 +902,9 @@ c,c,true,2,2,,1,2,11,9,0,0,,,,String,String
 d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,String
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
 a,a,true,0,0,Integer,1,3,1,134,0,0,,,right,Integer,Integer
@@ -772,23 +913,28 @@ c,c,true,2,2,Integer,1,2,3,11,0,0,,,right,Integer,Integer
 d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,String
 ```
 
+--------------------------
+
 ## `nop`
 
 `nop`
 
-Does nothing -- output is same as input.
+Synopsis: Does nothing -- output is same as input.
 
 Aliases: noop
 
 ## `parse`
 
 `parse`
+*[* *column-args ...* *]*
 
-Parse strings into richer types.
+Synopsis: Parse strings into richer types.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // align // h-
 a,b,c,d
     1,ab   ,    3,foo  
@@ -797,39 +943,46 @@ a,b,c,d
     2,12   ,   11,abc  
 ```
 
+--------------------------
+
 ## `quote`
 
 `quote`
  *[*
---mode
+--mode=...
 --strings-only *]*
+*[* *column-args ...* *]*
 
-Quote string values that would be ambigous or unprintable.
+Synopsis: Quote string values that would be ambigous or unprintable.
 
 Aliases: q
 
-  Options                   |  Description
-----------------------------|-------------------------------
---mode | maybe, everything, always
---strings-only | Ignore non-strings.
+ Options                     | Description         | Default | Values                    |
+-----------------------------|---------------------|---------|---------------------------|
+ --mode=...     | When to quote.      | "maybe" | maybe, everything, always |
+ --strings-only | Ignore non-strings. |         |                           |
 
 ## `region`
 
 `region`
 
-Select a range of rows.
+Synopsis: Select a range of rows.
 
 Aliases: range
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region -1            // h-
 id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 2,4,6         // h-
 id,a,b,c,X %
 1002,77,ymt,0.4,48%
@@ -837,7 +990,9 @@ id,a,b,c,X %
 1006,67,hjn,"",187%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 11..14        // h-
 id,a,b,c,X %
 1011,39,axr,"",97%
@@ -846,7 +1001,9 @@ id,a,b,c,X %
 1014,48,gys,5.2,49%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 11...14       // h-
 id,a,b,c,X %
 1011,39,axr,"",97%
@@ -854,7 +1011,9 @@ id,a,b,c,X %
 1013,73,dmm ,4.8,197%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 9..1          // h-
 id,a,b,c,X %
 1009,-99,ali,3.2,191%
@@ -868,7 +1027,9 @@ id,a,b,c,X %
 1001,79,ekl ,"",133%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region -9..-1        // h-
 id,a,b,c,X %
 1092,-74,rjz,36.4,76%
@@ -882,7 +1043,9 @@ id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 2,4,10..15    // h-
 id,a,b,c,X %
 1002,77,ymt,0.4,48%
@@ -895,12 +1058,14 @@ id,a,b,c,X %
 1015,-92,ndu,5.6,80%
 ```
 
+--------------------------
+
 ## `remove-empty`
 
 `remove-empty`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Empty columns and rows are removed.
+Synopsis: Empty columns and rows are removed.
 
 Aliases: compact
 
@@ -908,23 +1073,26 @@ Aliases: compact
 
 `replace`
  *[*
---search=
---replace=
+--search=...
+--replace=...
 --global *]*
+*[* *column-args ...* *]*
 
-Replace by regex.
+Synopsis: Replace by regex.
 
 Aliases: sub
 
-  Options                   |  Description
-----------------------------|-------------------------------
---search= | Search for in all columns.
---replace= | Replace matches with.
---global | Replace all occurances.
+ Options                    | Description                | Default | Values |
+----------------------------|----------------------------|---------|--------|
+ --search=...  | Search for in all columns. |         |        |
+ --replace=... | Replace matches with.      |         |        |
+ --global      | Replace all occurances.    |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
 id,a,b,c,X %
 1001,79,ekl ,"",133
@@ -934,7 +1102,9 @@ id,a,b,c,X %
 1005,-38,oub,1.6,9
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-
 id,a,b,c,X %
 _001,79,ekl ,"",_33%
@@ -944,7 +1114,9 @@ _004,-62,rcz ,_.2,_27%
 _005,-38,oub,_.6,9%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global // h-
 id,a,b,c,X %
 00,79,ekl ,"",33%
@@ -954,17 +1126,21 @@ id,a,b,c,X %
 005,-38,oub,.6,9%
 ```
 
+--------------------------
+
 ## `reverse`
 
 `reverse`
 
-Reverse order of rows.
+Synopsis: Reverse order of rows.
 
 Aliases: tac
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // reverse // h-
 a,b,c,d
 2,12,11,abc
@@ -973,7 +1149,9 @@ a,b,c,d
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // reverse
 2,12,11,abc
 134,5,9,baz
@@ -981,6 +1159,8 @@ $ cx in SOME.csv // reverse
 1,ab,3,foo
 a,b,c,d
 ```
+
+--------------------------
 
 ## `row-id`
 
@@ -990,17 +1170,19 @@ a,b,c,d
 --type=...
 --start=... *]*
 
-Inserts a row id column.
+Synopsis: Inserts a row id column.
 
-  Options                   |  Description
-----------------------------|-------------------------------
---name=... | Name of id column.  Default: "__rowid__".
---type=... | Type: "integer" or "uuid".  Default: "integer".
---start=... | Start of integer ids.  Default: 1
+ Options                  | Description                | Default     | Values |
+--------------------------|----------------------------|-------------|--------|
+ --name=...  | Name of id column.         | "__rowid__" |        |
+ --type=...  | Type: "integer" or "uuid". | "integer"   |        |
+ --start=... | Start of integer ids.      | 1           |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --start=100 // h-
 __rowid__,a,b,c,d
 100,1,ab,3,foo
@@ -1009,7 +1191,9 @@ __rowid__,a,b,c,d
 103,2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --name=id // h-
 id,a,b,c,d
 1,1,ab,3,foo
@@ -1018,7 +1202,9 @@ id,a,b,c,d
 4,2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
 uuid,a,b,c,d
 4ce19f1a-a12f-0c89-0429-311871528c45,1,ab,3,foo
@@ -1027,15 +1213,20 @@ uuid,a,b,c,d
 40bf24bd-85f1-a061-752b-bcd099c8eceb,2,12,11,abc
 ```
 
+--------------------------
+
 ## `set-meta`
 
 `set-meta`
+*[* *column-args ...* *]*
 
-Set column meta.
+Synopsis: Set column meta.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
 | a                    | b     | c     | d     |
 | -------------------: | ----- | ----- | ----- |
@@ -1045,7 +1236,9 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
 |                    2 | 12    | 11    | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md
 | name  | order | max_size | align |
 | ----- | ----: | -------: | ----- |
@@ -1055,7 +1248,9 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' 
 | a     |     9 |       20 | right |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 | newname | a     | b     | d     |
 | ------- | ----- | ----- | ----- |
@@ -1065,17 +1260,22 @@ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 | 11      | 2     | 12    | abc   |
 ```
 
+--------------------------
+
 ## `sort`
 
 `sort`
+*[* *column-args ...* *]*
 
-Sorts by specified columns.
+Synopsis: Sorts by specified columns.
 
 Aliases: s
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // sort d  // h-
 a,b,c,d
 2,12,11,abc
@@ -1084,7 +1284,9 @@ a,b,c,d
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // sort    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1093,7 +1295,9 @@ a,b,c,d
 24,44,6,bar
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h //            sort a    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1102,7 +1306,9 @@ a,b,c,d
 24,44,6,bar
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse   // sort a    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1111,7 +1317,9 @@ a,b,c,d
 134,5,9,baz
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse   // sort a:-  // h-
 a,b,c,d
 134,5,9,baz
@@ -1120,11 +1328,13 @@ a,b,c,d
 1,ab,3,foo
 ```
 
+--------------------------
+
 ## `sql-out`
 
 `sql-out`
  *[*
---table
+--table=...
 --transaction
 --rollback
 --commit
@@ -1133,24 +1343,26 @@ a,b,c,d
 --insert
 --varchar-size=... *]*
 
-Generates CSV lines.
+Synopsis: Generates CSV lines.
 
 Aliases: sql-
 
-  Options                   |  Description
-----------------------------|-------------------------------
---table | Table name.
---transaction | Emit a TRANSACTION block.
---rollback | Emit a ROLLBACK statement.
---commit | Emit a COMMIT statement.
---create | Emit a CREATE TABLE statement.
---temporary | CREATE TEMPORARY TABLE statement.
---insert | Emit INSERT INTO statements.
---varchar-size=... | VARCHAR(size). Default: 255.
+ Options                         | Description                       | Default | Values |
+---------------------------------|-----------------------------------|---------|--------|
+ --table=...        | Table name.                       |         |        |
+ --transaction      | Emit a TRANSACTION block.         |         |        |
+ --rollback         | Emit a ROLLBACK statement.        |         |        |
+ --commit           | Emit a COMMIT statement.          |         |        |
+ --create           | Emit a CREATE TABLE statement.    |         |        |
+ --temporary        | CREATE TEMPORARY TABLE statement. |         |        |
+ --insert           | Emit INSERT INTO statements.      |         |        |
+ --varchar-size=... | VARCHAR(size).                    | 255     |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
 CREATE TABLE SOME_TABLE
 (
@@ -1162,7 +1374,9 @@ CREATE TABLE SOME_TABLE
 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
 INSERT INTO SOME_TABLE
   (a, b, c, d)
@@ -1174,22 +1388,29 @@ VALUES
 
 ```
 
+--------------------------
+
 ## `stats`
 
 `stats`
+*[* *column-args ...* *]*
 
-Collect stats of a group of columns.
+Synopsis: Collect stats of a group of columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats salary // md
 | salary_count | salary_sum | salary_min | salary_max | salary_mean       | salary_median | salary_stddev    |
 | -----------: | ---------: | ---------: | ---------: | ----------------: | ------------: | ---------------: |
 |         17.0 |     1121.0 |       22.0 |      120.0 | 65.94117647058823 |          63.0 | 31.0908925348874 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats dept:g salary // md
 | dept       | salary_count | salary_sum | salary_min | salary_max | salary_mean        | salary_median | salary_stddev      |
 | ---------- | -----------: | ---------: | ---------: | ---------: | -----------------: | ------------: | -----------------: |
@@ -1199,7 +1420,9 @@ $ cx in stats-data.csv // -h // parse // stats dept:g salary // md
 | accounting |          5.0 |      357.0 |       40.0 |      115.0 |               71.4 |          47.0 | 33.672540741678525 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats job:g salary // md
 | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev      |
 | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | -----------------: |
@@ -1207,7 +1430,9 @@ $ cx in stats-data.csv // -h // parse // stats job:g salary // md
 | b     |          6.0 |      615.0 |       85.0 |      120.0 |       102.5 |         104.0 | 13.450526631573451 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 | dept       | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev     |
 | ---------- | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | ----------------: |
@@ -1221,11 +1446,14 @@ $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 | accounting | b     |          2.0 |      225.0 |      110.0 |      115.0 |       112.5 |         112.5 |               2.5 |
 ```
 
+--------------------------
+
 ## `strip`
 
 `strip`
+*[* *column-args ...* *]*
 
-Strip leading and trailing whitespace.
+Synopsis: Strip leading and trailing whitespace.
 
 Aliases: trim
 
@@ -1235,7 +1463,7 @@ Aliases: trim
 pipelines
 ...
 
-Send input to multiple output pipelines.
+Synopsis: Send input to multiple output pipelines.
 
 Aliases: t
 
@@ -1245,15 +1473,17 @@ Aliases: t
  *[*
 --include-header=... *]*
 
-Transpose rows and columns.
+Synopsis: Transpose rows and columns.
 
-  Options                   |  Description
-----------------------------|-------------------------------
---include-header=... | Include header in first column.  Default: true
+ Options                           | Description                     | Default | Values |
+-----------------------------------|---------------------------------|---------|--------|
+ --include-header=... | Include header in first column. | true    |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // transpose // h-
 _COL_1,_COL_2,_COL_3,_COL_4,_COL_5
 a,1,24,134,2
@@ -1262,7 +1492,9 @@ c,3,6,9,11
 d,foo,bar,baz,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // transpose --no-include-header // h-
 _COL_1,_COL_2,_COL_3,_COL_4
 1,24,134,2
@@ -1271,11 +1503,13 @@ ab,44,5,12
 foo,bar,baz,abc
 ```
 
+--------------------------
+
 ## `tsv-in`
 
 `tsv-in`
 
-Parses TSV lines.
+Synopsis: Parses TSV lines.
 
 Aliases: -tsv
 
@@ -1283,13 +1517,15 @@ Aliases: -tsv
 
 `tsv-out`
 
-Generates TSV lines.
+Synopsis: Generates TSV lines.
 
 Aliases: tsv-
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // tsv-
 a	b	c	d
 1	ab	3	foo
@@ -1298,23 +1534,29 @@ a	b	c	d
 2	12	11	abc
 ```
 
+--------------------------
+
 ## `type-inference`
 
 `type-inference`
+*[* *column-args ...* *]*
 
-Infer types from field strings.
+Synopsis: Infer types from field strings.
 
 Aliases: -types, types
 
 ## `uniq`
 
 `uniq`
+*[* *column-args ...* *]*
 
-Emit only rows with uniq columns.
+Synopsis: Emit only rows with uniq columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // uniq d  // h-
 a,b,c,d
 1,ab,3,foo
@@ -1323,7 +1565,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // uniq    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1332,8 +1576,11 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
-# DUPLICATES.csv
+--------------------------
+
+## DUPLICATES.csv
+
+```none
 x,y,z
 1,2,3
 4,5,6
@@ -1341,8 +1588,11 @@ x,y,z
 5,5,3
 ```
 
-```
-# EMOS.csv
+--------------------------
+
+## EMOS.csv
+
+```none
 2,12,11,abc
 134,5,9,baz
 24,44,6,bar
@@ -1350,8 +1600,11 @@ x,y,z
 a,b,c,d
 ```
 
-```
-# HAS-UNUSED-COLUMNS.csv
+--------------------------
+
+## HAS-UNUSED-COLUMNS.csv
+
+```none
 e,f,g,h
 1,ab,,foo
 24,,,bar
@@ -1359,16 +1612,22 @@ e,f,g,h
 ,12,,abc
 ```
 
-```
-# OTHER.csv
+--------------------------
+
+## OTHER.csv
+
+```none
 x,y
 1,2
 2,3
 5,9
 ```
 
-```
-# RANDOM.csv
+--------------------------
+
+## RANDOM.csv
+
+```none
 id,a,b,c,X %
 1001,79,ekl ,"",133%
 1002,77,ymt,0.4,48%
@@ -1472,8 +1731,11 @@ id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
-# SOME.csv
+--------------------------
+
+## SOME.csv
+
+```none
 a,b,c,d
 1,ab,3,foo
 24,44,6,bar
@@ -1481,8 +1743,11 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
-# SOME.edn
+--------------------------
+
+## SOME.edn
+
+```none
 [
 {:a 1 :b "ab" :c 3 :d "foo"}
 {:a 24 :b 44 :c 6 :d "bar"}
@@ -1491,8 +1756,11 @@ a,b,c,d
 ]
 ```
 
-```
-# SOME.erb
+--------------------------
+
+## SOME.erb
+
+```none
 === HEADER ===
 columns = <%= input.header.columns.map(&:to_s) * ', ' %>
 size    = <%= input.size %>
@@ -1504,8 +1772,11 @@ size    = <%= input.size %>
 
 ```
 
-```
-# SOME.json
+--------------------------
+
+## SOME.json
+
+```none
 [
 {"a":1,"b":"ab","c":3,"d":"foo"},
 {"a":24,"b":44,"c":6,"d":"bar"},
@@ -1514,8 +1785,11 @@ size    = <%= input.size %>
 ]
 ```
 
-```
-# plot.csv
+--------------------------
+
+## plot.csv
+
+```none
 x,y1,y2
 1,20,150
 2.2,21,150
@@ -1529,8 +1803,11 @@ x,y1,y2
 100,110,40
 ```
 
-```
-# stats-data.csv
+--------------------------
+
+## stats-data.csv
+
+```none
 dept,job,salary
 sales,a,67
 sales,a,63
@@ -1551,8 +1828,8 @@ accounting,b,110
 accounting,b,115
 ```
 
-# Attribution
+--------------------------
 
-Copyright 2020 - Kurt Stephens 
+--------------------------
 
 

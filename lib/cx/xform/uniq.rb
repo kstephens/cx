@@ -12,6 +12,7 @@ require 'set'
 #   synopsis: Emit only rows with uniq columns.
 #   args: []
 #   opts: {}
+#   has_column_args: true
 #   examples:
 #     - 'cx in SOME.csv // -h // uniq d  // h-'
 #     - 'cx in SOME.csv // -h // uniq    // h-'

@@ -10,6 +10,7 @@ require 'cx/xform/record'
 #   aliases: [ jira ]
 #   synopsis: Generate a Jira table lines.
 #   suffixes: [ .jira.txt ]
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:

@@ -9,6 +9,7 @@ require 'cx/compare'
 # Sort:
 #   aliases: s
 #   synopsis: Sorts by specified columns.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:

@@ -55,8 +55,8 @@ task :minify do
   end
 end
   
-desc "Generate lib/cx/commands.yml"
 XFORM_FILES = Rake::FileList.new("lib/cx/xform/*.rb")
+desc "Generate lib/cx/commands.yml"
 task :commands_yml => "lib/cx/commands.yml"
 file "lib/cx/commands.yml" => XFORM_FILES + [ 'Rakefile', 'lib/cx/command_factory.rb' ] do
   require 'cx/command_factory'

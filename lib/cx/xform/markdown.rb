@@ -11,6 +11,7 @@ require 'cx/xform/align'
 #   aliases: [ md, md-, markdown ]
 #   synopsis: Generate Markdown table lines.
 #   suffixes: [ .md ]
+#   has_column_args: true
 #   args: []
 #   opts:
 #     title: 'Output title (caption).  Default: none.'

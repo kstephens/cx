@@ -7,6 +7,7 @@ require 'cx/xform'
 # Align:
 #   aliases:
 #   synopsis: Aligns fields based on column max_size and alignment.
+#   has_column_args: true
 #   args: []
 #   opts:
 #   examples:

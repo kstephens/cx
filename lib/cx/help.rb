@@ -42,6 +42,8 @@ module CX
     end
     
     def make_document
+      require 'terminal-table'
+      
       commands.each do | c |
         c.examples.map! do | example |
           e = Example.load!(command: c.name, example: example)
@@ -50,7 +52,7 @@ module CX
           # e.contents.log_members
           e
         end
-        log.info "LOADED: command #{c.name} : #{c.examples.size} examples"
+        log.info "LOADED : command #{c.name} : #{c.options.size} options : #{c.examples.size} examples"
       end
 
       template = File.read(help_md_erb)
@@ -68,14 +70,29 @@ module CX
       doc
     end
 
+    def command_option_table c
+      rows = c.options.map{|o| [ code(o.brief), br(o.description), o.default, o.values * ', ' ]}
+      t = ::Terminal::Table.new do | t |
+        t.headings = %w(Options Description Default Values)
+        t.style = { border_i: '|', border_x: '-', border_top: false, border_bottom: false }
+        t.rows = rows
+      end
+      t = t.to_s.gsub(/^\|/, '')
+      t
+    end
+
     def code x
       no_wrap "<code>#{x}</code>"
     end
 
     def no_wrap x
-      "<span style='white-space: nowrap;>#{x}</span>"
+      x.gsub(' ', '&nbsp;')
     end
 
+    def br x
+      x.to_s.gsub(/\n/, '<br />')
+    end
+    
     def run_examples!
       Example::Runner.new.run!
     end

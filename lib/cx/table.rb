@@ -24,6 +24,7 @@ module CX
       end
     end
 
+    # TODO: change arguments to?: header = nil, rows = nil, meta = nil
     def initialize rows = nil, header = nil, meta = nil
       @meta ||= meta || Meta.new
       @rows ||= rows || [ ]

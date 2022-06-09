@@ -1,17 +1,20 @@
 # Overview
 
-CX processes a pipeline of commands which transform tabular data.
+CX transforms tabular data through a pipeline of commands.
 
-A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
+Pipeline commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
 
-Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
+Some commands have subpipelines arguments delimited by "`{{`" and "`}}`".
 
 # Installation
 
 ```
-# Install ruby, then:
+# Install ruby 2.7.1+
+$ rbenv install 2.7.1
+$ rbenv shell 2.7.1
 $ git clone https://github.com/kstephens/cx.git
 $ cd cx
+$ npm install -g minify
 $ bundle exec rake install
 ```
 
@@ -73,24 +76,20 @@ See the `cut` command for examples.
 <%= code(n) %> \
 <% end %> \
 <% if c.has_column_args? %>
-*[* *column-args *...* *]* \
+*[* *column-args ...* *]* \
 <% end %> \
 <% if c.has_pipeline_args? %> \
 *[* `{{` *pipeline* `}}` *...* *]* \
 <% end %>
 
-<%= c.synopsis %>
+Synopsis: <%= c.synopsis %>
 
 <% unless c.aliases.empty? %>
 Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% end %>
 
 <% unless c.options.empty? %>
-  Options                   |  Description
-----------------------------|------------------------------- \
-<% c.options.each do | o | %>
-<%= code(o.brief) %> | <%= o.description %> \
-<% end %>
+<%= command_option_table c %>
 <% end %>
 
 <%= c.description unless c.description.empty? %>
@@ -98,32 +97,45 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% unless c.examples.empty? %>
   Examples:
 
+--------------------------
+
 <% c.examples.each do | e | %>
-```
+
+```none
 $ <%= e.example %>
 <%= e.contents.actual %>```
+
+--------------------------
+
 <% end # examples.each %>
 <% end # unless c.examples.empty? %>
 
+--------------------------
+
 <% end # commands %>
 
-# Installation
-
-```
-git clone https://github.com/kstephens/cx.git
-gem install cx
-```
-
-# Example Data
-
-<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
-```
-# <%= File.basename file %>
-<%= File.read(file) %>```
-
-<% end %>
+--------------------------
 
 # Attribution
 
-Copyright 2020 - Kurt Stephens 
+--------------------------------
+Copyright 2020 - Kurt Stephens
+--------------------------------
+
+# Example Data
+
+--------------------------
+
+<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
+
+## <%= File.basename file %>
+
+```none
+<%= File.read(file) %>```
+
+--------------------------
+
+<% end %>
+
+--------------------------
 

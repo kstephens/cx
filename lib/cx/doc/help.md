@@ -1,17 +1,20 @@
 # Overview
 
-CX processes a pipeline of commands which transform tabular data.
+CX transforms tabular data through a pipeline of commands.
 
-A pipeline's commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
+Pipeline commands are separated by "`//`" -- mnemonic: Unix shell pipe "`|`".
 
-Some commands have pipelines arguments delimited by "`{{`" and "`}}`".
+Some commands have subpipelines arguments delimited by "`{{`" and "`}}`".
 
 # Installation
 
 ```
-# Install ruby, then:
+# Install ruby 2.7.1+
+$ rbenv install 2.7.1
+$ rbenv shell 2.7.1
 $ git clone https://github.com/kstephens/cx.git
 $ cd cx
+$ npm install -g minify
 $ bundle exec rake install
 ```
 
@@ -60,12 +63,15 @@ See the `cut` command for examples.
 ## `align`
 
 `align`
+*[* *column-args ...* *]*
 
-Aligns fields based on column max_size and alignment.
+Synopsis: Aligns fields based on column max_size and alignment.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // align
     1,ab   ,    3,foo  
    24,44   ,    6,bar  
@@ -73,15 +79,19 @@ $ cx in SOME.csv // -h // parse // align
     2,12   ,   11,abc  
 ```
 
+--------------------------
+
 ## `cat`
 
 `cat`
 
-Concatenates rows from multiple pipelines.  Columns are shared.
+Synopsis: Concatenates rows from multiple pipelines.  Columns are shared.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
 x,y,z
 1,2,
@@ -93,53 +103,58 @@ x,y,z
 5,5,3
 ```
 
+--------------------------
+
 ## `cmd`
 
 `cmd`
-<span style='white-space: nowrap;><code>command</code></span>
-<span style='white-space: nowrap;><code>args...</code></span>
+<code>command</code>
+<code>args...</code>
 
-Pipe through an external command.
+Synopsis: Pipe through an external command.
 
-Aliases: <span style='white-space: nowrap;><code>command</code></span>, <span style='white-space: nowrap;><code>/</code></span>
+Aliases: <code>command</code>, <code>/</code>
 
 ## `coerce`
 
 `coerce`
+*[* *column-args ...* *]*
 
-Coerce columns by inferred types.
+Synopsis: Coerce columns by inferred types.
 
 ## `csv-in`
 
 `csv-in`
  *[*
-<span style='white-space: nowrap;><code>--separator</code></span> *]*
+<code>--separator=...</code> *]*
 
-Parses CSV lines.
+Synopsis: Parses CSV lines.
 
-Aliases: <span style='white-space: nowrap;><code>-csv</code></span>
+Aliases: <code>-csv</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--separator</code></span> | Column separator: defaults to ",".
+ Options                      | Description                           | Default | Values |
+------------------------------|---------------------------------------|---------|--------|
+ <code>--separator=...</code> | Column separator: defaults to `","``. |         |        |
 
 ## `csv-out`
 
 `csv-out`
  *[*
-<span style='white-space: nowrap;><code>--separator</code></span> *]*
+<code>--separator=...</code> *]*
 
-Generates CSV lines.
+Synopsis: Generates CSV lines.
 
-Aliases: <span style='white-space: nowrap;><code>csv-</code></span>
+Aliases: <code>csv-</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--separator</code></span> | Column separator: defaults to ",".
+ Options                      | Description                           | Default | Values |
+------------------------------|---------------------------------------|---------|--------|
+ <code>--separator=...</code> | Column separator: defaults to `","``. |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // csv- --separator="\x09"
 a	b	c	d
 1	ab	3	foo
@@ -148,16 +163,20 @@ a	b	c	d
 2	12	11	abc
 ```
 
+--------------------------
+
 ## `cut`
 
 `cut`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Cut columns.
+Synopsis: Cut columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut a,d // h-
 a,d
 1,foo
@@ -166,7 +185,9 @@ a,d
 2,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut b a c // h-
 b,a,c
 ab,1,3
@@ -175,7 +196,9 @@ ab,1,3
 12,2,11
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut 'a,*' // h-
 a,b,c,d
 1,ab,3,foo
@@ -184,7 +207,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut 'd,*' // h-
 d,a,b,c
 foo,1,ab,3
@@ -193,7 +218,9 @@ baz,134,5,9
 abc,2,12,11
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // cut '*,b:-' // h-
 a,c,d
 1,3,foo
@@ -202,52 +229,78 @@ a,c,d
 2,11,abc
 ```
 
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // cut 2,1 // h-
+b,a
+ab,1
+44,24
+5,134
+12,2
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // cut -1,-2 // h-
+d,c
+foo,3
+bar,6
+baz,9
+abc,11
+```
+
+--------------------------
+
 ## `delimited-in`
 
 `delimited-in`
  *[*
-<span style='white-space: nowrap;><code>--field-sep=...</code></span>
-<span style='white-space: nowrap;><code>--record-sep=...</code></span> *]*
+<code>--field-sep=...</code>
+<code>--record-sep=...</code> *]*
 
-Parse delimited records.
+Synopsis: Parse delimited records.
 
-Aliases: <span style='white-space: nowrap;><code>-delimited</code></span>, <span style='white-space: nowrap;><code>-d</code></span>
+Aliases: <code>-delimited</code>, <code>-d</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--field-sep=...</code></span> | Default: ",".
-<span style='white-space: nowrap;><code>--record-sep=...</code></span> | Default: system newline.
+ Options                       | Description | Default        | Values |
+-------------------------------|-------------|----------------|--------|
+ <code>--field-sep=...</code>  |             | ","            |        |
+ <code>--record-sep=...</code> |             | system newline |        |
 
 ## `delimited-out`
 
 `delimited-out`
  *[*
-<span style='white-space: nowrap;><code>--field-sep=...</code></span>
-<span style='white-space: nowrap;><code>--record-sep=...</code></span>
-<span style='white-space: nowrap;><code>--multi-sep=...</code></span> *]*
-*[* *column-args *...* *]*
+<code>--field-sep=...</code>
+<code>--record-sep=...</code>
+<code>--multi-sep=...</code> *]*
+*[* *column-args ...* *]*
 
-Generate delimited records.
+Synopsis: Generate delimited records.
 
-Aliases: <span style='white-space: nowrap;><code>delimited-</code></span>, <span style='white-space: nowrap;><code>d-</code></span>
+Aliases: <code>delimited-</code>, <code>d-</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--field-sep=...</code></span> | Default: ",".
-<span style='white-space: nowrap;><code>--record-sep=...</code></span> | Default: system newline.
-<span style='white-space: nowrap;><code>--multi-sep=...</code></span> | Separator for enumerable values.  Default: ";".
+ Options                       | Description                      | Default        | Values |
+-------------------------------|----------------------------------|----------------|--------|
+ <code>--field-sep=...</code>  |                                  | ","            |        |
+ <code>--record-sep=...</code> |                                  | system newline |        |
+ <code>--multi-sep=...</code>  | Separator for enumerable values. | ";"            |        |
 
 ## `edn-in`
 
 `edn-in`
 
-Parses EDN.
+Synopsis: Parses EDN.
 
-Aliases: <span style='white-space: nowrap;><code>-edn</code></span>
+Aliases: <code>-edn</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.edn // -edn // h-
 a,b,c,d
 1,ab,3,foo
@@ -256,17 +309,21 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `edn-out`
 
 `edn-out`
 
-Emits EDN.
+Synopsis: Emits EDN.
 
-Aliases: <span style='white-space: nowrap;><code>edn-</code></span>
+Aliases: <code>edn-</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // edn-
 [
 {:a 1 :b "ab" :c 3 :d "foo"}
@@ -276,7 +333,9 @@ $ cx in SOME.csv // -h // parse // edn-
 ]
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // h- // edn- --mode=row
 [
 ["a" "b" "c" "d"]
@@ -287,31 +346,35 @@ $ cx in SOME.csv // -h // parse // h- // edn- --mode=row
 ]
 ```
 
+--------------------------
+
 ## `empty-null`
 
 `empty-null`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Empty fields are converted to NULL.
+Synopsis: Empty fields are converted to NULL.
 
 ## `erb-out`
 
 `erb-out`
  *[*
-<span style='white-space: nowrap;><code>----erb-options</code></span> *]*
-<span style='white-space: nowrap;><code>template.erb</code></span>
+<code>----erb-options</code> *]*
+<code>template.erb</code>
 
-Evaluates ERB in the context of input table.
+Synopsis: Evaluates ERB in the context of input table.
 
-Aliases: <span style='white-space: nowrap;><code>erb-</code></span>, <span style='white-space: nowrap;><code>erb</code></span>
+Aliases: <code>erb-</code>, <code>erb</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>----erb-options</code></span> | See ERB doc trim_mode.
+ Options                      | Description            | Default | Values |
+------------------------------|------------------------|---------|--------|
+ <code>----erb-options</code> | See ERB doc trim_mode. |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // erb SOME.erb
 === HEADER ===
 columns = a, b, c, d
@@ -325,15 +388,19 @@ size    = 4
 
 ```
 
+--------------------------
+
 ## `eval`
 
 `eval`
 
-Evaluates Ruby code for each row.
+Synopsis: Evaluates Ruby code for each row.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
 a,b,c,d
 Integer,String,Integer,String
@@ -342,7 +409,9 @@ Integer,Integer,Integer,String
 Integer,Integer,Integer,String
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
 a,b,c,d,a_to_power_of_c
 1,ab,3,foo,1
@@ -351,27 +420,32 @@ a,b,c,d,a_to_power_of_c
 2,12,11,abc,2048
 ```
 
+--------------------------
+
 ## `gnuplot-out`
 
 `gnuplot-out`
  *[*
-<span style='white-space: nowrap;><code>--color=...</code></span>
-<span style='white-space: nowrap;><code>--format=</code></span>
-<span style='white-space: nowrap;><code>--size=</code></span> *]*
+<code>--color=...</code>
+<code>--format=...</code>
+<code>--size=...</code> *]*
+*[* *column-args ...* *]*
 
-Generate GNUPLOT file.
+Synopsis: Generate GNUPLOT file.
 
-Aliases: <span style='white-space: nowrap;><code>gnuplot-</code></span>, <span style='white-space: nowrap;><code>gnuplot</code></span>
+Aliases: <code>gnuplot-</code>, <code>gnuplot</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--color=...</code></span> | Default: false.
-<span style='white-space: nowrap;><code>--format=</code></span> | term,tty,console,svg,...
-<span style='white-space: nowrap;><code>--size=</code></span> | WxH
+ Options                   | Description              | Default | Values |
+---------------------------|--------------------------|---------|--------|
+ <code>--color=...</code>  |                          | false   |        |
+ <code>--format=...</code> | term,tty,console,svg,... |         |        |
+ <code>--size=...</code>   | WxH                      |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                                                                 
                                                                                 
@@ -385,7 +459,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
      100 +       ##                      **@         @***********               
                    ##              ******  *        *                           
       80 +           #@###@####****         *      *                            
-                          @**  ########     *      *                            
+y1,y2                     @**  ########     *      *                            
       60 +               *             ####@##@######@#####                     
                         *                    *   *         ############         
       40 +  @**         *                    *  *                      #####@   
@@ -400,7 +474,9 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                                                                 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                                                                 
                                                                                 
@@ -429,7 +505,9 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                                                                 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
                                                                                 
                                                                                 
@@ -458,52 +536,66 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
                                                                                 
 ```
 
+--------------------------
+
 ## `grep`
 
 `grep`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Filters by regex.
+Synopsis: Filters by regex.
 
-Aliases: <span style='white-space: nowrap;><code>g</code></span>
+Aliases: <code>g</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:f
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:a
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep d:^a
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // grep "d:!;f"
 24,44,6,bar
 134,5,9,baz
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `header-in`
 
 `header-in`
 
-Interprets first row as a column name header.
+Synopsis: Interprets first row as a column name header.
 
-Aliases: <span style='white-space: nowrap;><code>-header</code></span>, <span style='white-space: nowrap;><code>-h</code></span>
+Aliases: <code>-header</code>, <code>-h</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // csv-
 1,ab,3,foo
 24,44,6,bar
@@ -511,23 +603,27 @@ $ cx in SOME.csv // -csv // -h // csv-
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `header-out`
 
 `header-out`
  *[*
-<span style='white-space: nowrap;><code>--meta-columns=...</code></span> *]*
+<code>--meta-columns=...</code> *]*
 
-Emits column names as first row.
+Synopsis: Emits column names as first row.
 
-Aliases: <span style='white-space: nowrap;><code>header-</code></span>, <span style='white-space: nowrap;><code>h-</code></span>
+Aliases: <code>header-</code>, <code>h-</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--meta-columns=...</code></span> | Emit a row for each meta-column containing the meta value for that column..
+ Options                         | Description                                                                 | Default | Values           |
+---------------------------------|-----------------------------------------------------------------------------|---------|------------------|
+ <code>--meta-columns=...</code> | Emit a row for each meta-column containing the meta value for that column.. |         | meta-column, ... |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // h- // csv-
 a,b,c,d
 1,ab,3,foo
@@ -536,7 +632,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-
 __META__,a,b,c,d
 type,Integer,Object,Integer,String
@@ -547,14 +645,16 @@ max_value,134,ab,11,foo
 "",2,12,11,abc
 ```
 
+--------------------------
+
 ## `help`
 
 `help`
-<span style='white-space: nowrap;><code>show</code></span>
-<span style='white-space: nowrap;><code>run-examples</code></span>
-<span style='white-space: nowrap;><code>make-help</code></span>
+<code>show</code>
+<code>run-examples</code>
+<code>make-help</code>
 
-Show this documentation.
+Synopsis: Show this documentation.
 
 Subcommands:
 * show         - this documentation (default).
@@ -565,67 +665,71 @@ Subcommands:
 
 `html-out`
  *[*
-<span style='white-space: nowrap;><code>--title</code></span>
-<span style='white-space: nowrap;><code>--table-only</code></span>
-<span style='white-space: nowrap;><code>--filtering=...</code></span>
-<span style='white-space: nowrap;><code>--sorting=...</code></span>
-<span style='white-space: nowrap;><code>--styled=...</code></span>
-<span style='white-space: nowrap;><code>--raw</code></span>
-<span style='white-space: nowrap;><code>--link</code></span>
-<span style='white-space: nowrap;><code>--head</code></span>
-<span style='white-space: nowrap;><code>--body-head</code></span>
-<span style='white-space: nowrap;><code>--body-foot</code></span>
-<span style='white-space: nowrap;><code>--indent=...</code></span> *]*
+<code>--title=...</code>
+<code>--table-only</code>
+<code>--filtering=...</code>
+<code>--sorting=...</code>
+<code>--styled=...</code>
+<code>--raw=...</code>
+<code>--link=...</code>
+<code>--head=...</code>
+<code>--body-head=...</code>
+<code>--body-foot=...</code>
+<code>--indent=...</code> *]*
+*[* *column-args ...* *]*
 
-Emits HTML.
+Synopsis: Emits HTML.
 
-Aliases: <span style='white-space: nowrap;><code>html-</code></span>, <span style='white-space: nowrap;><code>html</code></span>, <span style='white-space: nowrap;><code>htm</code></span>
+Aliases: <code>html-</code>, <code>html</code>, <code>htm</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--title</code></span> | Sets the HTML `title`.
-<span style='white-space: nowrap;><code>--table-only</code></span> | Emit the HTML `table` only.
-<span style='white-space: nowrap;><code>--filtering=...</code></span> | Enable filtering.  Default: true
-<span style='white-space: nowrap;><code>--sorting=...</code></span> | Enable sorting.  Default: true
-<span style='white-space: nowrap;><code>--styled=...</code></span> | Enable styling.  Default: true
-<span style='white-space: nowrap;><code>--raw</code></span> | Comma-separated list of columns containing raw HTML.
-<span style='white-space: nowrap;><code>--link</code></span> | Comma-separated list of columns containing URLS.
-<span style='white-space: nowrap;><code>--head</code></span> | Additional raw HTML at foot of `head`.
-<span style='white-space: nowrap;><code>--body-head</code></span> | Additional raw HTML at head of `body`.
-<span style='white-space: nowrap;><code>--body-foot</code></span> | Additional raw HTML at foot of `body`.
-<span style='white-space: nowrap;><code>--indent=...</code></span> | Spaces to indent.  Default: 1
+ Options                      | Description                                          | Default | Values |
+------------------------------|------------------------------------------------------|---------|--------|
+ <code>--title=...</code>     | Sets the HTML `title`.                               |         |        |
+ <code>--table-only</code>    | Emit the HTML `table` only.                          |         |        |
+ <code>--filtering=...</code> | Enable filtering.                                    | `true`  |        |
+ <code>--sorting=...</code>   | Enable sorting.                                      | `true`  |        |
+ <code>--styled=...</code>    | Enable styling.                                      | `true`  |        |
+ <code>--raw=...</code>       | Comma-separated list of columns containing raw HTML. |         |        |
+ <code>--link=...</code>      | Comma-separated list of columns containing URLS.     |         |        |
+ <code>--head=...</code>      | Additional raw HTML at foot of `head`.               |         |        |
+ <code>--body-head=...</code> | Additional raw HTML at head of `body`.               |         |        |
+ <code>--body-foot=...</code> | Additional raw HTML at foot of `body`.               |         |        |
+ <code>--indent=...</code>    | Spaces to indent.                                    | `1`     |        |
 
 ## `io-in`
 
 `io-in`
-<span style='white-space: nowrap;><code>filename</code></span>
-<span style='white-space: nowrap;><code>...</code></span>
+<code>filename</code>
+<code>...</code>
 
-Read from a file.
+Synopsis: Read from a file.
 
-Aliases: <span style='white-space: nowrap;><code>-io</code></span>, <span style='white-space: nowrap;><code>in</code></span>, <span style='white-space: nowrap;><code>i</code></span>
+Aliases: <code>-io</code>, <code>in</code>, <code>i</code>
 
 ## `io-out`
 
 `io-out`
-<span style='white-space: nowrap;><code>filename</code></span>
-<span style='white-space: nowrap;><code>...</code></span>
+<code>filename</code>
+<code>...</code>
 
-Write records to a file.
+Synopsis: Write records to a file.
 
-Aliases: <span style='white-space: nowrap;><code>io-</code></span>, <span style='white-space: nowrap;><code>out</code></span>, <span style='white-space: nowrap;><code>o</code></span>
+Aliases: <code>io-</code>, <code>out</code>, <code>o</code>
 
 ## `jira-out`
 
 `jira-out`
+*[* *column-args ...* *]*
 
-Generate a Jira table lines.
+Synopsis: Generate a Jira table lines.
 
-Aliases: <span style='white-space: nowrap;><code>jira-</code></span>, <span style='white-space: nowrap;><code>jira</code></span>
+Aliases: <code>jira-</code>, <code>jira</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // jira
 ||a||b||c||d||
 |1|ab|3|foo|
@@ -634,17 +738,21 @@ $ cx in SOME.csv // -h // jira
 |2|12|11|abc|
 ```
 
+--------------------------
+
 ## `json-in`
 
 `json-in`
 
-Parses JSON.
+Synopsis: Parses JSON.
 
-Aliases: <span style='white-space: nowrap;><code>-json</code></span>
+Aliases: <code>-json</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.json // -json // h-
 a,b,c,d
 1,ab,3,foo
@@ -653,17 +761,21 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `json-out`
 
 `json-out`
 
-Emits JSON.
+Synopsis: Emits JSON.
 
-Aliases: <span style='white-space: nowrap;><code>json-</code></span>
+Aliases: <code>json-</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // json-
 [
 {"a":1,"b":"ab","c":3,"d":"foo"},
@@ -673,25 +785,30 @@ $ cx in SOME.csv // -h // parse // json-
 ]
 ```
 
+--------------------------
+
 ## `markdown-out`
 
 `markdown-out`
  *[*
-<span style='white-space: nowrap;><code>--title=...</code></span>
-<span style='white-space: nowrap;><code>--include-header=...</code></span> *]*
+<code>--title=...</code>
+<code>--include-header=...</code> *]*
+*[* *column-args ...* *]*
 
-Generate Markdown table lines.
+Synopsis: Generate Markdown table lines.
 
-Aliases: <span style='white-space: nowrap;><code>markdown-</code></span>, <span style='white-space: nowrap;><code>md</code></span>, <span style='white-space: nowrap;><code>md-</code></span>, <span style='white-space: nowrap;><code>markdown</code></span>
+Aliases: <code>markdown-</code>, <code>md</code>, <code>md-</code>, <code>markdown</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--title=...</code></span> | Output title (caption).  Default: none.
-<span style='white-space: nowrap;><code>--include-header=...</code></span> | Include a header.  Default: true.
+ Options                           | Description             | Default | Values |
+-----------------------------------|-------------------------|---------|--------|
+ <code>--title=...</code>          | Output title (caption). | none    |        |
+ <code>--include-header=...</code> | Include a header.       | true    |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // markdown
 | a     | b     | c     | d     |
 | ----- | ----- | ----- | ----- |
@@ -701,7 +818,9 @@ $ cx in SOME.csv // -h // markdown
 | 2     | 12    | 11    | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md
 | a     | b     | c     | d     |
 | ----: | ----- | ----: | ----- |
@@ -711,7 +830,9 @@ $ cx in SOME.csv // -h // parse // md
 |     2 | 12    |    11 | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md --title=SOME.CSV
 | a     | b     | c     | d     |
 | ----: | ----- | ----: | ----- |
@@ -722,7 +843,9 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV
 [ SOME.CSV ]
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 |     1 | ab    |     3 | foo   |
 |    24 | 44    |     6 | bar   |
@@ -731,17 +854,22 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 [ SOME.CSV ]
 ```
 
+--------------------------
+
 ## `meta-in`
 
 `meta-in`
+*[* *column-args ...* *]*
 
-Calculates various column metadata.
+Synopsis: Calculates various column metadata.
 
-Aliases: <span style='white-space: nowrap;><code>-meta</code></span>
+Aliases: <code>-meta</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // h-
 a,b,c,d
 1,ab,3,foo
@@ -750,17 +878,22 @@ a,b,c,d
 2,12,11,abc
 ```
 
+--------------------------
+
 ## `meta-out`
 
 `meta-out`
+*[* *column-args ...* *]*
 
-Generate a table of column metadata.
+Synopsis: Generate a table of column metadata.
 
-Aliases: <span style='white-space: nowrap;><code>meta-</code></span>
+Aliases: <code>meta-</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
 a,a,true,0,0,,1,3,1,24,0,0,,,,String,String
@@ -769,7 +902,9 @@ c,c,true,2,2,,1,2,11,9,0,0,,,,String,String
 d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,String
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // -meta // meta- // h-
 name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
 a,a,true,0,0,Integer,1,3,1,134,0,0,,,right,Integer,Integer
@@ -778,23 +913,28 @@ c,c,true,2,2,Integer,1,2,3,11,0,0,,,right,Integer,Integer
 d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,String
 ```
 
+--------------------------
+
 ## `nop`
 
 `nop`
 
-Does nothing -- output is same as input.
+Synopsis: Does nothing -- output is same as input.
 
-Aliases: <span style='white-space: nowrap;><code>noop</code></span>
+Aliases: <code>noop</code>
 
 ## `parse`
 
 `parse`
+*[* *column-args ...* *]*
 
-Parse strings into richer types.
+Synopsis: Parse strings into richer types.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // align // h-
 a,b,c,d
     1,ab   ,    3,foo  
@@ -803,39 +943,46 @@ a,b,c,d
     2,12   ,   11,abc  
 ```
 
+--------------------------
+
 ## `quote`
 
 `quote`
  *[*
-<span style='white-space: nowrap;><code>--mode</code></span>
-<span style='white-space: nowrap;><code>--strings-only</code></span> *]*
+<code>--mode=...</code>
+<code>--strings-only</code> *]*
+*[* *column-args ...* *]*
 
-Quote string values that would be ambigous or unprintable.
+Synopsis: Quote string values that would be ambigous or unprintable.
 
-Aliases: <span style='white-space: nowrap;><code>q</code></span>
+Aliases: <code>q</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--mode</code></span> | maybe, everything, always
-<span style='white-space: nowrap;><code>--strings-only</code></span> | Ignore non-strings.
+ Options                     | Description         | Default | Values                    |
+-----------------------------|---------------------|---------|---------------------------|
+ <code>--mode=...</code>     | When to quote.      | "maybe" | maybe, everything, always |
+ <code>--strings-only</code> | Ignore non-strings. |         |                           |
 
 ## `region`
 
 `region`
 
-Select a range of rows.
+Synopsis: Select a range of rows.
 
-Aliases: <span style='white-space: nowrap;><code>range</code></span>
+Aliases: <code>range</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region -1            // h-
 id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 2,4,6         // h-
 id,a,b,c,X %
 1002,77,ymt,0.4,48%
@@ -843,7 +990,9 @@ id,a,b,c,X %
 1006,67,hjn,"",187%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 11..14        // h-
 id,a,b,c,X %
 1011,39,axr,"",97%
@@ -852,7 +1001,9 @@ id,a,b,c,X %
 1014,48,gys,5.2,49%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 11...14       // h-
 id,a,b,c,X %
 1011,39,axr,"",97%
@@ -860,7 +1011,9 @@ id,a,b,c,X %
 1013,73,dmm ,4.8,197%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 9..1          // h-
 id,a,b,c,X %
 1009,-99,ali,3.2,191%
@@ -874,7 +1027,9 @@ id,a,b,c,X %
 1001,79,ekl ,"",133%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region -9..-1        // h-
 id,a,b,c,X %
 1092,-74,rjz,36.4,76%
@@ -888,7 +1043,9 @@ id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 2,4,10..15    // h-
 id,a,b,c,X %
 1002,77,ymt,0.4,48%
@@ -901,36 +1058,41 @@ id,a,b,c,X %
 1015,-92,ndu,5.6,80%
 ```
 
+--------------------------
+
 ## `remove-empty`
 
 `remove-empty`
-*[* *column-args *...* *]*
+*[* *column-args ...* *]*
 
-Empty columns and rows are removed.
+Synopsis: Empty columns and rows are removed.
 
-Aliases: <span style='white-space: nowrap;><code>compact</code></span>
+Aliases: <code>compact</code>
 
 ## `replace`
 
 `replace`
  *[*
-<span style='white-space: nowrap;><code>--search=</code></span>
-<span style='white-space: nowrap;><code>--replace=</code></span>
-<span style='white-space: nowrap;><code>--global</code></span> *]*
+<code>--search=...</code>
+<code>--replace=...</code>
+<code>--global</code> *]*
+*[* *column-args ...* *]*
 
-Replace by regex.
+Synopsis: Replace by regex.
 
-Aliases: <span style='white-space: nowrap;><code>sub</code></span>
+Aliases: <code>sub</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--search=</code></span> | Search for in all columns.
-<span style='white-space: nowrap;><code>--replace=</code></span> | Replace matches with.
-<span style='white-space: nowrap;><code>--global</code></span> | Replace all occurances.
+ Options                    | Description                | Default | Values |
+----------------------------|----------------------------|---------|--------|
+ <code>--search=...</code>  | Search for in all columns. |         |        |
+ <code>--replace=...</code> | Replace matches with.      |         |        |
+ <code>--global</code>      | Replace all occurances.    |         |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
 id,a,b,c,X %
 1001,79,ekl ,"",133
@@ -940,7 +1102,9 @@ id,a,b,c,X %
 1005,-38,oub,1.6,9
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-
 id,a,b,c,X %
 _001,79,ekl ,"",_33%
@@ -950,7 +1114,9 @@ _004,-62,rcz ,_.2,_27%
 _005,-38,oub,_.6,9%
 ```
 
-```
+--------------------------
+
+```none
 $ cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global // h-
 id,a,b,c,X %
 00,79,ekl ,"",33%
@@ -960,17 +1126,21 @@ id,a,b,c,X %
 005,-38,oub,.6,9%
 ```
 
+--------------------------
+
 ## `reverse`
 
 `reverse`
 
-Reverse order of rows.
+Synopsis: Reverse order of rows.
 
-Aliases: <span style='white-space: nowrap;><code>tac</code></span>
+Aliases: <code>tac</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // reverse // h-
 a,b,c,d
 2,12,11,abc
@@ -979,7 +1149,9 @@ a,b,c,d
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // reverse
 2,12,11,abc
 134,5,9,baz
@@ -988,25 +1160,29 @@ $ cx in SOME.csv // reverse
 a,b,c,d
 ```
 
+--------------------------
+
 ## `row-id`
 
 `row-id`
  *[*
-<span style='white-space: nowrap;><code>--name=...</code></span>
-<span style='white-space: nowrap;><code>--type=...</code></span>
-<span style='white-space: nowrap;><code>--start=...</code></span> *]*
+<code>--name=...</code>
+<code>--type=...</code>
+<code>--start=...</code> *]*
 
-Inserts a row id column.
+Synopsis: Inserts a row id column.
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--name=...</code></span> | Name of id column.  Default: "__rowid__".
-<span style='white-space: nowrap;><code>--type=...</code></span> | Type: "integer" or "uuid".  Default: "integer".
-<span style='white-space: nowrap;><code>--start=...</code></span> | Start of integer ids.  Default: 1
+ Options                  | Description                | Default     | Values |
+--------------------------|----------------------------|-------------|--------|
+ <code>--name=...</code>  | Name of id column.         | "__rowid__" |        |
+ <code>--type=...</code>  | Type: "integer" or "uuid". | "integer"   |        |
+ <code>--start=...</code> | Start of integer ids.      | 1           |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --start=100 // h-
 __rowid__,a,b,c,d
 100,1,ab,3,foo
@@ -1015,7 +1191,9 @@ __rowid__,a,b,c,d
 103,2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --name=id // h-
 id,a,b,c,d
 1,1,ab,3,foo
@@ -1024,7 +1202,9 @@ id,a,b,c,d
 4,2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // row-id --type=uuid --name=uuid // h-
 uuid,a,b,c,d
 4ce19f1a-a12f-0c89-0429-311871528c45,1,ab,3,foo
@@ -1033,15 +1213,20 @@ uuid,a,b,c,d
 40bf24bd-85f1-a061-752b-bcd099c8eceb,2,12,11,abc
 ```
 
+--------------------------
+
 ## `set-meta`
 
 `set-meta`
+*[* *column-args ...* *]*
 
-Set column meta.
+Synopsis: Set column meta.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
 | a                    | b     | c     | d     |
 | -------------------: | ----- | ----- | ----- |
@@ -1051,7 +1236,9 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
 |                    2 | 12    | 11    | abc   |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md
 | name  | order | max_size | align |
 | ----- | ----: | -------: | ----- |
@@ -1061,7 +1248,9 @@ $ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' 
 | a     |     9 |       20 | right |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 | newname | a     | b     | d     |
 | ------- | ----- | ----- | ----- |
@@ -1071,17 +1260,22 @@ $ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
 | 11      | 2     | 12    | abc   |
 ```
 
+--------------------------
+
 ## `sort`
 
 `sort`
+*[* *column-args ...* *]*
 
-Sorts by specified columns.
+Synopsis: Sorts by specified columns.
 
-Aliases: <span style='white-space: nowrap;><code>s</code></span>
+Aliases: <code>s</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // sort d  // h-
 a,b,c,d
 2,12,11,abc
@@ -1090,7 +1284,9 @@ a,b,c,d
 1,ab,3,foo
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // sort    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1099,7 +1295,9 @@ a,b,c,d
 24,44,6,bar
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h //            sort a    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1108,7 +1306,9 @@ a,b,c,d
 24,44,6,bar
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse   // sort a    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1117,7 +1317,9 @@ a,b,c,d
 134,5,9,baz
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse   // sort a:-  // h-
 a,b,c,d
 134,5,9,baz
@@ -1126,37 +1328,41 @@ a,b,c,d
 1,ab,3,foo
 ```
 
+--------------------------
+
 ## `sql-out`
 
 `sql-out`
  *[*
-<span style='white-space: nowrap;><code>--table</code></span>
-<span style='white-space: nowrap;><code>--transaction</code></span>
-<span style='white-space: nowrap;><code>--rollback</code></span>
-<span style='white-space: nowrap;><code>--commit</code></span>
-<span style='white-space: nowrap;><code>--create</code></span>
-<span style='white-space: nowrap;><code>--temporary</code></span>
-<span style='white-space: nowrap;><code>--insert</code></span>
-<span style='white-space: nowrap;><code>--varchar-size=...</code></span> *]*
+<code>--table=...</code>
+<code>--transaction</code>
+<code>--rollback</code>
+<code>--commit</code>
+<code>--create</code>
+<code>--temporary</code>
+<code>--insert</code>
+<code>--varchar-size=...</code> *]*
 
-Generates CSV lines.
+Synopsis: Generates CSV lines.
 
-Aliases: <span style='white-space: nowrap;><code>sql-</code></span>
+Aliases: <code>sql-</code>
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--table</code></span> | Table name.
-<span style='white-space: nowrap;><code>--transaction</code></span> | Emit a TRANSACTION block.
-<span style='white-space: nowrap;><code>--rollback</code></span> | Emit a ROLLBACK statement.
-<span style='white-space: nowrap;><code>--commit</code></span> | Emit a COMMIT statement.
-<span style='white-space: nowrap;><code>--create</code></span> | Emit a CREATE TABLE statement.
-<span style='white-space: nowrap;><code>--temporary</code></span> | CREATE TEMPORARY TABLE statement.
-<span style='white-space: nowrap;><code>--insert</code></span> | Emit INSERT INTO statements.
-<span style='white-space: nowrap;><code>--varchar-size=...</code></span> | VARCHAR(size). Default: 255.
+ Options                         | Description                       | Default | Values |
+---------------------------------|-----------------------------------|---------|--------|
+ <code>--table=...</code>        | Table name.                       |         |        |
+ <code>--transaction</code>      | Emit a TRANSACTION block.         |         |        |
+ <code>--rollback</code>         | Emit a ROLLBACK statement.        |         |        |
+ <code>--commit</code>           | Emit a COMMIT statement.          |         |        |
+ <code>--create</code>           | Emit a CREATE TABLE statement.    |         |        |
+ <code>--temporary</code>        | CREATE TEMPORARY TABLE statement. |         |        |
+ <code>--insert</code>           | Emit INSERT INTO statements.      |         |        |
+ <code>--varchar-size=...</code> | VARCHAR(size).                    | 255     |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
 CREATE TABLE SOME_TABLE
 (
@@ -1168,7 +1374,9 @@ CREATE TABLE SOME_TABLE
 
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
 INSERT INTO SOME_TABLE
   (a, b, c, d)
@@ -1180,22 +1388,29 @@ VALUES
 
 ```
 
+--------------------------
+
 ## `stats`
 
 `stats`
+*[* *column-args ...* *]*
 
-Collect stats of a group of columns.
+Synopsis: Collect stats of a group of columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats salary // md
 | salary_count | salary_sum | salary_min | salary_max | salary_mean       | salary_median | salary_stddev    |
 | -----------: | ---------: | ---------: | ---------: | ----------------: | ------------: | ---------------: |
 |         17.0 |     1121.0 |       22.0 |      120.0 | 65.94117647058823 |          63.0 | 31.0908925348874 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats dept:g salary // md
 | dept       | salary_count | salary_sum | salary_min | salary_max | salary_mean        | salary_median | salary_stddev      |
 | ---------- | -----------: | ---------: | ---------: | ---------: | -----------------: | ------------: | -----------------: |
@@ -1205,7 +1420,9 @@ $ cx in stats-data.csv // -h // parse // stats dept:g salary // md
 | accounting |          5.0 |      357.0 |       40.0 |      115.0 |               71.4 |          47.0 | 33.672540741678525 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats job:g salary // md
 | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev      |
 | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | -----------------: |
@@ -1213,7 +1430,9 @@ $ cx in stats-data.csv // -h // parse // stats job:g salary // md
 | b     |          6.0 |      615.0 |       85.0 |      120.0 |       102.5 |         104.0 | 13.450526631573451 |
 ```
 
-```
+--------------------------
+
+```none
 $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 | dept       | job   | salary_count | salary_sum | salary_min | salary_max | salary_mean | salary_median | salary_stddev     |
 | ---------- | ----- | -----------: | ---------: | ---------: | ---------: | ----------: | ------------: | ----------------: |
@@ -1227,39 +1446,44 @@ $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 | accounting | b     |          2.0 |      225.0 |      110.0 |      115.0 |       112.5 |         112.5 |               2.5 |
 ```
 
+--------------------------
+
 ## `strip`
 
 `strip`
+*[* *column-args ...* *]*
 
-Strip leading and trailing whitespace.
+Synopsis: Strip leading and trailing whitespace.
 
-Aliases: <span style='white-space: nowrap;><code>trim</code></span>
+Aliases: <code>trim</code>
 
 ## `tee`
 
 `tee`
-<span style='white-space: nowrap;><code>pipelines</code></span>
-<span style='white-space: nowrap;><code>...</code></span>
+<code>pipelines</code>
+<code>...</code>
 
-Send input to multiple output pipelines.
+Synopsis: Send input to multiple output pipelines.
 
-Aliases: <span style='white-space: nowrap;><code>t</code></span>
+Aliases: <code>t</code>
 
 ## `transpose`
 
 `transpose`
  *[*
-<span style='white-space: nowrap;><code>--include-header=...</code></span> *]*
+<code>--include-header=...</code> *]*
 
-Transpose rows and columns.
+Synopsis: Transpose rows and columns.
 
-  Options                   |  Description
-----------------------------|-------------------------------
-<span style='white-space: nowrap;><code>--include-header=...</code></span> | Include header in first column.  Default: true
+ Options                           | Description                     | Default | Values |
+-----------------------------------|---------------------------------|---------|--------|
+ <code>--include-header=...</code> | Include header in first column. | true    |        |
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // transpose // h-
 _COL_1,_COL_2,_COL_3,_COL_4,_COL_5
 a,1,24,134,2
@@ -1268,7 +1492,9 @@ c,3,6,9,11
 d,foo,bar,baz,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // transpose --no-include-header // h-
 _COL_1,_COL_2,_COL_3,_COL_4
 1,24,134,2
@@ -1277,25 +1503,29 @@ ab,44,5,12
 foo,bar,baz,abc
 ```
 
+--------------------------
+
 ## `tsv-in`
 
 `tsv-in`
 
-Parses TSV lines.
+Synopsis: Parses TSV lines.
 
-Aliases: <span style='white-space: nowrap;><code>-tsv</code></span>
+Aliases: <code>-tsv</code>
 
 ## `tsv-out`
 
 `tsv-out`
 
-Generates TSV lines.
+Synopsis: Generates TSV lines.
 
-Aliases: <span style='white-space: nowrap;><code>tsv-</code></span>
+Aliases: <code>tsv-</code>
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // tsv-
 a	b	c	d
 1	ab	3	foo
@@ -1304,23 +1534,29 @@ a	b	c	d
 2	12	11	abc
 ```
 
+--------------------------
+
 ## `type-inference`
 
 `type-inference`
+*[* *column-args ...* *]*
 
-Infer types from field strings.
+Synopsis: Infer types from field strings.
 
-Aliases: <span style='white-space: nowrap;><code>-types</code></span>, <span style='white-space: nowrap;><code>types</code></span>
+Aliases: <code>-types</code>, <code>types</code>
 
 ## `uniq`
 
 `uniq`
+*[* *column-args ...* *]*
 
-Emit only rows with uniq columns.
+Synopsis: Emit only rows with uniq columns.
 
   Examples:
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // uniq d  // h-
 a,b,c,d
 1,ab,3,foo
@@ -1329,7 +1565,9 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
+--------------------------
+
+```none
 $ cx in SOME.csv // -h // uniq    // h-
 a,b,c,d
 1,ab,3,foo
@@ -1338,8 +1576,11 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
-# DUPLICATES.csv
+--------------------------
+
+## DUPLICATES.csv
+
+```none
 x,y,z
 1,2,3
 4,5,6
@@ -1347,8 +1588,11 @@ x,y,z
 5,5,3
 ```
 
-```
-# EMOS.csv
+--------------------------
+
+## EMOS.csv
+
+```none
 2,12,11,abc
 134,5,9,baz
 24,44,6,bar
@@ -1356,8 +1600,11 @@ x,y,z
 a,b,c,d
 ```
 
-```
-# HAS-UNUSED-COLUMNS.csv
+--------------------------
+
+## HAS-UNUSED-COLUMNS.csv
+
+```none
 e,f,g,h
 1,ab,,foo
 24,,,bar
@@ -1365,16 +1612,22 @@ e,f,g,h
 ,12,,abc
 ```
 
-```
-# OTHER.csv
+--------------------------
+
+## OTHER.csv
+
+```none
 x,y
 1,2
 2,3
 5,9
 ```
 
-```
-# RANDOM.csv
+--------------------------
+
+## RANDOM.csv
+
+```none
 id,a,b,c,X %
 1001,79,ekl ,"",133%
 1002,77,ymt,0.4,48%
@@ -1478,8 +1731,11 @@ id,a,b,c,X %
 1100,-27,ylb ,39.6,39%
 ```
 
-```
-# SOME.csv
+--------------------------
+
+## SOME.csv
+
+```none
 a,b,c,d
 1,ab,3,foo
 24,44,6,bar
@@ -1487,8 +1743,11 @@ a,b,c,d
 2,12,11,abc
 ```
 
-```
-# SOME.edn
+--------------------------
+
+## SOME.edn
+
+```none
 [
 {:a 1 :b "ab" :c 3 :d "foo"}
 {:a 24 :b 44 :c 6 :d "bar"}
@@ -1497,8 +1756,11 @@ a,b,c,d
 ]
 ```
 
-```
-# SOME.erb
+--------------------------
+
+## SOME.erb
+
+```none
 === HEADER ===
 columns = <%= input.header.columns.map(&:to_s) * ', ' %>
 size    = <%= input.size %>
@@ -1510,8 +1772,11 @@ size    = <%= input.size %>
 
 ```
 
-```
-# SOME.json
+--------------------------
+
+## SOME.json
+
+```none
 [
 {"a":1,"b":"ab","c":3,"d":"foo"},
 {"a":24,"b":44,"c":6,"d":"bar"},
@@ -1520,8 +1785,11 @@ size    = <%= input.size %>
 ]
 ```
 
-```
-# plot.csv
+--------------------------
+
+## plot.csv
+
+```none
 x,y1,y2
 1,20,150
 2.2,21,150
@@ -1535,8 +1803,11 @@ x,y1,y2
 100,110,40
 ```
 
-```
-# stats-data.csv
+--------------------------
+
+## stats-data.csv
+
+```none
 dept,job,salary
 sales,a,67
 sales,a,63
@@ -1557,7 +1828,7 @@ accounting,b,110
 accounting,b,115
 ```
 
-# Attribution
+--------------------------
 
-Copyright 2020 - Kurt Stephens 
+--------------------------
 

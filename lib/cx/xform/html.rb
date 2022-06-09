@@ -13,19 +13,20 @@ require 'cx/html_markup'
 #   aliases: html,htm
 #   synopsis: 'Emits HTML.'
 #   suffixes: [ .html, .htm ]
+#   has_column_args: true
 #   args: []
 #   opts:
-#     title:      'Sets the HTML `title`.'
+#     title=:     'Sets the HTML `title`.'
 #     table-only: 'Emit the HTML `table` only.'
-#     filtering:  'Enable filtering.  Default: true'
-#     sorting:    'Enable sorting.  Default: true'
-#     styled:     'Enable styling.  Default: true'
-#     raw:        'Comma-separated list of columns containing raw HTML.'
-#     link:       'Comma-separated list of columns containing URLS.'
-#     head:       'Additional raw HTML at foot of `head`.'
-#     body-head:  'Additional raw HTML at head of `body`.'
-#     body-foot:  'Additional raw HTML at foot of `body`.'
-#     indent:     'Spaces to indent.  Default: 1'
+#     filtering:  'Enable filtering.  Default: `true`'
+#     sorting:    'Enable sorting.  Default: `true`'
+#     styled:     'Enable styling.  Default: `true`'
+#     raw=:       'Comma-separated list of columns containing raw HTML.'
+#     link=:      'Comma-separated list of columns containing URLS.'
+#     head=:      'Additional raw HTML at foot of `head`.'
+#     body-head=: 'Additional raw HTML at head of `body`.'
+#     body-foot=: 'Additional raw HTML at foot of `body`.'
+#     indent=:    'Spaces to indent.  Default: `1`'
 
 module CX
   module Xform

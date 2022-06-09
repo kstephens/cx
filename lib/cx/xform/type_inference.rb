@@ -8,6 +8,7 @@ require 'cx/type'
 # TypeInference:
 #   aliases: [ -types, types ]
 #   synopsis: Infer types from field strings.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 

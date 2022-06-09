@@ -7,6 +7,7 @@ require 'cx/xform'
 # Strip:
 #   aliases: trim
 #   synopsis: Strip leading and trailing whitespace.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 

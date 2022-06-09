@@ -84,7 +84,7 @@ END
       argv = Shellwords.split(example)
       # pp(argv: argv)
       raise "Unexpected example arg list : #{argv.inspect}" unless argv.shift == 'cx'
-      # argv = %w(--debug) + argv
+      argv = %w(--debug) + argv if ENV['CX_DEBUG_EXAMPLES']
       write_files!
       main = CX::Main.new(argv)
       log.delimited "RUNNING LOCALLY" do

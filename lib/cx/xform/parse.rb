@@ -9,6 +9,7 @@ require 'cx/xform/column_change'
 # Parse:
 #   aliases: 
 #   synopsis: Parse strings into richer types.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:

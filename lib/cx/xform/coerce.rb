@@ -9,6 +9,7 @@ require 'cx/xform/column_change'
 # Coerce:
 #   aliases: 
 #   synopsis: Coerce columns by inferred types.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 
