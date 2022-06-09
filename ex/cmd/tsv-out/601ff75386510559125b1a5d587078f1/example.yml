@@ -1,0 +1,36 @@
+--- !ruby/struct:CX::Example
+command: tsv-out
+example: cx in SOME.csv // tsv-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/run
+  stderr: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/stderr
+  expected: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/expected
+  actual: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/actual
+  diff: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/diff
+contents: 
+dir: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1
+dir_name: 601ff75386510559125b1a5d587078f1
+base_dir: ex/cmd
+yaml_file: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // tsv-;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: "a\tb\tc\td\n1\tab\t3\tfoo\n24\t44\t6\tbar\n134\t5\t9\tbaz\n2\t12\t11\tabc\n"
+  actual: "a\tb\tc\td\n1\tab\t3\tfoo\n24\t44\t6\tbar\n134\t5\t9\tbaz\n2\t12\t11\tabc\n"
+  diff: ''
