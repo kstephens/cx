@@ -12,10 +12,15 @@ require 'color'
 #   has_column_args: true
 #   args: []
 #   opts:
-#     color: 'Generate color plot.  Default: false.'
-#     format=: 'Gnuplot format: term,tty,console,svg,...'
-#     title=: 'Title.  Default: none.'
-#     size=: 'width x height'
+#     style=:     'Style of chart.  Values: "plot", "barchart".  Default: "plot"'
+#     color:      'Generate color plot.  Default: false.'
+#     format=:    'Gnuplot format: term,tty,console,svg,...'
+#     title=:     'Title.  Default: none.'
+#     size=:      'width x height.  Default TTY size or 1024x768.'
+#     xrange=:    "min:max.  Default: auto."
+#     yrange=:    "min:max.  Default: auto."
+#     boxwidth=:  "Default: 0.75."
+#     x-labels:   'the X column contains discrete labels.'
 #   examples:
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
@@ -28,10 +33,20 @@ module CX
       
       def call input, env
         @input, @env = input, env
-        @title = opts[:title] || @env[:title] || @env[:in_file] || ''
+        @popts = opts.dup
+        @format = popts.delete(:format)
+        @title = popts.delete(:title) || @env[:title] || @env[:in_file] || ''
+        @size = popts.delete(:size)
+        @size &&= @size.split(/\s+|\s*x\s*|\s*,\s*/, 2).map(&:to_i)
         @columns = input_columns! input
         @output = make_output
-        @datafile_separator = opts[:datafile_separator] || "\t"
+        @datafile_separator = popts.delete(:datafile_separator) || "\t"
+        @style = (popts.delete(:style) || :plot).to_sym
+        @x_labels = popts.delete(:x_labels)
+        @color = popts.delete(:color)
+        @background_color = popts.delete(:background_color)
+        @text_color       = popts.delete(:text_color)
+
         plot!
         
         @env = nil
@@ -40,7 +55,7 @@ module CX
         end
       end
 
-      attr_accessor :data, :columns, :xcol, :ycols, :output
+      attr_accessor :data, :columns, :x_col, :y_cols, :output, :popts
       
       def << line
         @output << [ line.to_s + "\n" ] if line
@@ -62,35 +77,40 @@ module CX
         when 0
           raise_ "no columns specified"
         when 1 # we only have a y
-          @xcol = nil
-          @ycols = columns
+          @x_col = nil
+          @y_cols = columns
         else
-          @xcol  = columns[0]
-          @ycols = columns[1 .. -1]
+          @x_col  = columns[0]
+          @y_cols = columns[1 .. -1]
         end
         columns
       end
       
       def format!
-        @size = opts[:size] and @size = @size.split(/\s+|\s*x\s*|\s*,\s*/, 2).map(&:to_i)
-        case fmt = opts[:format]
+        case @format
         when nil, /term|tty|console/i
           # set terminal dumb {size <xchars>,<ychars>} {[no]feed}
           #  {aspect <htic>{,<vtic>}}
           #  {[no]enhanced}
           #  {mono|ansi|ansi256|ansirgb}
           @size ||= stty_size
-          self << <<"END"
-set terminal dumb size #{@size * ','} aspect 1 enhanced #{opts[:color] ? :ansirgb : :mono}
-set tics nomirror scale 0.5
-set autoscale
-END
+          @xtics = "scale 0.5 nomirror nooffset"
+          popts_update(
+            terminal:   "dumb size #{@size * ','} aspect 1 enhanced #{@color ? :ansirgb : :mono}",
+            ytics:      "nomirror scale 0.5",
+            autoscale:  "",
+            # background: 'rgb "black"',' # leads to invisible text.
+          )
           @plot_opts = 'pt "@"'
         else
           @size ||= [ 1024, 768 ]
-          self << %Q{set terminal #{fmt} size #{@size * ','}}
-          #  background rgb "black" leads to invisible text.
+          @xtics = "scale 0 nomirror nooffset"
+          popts_update(
+            terminal:  "#{@format} size #{@size * ','} enhanced #{@background_color && "background rgb #{@background_color.inspect}"}",
+            ytics:     "scale 0 nomirror",
+          )
         end
+        self
       end
 
       def stty_size
@@ -99,55 +119,136 @@ END
       end
 
       def header!
+        popts_update(
+          title: @title,
+          output: "/dev/stdout",
+          border: 0,
+          palette: "cubehelix",
+          boxwidth: 0.75,
+        )
+        
         format!
 
-        self << <<"END"
-# Style:
-set output "/dev/stdout"
-set border 0
-set tics scale 0 nomirror
-set style data linespoints
+        popts_update(
+          xlabel: @x_col.to_s,
+          ylabel: y_cols.map(&:to_s) * ',',
+        )
 
-# Notation:
-set title  #{@title.inspect}
-set ylabel #{(ycols.map(&:to_s) * ',').inspect}
-END
-        x_label = @xcol.to_s if @xcol
-        self << %Q{set xlabel #{x_label.inspect}} if x_label
+        # Reformat:
+        # popts[:size]   &&= popts[:size] * ','
+        popts[:output] &&= popts[:output].inspect
+        popts[:title]  &&= escape_string(popts[:title])
+        popts[:xrange] &&= "[#{opts[:xrange]}]"
+        popts[:yrange] &&= "[#{opts[:yrange]}]"
+        popts[:xlabel] &&= escape_string(popts[:xlabel])
+        popts[:ylabel] &&= escape_string(popts[:ylabel])
+        
+        case @style
+        when /^b/
+          @style = :barchart
+          raise_ "no x column specified" unless @x_col
+          popts_update(
+            # xtics: nil
+          )
+        when /^(p|l)/
+          @style = :plot
+          popts_update(
+            style: 'data linespoints',
+            xtics: @xtics,
+          )
+        else
+          raise_ "invalid style : #{@style.inspect}"
+        end
+
+        popts.each do | k, v |
+          self << (v.nil? ? "unset #{k}" : "set #{k} #{v}")
+        end
+        
+        self
       end
 
+      def popts_update h = {}
+        @popts = h.merge(@popts)
+      end
+      
       def plot!
         header!
 
-        ycols.each.with_index do | ycol, i |
-          line_style! ycol, i
+        emit_data!
+
+        @x_ind = @columns.index(x_col) + 2
+        
+        # Line styles:
+        y_cols_map do | y_col, i |
+          line_style!
+        end
+        self << ""
+        
+        plots = y_cols_map do | y_col, i |
+          plot_y
         end
         
+        self << "plot " + plots * ", \\\n     "
+      end
+      
+      def y_cols_map
+        @x_ind = @columns.index(x_col) + 2
+        y_cols.map.with_index do | y_col, y_i |
+          @y_col = y_col
+          @y_i = y_i
+          @y_ind = @columns.index(y_col) + 2
+          @y_title = escape_string(@y_col)
+          yield y_col, y_i, @y_ind
+        end
+      end
+
+      def emit_data!
+        @datafile = '$data'
         self << ''
         self << '# Data:'
         self << "set datafile separator #{@datafile_separator.inspect}"
         self << "# #{columns.map(&:to_s) * @datafile_separator}"
-        self << "$data << EOD"
+        self << "#{@datafile} << EOD"
         data!
         self << 'EOD'
         self << ''
-        
-        plots = ycols.map.with_index do | ycol, i |
-          plot_y("$data", ycol, i)
+        self
+      end
+      
+      def plot_y
+        case @style
+        when :barchart
+          boxes
+        else
+          linespoints
         end
-        self << "plot " + plots * ", \\\n     "
       end
 
-      def plot_y datafile, ycol, i
-        ind = @columns.index(ycol) + 1
-        using = @xcol ? "1:#{ind}" : "#{ind}"
-        %Q{#{datafile.inspect} using #{using} with linespoints linestyle #{i + 2} #{@plot_opts} title #{ycol.to_s.inspect}}
+      def linespoints
+        using = case
+                when @x_col && opts[:x_labels]
+                  "1:#{@y_ind}:xtic(#{@x_ind})"
+                when @x_col
+                  "2:#{@y_ind}"
+                else
+                  @y_ind
+                end
+        %Q{#{@datafile.inspect} using #{using} with linespoints linestyle #{@y_i + 2} #{@plot_opts} title #{@y_title}}
       end
 
-      def line_style! ycol, i
-        self << %Q{set style line #{i + 2} linecolor rgbcolor #{rgb_i(i)}}
+      def boxes
+        using = "1:#{@y_ind}:xtic(#{@x_ind})"
+        %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 2} #{@plot_opts} title #{@y_title}}
       end
 
+      def line_style!
+        self << %Q{set style line #{@y_i + 2} linecolor rgbcolor #{rgb_i(@y_i)}}
+      end
+
+      def escape_string s
+        s.to_s.gsub('_', '\\\_').inspect
+      end
+      
       def rgb_i i
         palette_frac = i.to_f / columns.size
         hsvtorgb(palette_frac, 1.0, 0.50)
@@ -158,19 +259,13 @@ END
       end
 
       def data!
+        i = -1
         @input.each do |r|
           r = @columns.map{|c| r[c]}
+          r.unshift(i += 1)
           self << r * @datafile_separator
         end
-      end
-      
-      def data_ycol! ycol
-        @input.each do |r|
-          xcol = @xcol && r[@xcol].to_s + ','
-          str = "#{xcol}#{r[ycol]}"
-          self << str
-        end
-      end
+      end      
     end
   end
 end
