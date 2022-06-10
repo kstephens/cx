@@ -25,7 +25,11 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
   end
 
   def text! s
-    raw! ::CGI::escapeHTML(s.to_s)
+    raw! escape(s)
+  end
+
+  def escape s
+    ::CGI::escapeHTML(s.to_s)
   end
 
   def comment! s
