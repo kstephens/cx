@@ -89,21 +89,14 @@ table.cx-table {
 .cx-table .cx-filter-row {
   position: sticky;
   left: 0; /* needed for sticky? */
-/*  top: 0; */
 }
 
 .cx-table .cx-filter-th {
-/*
-  top: 0;
- */
   position: sticky;
   left: 0;
 }
 
 .cx-filter-input-span {
-/*
-  top: 0;
-*/
   position: sticky;
   left: 2em;
   float: left;
@@ -119,10 +112,6 @@ table.cx-table {
   padding: 2px 2px;
   vertical-align: middle;
   text-align: center;
-/*
-  text-align: left;
-  float: left;
-*/
   text-decoration: none;
   display: inline-block;
   font-size: 80%;
