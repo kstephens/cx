@@ -8,8 +8,9 @@ require 'cx/column_args'
 # Grep:
 #   aliases: g
 #   synopsis: Filters by regex.
-#   args: []
+#   args: [] 
 #   opts:
+#     negate: 'Negate match. Alias: `--v`.'
 #   has_column_args: true
 #   examples:
 #     - 'cx in SOME.csv // -h // grep d:f'
@@ -34,7 +35,7 @@ module CX
     def rx_pred ca
       c = ca.column or raise_ ArgumentError, ca.inspect
       rx = Regexp.new(ca.args[-1] || '')
-      if ca.opts[:negate] || ca.opts[:order] == -1
+      if opts[:negate] || opts[:v] || ca.opts[:negate] || ca.opts[:order] == -1
         lambda do | row |
           ! rx.match?(row[c].to_s)
         end

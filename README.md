@@ -426,8 +426,9 @@ a,b,c,d,a_to_power_of_c
 
 `gnuplot-out`
  *[*
-`--color=...`
+`--color`
 `--format=...`
+`--title=...`
 `--size=...` *]*
 *[* *column-args ...* *]*
 
@@ -435,11 +436,12 @@ Synopsis: Generate GNUPLOT file.
 
 Aliases: `gnuplot-`, `gnuplot`
 
- Options        | Description              | Default | Values |
-----------------|--------------------------|---------|--------|
- `--color=...`  |                          | false   |        |
- `--format=...` | term,tty,console,svg,... |         |        |
- `--size=...`   | WxH                      |         |        |
+ Options        | Description                              | Default | Values |
+----------------|------------------------------------------|---------|--------|
+ `--color`      | Generate color plot.                     | false   |        |
+ `--format=...` | Gnuplot format: term,tty,console,svg,... |         |        |
+ `--title=...`  | Title.                                   | none    |        |
+ `--size=...`   | width x height                           |         |        |
 
   Examples:
 
@@ -541,11 +543,17 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
 ## `grep`
 
 `grep`
+ *[*
+`--negate` *]*
 *[* *column-args ...* *]*
 
 Synopsis: Filters by regex.
 
 Aliases: `g`
+
+ Options    | Description                 | Default | Values |
+------------|-----------------------------|---------|--------|
+ `--negate` | Negate match. Alias: `--v`. |         |        |
 
   Examples:
 
@@ -667,9 +675,9 @@ Subcommands:
  *[*
 `--title=...`
 `--table-only`
-`--filtering=...`
-`--sorting=...`
-`--styled=...`
+`--filtering`
+`--sorting`
+`--styled`
 `--raw=...`
 `--link=...`
 `--head=...`
@@ -686,9 +694,9 @@ Aliases: `html-`, `html`, `htm`
 -------------------|------------------------------------------------------|---------|--------|
  `--title=...`     | Sets the HTML `title`.                               |         |        |
  `--table-only`    | Emit the HTML `table` only.                          |         |        |
- `--filtering=...` | Enable filtering.                                    | `true`  |        |
- `--sorting=...`   | Enable sorting.                                      | `true`  |        |
- `--styled=...`    | Enable styling.                                      | `true`  |        |
+ `--filtering`     | Enable filtering.                                    | `true`  |        |
+ `--sorting`       | Enable sorting.                                      | `true`  |        |
+ `--styled`        | Enable styling.                                      | `true`  |        |
  `--raw=...`       | Comma-separated list of columns containing raw HTML. |         |        |
  `--link=...`      | Comma-separated list of columns containing URLS.     |         |        |
  `--head=...`      | Additional raw HTML at foot of `head`.               |         |        |
@@ -792,17 +800,17 @@ $ cx in SOME.csv // -h // parse // json-
 `markdown-out`
  *[*
 `--title=...`
-`--include-header=...` *]*
+`--include-header` *]*
 *[* *column-args ...* *]*
 
 Synopsis: Generate Markdown table lines.
 
 Aliases: `markdown-`, `md`, `md-`, `markdown`
 
- Options                | Description             | Default | Values |
-------------------------|-------------------------|---------|--------|
- `--title=...`          | Output title (caption). | none    |        |
- `--include-header=...` | Include a header.       | true    |        |
+ Options            | Description             | Default | Values |
+--------------------|-------------------------|---------|--------|
+ `--title=...`      | Output title (caption). | none    |        |
+ `--include-header` | Include a header.       | true    |        |
 
   Examples:
 
@@ -859,11 +867,17 @@ $ cx in SOME.csv // -h // parse // md --title=SOME.CSV --no-include-header
 ## `meta-in`
 
 `meta-in`
+ *[*
+`--clear-type` *]*
 *[* *column-args ...* *]*
 
 Synopsis: Calculates various column metadata.
 
 Aliases: `-meta`
+
+ Options        | Description        | Default | Values |
+----------------|--------------------|---------|--------|
+ `--clear-type` | Clear column type. |         |        |
 
   Examples:
 
@@ -1471,13 +1485,13 @@ Aliases: `t`
 
 `transpose`
  *[*
-`--include-header=...` *]*
+`--include-header` *]*
 
 Synopsis: Transpose rows and columns.
 
- Options                | Description                     | Default | Values |
-------------------------|---------------------------------|---------|--------|
- `--include-header=...` | Include header in first column. | true    |        |
+ Options            | Description                     | Default | Values |
+--------------------|---------------------------------|---------|--------|
+ `--include-header` | Include header in first column. | true    |        |
 
   Examples:
 

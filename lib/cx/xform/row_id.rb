@@ -10,9 +10,9 @@ require 'cx/random'
 #   synopsis: Inserts a row id column.
 #   args: []
 #   opts:
-#     name:       'Name of id column.  Default: "__rowid__".'
-#     type:       'Type: "integer" or "uuid".  Default: "integer".'
-#     start:      'Start of integer ids.  Default: 1'
+#     name=:       'Name of id column.  Default: "__rowid__".'
+#     type=:       'Type: "integer" or "uuid".  Default: "integer".'
+#     start=:      'Start of integer ids.  Default: 1'
 #   examples:
 #     - 'cx in SOME.csv // -h // row-id --start=100 // h-'
 #     - 'cx in SOME.csv // -h // row-id --name=id // h-'

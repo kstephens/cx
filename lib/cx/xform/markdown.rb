@@ -14,7 +14,7 @@ require 'cx/xform/align'
 #   has_column_args: true
 #   args: []
 #   opts:
-#     title: 'Output title (caption).  Default: none.'
+#     title=: 'Output title (caption).  Default: none.'
 #     include-header: 'Include a header.  Default: true.'
 #   examples:
 #     - 'cx in SOME.csv // -h // markdown'

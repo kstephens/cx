@@ -152,14 +152,14 @@
     description: ''
     default: '","'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :record-sep
     description: ''
     default: system newline
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   has_column_args: 
   has_pipeline_args: 
@@ -183,21 +183,21 @@
     description: ''
     default: '","'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :record-sep
     description: ''
     default: system newline
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :multi-sep
     description: Separator for enumerable values.
     default: '";"'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   has_column_args: true
   has_pipeline_args: 
@@ -311,21 +311,28 @@
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :color
-    description: ''
+    description: Generate color plot.
     default: 'false'
     values: []
     has_value: false
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :format
-    description: term,tty,console,svg,...
+    description: 'Gnuplot format: term,tty,console,svg,...'
     default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :title
+    description: Title.
+    default: none
+    values: []
+    has_value: true
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :size
-    description: WxH
+    description: width x height
     default: 
     values: []
     has_value: true
@@ -348,7 +355,14 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :negate
+    description: 'Negate match. Alias: `--v`.'
+    default: 
+    values: []
+    has_value: false
+    has_default: false
   has_column_args: true
   has_pipeline_args: 
   examples:
@@ -637,7 +651,7 @@
     description: Output title (caption).
     default: none
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :include-header
@@ -665,7 +679,14 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :clear-type
+    description: Clear column type.
+    default: 
+    values: []
+    has_value: false
+    has_default: false
   has_column_args: true
   has_pipeline_args: 
   examples:
@@ -689,7 +710,7 @@
   - cx in SOME.csv // -h // -meta // meta- // h-
   - cx in SOME.csv // -h // parse // -meta // meta- // h-
   file: lib/cx/xform/meta.rb
-  lineno: 16
+  lineno: 17
   path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: SetMeta
@@ -708,7 +729,7 @@
     //  meta- // cut name,order,max_size,align // md
   - cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
   file: lib/cx/xform/meta.rb
-  lineno: 27
+  lineno: 28
   path: cx/xform/meta
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: Nop
@@ -887,21 +908,21 @@
     description: Name of id column.
     default: '"__rowid__"'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :type
     description: 'Type: "integer" or "uuid".'
     default: '"integer"'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :start
     description: Start of integer ids.
     default: '1'
     values: []
-    has_value: false
+    has_value: true
     has_default: true
   has_column_args: 
   has_pipeline_args: 

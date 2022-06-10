@@ -111,7 +111,7 @@ module CX
         
         def brief
           case
-          when self.has_value? || self.default
+          when self.has_value?
             "--#{name}=..."
           else
             "--#{name}"

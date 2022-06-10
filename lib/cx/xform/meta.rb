@@ -9,7 +9,8 @@ require 'cx/xform'
 #   synopsis: Calculates various column metadata.
 #   has_column_args: true
 #   args: []
-#   opts: {}
+#   opts:
+#     clear-type: 'Clear column type.'
 #   examples:
 #     - 'cx in SOME.csv // -h // -meta // h-'
 
@@ -19,7 +20,7 @@ require 'cx/xform'
 #   synopsis: Generate a table of column metadata.
 #   has_column_args: true
 #   args: []
-#   opts: {}
+#   opts:
 #   examples:
 #     - 'cx in SOME.csv // -h // -meta // meta- // h-'
 #     - 'cx in SOME.csv // -h // parse // -meta // meta- // h-'

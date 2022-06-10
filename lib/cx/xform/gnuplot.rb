@@ -12,9 +12,10 @@ require 'color'
 #   has_column_args: true
 #   args: []
 #   opts:
-#     color: 'Default: false.'
-#     format=: 'term,tty,console,svg,...'
-#     size=: 'WxH'
+#     color: 'Generate color plot.  Default: false.'
+#     format=: 'Gnuplot format: term,tty,console,svg,...'
+#     title=: 'Title.  Default: none.'
+#     size=: 'width x height'
 #   examples:
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
