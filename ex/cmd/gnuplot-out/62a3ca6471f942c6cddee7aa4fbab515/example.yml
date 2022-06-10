@@ -1,0 +1,86 @@
+--- !ruby/struct:CX::Example
+command: gnuplot-out
+example: cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/run
+  stderr: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/stderr
+  expected: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/expected
+  actual: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/actual
+  diff: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/diff
+contents: 
+dir: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515
+dir_name: 62a3ca6471f942c6cddee7aa4fbab515
+base_dir: ex/cmd
+yaml_file: ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/gnuplot-out/62a3ca6471f942c6cddee7aa4fbab515'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: "\ngnuplot> plot \"$data\" using 1:2 with boxes linestyle 100 pt \"@\" title
+    \"x\" \n                                                         ^\n         line
+    11: warning: No pointtype specifier allowed, here\n"
+  expected: ''
+  actual: "\f                                                                                \n
+    \                                                                               \n
+    \                                     plot.csv                                  \n
+    \    100 +          +          +           +          +          +  ******  +
+    \  \n         +          +          +           +          +          +  *    *
+    \ +   \n      90 +                                                         x*******
+    \    \n                                                                    *    *
+    \     \n      80 +                                                          *
+    \   *      \n                                                                    *
+    \   *      \n      70 +                                                          *
+    \   *      \n                                                               ******
+    \   *      \n      60 +                                                     *
+    \  **    *      \n      50 +                                          **********
+    *   **    *      \n  x                                                 *   **
+    \  * *   **    *      \n      40 +                                          *
+    \  **   * *   **    *      \n                                                    *
+    \  **   * *   **    *      \n      30 +                                          *
+    \  **   * *   **    *      \n                                              *****
+    *   **   * *   **    *      \n      20 +                              *******
+    \  * *   **   * *   **    *      \n                                        *    **
+    \  * *   **   * *   **    *      \n      10 +                              *    **
+    \  * *   **   * *   **    *      \n         +          +        ***** ******  +
+    **   * * + **   * * + **    *  +   \n       0 +        ***** ********** ****************
+    ********** ***********  +   \n        -2          0          2           4          6
+    \         8          10  \n                                                                                \n"
+  diff: "@@ -0,0 +1,25 @@\n+\f                                                                                \n+
+    \                                                                               \n+
+    \                                     plot.csv                                  \n+
+    \    100 +          +          +           +          +          +  ******  +
+    \  \n+         +          +          +           +          +          +  *    *
+    \ +   \n+      90 +                                                         x*******
+    \    \n+                                                                    *
+    \   *      \n+      80 +                                                          *
+    \   *      \n+                                                                    *
+    \   *      \n+      70 +                                                          *
+    \   *      \n+                                                               ******
+    \   *      \n+      60 +                                                     *
+    \  **    *      \n+      50 +                                          **********
+    *   **    *      \n+  x                                                 *   **
+    \  * *   **    *      \n+      40 +                                          *
+    \  **   * *   **    *      \n+                                                    *
+    \  **   * *   **    *      \n+      30 +                                          *
+    \  **   * *   **    *      \n+                                              *****
+    *   **   * *   **    *      \n+      20 +                              *******
+    \  * *   **   * *   **    *      \n+                                        *
+    \   **   * *   **   * *   **    *      \n+      10 +                              *
+    \   **   * *   **   * *   **    *      \n+         +          +        ***** ******
+    \ + **   * * + **   * * + **    *  +   \n+       0 +        ***** ********** ****************
+    ********** ***********  +   \n+        -2          0          2           4          6
+    \         8          10  \n+                                                                                \n"

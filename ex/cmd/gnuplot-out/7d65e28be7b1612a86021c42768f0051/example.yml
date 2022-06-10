@@ -61,7 +61,7 @@ contents: !ruby/struct:CX::Example::Files
     \                                     plot.csv                                  \n
     \    160 +                                                                      \n
     \         @                                                                     \n
-    \         *                                                       y2 ******     \n
+    \         *                                                       y2 **@***     \n
     \    140 +*                                                                     \n
     \          *@                                                                   \n
     \          ***                                                                  \n
@@ -101,7 +101,7 @@ contents: !ruby/struct:CX::Example::Files
     \                                        ##@#     ###@#####                     \n-
     \                                                          ############         \n-
     \     40 +      +     +      +      +      +     +      +      +     + #####@
-    \  \n+          *                                                       y2 ******
+    \  \n+          *                                                       y2 **@***
     \    \n+     140 +*                                                                     \n+
     \          *@                                                                   \n+
     \          ***                                                                  \n+

@@ -426,22 +426,32 @@ a,b,c,d,a_to_power_of_c
 
 `gnuplot-out`
  *[*
+`--style=...`
 `--color`
 `--format=...`
 `--title=...`
-`--size=...` *]*
+`--size=...`
+`--xrange=...`
+`--yrange=...`
+`--boxwidth=...`
+`--x-labels` *]*
 *[* *column-args ...* *]*
 
 Synopsis: Generate GNUPLOT file.
 
 Aliases: `gnuplot-`, `gnuplot`
 
- Options        | Description                              | Default | Values |
-----------------|------------------------------------------|---------|--------|
- `--color`      | Generate color plot.                     | false   |        |
- `--format=...` | Gnuplot format: term,tty,console,svg,... |         |        |
- `--title=...`  | Title.                                   | none    |        |
- `--size=...`   | width x height                           |         |        |
+ Options          | Description                                    | Default | Values |
+------------------|------------------------------------------------|---------|--------|
+ `--style=...`    | Style of chart.  Values: "plot", "barchart".   | "plot"  |        |
+ `--color`        | Generate color plot.                           | false   |        |
+ `--format=...`   | Gnuplot format: term,tty,console,svg,...       |         |        |
+ `--title=...`    | Title.                                         | none    |        |
+ `--size=...`     | width x height.  Default TTY size or 1024x768. |         |        |
+ `--xrange=...`   | min:max.                                       | auto    |        |
+ `--yrange=...`   | min:max.                                       | auto    |        |
+ `--boxwidth=...` |                                                | 0.75    |        |
+ `--x-labels`     | the X column contains discrete labels.         |         |        |
 
   Examples:
 
@@ -454,8 +464,8 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
                                       plot.csv                                  
      160 +                                                                      
           @                                                                     
-     140 +#                                                       y1 ******     
-           #@                                                     y2 ######     
+     140 +#                                                       y1 **@***     
+           #@                                                     y2 ##@###     
      120 + @ ##                                                                 
                ##                                                ***********@   
      100 +       ##                      **@         @***********               
@@ -485,7 +495,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                       plot.csv                                  
      100 +                                                                  @   
                                                                            *    
-      90 +                                                         x ******     
+      90 +                                                         x **@***     
                                                                          *      
       80 +                                                              *       
                                                                        *        
@@ -516,7 +526,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
                                       plot.csv                                  
      160 +                                                                      
           @                                                                     
-          *                                                       y2 ******     
+          *                                                       y2 **@***     
      140 +*                                                                     
            *@                                                                   
            ***                                                                  
@@ -535,6 +545,37 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
       40 +      +     +      +      +      +     +      +      +     + *****@   
          0      10    20     30     40     50    60     70     80    90    100  
                                           x                                     
+                                                                                
+```
+
+--------------------------
+
+```none
+$ cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot
+                                                                                
+                                                                                
+                                      plot.csv                                  
+     100 +          +          +           +          +          +  ******  +   
+         +          +          +           +          +          +  *    *  +   
+      90 +                                                         x*******     
+                                                                    *    *      
+      80 +                                                          *    *      
+                                                                    *    *      
+      70 +                                                          *    *      
+                                                               ******    *      
+      60 +                                                     *   **    *      
+      50 +                                          ********** *   **    *      
+  x                                                 *   **   * *   **    *      
+      40 +                                          *   **   * *   **    *      
+                                                    *   **   * *   **    *      
+      30 +                                          *   **   * *   **    *      
+                                              ***** *   **   * *   **    *      
+      20 +                              *******   * *   **   * *   **    *      
+                                        *    **   * *   **   * *   **    *      
+      10 +                              *    **   * *   **   * *   **    *      
+         +          +        ***** ******  + **   * * + **   * * + **    *  +   
+       0 +        ***** ********** **************** ********** ***********  +   
+        -2          0          2           4          6          8          10  
                                                                                 
 ```
 

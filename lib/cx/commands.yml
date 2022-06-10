@@ -310,6 +310,13 @@
   arguments: []
   options:
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :style
+    description: 'Style of chart.  Values: "plot", "barchart".'
+    default: '"plot"'
+    values: []
+    has_value: true
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :color
     description: Generate color plot.
     default: 'false'
@@ -332,10 +339,38 @@
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :size
-    description: width x height
+    description: width x height.  Default TTY size or 1024x768.
     default: 
     values: []
     has_value: true
+    has_default: false
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :xrange
+    description: min:max.
+    default: auto
+    values: []
+    has_value: true
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :yrange
+    description: min:max.
+    default: auto
+    values: []
+    has_value: true
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :boxwidth
+    description: ''
+    default: '0.75'
+    values: []
+    has_value: true
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :x-labels
+    description: the X column contains discrete labels.
+    default: 
+    values: []
+    has_value: false
     has_default: false
   has_column_args: true
   has_pipeline_args: 
@@ -343,6 +378,7 @@
   - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
   - cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
   - cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
+  - cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot
   file: lib/cx/xform/gnuplot.rb
   lineno: 8
   path: cx/xform/gnuplot

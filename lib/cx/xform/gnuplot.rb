@@ -25,6 +25,7 @@ require 'color'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot'
 #     - 'cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot'
+#     - 'cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot'
 
 module CX
   module Xform
@@ -34,14 +35,22 @@ module CX
       def call input, env
         @input, @env = input, env
         @popts = opts.dup
+
+        @style = (popts.delete(:style) || "plot")
+        case @style
+        when /^b/
+          @style = :barchart
+        when /^(p|l)/
+          @style = :plot
+        else
+          raise_ "invalid style : #{@style.inspect}"
+        end
+        
         @format = popts.delete(:format)
         @title = popts.delete(:title) || @env[:title] || @env[:in_file] || ''
         @size = popts.delete(:size)
         @size &&= @size.split(/\s+|\s*x\s*|\s*,\s*/, 2).map(&:to_i)
-        @columns = input_columns! input
-        @output = make_output
         @datafile_separator = popts.delete(:datafile_separator) || "\t"
-        @style = (popts.delete(:style) || :plot).to_sym
         @x_labels = popts.delete(:x_labels)
         @color = popts.delete(:color)
         @background_color = popts.delete(:background_color)
@@ -52,6 +61,9 @@ module CX
         #@title_color &&= "tc rgb #{@title_color.inspect}"
         #@title_color = "tc lt 0"
         
+        @output = make_output
+        @columns = input_columns! input
+
         plot!
         
         @env = nil
@@ -78,12 +90,19 @@ module CX
           numerics = columns.select{|c| (c.meta.type_ || ::Object) <= ::Numeric }
           columns = numerics unless numerics.empty?
         end
+        
         case columns.size
         when 0
           raise_ "no columns specified"
         when 1 # we only have a y
-          @x_col = nil
-          @y_cols = columns
+          case @style
+          when :asdfasdfsd_barchart
+            @x_col = columns[0]
+            @y_cols = [ ]
+          else
+            @x_col = nil
+            @y_cols = columns
+          end
         else
           @x_col  = columns[0]
           @y_cols = columns[1 .. -1]
@@ -156,27 +175,24 @@ module CX
         popts[:ylabel] &&= escape_string(popts[:ylabel])
         
         case @style
-        when /^b/
-          @style = :barchart
-          raise_ "no x column specified" unless @x_col
+        when :barchart
           popts_update(
             # xtics: nil
           )
-        when /^(p|l)/
-          @style = :plot
+        when :plot
           popts_update(
             style: 'data linespoints',
             xtics: @xtics,
           )
         else
-          raise_ "invalid style : #{@style.inspect}"
+          raise_ "invalid style #{@style.inspect}"
         end
 
         popts.each do | k, v |
           self << (v.nil? ? "unset #{k}" : "set #{k} #{v}")
         end
-        self << %Q{set style fill solid 1.0}
-        self << %Q{set style fill pattern}
+        # self << %Q{set style fill solid 1.0}
+        # self << %Q{set style fill pattern}
         
         self
       end
@@ -190,17 +206,19 @@ module CX
 
         emit_data!
 
-        @x_ind = @columns.index(x_col) + 2
-
+        self << %Q{# BEGIN linestypes}
         self << %Q{set linetype 200 linecolor rgb "black"}
         self << %Q{set linetype 201 linecolor rgb "white"}
         self << %Q{set linetype 210 linecolor rgb #{(opts[:background_color] || "black").inspect}}
         self << %Q{set linetype 211 linecolor rgb #{(opts[:text_color] || "white").inspect}}
+        self << %Q{# END linestypes}
 
         # Line styles:
+        self << %Q{# BEGIN line styles}
         y_cols_map do | y_col, i |
           line_style!
         end
+        self << %Q{# END line styles}
         self << ""
         
         plots = y_cols_map do | y_col, i |
@@ -211,7 +229,7 @@ module CX
       end
       
       def y_cols_map
-        @x_ind = @columns.index(x_col) + 2
+        @x_ind = x_col && @columns.index(x_col) + 2
         y_cols.map.with_index do | y_col, y_i |
           @y_col = y_col
           @y_i = y_i
@@ -224,12 +242,13 @@ module CX
       def emit_data!
         @datafile = '$data'
         self << ''
-        self << '# Data:'
+        self << '# BEGIN Data'
         self << "set datafile separator #{@datafile_separator.inspect}"
         self << "# #{columns.map(&:to_s) * @datafile_separator}"
         self << "#{@datafile} << EOD"
         data!
         self << 'EOD'
+        self << '# END Data'
         self << ''
         self
       end
@@ -250,13 +269,18 @@ module CX
                 when @x_col
                   "2:#{@y_ind}"
                 else
-                  @y_ind
+                  "1:#{@y_ind}"
                 end
         %Q{#{@datafile.inspect} using #{using} with linespoints linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
       def boxes
-        using = "1:#{@y_ind}:xtic(#{@x_ind})"
+        using = case
+                when @x_col
+                  "1:#{@y_ind}:xtic(#{@x_ind})"
+                else
+                  "1:#{@y_ind}"
+                end
         %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
