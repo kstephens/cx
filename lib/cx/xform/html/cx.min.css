@@ -135,3 +135,45 @@ table.cx-table {
   font-style: italic;
   font-size: 80%;
 }
+
+/** tooltip  *****************************************/
+/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_tooltip */
+
+.cx-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.cx-tooltip .cx-tooltip-body {
+  padding-left:  0.5em;
+  padding-right: 0.5em;
+  vertical-align: middle;
+  font-size: 80%;
+}
+
+.cx-tooltip .cx-tooltip-text {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 10;
+  top: 100%;
+  left: 100%;
+
+  text-align: left;
+  padding: 0.5em;
+
+  border: 0.5em;
+  border-color: rgba(1.0, 1.0, 1.0, 0.5);
+  background: rgba(0.2, 0.2, 0.2, 0.95);
+  color: #fff;
+  transition: opacity 0.3s;
+}
+
+.cx-tooltip .cx-tooltip-text::after {
+  content: "";
+}
+
+.cx-tooltip:hover .cx-tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}

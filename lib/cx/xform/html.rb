@@ -21,6 +21,7 @@ require 'cx/html_markup'
 #     filtering:  'Enable filtering.  Default: `true`'
 #     sorting:    'Enable sorting.  Default: `true`'
 #     styled:     'Enable styling.  Default: `true`'
+#     filtering-tooltip:  'Enable filtering tooltip.  Default: `true`.'
 #     raw=:       'Comma-separated list of columns containing raw HTML.'
 #     link=:      'Comma-separated list of columns containing URLS.'
 #     head=:      'Additional raw HTML at foot of `head`.'
@@ -49,6 +50,8 @@ module CX
         @filtering   = false if @table_only
         @sorting     = opts.fetch(:sorting, true)
         @sorting     = false if @table_only
+        @filtering_tooltip = opts.fetch(:filtering_tooltip, true)
+        @filtering_tooltip = false if @table_only || ! @filtering
         @styled      = opts.fetch(:styled, true)
         self
       end
@@ -253,11 +256,19 @@ END
                   onkeyup: "cx_filter.filter_rows(event)",
                   placeholder: "#{UNICODE[:search]} Filter..."
                 )
+                if @filtering_tooltip
+                  h.span({class: 'cx-tooltip'}) do
+                    h.span(class: 'cx-tooltip-body') do
+                      h.text!('?')
+                    end
+                    h.span({class: 'cx-tooltip-text'})
+                  end
+                end
                 # Clear filter button:
                 h.button({class: 'cx-filter-input-clear', onclick: 'cx_filter.clear_filter()'}, 'X')
                 h.span(class: 'cx-filter-row-count-span') do
                   h.span({class: 'cx-filter-matched-row-count'}, input.size.to_s)
-                  h.text!(' / ')
+                  h.raw!('&nbsp;/&nbsp;')
                   h.span({class: 'cx-filter-row-count'}, input.size.to_s)
                 end
               end
