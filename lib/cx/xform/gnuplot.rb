@@ -95,14 +95,8 @@ module CX
         when 0
           raise_ "no columns specified"
         when 1 # we only have a y
-          case @style
-          when :asdfasdfsd_barchart
-            @x_col = columns[0]
-            @y_cols = [ ]
-          else
-            @x_col = nil
-            @y_cols = columns
-          end
+          @x_col = nil
+          @y_cols = columns
         else
           @x_col  = columns[0]
           @y_cols = columns[1 .. -1]
@@ -267,7 +261,7 @@ module CX
                 when @x_col && opts[:x_labels]
                   "1:#{@y_ind}:xtic(#{@x_ind})"
                 when @x_col
-                  "2:#{@y_ind}"
+                  "#{@x_ind}:#{@y_ind}"
                 else
                   "1:#{@y_ind}"
                 end
@@ -289,9 +283,8 @@ module CX
       end
 
       def escape_string s
-        s.to_s.gsub('_', '\\\_').inspect
-      end
-      def escape_string s
+        # enhanced text mode:
+        # s.to_s.gsub('_', '\\\_').inspect
         s.to_s.inspect
       end
       
