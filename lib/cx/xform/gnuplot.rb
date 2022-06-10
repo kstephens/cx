@@ -31,7 +31,7 @@ module CX
         @title = opts[:title] || @env[:title] || @env[:in_file] || ''
         @columns = input_columns! input
         @output = make_output
-
+        @datafile_separator = opts[:datafile_separator] || "\t"
         plot!
         
         @env = nil
@@ -125,8 +125,8 @@ END
         
         self << ''
         self << '# Data:'
-        self << 'set datafile separator ","'
-        self << "# #{columns.map(&:to_s) * ','}"
+        self << "set datafile separator #{@datafile_separator.inspect}"
+        self << "# #{columns.map(&:to_s) * @datafile_separator}"
         self << "$data << EOD"
         data!
         self << 'EOD'
@@ -160,7 +160,7 @@ END
       def data!
         @input.each do |r|
           r = @columns.map{|c| r[c]}
-          self << r * ','
+          self << r * @datafile_separator
         end
       end
       
