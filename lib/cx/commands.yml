@@ -528,6 +528,13 @@
     has_value: false
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :filtering-tooltip
+    description: Enable filtering tooltip.
+    default: "`true`"
+    values: []
+    has_value: false
+    has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :raw
     description: Comma-separated list of columns containing raw HTML.
     default: 

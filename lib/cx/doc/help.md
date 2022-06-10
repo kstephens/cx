@@ -719,6 +719,7 @@ Subcommands:
 `--filtering`
 `--sorting`
 `--styled`
+`--filtering-tooltip`
 `--raw=...`
 `--link=...`
 `--head=...`
@@ -731,19 +732,20 @@ Synopsis: Emits HTML.
 
 Aliases: `html-`, `html`, `htm`
 
- Options           | Description                                          | Default | Values |
--------------------|------------------------------------------------------|---------|--------|
- `--title=...`     | Sets the HTML `title`.                               |         |        |
- `--table-only`    | Emit the HTML `table` only.                          |         |        |
- `--filtering`     | Enable filtering.                                    | `true`  |        |
- `--sorting`       | Enable sorting.                                      | `true`  |        |
- `--styled`        | Enable styling.                                      | `true`  |        |
- `--raw=...`       | Comma-separated list of columns containing raw HTML. |         |        |
- `--link=...`      | Comma-separated list of columns containing URLS.     |         |        |
- `--head=...`      | Additional raw HTML at foot of `head`.               |         |        |
- `--body-head=...` | Additional raw HTML at head of `body`.               |         |        |
- `--body-foot=...` | Additional raw HTML at foot of `body`.               |         |        |
- `--indent=...`    | Spaces to indent.                                    | `1`     |        |
+ Options               | Description                                          | Default | Values |
+-----------------------|------------------------------------------------------|---------|--------|
+ `--title=...`         | Sets the HTML `title`.                               |         |        |
+ `--table-only`        | Emit the HTML `table` only.                          |         |        |
+ `--filtering`         | Enable filtering.                                    | `true`  |        |
+ `--sorting`           | Enable sorting.                                      | `true`  |        |
+ `--styled`            | Enable styling.                                      | `true`  |        |
+ `--filtering-tooltip` | Enable filtering tooltip.                            | `true`  |        |
+ `--raw=...`           | Comma-separated list of columns containing raw HTML. |         |        |
+ `--link=...`          | Comma-separated list of columns containing URLS.     |         |        |
+ `--head=...`          | Additional raw HTML at foot of `head`.               |         |        |
+ `--body-head=...`     | Additional raw HTML at head of `body`.               |         |        |
+ `--body-foot=...`     | Additional raw HTML at foot of `body`.               |         |        |
+ `--indent=...`        | Spaces to indent.                                    | `1`     |        |
 
 ## `io-in`
 
