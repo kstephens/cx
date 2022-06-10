@@ -45,8 +45,13 @@ module CX
         @x_labels = popts.delete(:x_labels)
         @color = popts.delete(:color)
         @background_color = popts.delete(:background_color)
-        @text_color       = popts.delete(:text_color)
-
+        @background_color &&= "background rgb #{@background_color.inspect}"
+        @text_color   = popts.delete(:text_color)
+        # @title_color = @text_color
+        #@text_color &&= "textcolor rgbcolor #{@text_color.inspect}"
+        #@title_color &&= "tc rgb #{@title_color.inspect}"
+        #@title_color = "tc lt 0"
+        
         plot!
         
         @env = nil
@@ -96,17 +101,24 @@ module CX
           @size ||= stty_size
           @xtics = "scale 0.5 nomirror nooffset"
           popts_update(
-            terminal:   "dumb size #{@size * ','} aspect 1 enhanced #{@color ? :ansirgb : :mono}",
+            terminal:   "dumb size #{@size * ','} aspect 1 noenhanced #{@color ? :ansirgb : :mono}",
             ytics:      "nomirror scale 0.5",
             autoscale:  "",
             # background: 'rgb "black"',' # leads to invisible text.
           )
           @plot_opts = 'pt "@"'
         else
+          more = String.new
+          case @format
+          when /svg/
+            more << %Q{ dynamic }
+          when /pdf/
+            more << %Q{ #{@color && :color} }
+          end
           @size ||= [ 1024, 768 ]
           @xtics = "scale 0 nomirror nooffset"
           popts_update(
-            terminal:  "#{@format} size #{@size * ','} enhanced #{@background_color && "background rgb #{@background_color.inspect}"}",
+            terminal:  "#{@format} size #{@size * ','} noenhanced #{more} #{@background_color}",
             ytics:     "scale 0 nomirror",
           )
         end
@@ -163,6 +175,8 @@ module CX
         popts.each do | k, v |
           self << (v.nil? ? "unset #{k}" : "set #{k} #{v}")
         end
+        self << %Q{set style fill solid 1.0}
+        self << %Q{set style fill pattern}
         
         self
       end
@@ -177,7 +191,12 @@ module CX
         emit_data!
 
         @x_ind = @columns.index(x_col) + 2
-        
+
+        self << %Q{set linetype 200 linecolor rgb "black"}
+        self << %Q{set linetype 201 linecolor rgb "white"}
+        self << %Q{set linetype 210 linecolor rgb #{(opts[:background_color] || "black").inspect}}
+        self << %Q{set linetype 211 linecolor rgb #{(opts[:text_color] || "white").inspect}}
+
         # Line styles:
         y_cols_map do | y_col, i |
           line_style!
@@ -233,20 +252,23 @@ module CX
                 else
                   @y_ind
                 end
-        %Q{#{@datafile.inspect} using #{using} with linespoints linestyle #{@y_i + 2} #{@plot_opts} title #{@y_title}}
+        %Q{#{@datafile.inspect} using #{using} with linespoints linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
       def boxes
         using = "1:#{@y_ind}:xtic(#{@x_ind})"
-        %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 2} #{@plot_opts} title #{@y_title}}
+        %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
       def line_style!
-        self << %Q{set style line #{@y_i + 2} linecolor rgbcolor #{rgb_i(@y_i)}}
+        self << %Q{set style line #{@y_i + 100} linecolor rgbcolor #{rgb_i(@y_i)}}
       end
 
       def escape_string s
         s.to_s.gsub('_', '\\\_').inspect
+      end
+      def escape_string s
+        s.to_s.inspect
       end
       
       def rgb_i i
