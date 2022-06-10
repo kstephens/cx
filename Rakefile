@@ -50,7 +50,8 @@ task :minify do
       end.
       sort.each do | f |
       min_f = f.sub(/\.#{suffix}$/, ".min.#{suffix}")
-      sh "minify --#{suffix} < '#{f}' > '#{min_f}'"
+      sh "minify --#{suffix} < '#{f}' > '#{min_f}.tmp' || cp '#{f}' '#{min_f}.tmp'"
+      File.rename("#{min_f}.tmp", min_f)
       end
   end
 end

@@ -120,7 +120,7 @@ module CX
               h.title(x);
             end
             if @styled
-              h.css! h.file_content!('cx.min.css')
+              h.css! h.file_content_min!('cx.css')
             end
             h.html! h.file_content!('head.html')
             optional_content(:head) {|x| raw!(x) }
@@ -268,12 +268,12 @@ END
       
       def table_footer!
         if @filtering
-          h.js! h.file_content!("vendor/zepto.min.js")
-          h.js! h.file_content!("parser_combinator.min.js")
-          h.js! h.file_content!("filter.min.js")
+          h.js! h.file_content_min!("vendor/zepto.js")
+          h.js! h.file_content_min!("parser_combinator.js")
+          h.js! h.file_content_min!("filter.js")
         end
         if @sorting
-          h.js! h.file_content!("vendor/tablesort.js")
+          h.js! h.file_content_min!("vendor/tablesort.js")
           h.js! "new Tablesort(document.getElementById('cx-table'));\n"
           h.js! "var cx_filter = cx_make_filter('cx-table');\n"
         end

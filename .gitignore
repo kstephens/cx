@@ -6,7 +6,7 @@
 /spec/reports/
 /tmp/
 /node_modules/
-
+*.tmp
 # rspec failure tracking
 .rspec_status
 spec/**/*.actual

@@ -65,6 +65,11 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
     end
   end
 
+  # Try NAME.min.EXT or NAME.EXT
+  def file_content_min! name
+    file_content!(name.sub(/.([^.]+)$/, '.min.\1')) || file_content!(name)
+  end
+  
   def file_content! name
     @file_content[name] ||= _read_content!(name) 
   end
