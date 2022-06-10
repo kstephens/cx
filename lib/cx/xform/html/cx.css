@@ -132,4 +132,6 @@ table.cx-table {
 }
 
 .cx-attribution {
+  font-style: italic;
+  font-size: 80%;
 }
