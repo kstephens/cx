@@ -25,6 +25,10 @@ a:hover {
 
 /** cx-content *****************************************/
 
+.cx-error {
+  background-color: #b08080;
+}
+
 .cx-title {
   text-align: center;
 }
@@ -79,9 +83,34 @@ table.cx-table {
   position: sticky;
   top: 0;
 }
+
+/** filtering  *****************************************/
+
 .cx-table .cx-filter-row {
   position: sticky;
   left: 0; /* needed for sticky? */
+/*  top: 0; */
+}
+
+.cx-table .cx-filter-th {
+/*
+  top: 0;
+ */
+  position: sticky;
+  left: 0;
+}
+
+.cx-filter-input-span {
+/*
+  top: 0;
+*/
+  position: sticky;
+  left: 2em;
+  float: left;
+}
+
+.cx-filter-input {
+  width: 20em;
 }
 .cx-filter-input-clear {
   background-color: inherit; /* black; */
@@ -90,19 +119,28 @@ table.cx-table {
   padding: 2px 2px;
   vertical-align: middle;
   text-align: center;
+/*
+  text-align: left;
+  float: left;
+*/
   text-decoration: none;
   display: inline-block;
   font-size: 80%;
   margin: 4px 2px;
   cursor: pointer;
 }
-.cx-filter-input {
-  width: 20em;
-}
-.cx-error {
-  background-color: #b08080;
-}
 .cx-filter-row-count-span {
   vertical-align: middle;
   font-size: 80%;
+}
+
+/** footer  *****************************************/
+
+.cx-footer {
+  position: sticky;
+  left:  1em;
+  float: left;
+}
+
+.cx-attribution {
 }

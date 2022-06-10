@@ -243,7 +243,7 @@ END
       
       def thead_filtering!
         h.tr(class: 'cx-filter-row') do
-          h.th(colspan: colspan) do
+          h.th(class: 'cx-filter-th', colspan: colspan) do
             h.indent!(false) do
               h.span(class: 'cx-filter-input-span') do
                 h.input(
