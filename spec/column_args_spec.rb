@@ -21,7 +21,7 @@ module CX
       expect(subject.map(&:name))
         .to eq([:a, :b, :c, :d, :e, :f, :g, nil, :*])
       expect(subject.map(&:index))
-        .to eq([nil, nil, nil, nil, nil, nil, nil, 11, nil])
+        .to eq([nil, nil, nil, nil, nil, nil, nil, 12, nil])
       expect(subject.map(&:opts))
         .to eq([{}, {}, {:negate=>true}, {:order=>-1}, {:order=>1}, {:y=>"z"}, {:negate=>true}, {:x=>"z"},
           {}])
@@ -42,17 +42,18 @@ module CX
           "*",
           "c:!",
           "4",
+          "-1",
           "unknown:+",
         ]
       end
       
       it "binds" do
         expect(subject.map(&:name))
-          .to eq([:a, :*, :c, nil, :unknown])
+          .to eq([:a, :*, :c, nil, nil, :unknown])
         expect(subject.map(&:index))
-          .to eq([0, nil, 2, 3, nil])
+          .to eq([0, nil, 2, 3, 5, nil])
         expect(subject.map(&:column).map(&:to_s))
-          .to eq(["a", "", "c", "d", ""])
+          .to eq(["a", "", "c", "d", "f", ""])
       end
 
       describe "unbound" do
@@ -69,11 +70,11 @@ module CX
         
         it "interpolates * as other columns" do
           expect(subject.map(&:name))
-            .to eq([:a, :b, :e, :f, :c, nil, :unknown]) # nil: HUH?
+            .to eq([:a, :b, :e, :c, nil, nil, :unknown]) # nil: HUH?
           expect(subject.map(&:index))
-            .to eq([0, 1, 4, 5, 2, 3, nil])
+            .to eq([0, 1, 4, 2, 3, 5, nil])
           expect(subject.map(&:column).map(&:to_s))
-            .to eq(["a", "b", "e", "f", "c", "d", ""])
+            .to eq(["a", "b", "e", "c", "d", "f", ""])
         end
         
         describe "unbound" do

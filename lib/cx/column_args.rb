@@ -42,15 +42,19 @@ module CX
     def first ; @args[0]    ; end
     def last  ; @args[-1]   ; end
     def [] i  ; @args[i]    ; end
-    
+
+    def parse_split_arg! arg, sep = ','
+      parse! arg.split(sep)
+    end
+
     def parse! _args
       _args.each do | arg_str |
-        @args << parse_arg(arg_str)
+        @args << parse_arg!(arg_str)
       end
       self
     end
 
-    def parse_arg arg_str
+    def parse_arg! arg_str
       name = index = rest_str = nil
       opts = { }
       args = [ ]
