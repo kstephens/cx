@@ -145,8 +145,7 @@ table.cx-table {
 }
 
 .cx-tooltip .cx-tooltip-body {
-  padding-left:  0.5em;
-  padding-right: 0.5em;
+  padding: 1em;
   vertical-align: middle;
   font-size: 80%;
 }
@@ -160,11 +159,11 @@ table.cx-table {
   left: 100%;
 
   text-align: left;
-  padding: 0.5em;
+  padding: 1.5em;
 
-  border: 0.5em;
-  border-color: rgba(1.0, 1.0, 1.0, 0.5);
-  background: rgba(0.2, 0.2, 0.2, 0.95);
+  border: solid 0.5em;
+  border-color: rgba(80, 80, 80, 0.95);
+  background: rgba(25, 25, 25, 0.95);
   color: #fff;
   transition: opacity 0.3s;
 }
