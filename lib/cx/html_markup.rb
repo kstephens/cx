@@ -69,9 +69,17 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
     end
   end
 
-  # Try NAME.min.EXT or NAME.EXT
+  # Try NAME.min.EXT or NAME.EXT, whichever is newer.
   def file_content_min! name
-    file_content!(name.sub(/.([^.]+)$/, '.min.\1')) || file_content!(name)
+    basename = name.sub(/(\.[^.]+)$/, '')
+    suffix = $1 || ''
+    max  = "#{basename}#{suffix}"
+    min  = "#{basename}.min#{suffix}"
+    if file_mtime(max) >= file_mtime(min)
+      file_content!(max)
+    else 
+      file_content!(min)
+    end
   end
   
   def file_content! name
@@ -79,7 +87,8 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
   end
 
   def _read_content! name
-    if str = (::File.read("#{@file_content_path}/#{name}") rescue nil)
+    if str = (::File.read(path = "#{@file_content_path}/#{name}") rescue nil)
+      # $stderr.puts "#{self} : _read_content! #{name.inspect} : read #{path.inspect}"
       def str.file val = nil
         @from_file = val unless val.nil?
         @from_file
@@ -89,6 +98,12 @@ class CX::HtmlMarkup < ::Builder::XmlMarkup
     str
   end
 
+  def file_mtime file
+    ::File.mtime(file)
+  rescue ::Errno::ENOENT
+    0
+  end
+  
   def indent! state = true
     save = @indent_enabled
     begin
