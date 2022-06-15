@@ -35,14 +35,6 @@ module CX
       include SelectColumns, OutputFormat, RecordOut
       def initialize!
         super
-        @raw_columns = Set.new((opts[:raw] || '')
-          .strip.split(/\s*,\s*/, -1)
-          .map(&:to_sym)
-          .uniq)
-        @link_columns = Set.new((opts[:link] || '')
-          .strip.split(/\s*,\s*/, -1)
-          .map(&:to_sym)
-          .uniq)
         @indent      = opts.fetch(:indent, 1).to_i
         @coerce      = opts[:coerce_to_string] || proc{|x| x}
         @table_only  = opts.fetch(:table_only, false)
@@ -57,6 +49,10 @@ module CX
       end
 
       def call input, env
+        @raw_columns_   = ColumnArgs.new.parse_split_arg!(opts[:raw]).bind!(input.header).wildcards!
+        @raw_columns    = Hash.new{|h, c| h[c] = @raw_columns_.find(c) }
+        @link_columns_  = ColumnArgs.new.parse_split_arg!(opts[:link]).bind!(input.header).wildcards!
+        @link_columns   = Hash.new{|h, c| h[c] = @link_columns_.find(c) }
         @resource = env[:html] ||= {resource: { }}
         @once = (@resource[:once] ||= {})
         output = make_output
@@ -226,17 +222,15 @@ END
             attrs = col_data[c].merge(title: "#{row_tooltip} - #{c.name}")
             h.indent!(false) do
               h.td(attrs) do
-                v = r[c]
+                v_text = v = r[c]
+                v_text = escape(render(v)) unless @raw_columns[c]
                 case
-                when @raw_columns.include?(c.name)
-                  raw!(v)
-                when @link_columns.include?(c.name)
-                  v = render(v)
+                when @link_columns[c]
                   h.a(href: v) do
-                    text!(v)
+                    text!(v_text)
                   end
                 else
-                  text!(render(v))
+                  text!(v_text)
                 end
               end
             end
@@ -312,6 +306,10 @@ END
         raw! @coerce.call(x).to_s
       end
 
+      def escape x
+        h.escape x
+      end
+      
       def render x
         case x
         when Hash

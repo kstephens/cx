@@ -19,6 +19,30 @@ module CX
       self.rest_str = ""
       self
     end
+
+    def match? x
+      case x
+      when nil
+      when Symbol
+        name == x
+      when String
+        name == x.to_sym
+      when Column
+        column == x
+      when Integer
+        case
+        when x >= 0
+          index == x
+        when x < 0
+          # binding.pry
+          column && index == column.header.size + x
+        end
+      when ColumnArg
+        self.object_id == x.object_id
+      else
+        raise_ ArgumentError, "match? : invalid #{x.inspect}"
+      end
+    end
   end
     
   class ColumnArgs
@@ -42,9 +66,19 @@ module CX
     def first ; @args[0]    ; end
     def last  ; @args[-1]   ; end
     def [] i  ; @args[i]    ; end
-
+    def find x, bound_only = nil
+      cas = bound_only || @header ? bound : @args
+      cas.find do | ca |
+        ca.match? x
+      end if x
+    end
+    def include? x, bound_only = nil
+      ! ! find(x, bound_only)
+    end
+    
     def parse_split_arg! arg, sep = ','
-      parse! arg.split(sep)
+      parse! arg.split(sep) if arg
+      self
     end
 
     def parse! _args
@@ -97,6 +131,7 @@ module CX
     end
     
     def bind! header
+      raise_ ArgumentError, "bind! : already bound" if @header
       @header = header
       @args.each do | ca |
         col = nil
@@ -120,6 +155,7 @@ module CX
     end
 
     def wildcards!
+      raise_ ArgumentError, "wildcards! : not bound" unless @header
       new_cas = [ ]
       scan = @args.dup
       while ca = scan.shift
