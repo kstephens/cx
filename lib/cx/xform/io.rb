@@ -41,18 +41,11 @@ module CX
       
       def open_ io, mode, env, &blk
         raise_ ArgumentError, "no block" unless block_given?
+        env[:in_file] = env[:out_file] = nil
         case io
         when '-', nil
           open default_io, mode, env, &blk
         when IO, StringIO
-          env[:in_file] = env[:out_file] = nil
-          case mode
-          when /[wa]/
-            env[:out_file] = io.inspect
-          else
-            env[:in_file] = io.inspect
-          end
-          
           begin
             yield io
           ensure
@@ -60,15 +53,14 @@ module CX
           end
         when String
           file_name = io.to_s.dup.freeze
-          case mode
-          when /[wa]/
-            Tempfile.create(file_name) do | ioh |
-              env[:out_file] = file_name
+          env[mode =~ /r/ ? :in_file : :out_file] = file_name
+          case 
+          when mode =~ /w/ && file_name !~ %r{^/dev/}
+            open_tempfile(file_name, mode) do | ioh |
               yield ioh
             end
           else
             File.open(file_name, mode) do | ioh |
-              env[:in_file] = file_name
               yield ioh
             end
           end
@@ -83,6 +75,20 @@ module CX
         env[:stats][direction][:files] += 1
         env[:stats][direction][:bytes] += n_bytes if n_bytes
       rescue
+      end
+
+      def open_tempfile file_name, mode
+        tmp = nil
+        begin
+          tmp = Tempfile.new(File.basename(file_name) + '.tmp.', File.dirname(file_name))
+          yield tmp
+        ensure
+          tmp.close
+          File.chmod(0666 & ~ File.umask, tmp.path) # TODO: use current mask.
+          File.rename(tmp.path, file_name)
+        end
+      ensure
+        File.unlink(tmp.path) rescue nil
       end
     end
 
@@ -102,7 +108,8 @@ module CX
     class IoOut
       include IoBase
       def call input, env
-        open(@io, "w", env) do | ioh |
+        mode = opts.fetch(:mode, "w")
+        open(@io, mode, env) do | ioh |
           # io.write("=== BEGIN ===========================\n")
           @n_bytes = 0
           log.info { "#{self} input dims = #{input.dimensions}" }
