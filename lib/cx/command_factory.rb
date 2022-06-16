@@ -35,7 +35,7 @@ module CX
     
     def load! contents = nil
       contents ||= File.read(COMMANDS_YML)
-      load_commands! YAML.load(contents, symbolize_names: true)
+      load_commands! CommandFactory.YAML_load(contents, symbolize_names: true)
       self
     end
 
@@ -67,6 +67,17 @@ module CX
       YamlGenerator.new.run!
     end
     
+    def self.YAML_load(data, **opts)
+      YAML.safe_load(data,
+        **opts,
+        permitted_classes: [
+          CommandDesc,
+          CommandDesc::Option,
+          OpenStruct,
+          Symbol]
+      )
+    end
+
     COMMANDS_YML = File.expand_path("../commands.yml", __FILE__)
 
     ###########################################
@@ -216,7 +227,7 @@ module CX
       def parse_block! block
         data =
         begin
-          YAML.load(block, symbolize_names: true)
+          CommandFactory.YAML_load(block, symbolize_names: true)
         rescue => e
           log.error e.inspect
           log.error "YAML block ::::\n#{block}\n::::"
