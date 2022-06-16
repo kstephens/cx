@@ -1019,6 +1019,38 @@ Aliases: `q`
  `--mode=...`     | When to quote.      | "maybe" | maybe, everything, always |
  `--strings-only` | Ignore non-strings. |         |                           |
 
+## `record-in`
+
+`record-in`
+ *[*
+`--record-sep=...`
+`--field-sep=...` *]*
+
+Synopsis: Parses records.
+
+Aliases: `-record`
+
+ Options            | Description       | Default          | Values |
+--------------------|-------------------|------------------|--------|
+ `--record-sep=...` | Record separator. | platform newline |        |
+ `--field-sep=...`  | Field separator.  | ""               |        |
+
+## `record-out`
+
+`record-out`
+ *[*
+`--record-sep=...`
+`--field-sep=...` *]*
+
+Synopsis: Generates records.
+
+Aliases: `record-`
+
+ Options            | Description       | Default          | Values |
+--------------------|-------------------|------------------|--------|
+ `--record-sep=...` | Record separator. | platform newline |        |
+ `--field-sep=...`  | Field separator.  | ""               |        |
+
 ## `region`
 
 `region`

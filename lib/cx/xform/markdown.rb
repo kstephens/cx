@@ -25,7 +25,7 @@ require 'cx/xform/align'
 module CX
   module Xform
     class MarkdownOut
-      include SelectColumns, OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOutBase
       
       def call input, env
         cols = column_args!(input).or_all!.columns.sort_by(&:order)

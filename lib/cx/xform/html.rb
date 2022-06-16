@@ -5,6 +5,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/record'
 require 'cx/io_buffer'
 require 'cx/html_markup'
 
@@ -32,7 +33,7 @@ require 'cx/html_markup'
 module CX
   module Xform
     class HtmlOut
-      include SelectColumns, OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOutBase
       def initialize!
         super
         @indent      = opts.fetch(:indent, 1).to_i

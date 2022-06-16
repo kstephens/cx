@@ -2,6 +2,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/record'
 
 # :COMMAND:
 # ErbOut:
@@ -16,7 +17,7 @@ require 'cx/xform'
 module CX
   module Xform
     class ErbOut
-      include RecordOut, Xform
+      include RecordOutBase, Xform
       
       def call input, env
         erb_file = args[0] or raise_ "Missing ERB filename"

@@ -2,6 +2,7 @@
 
 require 'cx'
 require 'cx/xform'
+require 'cx/xform/record'
 require 'cx/io_buffer'
 
 module CX
@@ -29,7 +30,7 @@ module CX
     end
 
     module StructuredOut
-      include RecordOut, SelectColumns, Xform
+      include RecordOutBase, SelectColumns, Xform
 
       def call input, env
         output = make_output

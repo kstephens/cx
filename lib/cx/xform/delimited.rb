@@ -29,14 +29,14 @@ require 'cx/xform/record'
 module CX
   module Xform
     class DelimitedIn
-      include RecordIn
+      include RecordInBase
       def parse_record line
         line.split(@field_sep, -1)
       end
     end
     
     class DelimitedOut
-      include SelectColumns, RecordOut
+      include SelectColumns, RecordOutBase
       def call input, env
         columns = column_args!(input).or_all!.columns
         output = make_output

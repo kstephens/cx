@@ -4,7 +4,6 @@ require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
 
-
 # :COMMAND:
 # JiraOut:
 #   aliases: [ jira ]
@@ -19,7 +18,7 @@ require 'cx/xform/record'
 module CX
   module Xform
     class JiraOut
-      include SelectColumns, OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOutBase
       
       def call input, env
         title = opts[:title] # TODO

@@ -4,6 +4,28 @@ require 'cx'
 require 'cx/xform'
 require 'cx/xform/meta'
 
+# :COMMAND:
+# RecordIn:
+#   aliases: [ -record ]
+#   synopsis: 'Parses records.'
+#   suffixes: [ ]
+#   inverse: [ 'record-' ]
+#   arguments: []
+#   options:
+#     record-sep=:  'Record separator.  Default: platform newline.'
+#     field-sep=:   'Field separator.   Default: "".'
+
+# :COMMAND:
+# RecordOut:
+#   aliases: [ record- ]
+#   synopsis: 'Generates records.'
+#   suffixes: [ ]
+#   inverse: [ '-record' ]
+#   arguments: []
+#   options:
+#     record-sep=:  'Record separator.  Default: platform newline.'
+#     field-sep=:   'Field separator.   Default: "".'
+
 module CX
   module Xform
     module RecordBase
@@ -12,8 +34,8 @@ module CX
     
       def initialize!
         super
-        @field_sep    = decode_string(opts.fetch(:field_sep,   ","))
         @record_sep   = decode_string(opts.fetch(:record_sep,  $/))
+        @field_sep    = decode_string(opts.fetch(:field_sep,   ","))
         @multi_sep    = decode_string(opts.fetch(:multi_sep,   ";"))
       end
 
@@ -28,7 +50,7 @@ module CX
       end
     end
 
-    module RecordIn
+    module RecordInBase
       include InputFormat, RecordBase
       
       def call input, env
@@ -51,7 +73,7 @@ module CX
       end
     end
     
-    module RecordOut
+    module RecordOutBase
       include OutputFormat, RecordBase
       
       def make_output
@@ -67,6 +89,44 @@ module CX
         else
           v.to_s
         end
+      end
+    end
+
+    ###########################
+
+    module RecordBaseInit
+      def initialize!
+        super
+        @field_sep    = decode_string(opts.fetch(:field_sep,   ""))
+        @multi_sep    = decode_string(opts.fetch(:multi_sep,   ""))
+      end
+    end
+
+    class RecordIn
+      include RecordBaseInit, RecordInBase
+      def parse_record line
+        if @field_sep.empty?
+          [ line ]
+        else
+          line.split(@field_sep, -1)
+          # TODO: handle multi values
+        end
+      end
+    end
+
+    class RecordOut
+      include RecordBaseInit, RecordOutBase
+      def call input, env
+        output = make_record_table([:_RECORD_])
+        out = String.new
+        input.each do | r |
+          out << input.header.map do | c |
+            r._get(c).to_s # TODO: handle multi values
+          end.join(@field_sep)
+          out << @record_sep
+        end
+        output << [ out ]
+        output
       end
     end
   end

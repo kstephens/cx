@@ -12,7 +12,7 @@ require 'cx/io_command'
 module CX
   module Xform
     class Cmd
-      include RecordOut, Xform
+      include RecordOutBase, Xform
       attr_accessor :command, :write_fn, :read_fn
 
       def inspect_content modes

@@ -27,12 +27,8 @@ require 'cx/xform/record'
 module CX
   module Xform
     class SqlOut
-      include OutputFormat, RecordOut
+      include OutputFormat, RecordOutBase
       attr_reader :input, :header, :output, :table
-
-      def initialize!
-        super
-      end
 
       def call input, env
         @input = input

@@ -30,7 +30,7 @@ require 'color'
 module CX
   module Xform
     class GnuplotOut
-      include SelectColumns, OutputFormat, RecordOut
+      include SelectColumns, OutputFormat, RecordOutBase
       
       def call input, env
         @input, @env = input, env

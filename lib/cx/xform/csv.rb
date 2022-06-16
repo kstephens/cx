@@ -30,7 +30,7 @@ require 'cx/xform/csv_safe'
 module CX
   module Xform
     class CsvIn
-      include RecordIn
+      include RecordInBase
       
       def initialize!
         super
@@ -44,7 +44,7 @@ module CX
     end
     
     class CsvOut
-      include RecordOut
+      include RecordOutBase
       
       def call input, env
         @csv = CSVSafe.new(opts || {})
