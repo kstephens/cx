@@ -40,6 +40,8 @@ module CX
         case @style
         when /^b/
           @style = :barchart
+        when /^c/
+          @style = :candlestick
         when /^(p|l)/
           @style = :plot
         else
@@ -169,6 +171,11 @@ module CX
         popts[:ylabel] &&= escape_string(popts[:ylabel])
         
         case @style
+        when :candlestick
+          popts[:xrange] ||= "[-0.5:#{@input.size + 0.5}]"
+          popts[:boxwidth] ||= 1.0
+          popts[:bars] ||= 1.5
+          popts[:errorbars] ||= 1.5
         when :barchart
           popts_update(
             # xtics: nil
@@ -178,8 +185,6 @@ module CX
             style: 'data linespoints',
             xtics: @xtics,
           )
-        else
-          raise_ "invalid style #{@style.inspect}"
         end
 
         popts.each do | k, v |
@@ -215,10 +220,17 @@ module CX
         self << %Q{# END line styles}
         self << ""
         
-        plots = y_cols_map do | y_col, i |
-          plot_y
+        popts_update(
+          # xtics: nil
+        )
+        case @style
+        when :candlestick
+          plots = [ candlesticks ]
+        else
+          plots = y_cols_map do | y_col, i |
+            plot_y
+          end
         end
-        
         self << "plot " + plots * ", \\\n     "
       end
       
@@ -276,6 +288,15 @@ module CX
                   "1:#{@y_ind}"
                 end
         %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
+      end
+
+      def candlesticks
+        using = '1:4:3:6:5'
+        case
+        when @x_col
+          using += ":xtic(#{@x_ind})"
+        end
+        %Q{#{@datafile.inspect} using #{using} with financebars title ""}
       end
 
       def line_style!
