@@ -156,7 +156,7 @@ module CX
 
         popts_update(
           xlabel: @x_col.to_s,
-          ylabel: y_cols.map(&:to_s) * ',',
+          ylabel: y_cols == 1 ? y_cols[0].to_s : "",
         )
 
         # Reformat:
