@@ -43,16 +43,21 @@ module CX
         raise_ ArgumentError, "match? : invalid #{x.inspect}"
       end
     end
+
+    def to_s      ; name.to_s ; end
+    alias :to_sym  :name
+    alias :to_i    :index
   end
     
   class ColumnArgs
-    include Enumerable, Support
+    include Enumerable, Support, Rx
 
-    attr_reader :args, :header
+    attr_reader :args, :header, :bound, :unbound
 
     def initialize
       @args = [ ]
       @header = nil
+      @bound = @unbound = [ ].freeze
     end
 
     def inspect_content modes
@@ -124,8 +129,9 @@ module CX
         arg_str,
         rest_str,
       )
-      if c.name == :*
-        c.index  = nil
+      if name =~ /[*?]/
+        c.index = nil
+        c.wildcard = true
       end
       c
     end
@@ -149,8 +155,8 @@ module CX
           when col = header.find{|c| c.name_ == ca.name}
             col
           end
-        ca.column and ca.index = ca.column.order
       end
+      calc_bound!
       self
     end
 
@@ -159,9 +165,9 @@ module CX
       new_cas = [ ]
       scan = @args.dup
       while ca = scan.shift
-        case
-        when ca.name == :*
-          @header.ordered.each do |c|
+        if ca.wildcard
+          rx = wildcard_rx(ca.name.to_s) 
+          @header.ordered.select{|c| rx.match(c.to_s) }.each do |c|
             unless new_cas.find{|ca| ca.column == c}
               ca = ColumnArg.new.header_column!(c)
               ca.args = ca.args.map(&:dup)
@@ -180,6 +186,24 @@ module CX
         end
       end
       @args = new_cas
+      calc_bound!
+      self
+    end
+
+    def calc_bound!
+      @bound = [ ]
+      @unbound = [ ]
+      @args.each do | ca |
+        if ca.column
+          ca.name  = ca.column.name 
+          ca.index = ca.column.order
+          @bound << ca unless @bound.include?(ca)
+        else
+          @unbound << ca unless @unbound.include?(ca)
+        end
+      end
+      @bound.freeze
+      @unbound.freeze
       self
     end
 
@@ -190,14 +214,6 @@ module CX
       self
     end
     
-    def unbound
-      @args.reject(&:column)
-    end
-    
-    def bound
-      @args.select(&:column)
-    end
-
     def check!
       unless (ub = unbound).empty?
         msg = ub.map(&:arg_str).map(&:inspect).join(', ')
@@ -208,6 +224,10 @@ module CX
     
     def columns
       bound.map(&:column)
+    end
+
+    def wildcard_rx name
+      Regexp.new('^' + glob_to_rx(name.to_s) + '$')
     end
   end
 end

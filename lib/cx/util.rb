@@ -108,4 +108,36 @@ class RecurLimit
     end
   end
 end
+
+######################################
+
+  module Rx
+    def glob_to_rx str, opts = Empty_Hash
+      rx = String.new
+      until str.empty?
+        rx <<
+        case str
+        when /^\\./
+          $&
+        when /^[.|{}()^$]/
+          '\\' + $&
+        when /^\*\*/
+          '.*'
+        when /^\*/
+          opts[:file] ? '[^/]*' : '.*'
+        when /^\?/
+          opts[:file] ? '[^/]'  : '.'
+        when /^./m
+          $&
+        else
+          raise_ "glob_to_rx: #{str}"
+        end
+        str = $'
+      end
+      rx
+    end
+    Empty_Hash = { }.freeze
+  end
 end
+
+

@@ -3,23 +3,11 @@ require 'cx/column_args'
 module CX
   RSpec.describe ColumnArgs do
     subject() { ColumnArgs.new.parse!(argv) }
-    let(:header) { Header.new([:a, :b, :c, :d, :e, :f]) }
-    let(:bound) { subject.bound }
-    let(:argv) do
-      [
-        "a",
-        "b:",
-        "c:!",
-        "d:-",
-        "e:+",
-        "f:x;y=z;q",
-        "g:!;asdf",
-        "2:x=z",
-        "*:foo",
-        "z",
-        "12"
-      ]
-    end
+    let(:header) { Header.new(columns) }
+    let(:columns) { [:a, :b, :c, :d, :e, :f] }
+    let(:bound)   { subject.bound  .map(&:to_sym) }
+    let(:unbound) { subject.unbound.map(&:to_sym) }
+    let(:argv)    { %w[ a b: c:! d:- e:+ f:x;y=z;q g:!;asdf 2:x=z *:foo z 12 ] }
     
     it "parses" do
       expect(subject.map(&:name))
@@ -42,7 +30,6 @@ module CX
     describe "find" do
       subject() { ColumnArgs.new.parse!(argv).bind!(header) }
       it "does not find invalid columns" do
-        # pp bound: bound
         expect(subject.find(nil))
           .to eq(nil)
           expect(subject.find(nil, :bound))
@@ -73,55 +60,61 @@ module CX
     
     describe "bind!" do
       subject() { ColumnArgs.new.parse!(argv).bind!(header) }
-      let(:argv) do
-        [
-          "a",
-          "*",
-          "c:!",
-          "4",
-          "-1",
-          "unknown:+",
-        ]
-      end
+      let(:argv) { %w[ a * c:! 4 -1 unknown:+ ] }
       
       it "binds" do
         expect(subject.map(&:name))
-          .to eq([:a, :*, :c, nil, nil, :unknown])
+          .to eq([:a, :*, :c, :d, :f, :unknown])
         expect(subject.map(&:index))
           .to eq([0, nil, 2, 3, 5, nil])
-        expect(subject.map(&:column).map(&:to_s))
-          .to eq(["a", "", "c", "d", "f", ""])
+          expect(subject.map(&:wildcard))
+          .to eq([nil, true, nil, nil, nil, nil])
+        expect(bound)
+          .to eq([:a, :c, :d, :f])
+        expect(unbound)
+          .to eq([:*, :unknown])
       end
 
       describe "unbound" do
         it "finds" do
-          expect(subject.unbound.map(&:name))
+          expect(unbound)
             .to eq([:*, :unknown])
         end
       end
 
       describe "wildcards!" do
-        subject() {
-          ColumnArgs.new.parse!(argv).bind!(header).wildcards!
-        }
+        subject() { ColumnArgs.new.parse!(argv).bind!(header).wildcards! }
         
         it "interpolates * as other columns" do
           expect(subject.map(&:name))
-            .to eq([:a, :b, :e, :c, nil, nil, :unknown]) # nil: HUH?
+            .to eq([:a, :b, :e, :c, :d, :f, :unknown]) # nil: HUH?
           expect(subject.map(&:index))
             .to eq([0, 1, 4, 2, 3, 5, nil])
-          expect(subject.map(&:column).map(&:to_s))
-            .to eq(["a", "b", "e", "c", "d", "f", ""])
+          expect(bound)
+            .to eq([:a, :b, :e, :c, :d, :f])
+          expect(unbound)
+            .to eq([:unknown])
         end
         
         describe "unbound" do
           it "does not find *" do
-            expect(subject.unbound.map(&:name))
-              .to eq([ :unknown])
+            expect(unbound)
+              .to eq([:unknown])
+          end
+        end
+
+        describe "generic wildcards" do
+          let(:columns) { [ :a, :col_1, :col_2, :b, :c ]}
+          let(:argv)    { %w[ c col_*:!;opt=val a unknown ] }
+
+          it "finds col_*" do
+            expect(bound)
+              .to eq([:c, :col_1, :col_2, :a])
+            expect(unbound)
+              .to eq([:unknown])
           end
         end
       end
-
     end
   end
 end
