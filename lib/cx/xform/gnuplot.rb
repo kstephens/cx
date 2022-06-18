@@ -41,7 +41,11 @@ module CX
         when /^b/
           @style = :barchart
         when /^c/
-          @style = :candlestick
+          @style = :candlesticks
+        when /^f/
+          @style = :financebars
+        when /^s/
+          @style = :statistics
         when /^(p|l)/
           @style = :plot
         else
@@ -141,7 +145,7 @@ module CX
       end
 
       def stty_size
-        `stty size`.chomp.split(/\s+/,-1).map(&:to_i).reverse
+        `stty size 2>/dev/null`.chomp.split(/\s+/,-1).map(&:to_i).reverse
           .tap { |xy| xy[1] -= 2 } # Adjust for shell prompt!
       end
 
@@ -152,6 +156,7 @@ module CX
           border: 0,
           palette: "cubehelix",
           boxwidth: 0.75,
+#          linewidth: 2.0,
         )
         
         format!
@@ -171,15 +176,11 @@ module CX
         popts[:ylabel] &&= escape_string(popts[:ylabel])
         
         case @style
-        when :candlestick
+        when :barchart, :candlesticks, :financebars, :statistics
           popts[:xrange] ||= "[-0.5:#{@input.size + 0.5}]"
           popts[:boxwidth] ||= 1.0
           popts[:bars] ||= 1.5
           popts[:errorbars] ||= 1.5
-        when :barchart
-          popts_update(
-            # xtics: nil
-          )
         when :plot
           popts_update(
             style: 'data linespoints',
@@ -297,6 +298,31 @@ module CX
         end
         [ %Q{#{@datafile.inspect} using #{using} with candlesticks title "" linewidth #{opts.fetch(:linewidth, 2.0)} whisker #{opts.fetch(:whisker , 0.5)}} ]
       end
+
+      def plot_financebars
+        using = '1:4:3:6:5'
+        case
+        when @x_col
+          using += ":xtic(#{@x_ind})"
+        end
+        [ %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 2.0)}} ]
+      end
+
+      def plot_statistics
+        pp %w[i x count sum min max mean median stddev].map(&:to_sym).zip(1 .. 99).to_h
+        using = '1:4:3:6:5'
+        case
+        when @x_col
+          using += ":xtic(#{@x_ind})"
+        end
+        [
+           %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 2.0)}},
+
+        ]
+      end
+
+      #################################################
+      # Style support
 
       def line_style!
         self << %Q{set style line #{@y_i + 100} linecolor rgbcolor #{rgb_i(@y_i)}}
