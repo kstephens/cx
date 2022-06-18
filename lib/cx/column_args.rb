@@ -34,7 +34,6 @@ module CX
         when x >= 0
           index == x
         when x < 0
-          # binding.pry
           column && index == column.header.size + x
         end
       when ColumnArg
@@ -52,12 +51,11 @@ module CX
   class ColumnArgs
     include Enumerable, Support, Rx
 
-    attr_reader :args, :header, :bound, :unbound
+    attr_reader :args, :header
 
     def initialize
       @args = [ ]
       @header = nil
-      @bound = @unbound = [ ].freeze
     end
 
     def inspect_content modes
@@ -155,8 +153,8 @@ module CX
           when col = header.find{|c| c.name_ == ca.name}
             col
           end
+        ca.column and ca.index = ca.column.order
       end
-      calc_bound!
       self
     end
 
@@ -186,24 +184,6 @@ module CX
         end
       end
       @args = new_cas
-      calc_bound!
-      self
-    end
-
-    def calc_bound!
-      @bound = [ ]
-      @unbound = [ ]
-      @args.each do | ca |
-        if ca.column
-          ca.name  = ca.column.name 
-          ca.index = ca.column.order
-          @bound << ca unless @bound.include?(ca)
-        else
-          @unbound << ca unless @unbound.include?(ca)
-        end
-      end
-      @bound.freeze
-      @unbound.freeze
       self
     end
 
@@ -213,7 +193,15 @@ module CX
       end
       self
     end
+
+    def unbound
+      @args.reject(&:column)
+    end
     
+    def bound
+      @args.select(&:column)
+    end
+
     def check!
       unless (ub = unbound).empty?
         msg = ub.map(&:arg_str).map(&:inspect).join(', ')
