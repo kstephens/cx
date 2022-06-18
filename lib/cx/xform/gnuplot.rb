@@ -232,7 +232,7 @@ module CX
       
       def y_cols_map
         @x_ind = x_col && @columns.index(x_col) + 2
-        y_cols.map.with_index do | y_col, y_i |
+        @y_cols.map.with_index do | y_col, y_i |
           @y_col = y_col
           @y_i = y_i
           @y_ind = @columns.index(y_col) + 2
@@ -260,8 +260,8 @@ module CX
 
       # Iterate over y columns
       def plot_y
-        plots = y_cols_map do | y_col, i |
-          send(:"#{@style}_y")
+        y_cols_map do | y_col, i |
+          send(:"plot_#{@style}_y")
         end
       end
 
@@ -309,7 +309,7 @@ module CX
       end
 
       def plot_statistics
-        pp %w[i x count sum min max mean median stddev].map(&:to_sym).zip(1 .. 99).to_h
+        # pp %w[i x count sum min max mean median stddev].map(&:to_sym).zip(1 .. 99).to_h
         using = '1:4:3:6:5'
         case
         when @x_col
