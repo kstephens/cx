@@ -23,8 +23,10 @@ module CX
     class Stats
       include SelectColumns, Xform
       
+      STATS_FIELDS = [:count, :sum, :min, :max, :mean, :median, :stddev].freeze
+      
       def call input, env
-        column_args!(input)
+        column_args!(input).check!
         group_ca, values_ca = column_args.partition{|ca| /^g/i.match?(ca.args.first || '') }
 
         if group_ca.empty?
@@ -35,7 +37,7 @@ module CX
           end.values
         end
 
-        stats_fields = [:count, :sum, :min, :max, :mean, :median, :stddev]
+        stats_fields = STATS_FIELDS
 
         header = [ ]
         group_cols = group_ca.map do | ca |
