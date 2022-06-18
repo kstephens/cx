@@ -54,11 +54,23 @@ module CX
 
     def self.load! opts
       e = new_from_hash(opts)
-      e = YAML.load(File.read(e.yaml_file))
+      e = YAML_load(File.read(e.yaml_file))
       # Logging.log.info "#{opts.inspect} Loaded: #{e.inspect}"
       e
     end
-
+    def self.YAML_load(data, **opts)
+      YAML.safe_load(data,
+        **opts,
+        permitted_classes: [
+          Example,
+          Files,
+          #CommandDesc,
+          #CommandDesc::Option,
+          OpenStruct,
+          Symbol,
+        ]
+      )
+    end
     def write_files!
       FileUtils.mkdir_p(dir)
       File.write(files.run, <<"END")
