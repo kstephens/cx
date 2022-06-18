@@ -223,14 +223,9 @@ module CX
         popts_update(
           # xtics: nil
         )
-        case @style
-        when :candlestick
-          plots = [ candlesticks ]
-        else
-          plots = y_cols_map do | y_col, i |
-            plot_y
-          end
-        end
+
+        plots = send(:"plot_#{@style}").flatten
+        
         self << "plot " + plots * ", \\\n     "
       end
       
@@ -259,16 +254,20 @@ module CX
         self
       end
       
+      #################################################
+      # Styles
+
+      # Iterate over y columns
       def plot_y
-        case @style
-        when :barchart
-          boxes
-        else
-          linespoints
+        plots = y_cols_map do | y_col, i |
+          send(:"#{@style}_y")
         end
       end
 
-      def linespoints
+      alias :plot_plot      :plot_y
+      alias :plot_barchart  :plot_y
+
+      def plot_plot_y
         using = case
                 when @x_col && opts[:x_labels]
                   "1:#{@y_ind}:xtic(#{@x_ind})"
@@ -280,7 +279,7 @@ module CX
         %Q{#{@datafile.inspect} using #{using} with linespoints linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
-      def boxes
+      def plot_barchart_y
         using = case
                 when @x_col
                   "1:#{@y_ind}:xtic(#{@x_ind})"
@@ -290,13 +289,13 @@ module CX
         %Q{#{@datafile.inspect} using #{using} with boxes linestyle #{@y_i + 100} #{@plot_opts} title #{@y_title} #{@title_color}}
       end
 
-      def candlesticks
+      def plot_candlesticks
         using = '1:4:3:6:5'
         case
         when @x_col
           using += ":xtic(#{@x_ind})"
         end
-        %Q{#{@datafile.inspect} using #{using} with financebars title ""}
+        [ %Q{#{@datafile.inspect} using #{using} with candlesticks title "" linewidth #{opts.fetch(:linewidth, 2.0)} whisker #{opts.fetch(:whisker , 0.5)}} ]
       end
 
       def line_style!
@@ -318,6 +317,9 @@ module CX
         Color::HSL.new(h * 360.0, s * 100, v * 100).html.inspect
       end
 
+      #################################################
+      
+      # Emit data block
       def data!
         i = -1
         @input.each do |r|
