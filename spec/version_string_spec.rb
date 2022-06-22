@@ -30,25 +30,6 @@ module CX
 END
     end
 
-    it "nums" do
-      expect(table(versions.map(&:nums)))
-        .to eq(<<~END.strip)
-        +----------+------------------------+
-        | ""       | []                     |
-        | "1"      | [1]                    |
-        | "2"      | [2]                    |
-        | "1.2"    | [1, nil, 2]            |
-        | "1.2.1"  | [1, nil, 2, nil, 1]    |
-        | "1.23a"  | [1, nil, 23, nil]      |
-        | "1.23-b" | [1, nil, 23, nil, nil] |
-        | "a 2.3"  | [nil, nil, 2, nil, 3]  |
-        | "a 2.4"  | [nil, nil, 2, nil, 4]  |
-        | "b"      | [nil]                  |
-        | "b 1.1"  | [nil, nil, 1, nil, 1]  |
-        +----------+------------------------+
-END
-    end
-
     it "to_a" do
       expect(table(versions.map(&:to_a)))
       .to eq(<<~END.strip)
