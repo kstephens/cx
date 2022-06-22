@@ -6,9 +6,29 @@ require 'bigdecimal'
 require 'rational'
 require 'set'
 require 'cx/boolean'
+require 'cx/version_string'
 
 module CX
-  class Type < Struct.new(:mod, :caster, :coercer, :matcher, :parser, :formatter, :name, :to_s, :rank)
+  class Type < Struct.new(
+    # The Module (or Class) that best represents this type:
+    :mod,
+    # Cast strings values to this type: 
+    :caster, 
+    # Coerce: 
+    :coercer,
+    # Returns true if String can be parsed into an instance of :mod. 
+    :matcher,
+    # Parses the most precise object of this type, returns nil otherwise.
+    :parser, 
+    # Formats values of this type, given an optional sprintf string.
+    :formatter,
+    # Symbol name of the type.
+    :name,
+    # String name of the type.
+     :to_s,
+    # Lower ranks are tried first.
+    :rank
+    )
     include Support
     
     def initialize *args
@@ -19,6 +39,8 @@ module CX
       self.rank = 0
     end
 
+    # Returns a substring of v that can be parsed by this type.
+    # Returns nil if v cannot be parsed. 
     def match v, anchored = true
       case v
       when String
@@ -31,21 +53,20 @@ module CX
       nil
     end
     
+    # Parses String v if it matches.
+    # Return v if v is nil or is already this type.
     def parse v, anchored = true
       case v
       when nil, mod
         v
       when String
-        if vp = match(v, anchored)
-          return nil if anchored && vp != v
-          vp = parser.call(self, vp)
-        end
-        vp
+        v = match(v, anchored) and parser.call(self, v)
       end
     rescue
       nil
     end
 
+    # Returns first parsed value.
     def self.parse v, anchored = true, types = @@types
       return v unless String === v
       types.find do | t |
