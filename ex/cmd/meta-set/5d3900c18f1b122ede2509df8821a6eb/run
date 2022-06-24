@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-dir='ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708'
+dir='ex/cmd/meta-set/5d3900c18f1b122ede2509df8821a6eb'
 cp -p ex/data/*.* "$dir"
 export CX_RANDOM_SEED=1638854222
 PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
 [[ -n "$CX_VERBOSE" ]] && set -x
 (
-  cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md;
+  cx in SOME.csv // -h // -meta // meta= 'c:name=newname;order=-1' // md;
   echo $! > exit_code
 ) 2> stderr > actual
 [[ -f expected ]] || cp actual expected

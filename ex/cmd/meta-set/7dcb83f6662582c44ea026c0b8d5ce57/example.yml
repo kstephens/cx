@@ -1,31 +1,31 @@
 --- !ruby/struct:CX::Example
-command: set-meta
-example: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' //
+command: meta-set
+example: cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right' //
   md
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
-  run: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/run
-  stderr: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/stderr
-  expected: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/expected
-  actual: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/actual
-  diff: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/diff
+  run: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/run
+  stderr: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/stderr
+  expected: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/expected
+  actual: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/actual
+  diff: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/diff
 contents: 
-dir: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48
-dir_name: b14ee374de5c2d7ec18e3cffb4af9f48
+dir: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57
+dir_name: 7dcb83f6662582c44ea026c0b8d5ce57
 base_dir: ex/cmd
-yaml_file: ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48/example.yml
+yaml_file: ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57/example.yml
 contents: !ruby/struct:CX::Example::Files
   run: |
     #!/usr/bin/env bash
-    dir='ex/cmd/set-meta/b14ee374de5c2d7ec18e3cffb4af9f48'
+    dir='ex/cmd/meta-set/7dcb83f6662582c44ea026c0b8d5ce57'
     cp -p ex/data/*.* "$dir"
     export CX_RANDOM_SEED=1638854222
     PATH="$(/bin/pwd)/bin:$PATH"
     cd "$dir" || exit 9
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
-      cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md;
+      cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right' // md;
       echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected

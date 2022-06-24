@@ -26,16 +26,16 @@ require 'cx/xform'
 #     - 'cx in SOME.csv // -h // parse // -meta // meta- // h-'
 
 # :COMMAND:
-# SetMeta:
-#   aliases: [ meta= ]
+# MetaSet:
+#   aliases: [ meta=, set-meta ]
 #   synopsis: Set column meta.
 #   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:
-#     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md"
-#     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md"
-#     - "cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md"
+#     - "cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right' // md"
+#     - "cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right;order=9' // meta- // cut name,order,max_size,align // md"
+#     - "cx in SOME.csv // -h // -meta // meta= 'c:name=newname;order=-1' // md"
 #     - "cx in SOME.csv // -h // -meta // meta= 'c:some_option=123' // meta- // md"
 
 module CX
@@ -110,7 +110,7 @@ module CX
       end
     end
 
-    class SetMeta
+    class MetaSet
       include SelectColumns, Xform
 
       def call input, env

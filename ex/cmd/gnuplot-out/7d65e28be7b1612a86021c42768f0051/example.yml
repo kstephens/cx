@@ -68,7 +68,7 @@ contents: !ruby/struct:CX::Example::Files
     \    120 + @  *                                                                 \n
     \              *                                                                \n
     \               *                                                               \n
-    y2  100 +       **                                                             \n
+    \    100 +       **                                                             \n
     \                  *                                                            \n
     \                   *                                                           \n
     \     80 +           *  **@**                                                   \n
@@ -108,7 +108,7 @@ contents: !ruby/struct:CX::Example::Files
     \    120 + @  *                                                                 \n+
     \              *                                                                \n+
     \               *                                                               \n+
-    y2  100 +       **                                                             \n+
+    \    100 +       **                                                             \n+
     \                  *                                                            \n+
     \                   *                                                           \n+
     \     80 +           *  **@**                                                   \n+

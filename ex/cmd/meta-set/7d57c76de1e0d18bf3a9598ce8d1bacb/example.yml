@@ -1,31 +1,31 @@
 --- !ruby/struct:CX::Example
-command: set-meta
-example: cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
-  //  meta- // cut name,order,max_size,align // md
+command: meta-set
+example: cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right;order=9'
+  // meta- // cut name,order,max_size,align // md
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
-  run: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/run
-  stderr: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/stderr
-  expected: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/expected
-  actual: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/actual
-  diff: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/diff
+  run: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/run
+  stderr: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/stderr
+  expected: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/expected
+  actual: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/actual
+  diff: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/diff
 contents: 
-dir: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708
-dir_name: 5bf68b648a35b9b76aff6257ac6ef708
+dir: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb
+dir_name: 7d57c76de1e0d18bf3a9598ce8d1bacb
 base_dir: ex/cmd
-yaml_file: ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708/example.yml
+yaml_file: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/example.yml
 contents: !ruby/struct:CX::Example::Files
   run: |
     #!/usr/bin/env bash
-    dir='ex/cmd/set-meta/5bf68b648a35b9b76aff6257ac6ef708'
+    dir='ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb'
     cp -p ex/data/*.* "$dir"
     export CX_RANDOM_SEED=1638854222
     PATH="$(/bin/pwd)/bin:$PATH"
     cd "$dir" || exit 9
     [[ -n "$CX_VERBOSE" ]] && set -x
     (
-      cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md;
+      cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right;order=9' // meta- // cut name,order,max_size,align // md;
       echo $! > exit_code
     ) 2> stderr > actual
     [[ -f expected ]] || cp actual expected

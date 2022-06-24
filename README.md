@@ -471,7 +471,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
      100 +       ##                      **@         @***********               
                    ##              ******  *        *                           
       80 +           #@###@####****         *      *                            
-y1,y2                     @**  ########     *      *                            
+                          @**  ########     *      *                            
       60 +               *             ####@##@######@#####                     
                         *                    *   *         ############         
       40 +  @**         *                    *  *                      #####@   
@@ -503,7 +503,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
                                                                    **@          
       60 +                                                     ****             
       50 +                                            @******@*                 
-  x                                                 **                          
+                                                    **                          
       40 +                                        **                            
                                                  *                              
       30 +                                     **                               
@@ -533,7 +533,7 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot
      120 + @  *                                                                 
                *                                                                
                 *                                                               
- y2  100 +       **                                                             
+     100 +       **                                                             
                    *                                                            
                     *                                                           
       80 +           *  **@**                                                   
@@ -555,27 +555,27 @@ $ cx in plot.csv // -h // gnuplot- --size=80x25 --style=b x // cmd gnuplot
                                                                                 
                                                                                 
                                       plot.csv                                  
-     100 +          +          +           +          +          +  ******  +   
-         +          +          +           +          +          +  *    *  +   
-      90 +                                                         x*******     
-                                                                    *    *      
-      80 +                                                          *    *      
-                                                                    *    *      
-      70 +                                                          *    *      
-                                                               ******    *      
-      60 +                                                     *   **    *      
-      50 +                                          ********** *   **    *      
-  x                                                 *   **   * *   **    *      
-      40 +                                          *   **   * *   **    *      
-                                                    *   **   * *   **    *      
-      30 +                                          *   **   * *   **    *      
-                                              ***** *   **   * *   **    *      
-      20 +                              *******   * *   **   * *   **    *      
-                                        *    **   * *   **   * *   **    *      
-      10 +                              *    **   * *   **   * *   **    *      
-         +          +        ***** ******  + **   * * + **   * * + **    *  +   
-       0 +        ***** ********** **************** ********** ***********  +   
-        -2          0          2           4          6          8          10  
+     100 +  +           +           +            +           +   *****   +      
+            +           +           +            +           +   *   *   +      
+      90 +                                                       * x ******     
+                                                                 *   *          
+      80 +                                                       *   *          
+                                                                 *   *          
+      70 +                                                       *   *          
+                                                          ****** *   *          
+      60 +                                                *    * *   *          
+      50 +                                    *************    * *   *          
+                                              *    **    **    * *   *          
+      40 +                                    *    **    **    * *   *          
+                                              *    **    **    * *   *          
+      30 +                                    *    **    **    * *   *          
+                                        *******    **    **    * *   *          
+      20 +                        *******    **    **    **    * *   *          
+                                  *    **    **    **    **    * *   *          
+      10 +                        *    **    **    **    **    * *   *          
+            +         ************* +  **    **  + **    **  + * *   *   +      
+       0 +***** ***** ****************************************** *****   +      
+            0           2           4            6           8           10     
                                                                                 
 ```
 
@@ -972,6 +972,67 @@ d,d,true,3,3,String,3,3,abc,foo,0,0,,,,String,String
 
 --------------------------
 
+## `meta-set`
+
+`meta-set`
+*[* *column-args ...* *]*
+
+Synopsis: Set column meta.
+
+Aliases: `meta=`, `set-meta`
+
+  Examples:
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right' // md
+| a                    | b     | c     | d     |
+| -------------------: | ----- | ----- | ----- |
+|                    1 | ab    | 3     | foo   |
+|                   24 | 44    | 6     | bar   |
+|                  134 | 5     | 9     | baz   |
+|                    2 | 12    | 11    | abc   |
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right;order=9' // meta- // cut name,order,max_size,align // md
+| name  | order | max_size | align |
+| ----- | ----: | -------: | ----- |
+| b     |     1 |        2 |       |
+| c     |     2 |        2 |       |
+| d     |     3 |        3 |       |
+| a     |     9 |       20 | right |
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // -meta // meta= 'c:name=newname;order=-1' // md
+| newname | a     | b     | d     |
+| ------- | ----- | ----- | ----- |
+| 3       | 1     | ab    | foo   |
+| 6       | 24    | 44    | bar   |
+| 9       | 134   | 5     | baz   |
+| 11      | 2     | 12    | abc   |
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // -meta // meta= 'c:some_option=123' // meta- // md
+| name  | name_ | visible | order | index | type  | min_size | max_size | min_value | max_value | blanks | nulls | format | align | align_inferred | types    | type_inferred | some_option |
+| ----- | ----- | ------- | ----: | ----: | ----- | -------: | -------: | --------- | --------- | -----: | ----: | ------ | ----- | -------------- | -------- | ------------- | ----------- |
+| a     | a     | true    |     0 |     0 |       |        1 |        3 | 1         | 24        |      0 |     0 |        |       |                | String   | String        |             |
+| b     | b     | true    |     1 |     1 |       |        1 |        2 | 12        | ab        |      0 |     0 |        |       |                | String   | String        |             |
+| c     | c     | true    |     2 |     2 |       |        1 |        2 | 11        | 9         |      0 |     0 |        |       |                | String   | String        | 123         |
+| d     | d     | true    |     3 |     3 |       |        3 |        3 | abc       | foo       |      0 |     0 |        |       |                | String   | String        |             |
+```
+
+--------------------------
+
 ## `nop`
 
 `nop`
@@ -1304,53 +1365,6 @@ uuid,a,b,c,d
 
 --------------------------
 
-## `set-meta`
-
-`set-meta`
-*[* *column-args ...* *]*
-
-Synopsis: Set column meta.
-
-  Examples:
-
---------------------------
-
-```none
-$ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
-| a                    | b     | c     | d     |
-| -------------------: | ----- | ----- | ----- |
-|                    1 | ab    | 3     | foo   |
-|                   24 | 44    | 6     | bar   |
-|                  134 | 5     | 9     | baz   |
-|                    2 | 12    | 11    | abc   |
-```
-
---------------------------
-
-```none
-$ cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md
-| name  | order | max_size | align |
-| ----- | ----: | -------: | ----- |
-| b     |     1 |        2 |       |
-| c     |     2 |        2 |       |
-| d     |     3 |        3 |       |
-| a     |     9 |       20 | right |
-```
-
---------------------------
-
-```none
-$ cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
-| newname | a     | b     | d     |
-| ------- | ----- | ----- | ----- |
-| 3       | 1     | ab    | foo   |
-| 6       | 24    | 44    | bar   |
-| 9       | 134   | 5     | baz   |
-| 11      | 2     | 12    | abc   |
-```
-
---------------------------
-
 ## `sort`
 
 `sort`
@@ -1431,6 +1445,7 @@ a,b,c,d
 `--temporary`
 `--insert`
 `--varchar-size=...` *]*
+*[* *column-args ...* *]*
 
 Synopsis: Generates CSV lines.
 
@@ -1471,9 +1486,36 @@ INSERT INTO SOME_TABLE
   (a, b, c, d)
 VALUES
   (1, 'ab', 3, 'foo'),
-  (24, 44, 6, 'bar'),
-  (134, 5, 9, 'baz'),
-  (2, 12, 11, 'abc');
+  (24, '44', 6, 'bar'),
+  (134, '5', 9, 'baz'),
+  (2, '12', 11, 'abc');
+
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // parse // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)' // sql- --table=SOME_TABLE a b 'c:type=NUMERIC;default=-1' --create --temporary
+CREATE TEMPORARY TABLE SOME_TABLE
+(
+  a VARCHAR(5),
+  b TEXT,
+  c NUMERIC DEFAULT -1
+);
+
+```
+
+--------------------------
+
+```none
+$ cx in SOME.csv // -h // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)' // sql- --table=SOME_TABLE --insert
+INSERT INTO SOME_TABLE
+  (a, b, c)
+VALUES
+  ('1', 'ab', 3),
+  ('24', '44', 6),
+  ('134', '5', 9),
+  ('2', '12', 11);
 
 ```
 

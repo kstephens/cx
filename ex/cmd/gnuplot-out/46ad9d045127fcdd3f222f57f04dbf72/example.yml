@@ -69,7 +69,7 @@ contents: !ruby/struct:CX::Example::Files
     \        \n                                                                   **@
     \         \n      60 +                                                     ****
     \            \n      50 +                                            @******@*
-    \                \n  x                                                 **                          \n
+    \                \n                                                    **                          \n
     \     40 +                                        **                            \n
     \                                                *                              \n
     \     30 +                                     **                               \n
@@ -112,7 +112,7 @@ contents: !ruby/struct:CX::Example::Files
     \        \n+                                                                   **@
     \         \n+      60 +                                                     ****
     \            \n+      50 +                                            @******@*
-    \                \n+  x                                                 **                          \n+
+    \                \n+                                                    **                          \n+
     \     40 +                                        **                            \n+
     \                                                *                              \n+
     \     30 +                                     **                               \n+

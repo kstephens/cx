@@ -1,23 +1,23 @@
 --- !ruby/struct:CX::Example
-command: set-meta
+command: meta-set
 example: cx in SOME.csv // -h // -meta // meta= 'c:some_option=123' // meta- // md
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
-  run: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/run
-  stderr: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/stderr
-  expected: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/expected
-  actual: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/actual
-  diff: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/diff
+  run: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/run
+  stderr: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/stderr
+  expected: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/expected
+  actual: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/actual
+  diff: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/diff
 contents: 
-dir: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e
+dir: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e
 dir_name: 0ee6bd60506f3e5cc569e0b4a595659e
 base_dir: ex/cmd
-yaml_file: ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e/example.yml
+yaml_file: ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e/example.yml
 contents: !ruby/struct:CX::Example::Files
   run: |
     #!/usr/bin/env bash
-    dir='ex/cmd/set-meta/0ee6bd60506f3e5cc569e0b4a595659e'
+    dir='ex/cmd/meta-set/0ee6bd60506f3e5cc569e0b4a595659e'
     cp -p ex/data/*.* "$dir"
     export CX_RANDOM_SEED=1638854222
     PATH="$(/bin/pwd)/bin:$PATH"
