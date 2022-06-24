@@ -133,6 +133,9 @@ module CX
       raise_ ArgumentError unless @columns.include?(c)
       @to_column.delete(c.name)
       @columns.delete(c)
+      @aliases.to_a.each do | name, col |
+        @aliases.delete(name) if col == c
+      end
       c._header = nil
       compact!
       @version += 1
