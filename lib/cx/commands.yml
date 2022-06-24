@@ -9,7 +9,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align
   file: lib/cx/xform/align.rb
@@ -24,8 +24,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
   file: lib/cx/xform/cat.rb
@@ -44,8 +44,8 @@
   - command
   - args...
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/cmd.rb
   lineno: 6
@@ -60,7 +60,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/coerce.rb
   lineno: 8
@@ -79,12 +79,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :separator
     description: 'Column separator: defaults to `","`.'
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/csv.rb
   lineno: 8
@@ -103,12 +103,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :separator
     description: 'Column separator: defaults to `","`.'
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // csv- --separator="\x09"
   file: lib/cx/xform/csv.rb
@@ -124,7 +124,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // cut a,d // h-
   - cx in SOME.csv // -h // cut b a c // h-
@@ -161,8 +161,8 @@
     values: []
     has_value: true
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/delimited.rb
   lineno: 7
@@ -200,7 +200,7 @@
     has_value: true
     has_default: true
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/delimited.rb
   lineno: 17
@@ -215,8 +215,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.edn // -edn // h-
   file: lib/cx/xform/edn.rb
@@ -232,8 +232,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // edn-
   - cx in SOME.csv // -h // parse // h- // edn- --mode=row
@@ -250,7 +250,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/empty_to_null.rb
   lineno: 6
@@ -270,12 +270,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :erb-options
     description: See ERB doc trim_mode.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // erb SOME.erb
   file: lib/cx/xform/erb.rb
@@ -290,8 +290,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-
   - cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-
@@ -326,7 +326,7 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :format
     description: 'Gnuplot format: term,tty,console,svg,...'
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
@@ -340,7 +340,7 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :size
     description: width x height.  Default TTY size or 1024x768.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
@@ -368,12 +368,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :x-labels
     description: the X column contains discrete labels.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in plot.csv // -h // gnuplot- --size=80x25 // cmd gnuplot
   - cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
@@ -395,12 +395,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :negate
     description: 'Negate match. Alias: `--v`.'
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // grep d:f
   - cx in SOME.csv // -h // grep d:a
@@ -420,8 +420,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // csv-
   file: lib/cx/xform/header.rb
@@ -442,14 +442,14 @@
     name: :meta-columns
     description: Emit a row for each meta-column containing the meta value for that
       column..
-    default:
+    default: 
     values:
     - meta-column
     - "..."
     has_value: true
     has_default: false
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -csv // -h // h- // csv-
   - cx in SOME.csv // -csv // -h // parse // h- --meta-columns=type,max_value // csv-
@@ -472,8 +472,8 @@
   - run-examples
   - make-help
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/help.rb
   lineno: 6
@@ -495,14 +495,14 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :title
     description: Sets the HTML `title`.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :table-only
     description: Emit the HTML `table` only.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
@@ -537,35 +537,35 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :raw
     description: Comma-separated list of columns containing raw HTML.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :link
     description: Comma-separated list of columns containing URLS.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :head
     description: Additional raw HTML at foot of `head`.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :body-head
     description: Additional raw HTML at head of `body`.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :body-foot
     description: Additional raw HTML at foot of `body`.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
@@ -577,7 +577,7 @@
     has_value: true
     has_default: true
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/html.rb
   lineno: 12
@@ -596,8 +596,8 @@
   - filename
   - "..."
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/io.rb
   lineno: 7
@@ -616,8 +616,8 @@
   - filename
   - "..."
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/io.rb
   lineno: 14
@@ -635,7 +635,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // jira
   file: lib/cx/xform/jira.rb
@@ -651,8 +651,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.json // -json // h-
   file: lib/cx/xform/json.rb
@@ -668,8 +668,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // json-
   file: lib/cx/xform/json.rb
@@ -704,7 +704,7 @@
     has_value: false
     has_default: true
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // markdown
   - cx in SOME.csv // -h // parse // md
@@ -726,12 +726,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :clear-type
     description: Clear column type.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // h-
   file: lib/cx/xform/meta.rb
@@ -748,7 +748,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // meta- // h-
   - cx in SOME.csv // -h // parse // -meta // meta- // h-
@@ -786,8 +786,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/nop.rb
   lineno: 6
@@ -802,7 +802,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // align // h-
   file: lib/cx/xform/parse.rb
@@ -831,12 +831,12 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :strings-only
     description: Ignore non-strings.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/quote.rb
   lineno: 7
@@ -865,8 +865,8 @@
     values: []
     has_value: true
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/record.rb
   lineno: 7
@@ -895,8 +895,8 @@
     values: []
     has_value: true
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/record.rb
   lineno: 18
@@ -911,8 +911,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in RANDOM.csv // -h // region -1            // h-
   - cx in RANDOM.csv // -h // region 2,4,6         // h-
@@ -935,7 +935,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/remove_empty.rb
   lineno: 9
@@ -953,26 +953,26 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :search
     description: Search for in all columns.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :replace
     description: Replace matches with.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :global
     description: Replace all occurances.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
   - cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace=_ // h-
@@ -991,8 +991,8 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // reverse // h-
   - cx in SOME.csv // reverse
@@ -1029,8 +1029,8 @@
     values: []
     has_value: true
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // row-id --start=100 // h-
   - cx in SOME.csv // -h // row-id --name=id // h-
@@ -1049,7 +1049,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // sort d  // h-
   - cx in SOME.csv // -h // sort    // h-
@@ -1072,49 +1072,49 @@
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :table
     description: Table name.
-    default:
+    default: 
     values: []
     has_value: true
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :transaction
     description: Emit a TRANSACTION block.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :rollback
     description: Emit a ROLLBACK statement.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :commit
     description: Emit a COMMIT statement.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :create
     description: Emit a CREATE TABLE statement.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :temporary
     description: CREATE TEMPORARY TABLE statement.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :insert
     description: Emit INSERT INTO statements.
-    default:
+    default: 
     values: []
     has_value: false
     has_default: false
@@ -1125,11 +1125,15 @@
     values: []
     has_value: true
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: true
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --create
   - cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
+  - cx in SOME.csv // -h // parse // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)'
+    // sql- --table=SOME_TABLE a b 'c:type=NUMERIC;default=-1' --create --temporary
+  - cx in SOME.csv // -h // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)' //
+    sql- --table=SOME_TABLE --insert
   file: lib/cx/xform/sql.rb
   lineno: 8
   path: cx/xform/sql
@@ -1143,7 +1147,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in stats-data.csv // -h // parse // stats salary // md
   - cx in stats-data.csv // -h // parse // stats dept:g salary // md
@@ -1163,7 +1167,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/strip.rb
   lineno: 6
@@ -1180,8 +1184,8 @@
   - pipelines
   - "..."
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/tee.rb
   lineno: 5
@@ -1202,8 +1206,8 @@
     values: []
     has_value: false
     has_default: true
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // transpose // h-
   - cx in SOME.csv // -h // transpose --no-include-header // h-
@@ -1221,8 +1225,8 @@
   - ".tsv"
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/tsv.rb
   lineno: 7
@@ -1238,8 +1242,8 @@
   - ".tsv"
   arguments: []
   options: []
-  has_column_args:
-  has_pipeline_args:
+  has_column_args: 
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // tsv-
   file: lib/cx/xform/tsv.rb
@@ -1257,7 +1261,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples: []
   file: lib/cx/xform/type_inference.rb
   lineno: 7
@@ -1272,7 +1276,7 @@
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // uniq d  // h-
   - cx in SOME.csv // -h // uniq    // h-

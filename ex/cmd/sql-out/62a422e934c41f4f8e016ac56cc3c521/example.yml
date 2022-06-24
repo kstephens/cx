@@ -1,0 +1,53 @@
+--- !ruby/struct:CX::Example
+command: sql-out
+example: cx in SOME.csv // -h // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)'
+  // sql- --table=SOME_TABLE --insert
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/run
+  stderr: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/stderr
+  expected: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/expected
+  actual: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/actual
+  diff: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/diff
+contents: 
+dir: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521
+dir_name: 62a422e934c41f4f8e016ac56cc3c521
+base_dir: ex/cmd
+yaml_file: ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/sql-out/62a422e934c41f4f8e016ac56cc3c521'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in SOME.csv // -h // cut a b c // parse // meta= 'a:sql_type=VARCHAR(5)' // sql- --table=SOME_TABLE --insert;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |+
+    INSERT INTO SOME_TABLE
+      (a, b, c)
+    VALUES
+      ('1', 'ab', 3),
+      ('24', '44', 6),
+      ('134', '5', 9),
+      ('2', '12', 11);
+
+  actual: |+
+    INSERT INTO SOME_TABLE
+      (a, b, c)
+    VALUES
+      ('1', 'ab', 3),
+      ('24', '44', 6),
+      ('134', '5', 9),
+      ('2', '12', 11);
+
+  diff: ''

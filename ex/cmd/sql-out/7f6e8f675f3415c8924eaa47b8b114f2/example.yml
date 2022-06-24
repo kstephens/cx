@@ -45,8 +45,10 @@ contents: !ruby/struct:CX::Example::Files
       (a, b, c, d)
     VALUES
       (1, 'ab', 3, 'foo'),
-      (24, 44, 6, 'bar'),
-      (134, 5, 9, 'baz'),
-      (2, 12, 11, 'abc');
+      (24, '44', 6, 'bar'),
+      (134, '5', 9, 'baz'),
+      (2, '12', 11, 'abc');
 
-  diff: ''
+  diff: "@@ -2,7 +2,7 @@\n   (a, b, c, d)\n VALUES\n   (1, 'ab', 3, 'foo'),\n-  (24,
+    44, 6, 'bar'),\n-  (134, 5, 9, 'baz'),\n-  (2, 12, 11, 'abc');\n+  (24, '44',
+    6, 'bar'),\n+  (134, '5', 9, 'baz'),\n+  (2, '12', 11, 'abc');\n \n"
