@@ -17,6 +17,7 @@ require 'cx/stats'
 #     - 'cx in stats-data.csv // -h // parse // stats dept:g salary // md'
 #     - 'cx in stats-data.csv // -h // parse // stats job:g salary // md'
 #     - 'cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md'
+#     - "cx in stats-data.csv // -h // parse // stats dept:g job:g salary // cut dept,job,*_min,*_max // md"
 
 module CX  
   module Xform
