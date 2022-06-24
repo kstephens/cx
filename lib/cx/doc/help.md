@@ -1580,22 +1580,6 @@ $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
 --------------------------
 
 ```none
-$ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // cut dept,job,*_min,*_max // md
-| dept       | job   | salary_min | salary_max |
-| ---------- | ----- | ---------: | ---------: |
-| sales      | a     |       63.0 |       67.0 |
-| sales      | b     |       98.0 |       98.0 |
-| marketing  | a     |       22.0 |       40.0 |
-| marketing  | b     |       85.0 |       87.0 |
-| tech       | a     |       60.0 |       70.0 |
-| tech       | b     |      120.0 |      120.0 |
-| accounting | a     |       40.0 |       47.0 |
-| accounting | b     |      110.0 |      115.0 |
-```
-
---------------------------
-
-```none
 $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median // md
 | dept       | job   | salary_mean | salary_median |
 | ---------- | ----- | ----------: | ------------: |
