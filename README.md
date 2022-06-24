@@ -1709,6 +1709,35 @@ a,b,c,d
 
 --------------------------
 
+```none
+$ cx in DUPLICATES.csv // -h // uniq   // h-
+x,y,z
+1,2,3
+4,5,6
+5,5,3
+```
+
+--------------------------
+
+```none
+$ cx in DUPLICATES.csv // -h // uniq x // h-
+x,y,z
+1,2,3
+4,5,6
+5,5,3
+```
+
+--------------------------
+
+```none
+$ cx in DUPLICATES.csv // -h // uniq y // h-
+x,y,z
+1,2,3
+4,5,6
+```
+
+--------------------------
+
 ## DUPLICATES.csv
 
 ```none

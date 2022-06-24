@@ -1,0 +1,42 @@
+--- !ruby/struct:CX::Example
+command: uniq
+example: cx in DUPLICATES.csv // -h // uniq y // h-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/run
+  stderr: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/stderr
+  expected: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/expected
+  actual: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/actual
+  diff: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/diff
+contents: 
+dir: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8
+dir_name: 80cd5cb232cc76c334864657fe7b97f8
+base_dir: ex/cmd
+yaml_file: ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/uniq/80cd5cb232cc76c334864657fe7b97f8'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in DUPLICATES.csv // -h // uniq y // h-;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    x,y,z
+    1,2,3
+    4,5,6
+  actual: |
+    x,y,z
+    1,2,3
+    4,5,6
+  diff: ''

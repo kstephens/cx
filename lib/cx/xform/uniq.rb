@@ -16,6 +16,9 @@ require 'set'
 #   examples:
 #     - 'cx in SOME.csv // -h // uniq d  // h-'
 #     - 'cx in SOME.csv // -h // uniq    // h-'
+#     - 'cx in DUPLICATES.csv // -h // uniq   // h-'
+#     - 'cx in DUPLICATES.csv // -h // uniq x // h-'
+#     - 'cx in DUPLICATES.csv // -h // uniq y // h-'
 
 module CX
   module Xform
