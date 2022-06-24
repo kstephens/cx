@@ -109,7 +109,9 @@ module CX
     
     def alias! c, name
       c = get(c) if Column === c
-      @aliases[name.to_sym] = c
+      name = name.to_sym
+      @aliases[name] = c
+      c.aliases << name
       self
     end
 

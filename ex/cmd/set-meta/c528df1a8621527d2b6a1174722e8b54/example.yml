@@ -30,7 +30,9 @@ contents: !ruby/struct:CX::Example::Files
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  stderr: ''
+  stderr: |
+    # cx : ERROR  : cxundefined method `aliases' for nil:NilClass
+    Did you mean?  alias
   expected: |
     | newname | a     | b     | d     |
     | ------- | ----- | ----- | ----- |
@@ -38,11 +40,12 @@ contents: !ruby/struct:CX::Example::Files
     | 6       | 24    | 44    | bar   |
     | 9       | 134   | 5     | baz   |
     | 11      | 2     | 12    | abc   |
-  actual: |
-    | newname | a     | b     | d     |
-    | ------- | ----- | ----- | ----- |
-    | 3       | 1     | ab    | foo   |
-    | 6       | 24    | 44    | bar   |
-    | 9       | 134   | 5     | baz   |
-    | 11      | 2     | 12    | abc   |
-  diff: ''
+  actual: ''
+  diff: |
+    @@ -1,6 +0,0 @@
+    -| newname | a     | b     | d     |
+    -| ------- | ----- | ----- | ----- |
+    -| 3       | 1     | ab    | foo   |
+    -| 6       | 24    | 44    | bar   |
+    -| 9       | 134   | 5     | baz   |
+    -| 11      | 2     | 12    | abc   |

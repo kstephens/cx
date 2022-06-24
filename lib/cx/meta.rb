@@ -32,6 +32,7 @@ module CX
         [:align_inferred, type: Symbol],
         [:types,          type: Set], # Set.new([Module])
         [:type_inferred,  type: Module],
+        [:aliases,        type: Set],
       ]
     attr_accessor_typed *ATTRS
 
@@ -60,6 +61,7 @@ module CX
       @name_ = c.name_
       @index = c.index
       @order = c.order
+      @aliases = c.aliases.dup
       self
     end
 
@@ -70,14 +72,13 @@ module CX
     end
     
     def clear! c = nil
-      if c
-        column! c
-      end
+      column! c if c
       @types = Set.new
       @type_inferred = @align_inferred = nil
       @type_object = nil
       @min_width = @max_width = @min_value = @max_value = nil
       @blanks = @nulls = @whitespace = 0
+      @aliases = Set.new
       self
     end
 

@@ -1,5 +1,5 @@
-name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred
-a,a,true,0,0,,1,3,1,24,0,0,,,,String,String
-b,b,true,1,1,,1,2,12,ab,0,0,,,,String,String
-c,c,true,2,2,,1,2,11,9,0,0,,,,String,String
-d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,String
+name,name_,visible,order,index,type,min_size,max_size,min_value,max_value,blanks,nulls,format,align,align_inferred,types,type_inferred,aliases
+a,a,true,0,0,,1,3,1,24,0,0,,,,String,String,""
+b,b,true,1,1,,1,2,12,ab,0,0,,,,String,String,""
+c,c,true,2,2,,1,2,11,9,0,0,,,,String,String,""
+d,d,true,3,3,,3,3,abc,foo,0,0,,,,String,String,""

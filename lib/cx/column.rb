@@ -6,11 +6,12 @@
 require 'cx'
 require 'cx/inspect'
 require 'cx/logging'
+require 'set'
 
 module CX
   class Column
     include Support
-    attr_reader :name, :index, :order, :meta, :header
+    attr_reader :name, :index, :order, :meta, :header, :aliases
     attr_reader :to_s, :name_ # Derived
     alias :to_sym :name
     alias :to_i   :index
@@ -20,10 +21,12 @@ module CX
       self._name = name
       self._order = order
       self._index = index
+      @aliases = Set.new
     end
 
     def clear!
       @header = @order = @index = nil
+      @aliases = Set.new
       self
     end
 
