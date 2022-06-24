@@ -18,6 +18,7 @@ require 'cx/stats'
 #     - 'cx in stats-data.csv // -h // parse // stats job:g salary // md'
 #     - 'cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md'
 #     - "cx in stats-data.csv // -h // parse // stats dept:g job:g salary // cut dept,job,*_min,*_max // md"
+#     - "cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median // md"
 
 module CX  
   module Xform
@@ -46,8 +47,11 @@ module CX
           [ ca.column, out_col ]
         end
         value_cols = values_ca.map do | ca |
+          fields = ca.args
+          fields = stats_fields if fields.empty?
+          pp(ca: ca, fields: fields)
           [ ca.column,
-            stats_fields.map { | sf |
+            fields.map { | sf |
               out_col = Column.new(:"#{ca.column.name}_#{sf}").
                 tap{|c| c.meta.align = :right}
               header << out_col

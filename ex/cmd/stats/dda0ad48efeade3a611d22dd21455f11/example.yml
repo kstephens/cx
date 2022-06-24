@@ -1,0 +1,57 @@
+--- !ruby/struct:CX::Example
+command: stats
+example: cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median
+  // md
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/run
+  stderr: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/stderr
+  expected: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/expected
+  actual: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/actual
+  diff: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/diff
+contents: 
+dir: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11
+dir_name: dda0ad48efeade3a611d22dd21455f11
+base_dir: ex/cmd
+yaml_file: ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/stats/dda0ad48efeade3a611d22dd21455f11'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_VERBOSE" ]] && set -x
+    (
+      cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median // md;
+      echo $! > exit_code
+    ) 2> stderr > actual
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    | dept       | job   | salary_mean | salary_median |
+    | ---------- | ----- | ----------: | ------------: |
+    | sales      | a     |        65.0 |          65.0 |
+    | sales      | b     |        98.0 |          98.0 |
+    | marketing  | a     |        28.5 |          26.0 |
+    | marketing  | b     |        86.0 |          86.0 |
+    | tech       | a     |        65.0 |          65.0 |
+    | tech       | b     |       120.0 |         120.0 |
+    | accounting | a     |        44.0 |          45.0 |
+    | accounting | b     |       112.5 |         112.5 |
+  actual: |
+    | dept       | job   | salary_mean | salary_median |
+    | ---------- | ----- | ----------: | ------------: |
+    | sales      | a     |        65.0 |          65.0 |
+    | sales      | b     |        98.0 |          98.0 |
+    | marketing  | a     |        28.5 |          26.0 |
+    | marketing  | b     |        86.0 |          86.0 |
+    | tech       | a     |        65.0 |          65.0 |
+    | tech       | b     |       120.0 |         120.0 |
+    | accounting | a     |        44.0 |          45.0 |
+    | accounting | b     |       112.5 |         112.5 |
+  diff: ''

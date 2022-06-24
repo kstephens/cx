@@ -1595,6 +1595,22 @@ $ cx in stats-data.csv // -h // parse // stats dept:g job:g salary // cut dept,j
 
 --------------------------
 
+```none
+$ cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median // md
+| dept       | job   | salary_mean | salary_median |
+| ---------- | ----- | ----------: | ------------: |
+| sales      | a     |        65.0 |          65.0 |
+| sales      | b     |        98.0 |          98.0 |
+| marketing  | a     |        28.5 |          26.0 |
+| marketing  | b     |        86.0 |          86.0 |
+| tech       | a     |        65.0 |          65.0 |
+| tech       | b     |       120.0 |         120.0 |
+| accounting | a     |        44.0 |          45.0 |
+| accounting | b     |       112.5 |         112.5 |
+```
+
+--------------------------
+
 ## `strip`
 
 `strip`

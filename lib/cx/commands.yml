@@ -1156,6 +1156,8 @@
   - cx in stats-data.csv // -h // parse // stats dept:g job:g salary // md
   - cx in stats-data.csv // -h // parse // stats dept:g job:g salary // cut dept,job,*_min,*_max
     // md
+  - cx in stats-data.csv // -h // parse // stats dept:g job:g salary:mean;median //
+    md
   file: lib/cx/xform/stats.rb
   lineno: 8
   path: cx/xform/stats
