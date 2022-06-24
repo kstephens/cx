@@ -37,10 +37,11 @@ module CX
 
     #####################################
 
-    attr_reader :state
+    attr_reader :state, :opts
     
     def initialize
       self.visible = true
+      @opts = { }
       clear!
     end
 
@@ -187,7 +188,7 @@ module CX
     end
 
     def to_h
-      ATTRS.map(&:first).map{|k| [k, send(k)]}.to_h
+      ATTRS.map(&:first).map{|k| [k, send(k)]}.to_h.merge(@opts)
     end
 
     def table
@@ -204,7 +205,7 @@ module CX
         opts[:align] ||= align_for_type(type)
         
         col = Column.new(name)
-        col.meta.update_from_hash!(opts.merge(type: type))
+        col.meta.update_from_hash!(opts.merge(name: name, type: type))
         header << col
       end
       
@@ -212,7 +213,19 @@ module CX
         header[:max_value].meta.type =
         type
       
-      Table.new([], header)
+      table_add_opts_columns!(Table.new([], header))
+    end
+
+    def table_add_opts_columns! table
+      header = table.header
+      @opts.each do | name, val |
+        unless header[name]
+          col = Column.new(name)
+          col.meta.update_from_hash(name: name, type: String)
+          header << col
+        end
+      end
+      table
     end
     
     def align_for_type type
@@ -258,6 +271,16 @@ module CX
             .sort
             .first
         end
+    end
+
+    def method_missing sel, *args, &blk
+      case sel.to_s
+      when /^(\w+)=$/
+        return @opts[$1.to_sym] = args.first
+      when /^\w+$/
+        return @opts[sel]
+      end
+      super(sel, *args, &blk)
     end
     
     TYPE_LCM = { }

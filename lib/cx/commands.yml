@@ -758,19 +758,21 @@
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: SetMeta
   name: set-meta
-  aliases: []
+  aliases:
+  - meta=
   synopsis: Set column meta.
   description: ''
   suffixes: []
   arguments: []
   options: []
   has_column_args: true
-  has_pipeline_args:
+  has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md
   - cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9'
     //  meta- // cut name,order,max_size,align // md
   - cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md
+  - cx in SOME.csv // -h // -meta // meta= 'c:some_option=123' // meta- // md
   file: lib/cx/xform/meta.rb
   lineno: 28
   path: cx/xform/meta

@@ -27,7 +27,7 @@ require 'cx/xform'
 
 # :COMMAND:
 # SetMeta:
-#   aliases:
+#   aliases: [ meta= ]
 #   synopsis: Set column meta.
 #   has_column_args: true
 #   args: []
@@ -36,6 +36,7 @@ require 'cx/xform'
 #     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right' // md"
 #     - "cx in SOME.csv // -h // -meta // set-meta 'a:max_size=20;align=right;order=9' //  meta- // cut name,order,max_size,align // md"
 #     - "cx in SOME.csv // -h // -meta // set-meta 'c:name=newname;order=-1' // md"
+#     - "cx in SOME.csv // -h // -meta // meta= 'c:some_option=123' // meta- // md"
 
 module CX
   module Xform
@@ -94,11 +95,17 @@ module CX
       include SelectColumns, Xform
 
       def call input, env
-        columns = column_args!(input).or_all!.columns
         output = input.header.meta.table
+
+        columns = column_args!(input).or_all!.columns
+        columns.each do | c |
+          c.meta.table_add_opts_columns! output
+        end
+
         columns.each do | c |
           output << c.meta.to_h
         end
+
         MetaIn.new.call(output, env)
       end
     end
