@@ -43,16 +43,20 @@ module CX
         header = [ ]
         group_cols = group_ca.map do | ca |
           header << (out_col = ca.column.dup.clear!)
+          out_col.meta.stats_group = true
           [ ca.column, out_col ]
         end
         value_cols = values_ca.map do | ca |
-          fields = ca.args
-          fields = stats_fields if fields.empty?
-          pp(ca: ca, fields: fields)
+          fields = ca.args.empty? ? stats_fields : ca.args
           [ ca.column,
             fields.map { | sf |
               out_col = Column.new(:"#{ca.column.name}_#{sf}").
-                tap{|c| c.meta.align = :right}
+                tap do |c|
+                  c.meta.align = :right
+                  c.meta.type = ::Float
+                  c.meta.stat = sf.to_s
+                  c.meta.stat_col = ca.column.name
+                end
               header << out_col
               [ out_col,  sf ]
             } ]

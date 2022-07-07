@@ -3,6 +3,7 @@
 require 'cx'
 require 'cx/xform'
 require 'cx/xform/record'
+require 'cx/xform/stats'
 require 'color'
 
 # :COMMAND:
