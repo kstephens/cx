@@ -65,6 +65,7 @@ module CX
     def each &blk
       @args.each(&blk)
     end
+    def empty? ; @args.empty? ; end
     def size  ; @args.size  ; end
     def first ; @args[0]    ; end
     def last  ; @args[-1]   ; end
