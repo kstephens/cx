@@ -136,6 +136,16 @@ end
       end
       rx
     end
+
+    def rx_or_str str
+      case str
+      when %r{^/(.*)/([imx]?)?$}
+        eval "%r{#{$1}}#{$2}"
+      else
+        str
+      end
+    end
+
     Empty_Hash = { }.freeze
   end
 end
