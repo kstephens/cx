@@ -58,6 +58,7 @@ module CX
       # Logging.log.info "#{opts.inspect} Loaded: #{e.inspect}"
       e
     end
+
     def self.YAML_load(data, **opts)
       YAML.safe_load(data,
         **opts,
@@ -71,6 +72,7 @@ module CX
         ]
       )
     end
+
     def write_files!
       FileUtils.mkdir_p(dir)
       File.write(files.run, <<"END")
@@ -80,11 +82,9 @@ cp -p ex/data/*.* "$dir"
 export CX_RANDOM_SEED=#{CX::Random.seed}
 PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
-[[ -n "$CX_VERBOSE" ]] && set -x
-(
-  #{example};
-  echo $! > exit_code
-) 2> stderr > actual
+[[ -n "$CX_EX_VERBOSE" ]] && set -x
+#{example} 2> stderr > actual
+echo $! > exit_code
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]
@@ -96,7 +96,7 @@ END
       argv = Shellwords.split(example)
       # pp(argv: argv)
       raise "Unexpected example arg list : #{argv.inspect}" unless argv.shift == 'cx'
-      argv = %w(--debug) + argv if ENV['CX_DEBUG_EXAMPLES']
+      argv = Shellwords.shellsplit(ENV['CX_EX_OPTS'] || '') + argv
       write_files!
       main = CX::Main.new(argv)
       log.delimited "RUNNING LOCALLY" do
