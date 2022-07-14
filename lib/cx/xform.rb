@@ -67,11 +67,13 @@ module CX
     module SelectColumns
       attr_accessor :column_argv, :column_args, :selected_columns
       
-      def column_args! input
+      def parse_args!
         @column_args =
           ColumnArgs.new.
-          parse!(column_argv || args).
-          bind!(input.header).
+          parse!(column_argv || args)
+      end
+      def column_args! input
+          parse_args!.bind!(input.header).
           wildcards!
       end
     end
