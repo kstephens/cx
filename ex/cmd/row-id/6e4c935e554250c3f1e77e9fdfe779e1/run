@@ -4,11 +4,9 @@ cp -p ex/data/*.* "$dir"
 export CX_RANDOM_SEED=1638854222
 PATH="$(/bin/pwd)/bin:$PATH"
 cd "$dir" || exit 9
-[[ -n "$CX_VERBOSE" ]] && set -x
-(
-  cx in SOME.csv // -h // row-id --name=id // h-;
-  echo $! > exit_code
-) 2> stderr > actual
+[[ -n "$CX_EX_VERBOSE" ]] && set -x
+cx in SOME.csv // -h // row-id --name=id // h- 2> stderr > actual
+echo $! > exit_code
 [[ -f expected ]] || cp actual expected
 diff -u expected actual | (read _; read _; cat) > diff
 [[ ! -s diff ]]

@@ -1,0 +1,6 @@
+         line 11: warning: Skipping data file with no valid points
+
+gnuplot> plot "$data" using 4:3 with linespoints linestyle 100  title "y2" 
+                                                                           ^
+         line 11: x range is invalid
+

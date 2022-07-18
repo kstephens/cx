@@ -1,4 +1,0 @@
-
-gnuplot> plot "$data" using 1:2 with boxes linestyle 100 pt "@" title "x" 
-                                                         ^
-         line 11: warning: No pointtype specifier allowed, here

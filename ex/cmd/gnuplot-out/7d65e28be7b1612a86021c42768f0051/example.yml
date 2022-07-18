@@ -22,15 +22,15 @@ contents: !ruby/struct:CX::Example::Files
     export CX_RANDOM_SEED=1638854222
     PATH="$(/bin/pwd)/bin:$PATH"
     cd "$dir" || exit 9
-    [[ -n "$CX_VERBOSE" ]] && set -x
-    (
-      cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot;
-      echo $! > exit_code
-    ) 2> stderr > actual
+    [[ -n "$CX_EX_VERBOSE" ]] && set -x
+    cx in plot.csv // -h // gnuplot- --size=80x25 x y2 // cmd gnuplot 2> stderr > actual
+    echo $! > exit_code
     [[ -f expected ]] || cp actual expected
     diff -u expected actual | (read _; read _; cat) > diff
     [[ ! -s diff ]]
-  stderr: ''
+  stderr: "         line 11: warning: Skipping data file with no valid points\n\ngnuplot>
+    plot \"$data\" using 4:3 with linespoints linestyle 100  title \"y2\" \n                                                                           ^\n
+    \        line 11: x range is invalid\n\n"
   expected: "\f                                                                                \n
     \                                                                               \n
     \                                     plot.csv                                  \n
@@ -56,34 +56,12 @@ contents: !ruby/struct:CX::Example::Files
     \  \n         0      10    20     30     40     50    60     70     80    90    100
     \ \n                                          x                                     \n
     \                                                                               \n"
-  actual: "\f                                                                                \n
-    \                                                                               \n
-    \                                     plot.csv                                  \n
-    \    160 +                                                                      \n
-    \         @                                                                     \n
-    \         *                                                       y2 **@***     \n
-    \    140 +*                                                                     \n
-    \          *@                                                                   \n
-    \          ***                                                                  \n
-    \    120 + @  *                                                                 \n
-    \              *                                                                \n
-    \               *                                                               \n
-    \    100 +       **                                                             \n
-    \                  *                                                            \n
-    \                   *                                                           \n
-    \     80 +           *  **@**                                                   \n
-    \                     @*     ****                                               \n
-    \                                ****                                           \n
-    \     60 +                           ****    *@***                              \n
-    \                                        **@*     ***@*****                     \n
-    \                                                          ************         \n
-    \     40 +      +     +      +      +      +     +      +      +     + *****@
-    \  \n         0      10    20     30     40     50    60     70     80    90    100
-    \ \n                                          x                                     \n
-    \                                                                               \n"
-  diff: "@@ -3,23 +3,23 @@\n                                       plot.csv                                  \n
-    \     160 +                                                                      \n
-    \          @                                                                     \n-
+  actual: ''
+  diff: "@@ -1,25 +0,0 @@\n-\f                                                                                \n-
+    \                                                                               \n-
+    \                                     plot.csv                                  \n-
+    \    160 +                                                                      \n-
+    \         @                                                                     \n-
     \         #                                                       y2 ######     \n-
     \    140 +#                                                                     \n-
     \          #@                                                                   \n-
@@ -101,23 +79,6 @@ contents: !ruby/struct:CX::Example::Files
     \                                        ##@#     ###@#####                     \n-
     \                                                          ############         \n-
     \     40 +      +     +      +      +      +     +      +      +     + #####@
-    \  \n+          *                                                       y2 **@***
-    \    \n+     140 +*                                                                     \n+
-    \          *@                                                                   \n+
-    \          ***                                                                  \n+
-    \    120 + @  *                                                                 \n+
-    \              *                                                                \n+
-    \               *                                                               \n+
-    \    100 +       **                                                             \n+
-    \                  *                                                            \n+
-    \                   *                                                           \n+
-    \     80 +           *  **@**                                                   \n+
-    \                     @*     ****                                               \n+
-    \                                ****                                           \n+
-    \     60 +                           ****    *@***                              \n+
-    \                                        **@*     ***@*****                     \n+
-    \                                                          ************         \n+
-    \     40 +      +     +      +      +      +     +      +      +     + *****@
-    \  \n          0      10    20     30     40     50    60     70     80    90
-    \   100  \n                                           x                                     \n
-    \                                                                                \n"
+    \  \n-         0      10    20     30     40     50    60     70     80    90
+    \   100  \n-                                          x                                     \n-
+    \                                                                               \n"
