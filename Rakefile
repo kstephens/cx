@@ -14,7 +14,7 @@ task :coverage do
 end
 
 task :readme do
-  sh "bin/cx --debug help make-help show > tmp/README.md"
+  sh "bin/cx --debug help make-help! > tmp/README.md"
   sh "sed -E -e 's@<code>@     `@g' -e 's@</code>@`      @g' -e 's@<[a-z]+[^>]+>|</[a-z]+>@@g' tmp/README.md > README.md"
 end
 
@@ -32,7 +32,7 @@ end
 namespace :examples do
   desc "run examples."
   task :run => [ :commands_yml ] do
-    sh "bin/cx --debug help run-examples"
+    sh "bin/cx --debug help run-examples!"
   end
   desc "Show diff of expected vs. actual."
   task :diff do

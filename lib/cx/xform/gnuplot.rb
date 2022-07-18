@@ -13,7 +13,7 @@ require 'color'
 #   has_column_args: true
 #   args: []
 #   opts:
-#     style=:     'Style of chart.  Values: "plot", "barchart".  Default: "plot"'
+#     style=:     'Style of chart.  Values: "plot", "barchart", "statistics".  Default: "plot"'
 #     color:      'Generate color plot.  Default: false.'
 #     format=:    'Gnuplot format: term,tty,console,svg,...'
 #     title=:     'Title.  Default: none.'
@@ -69,17 +69,17 @@ module CX
         #@title_color = "tc lt 0"
         
         @output = make_output
-        @columns = input_columns! input
+        input_columns! input
 
         plot!
         
         @env = nil
         @output.tap do |x|
-          @input = @output = nil
+          @cols = @input = @output = nil
         end
       end
 
-      attr_accessor :data, :columns, :x_col, :y_cols, :output, :popts
+      attr_accessor :popts
       
       def << line
         @output << [ line.to_s + "\n" ] if line
@@ -88,27 +88,31 @@ module CX
       
       def input_columns! input
         # Check specified column args:
-        column_args!(input)
-        columns = column_args.columns
+        column_args!(input).wildcards!
         # If none specified, use header columns:
         # Prefer numeric columns:
-        if column_args.columns.empty?
-          columns = input.header.columns if columns.empty?
-          numerics = columns.select{|c| (c.meta.type_ || ::Object) <= ::Numeric }
-          columns = numerics unless numerics.empty?
+        if column_args.empty?
+          @cols = column_args.or_all!.args
+          numerics = @cols.select{|ca| (ca.column.meta.type_ || ::Object) <= ::Numeric }
+          @cols = numerics unless numerics.empty?
+        else
+          @cols = column_args.args
         end
         
-        case columns.size
+        @cols.each.with_index{|ca, i| ca.opts[:data_index] = i + 2}
+
+        case @cols.size
         when 0
           raise_ "no columns specified"
         when 1 # we only have a y
           @x_col = nil
-          @y_cols = columns
+          @y_cols = @cols
         else
-          @x_col  = columns[0]
-          @y_cols = columns[1 .. -1]
+          @x_col  = @cols[0]
+          @y_cols = @cols[1 .. -1]
         end
-        columns
+
+        self
       end
       
       def format!
@@ -156,15 +160,16 @@ module CX
           output: "/dev/stdout",
           border: 0,
           palette: "cubehelix",
-          boxwidth: 0.75,
-#          linewidth: 2.0,
+          # boxwidth: 0.75,
         )
+        popts.delete(:linewidth)
+        popts.delete(:whisker)
         
         format!
 
         popts_update(
           xlabel: @x_col.to_s,
-          ylabel: y_cols == 1 ? y_cols[0].to_s : "",
+          ylabel: @y_cols == 1 ? @y_cols[0].to_s : "",
         )
 
         # Reformat:
@@ -178,10 +183,10 @@ module CX
         
         case @style
         when :barchart, :candlesticks, :financebars, :statistics
-          popts[:xrange] ||= "[-0.5:#{@input.size + 0.5}]"
-          popts[:boxwidth] ||= 1.0
-          popts[:bars] ||= 1.5
-          popts[:errorbars] ||= 1.5
+          popts[:xrange] ||= "[-0.5:#{@input.size - 0.5}]"
+          # popts[:boxwidth] ||= 1.0
+          # popts[:bars] ||= 1.5
+          # popts[:errorbars] ||= 1.5
         when :plot
           popts_update(
             style: 'data linespoints',
@@ -203,65 +208,49 @@ module CX
       end
       
       def plot!
-        header!
-
         emit_data!
 
+        plots = send(:"plot_#{@style}").flatten
+        
         self << %Q{# BEGIN linestypes}
         self << %Q{set linetype 200 linecolor rgb "black"}
         self << %Q{set linetype 201 linecolor rgb "white"}
         self << %Q{set linetype 210 linecolor rgb #{(opts[:background_color] || "black").inspect}}
-        self << %Q{set linetype 211 linecolor rgb #{(opts[:text_color] || "white").inspect}}
-        self << %Q{# END linestypes}
+        self << %Q{set linetype 211 linecolor rgb #{(opts[:text_color]       || "white").inspect}}
+        self << %Q{# END   linestypes}
+        self << ""
 
         # Line styles:
-        self << %Q{# BEGIN line styles}
+        self << %Q{# BEGIN style line}
         y_cols_map do | y_col, i |
           line_style!
         end
-        self << %Q{# END line styles}
+        self << %Q{# END   style line}
         self << ""
         
-        popts_update(
-          # xtics: nil
-        )
+        header!
+        self << ''
 
-        plots = send(:"plot_#{@style}").flatten
-        
         self << "plot " + plots * ", \\\n     "
       end
       
       def y_cols_map
-        @x_ind = x_col && @columns.index(x_col) + 2
+        @x_ind = @x_col && data_index(@x_col) + 2
         @y_cols.map.with_index do | y_col, y_i |
           @y_col = y_col
           @y_i = y_i
-          @y_ind = @columns.index(y_col) + 2
+          @y_ind = data_index(y_col)
           @y_title = escape_string(@y_col)
-          yield y_col, y_i, @y_ind
+          yield
         end
       end
 
-      def emit_data!
-        @datafile = '$data'
-        self << ''
-        self << '# BEGIN Data'
-        self << "set datafile separator #{@datafile_separator.inspect}"
-        self << "# #{columns.map(&:to_s) * @datafile_separator}"
-        self << "#{@datafile} << EOD"
-        data!
-        self << 'EOD'
-        self << '# END Data'
-        self << ''
-        self
-      end
-      
       #################################################
       # Styles
 
       # Iterate over y columns
       def plot_y
-        y_cols_map do | y_col, i |
+        y_cols_map do
           send(:"plot_#{@style}_y")
         end
       end
@@ -292,34 +281,68 @@ module CX
       end
 
       def plot_candlesticks
-        using = '1:4:3:6:5'
-        case
-        when @x_col
-          using += ":xtic(#{@x_ind})"
-        end
-        [ %Q{#{@datafile.inspect} using #{using} with candlesticks title "" linewidth #{opts.fetch(:linewidth, 2.0)} whisker #{opts.fetch(:whisker , 0.5)}} ]
+        # self << "set bars 0.10"
+        using = stats_using
+        # opts[:linewidth] = 0.5
+        # opts[:whisker] = 0.5
+        [ %Q{#{@datafile.inspect} using #{using} with candlesticks title "" linewidth #{opts.fetch(:linewidth, 1.5)} whisker #{opts.fetch(:whisker , 0.5)}} ]
       end
 
       def plot_financebars
-        using = '1:4:3:6:5'
-        case
-        when @x_col
-          using += ":xtic(#{@x_ind})"
-        end
-        [ %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 2.0)}} ]
+        self << "set bars 10.0"
+        using = stats_using
+        [ %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 1.5)}} ]
       end
 
       def plot_statistics
-        # pp %w[i x count sum min max mean median stddev].map(&:to_sym).zip(1 .. 99).to_h
-        using = '1:4:3:6:5'
-        case
-        when @x_col
-          using += ":xtic(#{@x_ind})"
-        end
+        using = stats_using
         [
-           %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 2.0)}},
-
+          %Q{#{@datafile.inspect} using #{using} with financebars title "" linewidth #{opts.fetch(:linewidth, 1.5)}},
         ]
+      end
+
+      # x,open,low,high,close[,xtic]
+      def stats_using
+        c = stats_cols
+        case
+        when ! c[:mean] && ! c[:median]
+          c[:mean]   = c[:min]
+          c[:median] = c[:max]
+        when ! c[:mean] && c[:median]
+          c[:mean] = c[:median]
+        when ! c[:median] && c[:mean]
+          c[:media] = c[:mean]
+        end
+        using =
+           [ 1 ] + 
+           [ :mean, :min, :max, :median ].map do |sf| 
+              data_index(c[sf] || raise_("no column for stat #{sf.inspect}"))
+           end +
+           [ '(0.5)' ] # box width.
+        using << "xtic(#{data_index(c[:xlabel])})" if c[:xlabel]
+        # pp(using: using)
+        using * ":"
+      end
+
+      def stats_cols
+        c = { }
+        cols = @cols
+        # pp(cols: cols)
+        ([ :xlabel ] + Stats::STATS_FIELDS).each do | sf |
+          sf_str = sf.to_s
+          sf_rx = Regexp.new(sf_str)
+          col =
+            cols.find{|ca| ca.args[0]          == sf_str } ||
+            cols.find{|ca| ca.column.meta.stat == sf_str } ||
+            cols.find{|ca| ca.column.to_s      =~ sf_rx }
+            c[sf] = col 
+        end
+        # pp(stats_cols: c)
+        c
+      end
+
+      def data_index col
+        col.opts[:data_index] or raise_ "data_index : #{col.inspect}"
       end
 
       #################################################
@@ -336,7 +359,7 @@ module CX
       end
       
       def rgb_i i
-        palette_frac = i.to_f / columns.size
+        palette_frac = i.to_f / @cols.size
         hsvtorgb(palette_frac, 1.0, 0.50)
       end
       
@@ -347,14 +370,24 @@ module CX
       #################################################
       
       # Emit data block
-      def data!
-        i = -1
+      def emit_data!
+        @datafile = '$data'
+        self << ''
+        self << '# BEGIN Data'
+        self << "set datafile separator #{@datafile_separator.inspect}"
+        self << "# #{([:__data_index__]+ @cols.map(&:to_s)) * @datafile_separator}"
+        self << "#{@datafile} << EOD"
+        index = -1
         @input.each do |r|
-          r = @columns.map{|c| r[c]}
-          r.unshift(i += 1)
+          r = @cols.map{|ca| r[ca.column]}
+          r.unshift(index += 1)
           self << r * @datafile_separator
         end
-      end      
+        self << 'EOD'
+        self << '# END Data'
+        self << ''
+        self
+      end
     end
   end
 end

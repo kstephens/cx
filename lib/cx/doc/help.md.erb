@@ -1,3 +1,6 @@
+<% unless show_header? %>
+CX - Process Tabular Data
+<% else %>
 # Overview
 
 CX transforms tabular data through a pipeline of commands.
@@ -58,7 +61,22 @@ See the `cut`, `grep`, `sort` and `uniq` commands for examples.
 `--verbose`         | Enable verbose info.    |
 `--help`            | Print this document.    |
 
+<% end # show_header? %>
+
 # Commands
+
+<% unless search_terms.empty? %>
+Matching: <%= search_terms.map(&:inspect) * ', ' %>
+Matched: <%= matched_strings.to_a.sort.map(&:inspect) * ', '   %>
+<% end %>
+
+<% if show_command_table? %>
+<%= command_table commands %>
+
+<% end %>
+
+<% if show_command_detail? %>
+# Command Detail
 
 <% commands.each do | c | %>
 <%# log.info "command #{c.name} : #{c.examples.size} examples" %>
@@ -94,10 +112,10 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 
 <%= c.description unless c.description.empty? %>
 
-<% unless c.examples.empty? %>
+<% if show_examples? && ! c.examples.empty? %>
   Examples:
 
---------------------------
+-------------------------------------
 
 <% c.examples.each do | e | %>
 
@@ -105,26 +123,28 @@ Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 $ <%= e.example %>
 <%= e.contents.actual %>```
 
---------------------------
+-------------------------------------
 
 <% end # examples.each %>
-<% end # unless c.examples.empty? %>
 
---------------------------
+-------------------------------------
 
+<% end # show_examples? %>
+-------------------------------------
 <% end # commands %>
+<% end # show_command_detail? %>
 
---------------------------
-
+<% if show_attribution? %>
 # Attribution
 
---------------------------------
+-------------------------------------
 Copyright 2020 - Kurt Stephens
---------------------------------
-
+-------------------------------------
+<% end %>
+<% if show_example_data? %>
 # Example Data
 
---------------------------
+-------------------------------------
 
 <% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
 
@@ -133,9 +153,8 @@ Copyright 2020 - Kurt Stephens
 ```none
 <%= File.read(file) %>```
 
---------------------------
+-------------------------------------
 
-<% end %>
-
---------------------------
-
+<% end # ex.data/*.* %>
+-------------------------------------
+<% end # show_example_data? %>

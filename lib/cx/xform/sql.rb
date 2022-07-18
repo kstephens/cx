@@ -8,7 +8,7 @@ require 'cx/xform/record'
 # :COMMAND:
 # SqlOut:
 #   aliases: sql-
-#   synopsis: Generates CSV lines.
+#   synopsis: Generate SQL.
 #   has_column_args: true
 #   args: []
 #   opts:

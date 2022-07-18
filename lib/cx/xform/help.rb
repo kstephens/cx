@@ -9,10 +9,9 @@ require 'cx/help'
 #   synopsis: 'Show this documentation.'
 #   description: |-
 #     Subcommands:
-#     * show         - this documentation (default).
-#     * run-examples - runs all command examples into ex/cmd/.
-#     * make-help    - regenerates this documetation.
-#   args: [ 'show', 'run-examples', 'make-help'  ]
+#     * run-examples! - runs all command examples into ex/cmd/.
+#     * make-help!    - regenerates this documetation.
+#   args: [ 'run-examples!', 'make-help!'  ]
 #
 
 module CX
@@ -21,20 +20,18 @@ module CX
       include Xform
 
       def call input, env
-        help = CX::Help.new
-        doc = ''
-        args.push 'show' if args.empty?
-        args.each do | arg |
-          case arg
-          when 'run-examples'
-            help.run_examples!
-          when 'make-help'
-            help.make_document!
-          when 'show'
-            doc = help.document
-          else
-            raise "Unknown argument #{arg.inspect}"
-          end
+        args = self.args.dup
+        case args[0]
+        when 'run-examples!'
+          CX::Help.new.run_examples!
+          doc = ''
+        when 'make-help!'
+          doc = CX::Help.new.make_document!.full_document
+        else
+          doc = CX::Help.new do | help |
+            help.opts = opts
+            help.search_terms = args
+          end.document
         end
         rows = doc.split(/\n/, -1).map{|line| [ line << "\n" ]}
         Table.new(rows, Header.new([:HELP]))

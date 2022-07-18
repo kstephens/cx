@@ -47,7 +47,11 @@ module CX
     def pp *args
       log.debug { pps(*args) }
     end
-    
+
+    def pp_info *args
+      log.info { pps(*args) }
+    end
+
     def pps *args
       ::PP.pp(*args, String.new).chomp
     end
