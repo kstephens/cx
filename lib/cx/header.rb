@@ -169,16 +169,13 @@ module CX
       return name if c.name == name
       raise_ ArgumentError if @to_column[name]
       raise_ ArgumentError unless @columns.include?(c)
-      @to_column.delete(c.name)
-      @aliases.keys do | (a, n) |
-        @aliases.delete(a) if n == c.name
-      end
-      new_name = available_name(c, name)
-      c._name = new_name
-      @to_column[new_name] = c
-      alias! c, c.name_
+      aliases = @aliases.select{|a, n| n == c.name}.map(&:first)
+      remove_column! c
+      c._name = name
+      add_column! c
+      aliases.each{|a| alias! c, a}
       @version += 1
-      new_name
+      c.name
     end
 
     def change_index! c, index
