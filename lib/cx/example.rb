@@ -161,7 +161,14 @@ END
         @commands ||= factory.all
       end
 
-      def run!
+      def run! patterns = nil
+        patterns ||= [ ]
+        commands = self.commands
+        unless patterns.empty?
+          commands = commands.select do | cmd |
+            patterns.any? {|pattern| cmd.name.to_s == pattern}
+          end
+        end
         commands.each do | cmd |
           log.delimited "command : #{cmd.name} ================== " do 
             cmd.examples.each do | example |

@@ -183,8 +183,8 @@ module CX
       x.to_s.gsub(/\n/, '<br />')
     end
     
-    def run_examples!
-      Example::Runner.new.run!
+    def run_examples! patterns = nil
+      Example::Runner.new.run!(patterns)
     end
 
   end

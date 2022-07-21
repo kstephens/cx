@@ -23,7 +23,7 @@ module CX
         args = self.args.dup
         case args[0]
         when 'run-examples!'
-          CX::Help.new.run_examples!
+          CX::Help.new.run_examples!(args[1 .. -1])
           doc = ''
         when 'make-help!'
           doc = CX::Help.new.make_document!.full_document
