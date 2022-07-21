@@ -299,6 +299,38 @@
   lineno: 6
   path: cx/xform/eval
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: Select
+  name: select
+  aliases: []
+  synopsis: Select rows for Ruby expressions that evaluation true.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // parse // select "a > 10" // h-
+  file: lib/cx/xform/eval.rb
+  lineno: 15
+  path: cx/xform/eval
+- !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: Reject
+  name: reject
+  aliases: []
+  synopsis: Reject rows for Ruby expressions that evaluation true.
+  description: ''
+  suffixes: []
+  arguments: []
+  options: []
+  has_column_args: 
+  has_pipeline_args: 
+  examples:
+  - cx in SOME.csv // -h // parse // reject "a > 10" // h-
+  file: lib/cx/xform/eval.rb
+  lineno: 23
+  path: cx/xform/eval
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: GnuplotOut
   name: gnuplot-out
   aliases:

@@ -1,0 +1,40 @@
+--- !ruby/struct:CX::Example
+command: select
+example: cx in SOME.csv // -h // parse // select "a > 10" // h-
+exit_code: 0
+success: true
+files: !ruby/struct:CX::Example::Files
+  run: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/run
+  stderr: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/stderr
+  expected: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/expected
+  actual: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/actual
+  diff: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/diff
+contents: 
+dir: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273
+dir_name: 2f1ccc26cf1de2b71e215136ae4ef273
+base_dir: ex/cmd
+yaml_file: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/example.yml
+contents: !ruby/struct:CX::Example::Files
+  run: |
+    #!/usr/bin/env bash
+    dir='ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273'
+    cp -p ex/data/*.* "$dir"
+    export CX_RANDOM_SEED=1638854222
+    PATH="$(/bin/pwd)/bin:$PATH"
+    cd "$dir" || exit 9
+    [[ -n "$CX_EX_VERBOSE" ]] && set -x
+    cx in SOME.csv // -h // parse // select "a > 10" // h- 2> stderr > actual
+    echo $! > exit_code
+    [[ -f expected ]] || cp actual expected
+    diff -u expected actual | (read _; read _; cat) > diff
+    [[ ! -s diff ]]
+  stderr: ''
+  expected: |
+    a,b,c,d
+    24,44,6,bar
+    134,5,9,baz
+  actual: |
+    a,b,c,d
+    24,44,6,bar
+    134,5,9,baz
+  diff: ''

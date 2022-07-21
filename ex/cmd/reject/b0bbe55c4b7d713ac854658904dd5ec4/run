@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+dir='ex/cmd/reject/b0bbe55c4b7d713ac854658904dd5ec4'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_EX_VERBOSE" ]] && set -x
+cx in SOME.csv // -h // parse // reject "a > 10" // h- 2> stderr > actual
+echo $! > exit_code
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]

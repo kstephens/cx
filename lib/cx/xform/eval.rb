@@ -12,23 +12,32 @@ require 'cx/xform'
 #     - 'cx in SOME.csv // -h // parse // eval "row.map_vals!(&:class)" // h-'
 #     - 'cx in SOME.csv // -h // parse // eval "self.a_to_power_of_c = a ** c" // h-'
 
+# :COMMAND:
+# Select:
+#   synopsis: Select rows for Ruby expressions that evaluation true.
+#   arguments: []
+#   options:
+#   examples:
+#     - 'cx in SOME.csv // -h // parse // select "a > 10" // h-'
+
+# :COMMAND:
+# Reject:
+#   synopsis: Reject rows for Ruby expressions that evaluation true.
+#   arguments: []
+#   options:
+#   examples:
+#     - 'cx in SOME.csv // -h // parse // reject "a > 10" // h-'
+
 module CX
   module Xform
     class Eval
       include Xform
+
       def call input, env
-        code = args.map do | arg |
-          case arg
-          when /^@(.*)/
-            File.read($1)
-          else
-            arg
-          end
-        end.join(" ;\n")
-        
-        fn = "Proc.new do \n #{code} \nend\n"
-        fn = eval(fn)
-        
+        call_with_row_fn input, env, row_fn
+      end
+
+      def call_with_row_fn input, env, fn
         ec = RowContext.new
         ec.input = input
         ec.env = env
@@ -42,6 +51,21 @@ module CX
           end # throw is false
         end
         MetaIn.new.call(input, env)
+      end
+
+      def row_fn
+        eval("Proc.new do \n #{row_code} \nend\n")
+      end
+
+      def row_code
+        args.map do | arg |
+          case arg
+          when /^@(.*)/
+            File.read($1)
+          else
+            arg
+          end
+        end.join(" ;\n")
       end
     end
   
@@ -57,6 +81,7 @@ module CX
       end
       
       def __col_fn sel
+        # ::Kernel.puts({sel: sel}.inspect) 
         case
         when @row.respond_to?(sel)
           lambda do |*args, &blk|
@@ -96,6 +121,19 @@ module CX
         m = ::Object.instance_method(:define_singleton_method)
         m.bind(self).call(sel, &blk) # use #bind_call?
         self
+      end
+    end
+
+    class Select < Eval
+      include Xform
+      def row_code
+	      "next! unless (#{super})"
+      end
+    end
+
+    class Reject < Select
+      def row_code
+        "next! if (#{super})"
       end
     end
   end
