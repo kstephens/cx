@@ -31,9 +31,9 @@ module CX
     module RecordBaseInit
       def initialize!
         super
-        @record_sep  , @record_sep_rx   = decode_sep(opts.fetch(:record_sep,  @record_sep_default ||= $/ ))
-        @field_sep   , @field_sep_rx    = decode_sep(opts.fetch(:field_sep,   @field_sep_default  ||= ","))
-        @multi_sep   , @multi_sep_rx    = decode_sep(opts.fetch(:multi_sep,   @@multi_sep         ||= ";"))
+        @record_sep  , @record_sep_rx   = decode_sep(opts.fetch(:record_sep,  @record_sep_default  ||= $/ ))
+        @field_sep   , @field_sep_rx    = decode_sep(opts.fetch(:field_sep,   @field_sep_default   ||= ","))
+        @multi_sep   , @multi_sep_rx    = decode_sep(opts.fetch(:multi_sep,   @multi_sep_default   ||= ";"))
       end
 
       def decode_sep s
