@@ -28,22 +28,23 @@ require 'cx/xform/meta'
 
 module CX
   module Xform
-    module RecordBase
-      include Xform
-      attr_accessor :col_sep, :row_sep, :multi_sep
-    
+    module RecordBaseInit
       def initialize!
         super
-        @record_sep   = decode_string(opts.fetch(:record_sep,  $/))
-        @field_sep    = decode_string(opts.fetch(:field_sep,   ","))
-        @multi_sep    = decode_string(opts.fetch(:multi_sep,   ";"))
+        @record_sep  , @record_sep_rx   = decode_sep(opts.fetch(:record_sep,  @record_sep_default ||= $/ ))
+        @field_sep   , @field_sep_rx    = decode_sep(opts.fetch(:field_sep,   @field_sep_default  ||= ","))
+        @multi_sep   , @multi_sep_rx    = decode_sep(opts.fetch(:multi_sep,   @@multi_sep         ||= ";"))
       end
 
-      def decode_string s
-        s = '"' + s.gsub(/["#]/){|m| '\\' + m[0]} + '"'
-        eval(s)
+      def decode_sep s
+        [s, Regexp.new(s)]
       end
-      
+    end
+
+    module RecordBase
+      include RecordBaseInit, Xform
+      attr_accessor :col_sep, :row_sep, :multi_sep
+    
       def make_record_table cols = []
         cols = cols.map{|c| Column.new(c).tap{|c| c.meta.type = ::String}}
         Table.new([], Header.new(cols))
@@ -51,13 +52,13 @@ module CX
     end
 
     module RecordInBase
-      include InputFormat, RecordBase
+      include RecordBaseInit, InputFormat, RecordBase
       
       def call input, env
         raise_ ArgumentError, "expected one input row" unless input.size == 1
         raise_ ArgumentError, "expected one input col" unless input.first.size == 1
         input_string = input[0][0].to_s
-        rows = input_string.split(@record_sep, -1)
+        rows = input_string.split(@record_sep_rx, -1)
         rows.pop if rows[-1].empty?
         rows = rows.map!{|line| parse_record(line)}
         header = Header.
@@ -94,28 +95,20 @@ module CX
 
     ###########################
 
-    module RecordBaseInit
-      def initialize!
-        super
-        @field_sep    = decode_string(opts.fetch(:field_sep,   ""))
-        @multi_sep    = decode_string(opts.fetch(:multi_sep,   ""))
-      end
-    end
-
     class RecordIn
-      include RecordBaseInit, RecordInBase
+      include RecordInBase
       def parse_record line
         if @field_sep.empty?
           [ line ]
         else
-          line.split(@field_sep, -1)
+          line.split(@field_sep_rx, -1)
           # TODO: handle multi values
         end
       end
     end
 
     class RecordOut
-      include RecordBaseInit, RecordOutBase
+      include RecordOutBase
       def call input, env
         output = make_record_table([:_RECORD_])
         out = String.new

@@ -21,8 +21,8 @@ require 'cx/xform/csv_safe'
 #   synopsis: Generates CSV lines.
 #   suffixes: [ .csv ]
 #   inverse: [ '-csv' ]
-#   args: []
-#   opts:
+#   arguments: []
+#   options:
 #     separator=: 'Column separator: defaults to `","`.'
 #   examples:
 #     - cx in SOME.csv // csv- --separator="\x09"
@@ -33,6 +33,7 @@ module CX
       include RecordInBase
       
       def initialize!
+        opts[:field_sep] ||= opts[:separator] || ','
         super
         @csv = CSVSafe.new(opts || {})
         self
@@ -44,8 +45,13 @@ module CX
     end
     
     class CsvOut
-      include RecordOutBase
+      include RecordBaseInit, RecordOutBase
       
+      def initialize!
+        opts[:field_sep] ||= opts[:separator] || ','
+        super
+      end
+
       def call input, env
         @csv = CSVSafe.new(opts || {})
         @cols = input.header.ordered

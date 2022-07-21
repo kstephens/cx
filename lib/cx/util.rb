@@ -139,7 +139,7 @@ end
 
     def rx_or_str str
       case str
-      when %r{^/(.*)/([imx]?)?$}
+      when %r{^/(.*)/([imx]?)$}
         eval "%r{#{$1}}#{$2}"
       else
         str
@@ -147,6 +147,7 @@ end
     end
 
     Empty_Hash = { }.freeze
+    extend self
   end
 end
 

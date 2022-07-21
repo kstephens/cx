@@ -9,8 +9,8 @@ require 'cx/xform/record'
 #   aliases: [ -d ]
 #   synopsis: Parse delimited records.
 #   inverse: [ d- ]
-#   args: []
-#   opts:
+#   arguments: []
+#   options:
 #     field-sep=:   'Default: ",".'
 #     record-sep=:  'Default: system newline.'
 
@@ -19,9 +19,9 @@ require 'cx/xform/record'
 #   aliases: [ d- ]
 #   synopsis: Generate delimited records.
 #   inverse: [ -d ]
-#   args: []
+#   arguments: []
 #   has_column_args: true
-#   opts:
+#   options:
 #     field-sep=:   'Default: ",".'
 #     record-sep=:  'Default: system newline.'
 #     multi-sep=:   'Separator for enumerable values.  Default: ";".'
@@ -31,7 +31,7 @@ module CX
     class DelimitedIn
       include RecordInBase
       def parse_record line
-        line.split(@field_sep, -1)
+        line.split(@field_sep_rx, -1)
       end
     end
     

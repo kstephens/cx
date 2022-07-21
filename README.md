@@ -97,10 +97,12 @@ See the `cut`, `grep`, `sort` and `uniq` commands for examples.
  record-in      | Parses records.                                                 | -record                   |
  record-out     | Generates records.                                              | record-                   |
  region         | Select a range of rows.                                         | range                     |
+ reject         | Reject rows for Ruby expressions that evaluation true.          |                           |
  remove-empty   | Empty columns and rows are removed.                             | compact                   |
  replace        | Replace by regex.                                               | sub                       |
  reverse        | Reverse order of rows.                                          | tac                       |
  row-id         | Inserts a row id column.                                        |                           |
+ select         | Select rows for Ruby expressions that evaluation true.          |                           |
  sort           | Sorts by specified columns.                                     | s                         |
  sql-out        | Generate SQL.                                                   | sql-                      |
  stats          | Collect stats of a group of columns.                            |                           |
@@ -1200,6 +1202,27 @@ id,a,b,c,X %
 -------------------------------------
 
 -------------------------------------
+## `reject`
+
+`reject` 
+Synopsis: Reject rows for Ruby expressions that evaluation true.
+
+  Examples:
+
+-------------------------------------
+
+```none
+$ cx in SOME.csv // -h // parse // reject "a > 10" // h-
+a,b,c,d
+24,44,6,bar
+134,5,9,baz
+```
+
+-------------------------------------
+
+-------------------------------------
+
+-------------------------------------
 ## `remove-empty`
 
 `remove-empty` *[* *column-args ...* *]* 
@@ -1344,6 +1367,27 @@ uuid,a,b,c,d
 035fb7a3-1142-14a1-1a68-e5d97aeb3594,24,44,6,bar
 292172a7-b6b9-6ed5-46bc-c9486137efdb,134,5,9,baz
 40bf24bd-85f1-a061-752b-bcd099c8eceb,2,12,11,abc
+```
+
+-------------------------------------
+
+-------------------------------------
+
+-------------------------------------
+## `select`
+
+`select` 
+Synopsis: Select rows for Ruby expressions that evaluation true.
+
+  Examples:
+
+-------------------------------------
+
+```none
+$ cx in SOME.csv // -h // parse // select "a > 10" // h-
+a,b,c,d
+24,44,6,bar
+134,5,9,baz
 ```
 
 -------------------------------------
