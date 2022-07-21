@@ -36,6 +36,14 @@ module CX
       @version = 0
     end
 
+    def initialize_copy
+      super
+      @columns = @columns.dup
+      @to_column = @to_column.dup
+      @aliases = @aliases.dup
+      @meta = @meta.dup
+    end
+
     def [] k
       case k
       when Integer
