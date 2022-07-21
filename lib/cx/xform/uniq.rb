@@ -28,7 +28,11 @@ module CX
       def call input, env
         column_args!(input).or_all!
         columns = column_args.args.map(&:column)
-        uniq input, env, columns
+        if opts[:c] || opts[:count]
+          uniq_count input, env, columns
+        else
+          uniq input, env, columns
+        end
       end
 
       def uniq input, env, columns
@@ -47,8 +51,9 @@ module CX
       end
     
       def uniq_count input, env, columns
-        output = Table.new(input.header.dup)
+        output = Table.new(nil, input.header.dup)
         output.header << :COUNT
+        output.header[:COUNT].meta.type = Integer
         examples = { }
         counts = Hash.new{|h, k| h[k] = 0}
         input.each do | row |
@@ -60,7 +65,7 @@ module CX
         examples.each do | k, example |
           output << (example << counts[k])
         end
-        output = MetaIn.new.call(output, env)
+        # output = MetaIn.new.call(output, env)
         output
       end
     end
