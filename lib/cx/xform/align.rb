@@ -23,7 +23,7 @@ module CX
         input.map_columns!(@cols) do | r, c, v |
           align_col c, v, nil
         end
-        @cols = @c_mw = @c_fmt = nil
+        @cols = @c_mw = @c_fmt = nil # GC
         input
       end
       

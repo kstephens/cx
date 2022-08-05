@@ -12,8 +12,8 @@ require 'cx/logging'
 
 module CX
   class Table
-    include Enumerable
-    attr_reader :rows, :header, :meta
+    include Enumerable, Meta::Owner
+    attr_reader :rows, :header
 
     def inspect_content mode
       case mode
@@ -26,7 +26,7 @@ module CX
 
     # TODO: change arguments to?: header = nil, rows = nil, meta = nil
     def initialize rows = nil, header = nil, meta = nil
-      @meta ||= meta || Meta.new
+      self.meta = meta || Meta.new(self)
       @rows ||= rows || [ ]
       @header = header
       @rows.map!{|r| make_row r}
@@ -38,7 +38,7 @@ module CX
 
     def initialize_copy orig
       super
-      @meta = @meta.dup
+      self.meta = @meta.dup
       @rows = @rows.map(&:dup)
     end
 

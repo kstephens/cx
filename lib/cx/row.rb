@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'cx'
+require 'cx/meta'
 
 module CX
   class Row
-    include Enumerable, Support
+    include Enumerable, Support, Meta::Owner
 
     attr_reader :header, :data, :header_version
     attr_accessor :file_name, :line_number
@@ -30,7 +31,7 @@ module CX
     def initialize_copy orig
       super
       set_data! @data.dup
-      @meta = @meta && @meta.dup
+      self.meta = @meta && @meta.dup
     end
 
     def set_data! data
@@ -131,9 +132,6 @@ module CX
     end
     alias :to_a :values
 
-    def first ; _get(@header.first) ; end
-    def last  ; _get(@header.last)  ; end
-
     def to_h cols = @header
       h = { }
       cols.each do | c |
@@ -159,7 +157,7 @@ module CX
       end
       def _fetch k, v
         k = k.to_i
-        k = @data.size + k if k < 0
+        k += @data.size if k < 0
         0 <= k && k < @data.size ? @data[k] : v
       end
     end
