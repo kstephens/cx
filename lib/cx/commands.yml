@@ -161,6 +161,13 @@
     values: []
     has_value: true
     has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :record-cont-sep
+    description: Separator for continued records.
+    default: NONE
+    values: []
+    has_value: true
+    has_default: true
   has_column_args: 
   has_pipeline_args: 
   examples: []
@@ -199,11 +206,18 @@
     values: []
     has_value: true
     has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :record-cont-sep
+    description: Separator for continued records.
+    default: NONE
+    values: []
+    has_value: true
+    has_default: true
   has_column_args: true
   has_pipeline_args: 
   examples: []
   file: lib/cx/xform/delimited.rb
-  lineno: 17
+  lineno: 18
   path: cx/xform/delimited
 - !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: EdnIn
@@ -967,6 +981,13 @@
     values: []
     has_value: true
     has_default: true
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :record-cont-sep
+    description: Record continuation separator..
+    default: 
+    values: []
+    has_value: true
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples: []

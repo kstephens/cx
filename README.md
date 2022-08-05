@@ -311,29 +311,31 @@ abc,11
 -------------------------------------
 ## `delimited-in`
 
-`delimited-in`  *[* `--field-sep=...` `--record-sep=...`  *]* 
+`delimited-in`  *[* `--field-sep=...` `--record-sep=...` `--record-cont-sep=...`  *]* 
 Synopsis: Parse delimited records.
 
 Aliases: `-delimited`, `-d`
 
- Options            | Description | Default        | Values |
---------------------|-------------|----------------|--------|
- `--field-sep=...`  |             | ","            |        |
- `--record-sep=...` |             | system newline |        |
+ Options                 | Description                      | Default        | Values |
+-------------------------|----------------------------------|----------------|--------|
+ `--field-sep=...`       |                                  | ","            |        |
+ `--record-sep=...`      |                                  | system newline |        |
+ `--record-cont-sep=...` | Separator for continued records. | NONE           |        |
 
 -------------------------------------
 ## `delimited-out`
 
-`delimited-out`  *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...`  *]* *[* *column-args ...* *]* 
+`delimited-out`  *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...` `--record-cont-sep=...`  *]* *[* *column-args ...* *]* 
 Synopsis: Generate delimited records.
 
 Aliases: `delimited-`, `d-`
 
- Options            | Description                      | Default        | Values |
---------------------|----------------------------------|----------------|--------|
- `--field-sep=...`  |                                  | ","            |        |
- `--record-sep=...` |                                  | system newline |        |
- `--multi-sep=...`  | Separator for enumerable values. | ";"            |        |
+ Options                 | Description                      | Default        | Values |
+-------------------------|----------------------------------|----------------|--------|
+ `--field-sep=...`       |                                  | ","            |        |
+ `--record-sep=...`      |                                  | system newline |        |
+ `--multi-sep=...`       | Separator for enumerable values. | ";"            |        |
+ `--record-cont-sep=...` | Separator for continued records. | NONE           |        |
 
 -------------------------------------
 ## `edn-in`

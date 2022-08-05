@@ -10,8 +10,8 @@ require 'cx/xform/csv'
 #   synopsis: Parses TSV lines.
 #   suffixes: [ .tsv ]
 #   inverse: [ 'tsv-' ]
-#   args: []
-#   opts: {}
+#   arguments: []
+#   options: {}
 
 # :COMMAND:
 # TsvOut:
@@ -19,8 +19,8 @@ require 'cx/xform/csv'
 #   synopsis: Generates TSV lines.
 #   suffixes: [ .tsv ]
 #   inverse: [ '-tsv' ]
-#   args: []
-#   opts: {}
+#   arguments: []
+#   options: {}
 #   examples:
 #     - cx in SOME.csv // tsv-
 
