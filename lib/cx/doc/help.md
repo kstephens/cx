@@ -719,12 +719,14 @@ max_value,134,ab,11,foo
 -------------------------------------
 ## `help`
 
-`help` `run-examples!` `make-help!` 
+`help`  *[* `--examples` `--example-data`  *]* `search-terms` `...` 
 Synopsis: Show this documentation.
 
-Subcommands:
-* run-examples! - runs all command examples into ex/cmd/.
-* make-help!    - regenerates this documetation.
+ Options          | Description                 | Default | Values |
+------------------|-----------------------------|---------|--------|
+ `--examples`     | Show commmand examples.     |         |        |
+ `--example-data` | Show commmand example data. |         |        |
+If search-terms are given, show matching commands.
 -------------------------------------
 ## `html-out`
 
@@ -817,7 +819,7 @@ a,b,c,d
 -------------------------------------
 ## `json-out`
 
-`json-out` 
+`json-out` *[* *column-args ...* *]* 
 Synopsis: Emits JSON.
 
 Aliases: `json-`
@@ -839,6 +841,20 @@ $ cx in SOME.csv // -h // parse // json-
 -------------------------------------
 
 -------------------------------------
+
+-------------------------------------
+## `markdown-in`
+
+`markdown-in`  *[* `----caption=...` `----title=...` `----include-header`  *]* *[* *column-args ...* *]* 
+Synopsis: Parse Markdown. (PoC)
+
+Aliases: `-markdown`, `-md`
+
+ Options              | Description        | Default | Values |
+----------------------|--------------------|---------|--------|
+ `----caption=...`    | Caption for table. |         | STRING |
+ `----title=...`      | Title for table.   |         | STRING |
+ `----include-header` | Default true.      |         |        |
 
 -------------------------------------
 ## `markdown-out`
@@ -1099,11 +1115,11 @@ Synopsis: Generates records.
 
 Aliases: `record-`
 
- Options                 | Description                     | Default          | Values |
--------------------------|---------------------------------|------------------|--------|
- `--record-sep=...`      | Record separator.               | platform newline |        |
- `--field-sep=...`       | Field separator.                | ""               |        |
- `--record-cont-sep=...` | Record continuation separator.. |                  |        |
+ Options                 | Description                    | Default          | Values |
+-------------------------|--------------------------------|------------------|--------|
+ `--record-sep=...`      | Record separator.              | platform newline |        |
+ `--field-sep=...`       | Field separator.               | ""               |        |
+ `--record-cont-sep=...` | Record continuation separator. |                  |        |
 
 -------------------------------------
 ## `region`

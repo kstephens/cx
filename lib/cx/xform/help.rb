@@ -8,11 +8,11 @@ require 'cx/help'
 #   aliases:
 #   synopsis: 'Show this documentation.'
 #   description: |-
-#     Subcommands:
-#     * run-examples! - runs all command examples into ex/cmd/.
-#     * make-help!    - regenerates this documetation.
-#   args: [ 'run-examples!', 'make-help!'  ]
-#
+#     If search-terms are given, show matching commands.
+#   args: [ search-terms, ...  ]
+#   options:
+#     examples: Show commmand examples.
+#     example-data: Show commmand example data.
 
 module CX
   module Xform

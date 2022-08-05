@@ -109,7 +109,7 @@ module CX
     end
 
     def show_examples?
-      verbose? || opts[:examples]
+      verbose? || opts[:examples] || opts[:example_data]
     end
 
     def show_example_data?

@@ -507,15 +507,26 @@
   name: help
   aliases: []
   synopsis: Show this documentation.
-  description: |-
-    Subcommands:
-    * run-examples! - runs all command examples into ex/cmd/.
-    * make-help!    - regenerates this documetation.
+  description: If search-terms are given, show matching commands.
   suffixes: []
   arguments:
-  - run-examples!
-  - make-help!
-  options: []
+  - search-terms
+  - "..."
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :examples
+    description: Show commmand examples.
+    default: 
+    values: []
+    has_value: false
+    has_default: false
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :example-data
+    description: Show commmand example data.
+    default: 
+    values: []
+    has_value: false
+    has_default: false
   has_column_args: 
   has_pipeline_args: 
   examples: []
@@ -712,7 +723,7 @@
   suffixes: []
   arguments: []
   options: []
-  has_column_args: 
+  has_column_args: true
   has_pipeline_args: 
   examples:
   - cx in SOME.csv // -h // parse // json-
@@ -1369,7 +1380,14 @@
   description: ''
   suffixes: []
   arguments: []
-  options: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :count
+    description: Count uniq rows into column NAME.
+    default: '"COUNT"'
+    values: []
+    has_value: true
+    has_default: true
   has_column_args: true
   has_pipeline_args: 
   examples:
