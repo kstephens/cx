@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+dir='ex/cmd/uniq/e190101f5a04f5fd1463d5d1a2bb7c51'
+cp -p ex/data/*.* "$dir"
+export CX_RANDOM_SEED=1638854222
+PATH="$(/bin/pwd)/bin:$PATH"
+cd "$dir" || exit 9
+[[ -n "$CX_EX_VERBOSE" ]] && set -x
+cx in DUPLICATES.csv // -h // uniq z --count   // h- 2> stderr > actual
+echo $! > exit_code
+[[ -f expected ]] || cp actual expected
+diff -u expected actual | (read _; read _; cat) > diff
+[[ ! -s diff ]]

@@ -1717,8 +1717,12 @@ Aliases: `-types`, `types`
 -------------------------------------
 ## `uniq`
 
-`uniq` *[* *column-args ...* *]* 
+`uniq`  *[* `--count=...`  *]* *[* *column-args ...* *]* 
 Synopsis: Emit only rows with uniq columns.
+
+ Options       | Description                       | Default | Values |
+---------------|-----------------------------------|---------|--------|
+ `--count=...` | Count uniq rows into column NAME. | "COUNT" |        |
 
   Examples:
 
@@ -1771,6 +1775,24 @@ $ cx in DUPLICATES.csv // -h // uniq y // h-
 x,y,z
 1,2,3
 4,5,6
+```
+
+-------------------------------------
+
+```none
+$ cx in DUPLICATES.csv // -h // uniq z --count   // h-
+x,y,z,COUNT
+1,2,3,3
+4,5,6,1
+```
+
+-------------------------------------
+
+```none
+$ cx in DUPLICATES.csv // -h // uniq z --count=N // h-
+x,y,z,N
+1,2,3,3
+4,5,6,1
 ```
 
 -------------------------------------

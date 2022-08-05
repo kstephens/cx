@@ -1357,6 +1357,8 @@
   - cx in DUPLICATES.csv // -h // uniq   // h-
   - cx in DUPLICATES.csv // -h // uniq x // h-
   - cx in DUPLICATES.csv // -h // uniq y // h-
+  - cx in DUPLICATES.csv // -h // uniq z --count   // h-
+  - cx in DUPLICATES.csv // -h // uniq z --count=N // h-
   file: lib/cx/xform/uniq.rb
   lineno: 9
   path: cx/xform/uniq
