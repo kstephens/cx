@@ -983,7 +983,7 @@
     has_default: true
   - !ruby/struct:CX::CommandFactory::CommandDesc::Option
     name: :record-cont-sep
-    description: Record continuation separator..
+    description: Record continuation separator.
     default: 
     values: []
     has_value: true

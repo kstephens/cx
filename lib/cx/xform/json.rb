@@ -18,6 +18,7 @@ require 'json'
 # JsonOut:
 #   aliases:
 #   synopsis: Emits JSON.
+#   has_column_args: true
 #   args: []
 #   opts: {}
 #   examples:

@@ -21,6 +21,10 @@ module CX
       
       def call input, env
         @strings_only = opts.fetch(:strings_only, false)
+        columns = column_args!(input).or_all!.columns
+        # ??? : not exactly : see @strings_only
+        # columns.each{|c| c.meta.type = c.meta.type_inferred = ::String }
+        
         @mode =
           case opts.fetch(:mode, "maybe")
           when /m/i
