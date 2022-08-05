@@ -38,6 +38,7 @@ module CX
         opts[:separator] = "\x09"
         super
       end
+      def content_type ; 'text/tab-separated-values' ; end # # according to RFC 4180.
     end
   end
 end

@@ -59,7 +59,7 @@ module CX
         input.each do | r |
           output << [ line(r) ]
         end
-        env[:content_type] = 'text/csv' # according to RFC 4180.
+        env[:content_type] = content_type
         @cols = nil
         output
       end
@@ -67,6 +67,8 @@ module CX
       def line r
         @csv.generate_line(@cols.map{|c| format_value(r[c])})
       end
+
+      def content_type ; 'text/csv' ; end # # according to RFC 4180.
     end
   end
 end
