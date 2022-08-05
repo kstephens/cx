@@ -744,6 +744,47 @@
   lineno: 9
   path: cx/xform/markdown
 - !ruby/struct:CX::CommandFactory::CommandDesc
+  class_name: MarkdownIn
+  name: markdown-in
+  aliases:
+  - "-markdown"
+  - "-md"
+  synopsis: Parse Markdown. (PoC)
+  description: ''
+  suffixes:
+  - ".md"
+  arguments: []
+  options:
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :--caption
+    description: Caption for table.
+    default: 
+    values:
+    - STRING
+    has_value: true
+    has_default: false
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :--title
+    description: Title for table.
+    default: 
+    values:
+    - STRING
+    has_value: true
+    has_default: false
+  - !ruby/struct:CX::CommandFactory::CommandDesc::Option
+    name: :--include-header
+    description: Default true.
+    default: 
+    values: []
+    has_value: false
+    has_default: false
+  has_column_args: true
+  has_pipeline_args: 
+  examples: []
+  file: lib/cx/xform/markdown.rb
+  lineno: 25
+  path: cx/xform/markdown
+- !ruby/struct:CX::CommandFactory::CommandDesc
   class_name: MetaIn
   name: meta-in
   aliases:

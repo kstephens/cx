@@ -87,6 +87,7 @@ See the `cut`, `grep`, `sort` and `uniq` commands for examples.
  jira-out       | Generate a Jira table lines.                                    | jira- jira                |
  json-in        | Parses JSON.                                                    | -json                     |
  json-out       | Emits JSON.                                                     | json-                     |
+ markdown-in    | Parse Markdown. (PoC)                                           | -markdown -md             |
  markdown-out   | Generate Markdown table lines.                                  | markdown- md md- markdown |
  meta-in        | Calculates various column metadata.                             | -meta                     |
  meta-out       | Generate a table of column metadata.                            | meta-                     |
