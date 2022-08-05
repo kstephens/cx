@@ -38,6 +38,7 @@ module CX
               c.name.size,
               min_width
             ].max
+            m.type = m.type_inferred = ::String
         end
         @c_fmt = Hash.new{|h,i| h[i] = "%#{i}s"}
         self
