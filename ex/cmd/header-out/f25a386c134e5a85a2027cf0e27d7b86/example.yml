@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: header-out
 example: cx in SOME.csv // -csv // -h // h- // csv-
+example_md5: f25a386c134e5a85a2027cf0e27d7b86
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/expected
   actual: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/actual
   diff: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/header-out/f25a386c134e5a85a2027cf0e27d7b86
 dir_name: f25a386c134e5a85a2027cf0e27d7b86

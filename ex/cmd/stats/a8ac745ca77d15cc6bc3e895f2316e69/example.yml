@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: stats
 example: cx in stats-data.csv // -h // parse // stats job:g salary // md
+example_md5: a8ac745ca77d15cc6bc3e895f2316e69
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/expected
   actual: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/actual
   diff: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69/diff
+data_files:
+- stats-data.csv
 contents: 
 dir: ex/cmd/stats/a8ac745ca77d15cc6bc3e895f2316e69
 dir_name: a8ac745ca77d15cc6bc3e895f2316e69

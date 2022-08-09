@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: markdown-out
 example: cx in SOME.csv // -h // parse // md
+example_md5: 3e558e04bebf7a0eb41c33969389bd4a
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/expected
   actual: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/actual
   diff: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/markdown-out/3e558e04bebf7a0eb41c33969389bd4a
 dir_name: 3e558e04bebf7a0eb41c33969389bd4a

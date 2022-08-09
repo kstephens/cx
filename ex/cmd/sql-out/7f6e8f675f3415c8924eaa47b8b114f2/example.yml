@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: sql-out
 example: cx in SOME.csv // -h // parse // sql- --table=SOME_TABLE --insert
+example_md5: 7f6e8f675f3415c8924eaa47b8b114f2
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/expected
   actual: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/actual
   diff: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/sql-out/7f6e8f675f3415c8924eaa47b8b114f2
 dir_name: 7f6e8f675f3415c8924eaa47b8b114f2

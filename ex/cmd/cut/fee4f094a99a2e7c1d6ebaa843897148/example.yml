@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: cut
 example: cx in SOME.csv // -h // cut -1,-2 // h-
+example_md5: fee4f094a99a2e7c1d6ebaa843897148
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/expected
   actual: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/actual
   diff: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/cut/fee4f094a99a2e7c1d6ebaa843897148
 dir_name: fee4f094a99a2e7c1d6ebaa843897148

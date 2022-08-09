@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: align
 example: cx in SOME.csv // -h // parse // align
+example_md5: a4e001494c9f3acbb4bf3a6e7d373207
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/expected
   actual: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/actual
   diff: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/align/a4e001494c9f3acbb4bf3a6e7d373207
 dir_name: a4e001494c9f3acbb4bf3a6e7d373207

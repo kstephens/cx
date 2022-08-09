@@ -66,7 +66,6 @@ See the `cut`, `grep`, `sort` and `uniq` commands for examples.
 # Commands
 
 <% unless search_terms.empty? %>
-Matching: <%= search_terms.map(&:inspect) * ', ' %>
 Matched: <%= matched_strings.to_a.sort.map(&:inspect) * ', '   %>
 <% end %>
 
@@ -105,6 +104,9 @@ Synopsis: <%= c.synopsis %>
 <% unless c.aliases.empty? %>
 Aliases: <%= c.aliases.map{|x| code x}.join(', ') %>
 <% end %>
+<% unless c.inverse.empty? %>
+Inverse: <%= c.inverse.map{|x| code x}.join(', ') %>
+<% end %>
 
 <% unless c.options.empty? %>
 <%= command_option_table c %>
@@ -134,27 +136,28 @@ $ <%= e.example %>
 <% end # commands %>
 <% end # show_command_detail? %>
 
-<% if show_attribution? %>
-# Attribution
-
--------------------------------------
-Copyright 2020 - Kurt Stephens
--------------------------------------
-<% end %>
 <% if show_example_data? %>
 # Example Data
 
 -------------------------------------
 
-<% Dir["#{CX.base_dir}/ex/data/*.*"].sort.each do | file | %>
+<% example_data_files.each do | file | %>
+
+-------------------------------------
 
 ## <%= File.basename file %>
 
 ```none
 <%= File.read(file) %>```
 
--------------------------------------
 
-<% end # ex.data/*.* %>
--------------------------------------
+<% end # example_data_files %>
 <% end # show_example_data? %>
+
+<% if show_attribution? %>
+# Attribution
+
+-------------------------------------
+Copyright 2020-2022 - Kurt Stephens
+-------------------------------------
+<% end %>

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: grep
 example: cx in SOME.csv // -h // grep d:f
+example_md5: 17a312d16cc199d1a42157615fffd1ee
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/expected
   actual: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/actual
   diff: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/grep/17a312d16cc199d1a42157615fffd1ee
 dir_name: 17a312d16cc199d1a42157615fffd1ee

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: gnuplot-out
 example: cx in plot.csv // -h // gnuplot- --size=80x25 x // cmd gnuplot
+example_md5: 46ad9d045127fcdd3f222f57f04dbf72
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/expected
   actual: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/actual
   diff: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72/diff
+data_files:
+- plot.csv
 contents: 
 dir: ex/cmd/gnuplot-out/46ad9d045127fcdd3f222f57f04dbf72
 dir_name: 46ad9d045127fcdd3f222f57f04dbf72

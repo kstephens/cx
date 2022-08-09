@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: row-id
 example: cx in SOME.csv // -h // row-id --start=100 // h-
+example_md5: b1e4920e48f5438b6ede974f4f375594
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/expected
   actual: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/actual
   diff: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/row-id/b1e4920e48f5438b6ede974f4f375594
 dir_name: b1e4920e48f5438b6ede974f4f375594

@@ -5,6 +5,7 @@
   aliases: []
   synopsis: Aligns fields based on column max_size and alignment.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -21,6 +22,7 @@
   aliases: []
   synopsis: Concatenates rows from multiple pipelines.  Columns are shared.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -39,6 +41,7 @@
   - "/"
   synopsis: Pipe through an external command.
   description: ''
+  inverse: []
   suffixes: []
   arguments:
   - command
@@ -56,6 +59,7 @@
   aliases: []
   synopsis: Coerce columns by inferred types.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -72,6 +76,8 @@
   - "-csv"
   synopsis: Parses CSV lines.
   description: ''
+  inverse:
+  - csv-
   suffixes:
   - ".csv"
   arguments: []
@@ -96,6 +102,8 @@
   - csv-
   synopsis: Generates CSV lines.
   description: ''
+  inverse:
+  - "-csv"
   suffixes:
   - ".csv"
   arguments: []
@@ -120,6 +128,7 @@
   aliases: []
   synopsis: Cut columns.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -144,6 +153,8 @@
   - "-d"
   synopsis: Parse delimited records.
   description: ''
+  inverse:
+  - d-
   suffixes: []
   arguments: []
   options:
@@ -182,6 +193,8 @@
   - d-
   synopsis: Generate delimited records.
   description: ''
+  inverse:
+  - "-d"
   suffixes: []
   arguments: []
   options:
@@ -226,6 +239,7 @@
   - "-edn"
   synopsis: Parses EDN.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -243,6 +257,7 @@
   - edn-
   synopsis: Emits EDN.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -260,6 +275,7 @@
   aliases: []
   synopsis: Empty fields are converted to NULL.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -277,6 +293,7 @@
   - erb
   synopsis: Evaluates ERB in the context of input table.
   description: ''
+  inverse: []
   suffixes: []
   arguments:
   - template.erb
@@ -301,6 +318,7 @@
   aliases: []
   synopsis: Evaluates Ruby code for each row.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -318,6 +336,7 @@
   aliases: []
   synopsis: Select rows for Ruby expressions that evaluation true.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -334,6 +353,7 @@
   aliases: []
   synopsis: Reject rows for Ruby expressions that evaluation true.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -352,6 +372,7 @@
   - gnuplot
   synopsis: Generate GNUPLOT file.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -435,6 +456,7 @@
   - g
   synopsis: Filters by regex.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -463,6 +485,8 @@
   - "-h"
   synopsis: Interprets first row as a column name header.
   description: ''
+  inverse:
+  - h-
   suffixes: []
   arguments: []
   options: []
@@ -481,6 +505,8 @@
   - h-
   synopsis: Emits column names as first row.
   description: ''
+  inverse:
+  - "-h"
   suffixes: []
   arguments: []
   options:
@@ -508,6 +534,7 @@
   aliases: []
   synopsis: Show this documentation.
   description: If search-terms are given, show matching commands.
+  inverse: []
   suffixes: []
   arguments:
   - search-terms
@@ -542,6 +569,7 @@
   - htm
   synopsis: Emits HTML.
   description: ''
+  inverse: []
   suffixes:
   - ".html"
   - ".htm"
@@ -646,6 +674,7 @@
   - i
   synopsis: Read from a file.
   description: ''
+  inverse: []
   suffixes: []
   arguments:
   - filename
@@ -666,6 +695,7 @@
   - o
   synopsis: Write records to a file.
   description: ''
+  inverse: []
   suffixes: []
   arguments:
   - filename
@@ -685,6 +715,7 @@
   - jira
   synopsis: Generate a Jira table lines.
   description: ''
+  inverse: []
   suffixes:
   - ".jira.txt"
   arguments: []
@@ -703,6 +734,7 @@
   - "-json"
   synopsis: Parses JSON.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -720,6 +752,7 @@
   - json-
   synopsis: Emits JSON.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -740,6 +773,7 @@
   - markdown
   synopsis: Generate Markdown table lines.
   description: ''
+  inverse: []
   suffixes:
   - ".md"
   arguments: []
@@ -776,6 +810,7 @@
   - "-md"
   synopsis: Parse Markdown. (PoC)
   description: ''
+  inverse: []
   suffixes:
   - ".md"
   arguments: []
@@ -816,6 +851,7 @@
   - "-meta"
   synopsis: Calculates various column metadata.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -840,6 +876,7 @@
   - meta-
   synopsis: Generate a table of column metadata.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -859,6 +896,7 @@
   - set-meta
   synopsis: Set column meta.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -880,6 +918,7 @@
   - noop
   synopsis: Does nothing -- output is same as input.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -895,6 +934,7 @@
   aliases: []
   synopsis: Parse strings into richer types.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -912,6 +952,7 @@
   - q
   synopsis: Quote string values that would be ambigous or unprintable.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -945,6 +986,8 @@
   - "-record"
   synopsis: Parses records.
   description: ''
+  inverse:
+  - record-
   suffixes: []
   arguments: []
   options:
@@ -975,6 +1018,8 @@
   - record-
   synopsis: Generates records.
   description: ''
+  inverse:
+  - "-record"
   suffixes: []
   arguments: []
   options:
@@ -1012,6 +1057,7 @@
   - range
   synopsis: Select a range of rows.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1035,6 +1081,7 @@
   - compact
   synopsis: Empty columns and rows are removed.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1051,6 +1098,7 @@
   - sub
   synopsis: Replace by regex.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -1092,6 +1140,7 @@
   - tac
   synopsis: Reverse order of rows.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1109,6 +1158,7 @@
   aliases: []
   synopsis: Inserts a row id column.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -1149,6 +1199,7 @@
   - s
   synopsis: Sorts by specified columns.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1170,6 +1221,7 @@
   - sql-
   synopsis: Generate SQL.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -1247,6 +1299,7 @@
   aliases: []
   synopsis: Collect stats of a group of columns.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1269,6 +1322,7 @@
   - trim
   synopsis: Strip leading and trailing whitespace.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1285,6 +1339,7 @@
   - t
   synopsis: Send input to multiple output pipelines.
   description: ''
+  inverse: []
   suffixes: []
   arguments:
   - pipelines
@@ -1302,6 +1357,7 @@
   aliases: []
   synopsis: Transpose rows and columns.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:
@@ -1327,6 +1383,8 @@
   - "-tsv"
   synopsis: Parses TSV lines.
   description: ''
+  inverse:
+  - tsv-
   suffixes:
   - ".tsv"
   arguments: []
@@ -1344,6 +1402,8 @@
   - tsv-
   synopsis: Generates TSV lines.
   description: ''
+  inverse:
+  - "-tsv"
   suffixes:
   - ".tsv"
   arguments: []
@@ -1363,6 +1423,7 @@
   - types
   synopsis: Infer types from field strings.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options: []
@@ -1378,6 +1439,7 @@
   aliases: []
   synopsis: Emit only rows with uniq columns.
   description: ''
+  inverse: []
   suffixes: []
   arguments: []
   options:

@@ -2,6 +2,7 @@
 command: meta-set
 example: cx in SOME.csv // -h // -meta // meta-set 'a:max_size=20;align=right;order=9'
   // meta- // cut name,order,max_size,align // md
+example_md5: 7d57c76de1e0d18bf3a9598ce8d1bacb
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -10,6 +11,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/expected
   actual: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/actual
   diff: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/meta-set/7d57c76de1e0d18bf3a9598ce8d1bacb
 dir_name: 7d57c76de1e0d18bf3a9598ce8d1bacb

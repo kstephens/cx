@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: sort
 example: cx in SOME.csv // -h // sort d  // h-
+example_md5: 14f9314b03ffd8c0ace47223069e5329
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/expected
   actual: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/actual
   diff: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/sort/14f9314b03ffd8c0ace47223069e5329
 dir_name: 14f9314b03ffd8c0ace47223069e5329

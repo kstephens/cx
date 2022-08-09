@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: json-out
 example: cx in SOME.csv // -h // parse // json-
+example_md5: 8715c896b02664517163eca658eb86fb
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/json-out/8715c896b02664517163eca658eb86fb/expected
   actual: ex/cmd/json-out/8715c896b02664517163eca658eb86fb/actual
   diff: ex/cmd/json-out/8715c896b02664517163eca658eb86fb/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/json-out/8715c896b02664517163eca658eb86fb
 dir_name: 8715c896b02664517163eca658eb86fb

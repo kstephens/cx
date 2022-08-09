@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: edn-out
 example: cx in SOME.csv // -h // parse // h- // edn- --mode=row
+example_md5: 045edb2dcd211cfa182be412883fef72
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/edn-out/045edb2dcd211cfa182be412883fef72/expected
   actual: ex/cmd/edn-out/045edb2dcd211cfa182be412883fef72/actual
   diff: ex/cmd/edn-out/045edb2dcd211cfa182be412883fef72/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/edn-out/045edb2dcd211cfa182be412883fef72
 dir_name: 045edb2dcd211cfa182be412883fef72

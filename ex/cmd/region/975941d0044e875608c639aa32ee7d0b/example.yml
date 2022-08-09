@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: region
 example: cx in RANDOM.csv // -h // region 11...14       // h-
+example_md5: 975941d0044e875608c639aa32ee7d0b
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/region/975941d0044e875608c639aa32ee7d0b/expected
   actual: ex/cmd/region/975941d0044e875608c639aa32ee7d0b/actual
   diff: ex/cmd/region/975941d0044e875608c639aa32ee7d0b/diff
+data_files:
+- RANDOM.csv
 contents: 
 dir: ex/cmd/region/975941d0044e875608c639aa32ee7d0b
 dir_name: 975941d0044e875608c639aa32ee7d0b

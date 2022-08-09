@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: reverse
 example: cx in SOME.csv // -h // reverse // h-
+example_md5: 0c73431f10dc4c07b679b98c3cae30e9
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/expected
   actual: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/actual
   diff: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/reverse/0c73431f10dc4c07b679b98c3cae30e9
 dir_name: 0c73431f10dc4c07b679b98c3cae30e9

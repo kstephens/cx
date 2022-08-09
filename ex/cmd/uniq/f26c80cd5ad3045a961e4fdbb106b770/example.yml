@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: uniq
 example: cx in DUPLICATES.csv // -h // uniq z --count=N // h-
+example_md5: f26c80cd5ad3045a961e4fdbb106b770
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/uniq/f26c80cd5ad3045a961e4fdbb106b770/expected
   actual: ex/cmd/uniq/f26c80cd5ad3045a961e4fdbb106b770/actual
   diff: ex/cmd/uniq/f26c80cd5ad3045a961e4fdbb106b770/diff
+data_files:
+- DUPLICATES.csv
 contents: 
 dir: ex/cmd/uniq/f26c80cd5ad3045a961e4fdbb106b770
 dir_name: f26c80cd5ad3045a961e4fdbb106b770

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: select
 example: cx in SOME.csv // -h // parse // select "a > 10" // h-
+example_md5: 2f1ccc26cf1de2b71e215136ae4ef273
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/expected
   actual: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/actual
   diff: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/select/2f1ccc26cf1de2b71e215136ae4ef273
 dir_name: 2f1ccc26cf1de2b71e215136ae4ef273
