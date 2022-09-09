@@ -15,11 +15,11 @@ module CX
     
     ATTRS =
       [
-        [:name,       type: Symbol],
-        [:name_,      type: Symbol],
+        [:name,       type: Symbol, delegate: false],
+        [:name_,      type: Symbol, delegate: false],
         [:visible,    type: Boolean],
-        [:order,      type: Integer],
-        [:index,      type: Integer],
+        [:order,      type: Integer, delegate: false],
+        [:index,      type: Integer, delegate: false],
         [:type,       type: Module],
         [:min_size,   type: Integer],
         [:max_size,   type: Integer],
@@ -32,14 +32,38 @@ module CX
         [:align_inferred, type: Symbol],
         [:types,          type: Set], # Set.new([Module])
         [:type_inferred,  type: Module],
+        # [:version,        type: Integer, delegate: true],
       ]
     attr_accessor_typed *ATTRS
 
     #####################################
 
-    attr_reader :state, :opts
+    eval(ATTRS.map{|(name, opts)| opts[:delegate] ? name : nil}.compact.map do | name |
+<<"END"
+def #{name}     ; raise unless @owner; @owner.#{name}      rescue nil ; end
+def #{name}= x  ; raise unless @owner; @owner.#{name} = x  rescue nil ; end
+END
+    end * "\n")
+
+    #####################################
     
-    def initialize
+    module Owner
+      attr_reader :meta
+      def meta= m
+        if @meta = m
+          @meta.owner = self
+        end
+      end
+    end
+
+    #####################################
+    
+    attr_reader :state, :opts
+    attr_accessor :owner
+    
+    def initialize owner = nil
+      raise unless owner
+      @owner = owner
       self.visible = true
       @opts = { }
       clear!
@@ -56,23 +80,30 @@ module CX
     end
 
     def column! c
+      # ??? delegate to @owner?
       @name  = c.name
       @name_ = c.name_
       @index = c.index
       @order = c.order
+      # @version = c.version
+      self
+    end
+
+    def header! h
+      # ??? delegate to @owner?
+      #@version = h.version
       self
     end
 
     def update_column! c
+      # ??? delegate to @owner?
       c.name = @name
       c.order = @order
       column! c
     end
     
     def clear! c = nil
-      if c
-        column! c
-      end
+      column!(c) if c
       @types = Set.new
       @type_inferred = @align_inferred = nil
       @type_object = nil
@@ -114,17 +145,20 @@ module CX
       when nil
         @nulls += 1
       when ''
-        min_max_value! v
-        @types << v.class
+        update_min_max_value! v
         @blanks += 1
-        min_max_size! 0
       else
-        min_max_value! v
-        @types << v.class
-        v = v.to_s
-        @whitespace +=1 if /\s/.match?(v)
-        min_max_size! v.size
+        v = update_min_max_value! v
+        @whitespace += 1 if /\s/.match?(v)
       end
+      v
+    end
+
+    def update_min_max_value! v
+      min_max_value! v
+      @types << v.class
+      v = v.to_s # ??? use formatter?
+      min_max_size! v.size
       v
     end
 
@@ -139,11 +173,11 @@ module CX
     ## Update statisitics
     ##
     
-    def min_max_size! n
-      return nil unless n
+    def min_max_size! val
+      raise unless val
       check_state! :type!, :active
-      @min_size = n if ! @min_size || @min_size > n
-      @max_size = n if ! @max_size || @max_size < n 
+      @min_size = val if ! @min_size || @min_size > val
+      @max_size = val if ! @max_size || @max_size < val
       self
     end
 
@@ -221,7 +255,7 @@ module CX
       @opts.each do | name, val |
         unless header[name]
           col = Column.new(name)
-          col.meta.update_from_hash(name: name, type: String)
+          col.meta.update_from_hash!(name: name, type: String)
           header << col
         end
       end
@@ -274,13 +308,15 @@ module CX
     end
 
     def method_missing sel, *args, &blk
-      case sel.to_s
-      when /^(\w+)=$/
-        return @opts[$1.to_sym] = args.first
-      when /^\w+$/
-        return @opts[sel]
+      sel_s = nil
+      case
+      when ! blk && args.size == 1 && (sel_s ||= sel.to_s) =~ /^(\w+)=$/
+        @opts[$1.to_sym] = args.first
+      when ! blk && args.size == 0 && (sel_s ||= sel.to_s) =~ /^\w+$/
+        @opts[sel]
+      else
+        super(sel, *args, &blk)
       end
-      super(sel, *args, &blk)
     end
     
     TYPE_LCM = { }

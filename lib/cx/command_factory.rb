@@ -84,6 +84,7 @@ module CX
     
     class CommandDesc < Struct.new(
       :class_name, :name, :aliases, :synopsis, :description,
+      :inverse,
       :suffixes, :arguments, :options,
       :has_column_args, :has_pipeline_args,
       :examples,
@@ -149,6 +150,7 @@ module CX
         self.description ||= ""
         self.suffixes ||= [ ]
         self.arguments ||= [ ]
+        self.inverse ||= [ ]
         self.options ||= { }
         self.examples ||= [ ]
         

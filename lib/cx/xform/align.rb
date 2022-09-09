@@ -23,7 +23,7 @@ module CX
         input.map_columns!(@cols) do | r, c, v |
           align_col c, v, nil
         end
-        @cols = @c_mw = @c_fmt = nil
+        @cols = @c_mw = @c_fmt = nil # GC
         input
       end
       
@@ -38,6 +38,7 @@ module CX
               c.name.size,
               min_width
             ].max
+            m.type = m.type_inferred = ::String
         end
         @c_fmt = Hash.new{|h,i| h[i] = "%#{i}s"}
         self

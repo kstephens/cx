@@ -10,8 +10,8 @@ require 'cx/xform/csv'
 #   synopsis: Parses TSV lines.
 #   suffixes: [ .tsv ]
 #   inverse: [ 'tsv-' ]
-#   args: []
-#   opts: {}
+#   arguments: []
+#   options: {}
 
 # :COMMAND:
 # TsvOut:
@@ -19,8 +19,8 @@ require 'cx/xform/csv'
 #   synopsis: Generates TSV lines.
 #   suffixes: [ .tsv ]
 #   inverse: [ '-tsv' ]
-#   args: []
-#   opts: {}
+#   arguments: []
+#   options: {}
 #   examples:
 #     - cx in SOME.csv // tsv-
 
@@ -38,6 +38,7 @@ module CX
         opts[:separator] = "\x09"
         super
       end
+      def content_type ; 'text/tab-separated-values' ; end # # according to RFC 4180.
     end
   end
 end

@@ -60,15 +60,23 @@ module CX
     
     def make_document
       commands = all_commands.select{|c| show_command?(c)}
+      example_data_files = Set.new
       commands.each do | c |
         c.examples.map! do | example |
           e = Example.load!(command: c.name, example: example)
           # log.info "Loaded example: #{e.to_h.inspect}"
           # log.info "Loaded example content:"
           # e.contents.log_members
+          example_data_files.merge(e.data_files)
           e
         end
         log.info "LOADED : command #{c.name} : #{c.options.size} options : #{c.examples.size} examples"
+      end
+
+      if commands.size == all_commands.size
+        example_data_files = Example.data_files_available
+      else
+        example_data_files = example_data_files.to_a.sort.map{|p| "#{CX.base_dir}/ex/data/#{p}"}
       end
 
       template = File.read(help_md_erb)
@@ -89,9 +97,9 @@ module CX
     end
 
     def command_table commands
-      table(%w(Command Synopsis Aliases),
+      table(%w(Command Synopsis Aliases Inverse),
       commands.map do |c|
-        [ c.name.to_s, c.synopsis, c.aliases * ' ']
+        [ c.name.to_s, c.synopsis, c.aliases * ' ', c.inverse * ' ']
       end)
     end
 
@@ -109,7 +117,7 @@ module CX
     end
 
     def show_examples?
-      verbose? || opts[:examples]
+      verbose? || opts[:examples] || opts[:example_data]
     end
 
     def show_example_data?
@@ -117,7 +125,7 @@ module CX
     end
 
     def show_command_detail?
-      verbose?
+      verbose? || show_examples?
     end
 
     def show_brief?

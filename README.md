@@ -60,59 +60,60 @@ See the `cut`, `grep`, `sort` and `uniq` commands for examples.
 
 # Commands
 
- Command        | Synopsis                                                        | Aliases                   |
-----------------|-----------------------------------------------------------------|---------------------------|
- align          | Aligns fields based on column max_size and alignment.           |                           |
- cat            | Concatenates rows from multiple pipelines.  Columns are shared. |                           |
- cmd            | Pipe through an external command.                               | command /                 |
- coerce         | Coerce columns by inferred types.                               |                           |
- csv-in         | Parses CSV lines.                                               | -csv                      |
- csv-out        | Generates CSV lines.                                            | csv-                      |
- cut            | Cut columns.                                                    |                           |
- delimited-in   | Parse delimited records.                                        | -delimited -d             |
- delimited-out  | Generate delimited records.                                     | delimited- d-             |
- edn-in         | Parses EDN.                                                     | -edn                      |
- edn-out        | Emits EDN.                                                      | edn-                      |
- empty-null     | Empty fields are converted to NULL.                             |                           |
- erb-out        | Evaluates ERB in the context of input table.                    | erb- erb                  |
- eval           | Evaluates Ruby code for each row.                               |                           |
- gnuplot-out    | Generate GNUPLOT file.                                          | gnuplot- gnuplot          |
- grep           | Filters by regex.                                               | g                         |
- header-in      | Interprets first row as a column name header.                   | -header -h                |
- header-out     | Emits column names as first row.                                | header- h-                |
- help           | Show this documentation.                                        |                           |
- html-out       | Emits HTML.                                                     | html- html htm            |
- io-in          | Read from a file.                                               | -io in i                  |
- io-out         | Write records to a file.                                        | io- out o                 |
- jira-out       | Generate a Jira table lines.                                    | jira- jira                |
- json-in        | Parses JSON.                                                    | -json                     |
- json-out       | Emits JSON.                                                     | json-                     |
- markdown-out   | Generate Markdown table lines.                                  | markdown- md md- markdown |
- meta-in        | Calculates various column metadata.                             | -meta                     |
- meta-out       | Generate a table of column metadata.                            | meta-                     |
- meta-set       | Set column meta.                                                | meta= set-meta            |
- nop            | Does nothing -- output is same as input.                        | noop                      |
- parse          | Parse strings into richer types.                                |                           |
- quote          | Quote string values that would be ambigous or unprintable.      | q                         |
- record-in      | Parses records.                                                 | -record                   |
- record-out     | Generates records.                                              | record-                   |
- region         | Select a range of rows.                                         | range                     |
- reject         | Reject rows for Ruby expressions that evaluation true.          |                           |
- remove-empty   | Empty columns and rows are removed.                             | compact                   |
- replace        | Replace by regex.                                               | sub                       |
- reverse        | Reverse order of rows.                                          | tac                       |
- row-id         | Inserts a row id column.                                        |                           |
- select         | Select rows for Ruby expressions that evaluation true.          |                           |
- sort           | Sorts by specified columns.                                     | s                         |
- sql-out        | Generate SQL.                                                   | sql-                      |
- stats          | Collect stats of a group of columns.                            |                           |
- strip          | Strip leading and trailing whitespace.                          | trim                      |
- tee            | Send input to multiple output pipelines.                        | t                         |
- transpose      | Transpose rows and columns.                                     |                           |
- tsv-in         | Parses TSV lines.                                               | -tsv                      |
- tsv-out        | Generates TSV lines.                                            | tsv-                      |
- type-inference | Infer types from field strings.                                 | -types types              |
- uniq           | Emit only rows with uniq columns.                               |                           |
+ Command        | Synopsis                                                        | Aliases                   | Inverse |
+----------------|-----------------------------------------------------------------|---------------------------|---------|
+ align          | Aligns fields based on column max_size and alignment.           |                           |         |
+ cat            | Concatenates rows from multiple pipelines.  Columns are shared. |                           |         |
+ cmd            | Pipe through an external command.                               | command /                 |         |
+ coerce         | Coerce columns by inferred types.                               |                           |         |
+ csv-in         | Parses CSV lines.                                               | -csv                      | csv-    |
+ csv-out        | Generates CSV lines.                                            | csv-                      | -csv    |
+ cut            | Cut columns.                                                    |                           |         |
+ delimited-in   | Parse delimited records.                                        | -delimited -d             | d-      |
+ delimited-out  | Generate delimited records.                                     | delimited- d-             | -d      |
+ edn-in         | Parses EDN.                                                     | -edn                      |         |
+ edn-out        | Emits EDN.                                                      | edn-                      |         |
+ empty-null     | Empty fields are converted to NULL.                             |                           |         |
+ erb-out        | Evaluates ERB in the context of input table.                    | erb- erb                  |         |
+ eval           | Evaluates Ruby code for each row.                               |                           |         |
+ gnuplot-out    | Generate GNUPLOT file.                                          | gnuplot- gnuplot          |         |
+ grep           | Filters by regex.                                               | g                         |         |
+ header-in      | Interprets first row as a column name header.                   | -header -h                | h-      |
+ header-out     | Emits column names as first row.                                | header- h-                | -h      |
+ help           | Show this documentation.                                        |                           |         |
+ html-out       | Emits HTML.                                                     | html- html htm            |         |
+ io-in          | Read from a file.                                               | -io in i                  |         |
+ io-out         | Write records to a file.                                        | io- out o                 |         |
+ jira-out       | Generate a Jira table lines.                                    | jira- jira                |         |
+ json-in        | Parses JSON.                                                    | -json                     |         |
+ json-out       | Emits JSON.                                                     | json-                     |         |
+ markdown-in    | Parse Markdown. (PoC)                                           | -markdown -md             |         |
+ markdown-out   | Generate Markdown table lines.                                  | markdown- md md- markdown |         |
+ meta-in        | Calculates various column metadata.                             | -meta                     |         |
+ meta-out       | Generate a table of column metadata.                            | meta-                     |         |
+ meta-set       | Set column meta.                                                | meta= set-meta            |         |
+ nop            | Does nothing -- output is same as input.                        | noop                      |         |
+ parse          | Parse strings into richer types.                                |                           |         |
+ quote          | Quote string values that would be ambigous or unprintable.      | q                         |         |
+ record-in      | Parses records.                                                 | -record                   | record- |
+ record-out     | Generates records.                                              | record-                   | -record |
+ region         | Select a range of rows.                                         | range                     |         |
+ reject         | Reject rows for Ruby expressions that evaluation true.          |                           |         |
+ remove-empty   | Empty columns and rows are removed.                             | compact                   |         |
+ replace        | Replace by regex.                                               | sub                       |         |
+ reverse        | Reverse order of rows.                                          | tac                       |         |
+ row-id         | Inserts a row id column.                                        |                           |         |
+ select         | Select rows for Ruby expressions that evaluation true.          |                           |         |
+ sort           | Sorts by specified columns.                                     | s                         |         |
+ sql-out        | Generate SQL.                                                   | sql-                      |         |
+ stats          | Collect stats of a group of columns.                            |                           |         |
+ strip          | Strip leading and trailing whitespace.                          | trim                      |         |
+ tee            | Send input to multiple output pipelines.                        | t                         |         |
+ transpose      | Transpose rows and columns.                                     |                           |         |
+ tsv-in         | Parses TSV lines.                                               | -tsv                      | tsv-    |
+ tsv-out        | Generates TSV lines.                                            | tsv-                      | -tsv    |
+ type-inference | Infer types from field strings.                                 | -types types              |         |
+ uniq           | Emit only rows with uniq columns.                               |                           |         |
 
 # Command Detail
 
@@ -184,6 +185,7 @@ Synopsis: Coerce columns by inferred types.
 Synopsis: Parses CSV lines.
 
 Aliases: `-csv`
+Inverse: `csv-`
 
  Options           | Description                          | Default | Values |
 -------------------|--------------------------------------|---------|--------|
@@ -196,6 +198,7 @@ Aliases: `-csv`
 Synopsis: Generates CSV lines.
 
 Aliases: `csv-`
+Inverse: `-csv`
 
  Options           | Description                          | Default | Values |
 -------------------|--------------------------------------|---------|--------|
@@ -310,29 +313,33 @@ abc,11
 -------------------------------------
 ## `delimited-in`
 
-`delimited-in`  *[* `--field-sep=...` `--record-sep=...`  *]* 
+`delimited-in`  *[* `--field-sep=...` `--record-sep=...` `--record-cont-sep=...`  *]* 
 Synopsis: Parse delimited records.
 
 Aliases: `-delimited`, `-d`
+Inverse: `d-`
 
- Options            | Description | Default        | Values |
---------------------|-------------|----------------|--------|
- `--field-sep=...`  |             | ","            |        |
- `--record-sep=...` |             | system newline |        |
+ Options                 | Description                      | Default        | Values |
+-------------------------|----------------------------------|----------------|--------|
+ `--field-sep=...`       |                                  | ","            |        |
+ `--record-sep=...`      |                                  | system newline |        |
+ `--record-cont-sep=...` | Separator for continued records. | NONE           |        |
 
 -------------------------------------
 ## `delimited-out`
 
-`delimited-out`  *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...`  *]* *[* *column-args ...* *]* 
+`delimited-out`  *[* `--field-sep=...` `--record-sep=...` `--multi-sep=...` `--record-cont-sep=...`  *]* *[* *column-args ...* *]* 
 Synopsis: Generate delimited records.
 
 Aliases: `delimited-`, `d-`
+Inverse: `-d`
 
- Options            | Description                      | Default        | Values |
---------------------|----------------------------------|----------------|--------|
- `--field-sep=...`  |                                  | ","            |        |
- `--record-sep=...` |                                  | system newline |        |
- `--multi-sep=...`  | Separator for enumerable values. | ";"            |        |
+ Options                 | Description                      | Default        | Values |
+-------------------------|----------------------------------|----------------|--------|
+ `--field-sep=...`       |                                  | ","            |        |
+ `--record-sep=...`      |                                  | system newline |        |
+ `--multi-sep=...`       | Separator for enumerable values. | ";"            |        |
+ `--record-cont-sep=...` | Separator for continued records. | NONE           |        |
 
 -------------------------------------
 ## `edn-in`
@@ -654,6 +661,7 @@ $ cx in SOME.csv // -h // grep "d:!;f"
 Synopsis: Interprets first row as a column name header.
 
 Aliases: `-header`, `-h`
+Inverse: `h-`
 
   Examples:
 
@@ -678,6 +686,7 @@ $ cx in SOME.csv // -csv // -h // csv-
 Synopsis: Emits column names as first row.
 
 Aliases: `header-`, `h-`
+Inverse: `-h`
 
  Options              | Description                                                                 | Default | Values           |
 ----------------------|-----------------------------------------------------------------------------|---------|------------------|
@@ -716,12 +725,14 @@ max_value,134,ab,11,foo
 -------------------------------------
 ## `help`
 
-`help` `run-examples!` `make-help!` 
+`help`  *[* `--examples` `--example-data`  *]* `search-terms` `...` 
 Synopsis: Show this documentation.
 
-Subcommands:
-* run-examples! - runs all command examples into ex/cmd/.
-* make-help!    - regenerates this documetation.
+ Options          | Description                 | Default | Values |
+------------------|-----------------------------|---------|--------|
+ `--examples`     | Show commmand examples.     |         |        |
+ `--example-data` | Show commmand example data. |         |        |
+If search-terms are given, show matching commands.
 -------------------------------------
 ## `html-out`
 
@@ -814,7 +825,7 @@ a,b,c,d
 -------------------------------------
 ## `json-out`
 
-`json-out` 
+`json-out` *[* *column-args ...* *]* 
 Synopsis: Emits JSON.
 
 Aliases: `json-`
@@ -836,6 +847,20 @@ $ cx in SOME.csv // -h // parse // json-
 -------------------------------------
 
 -------------------------------------
+
+-------------------------------------
+## `markdown-in`
+
+`markdown-in`  *[* `----caption=...` `----title=...` `----include-header`  *]* *[* *column-args ...* *]* 
+Synopsis: Parse Markdown. (PoC)
+
+Aliases: `-markdown`, `-md`
+
+ Options              | Description        | Default | Values |
+----------------------|--------------------|---------|--------|
+ `----caption=...`    | Caption for table. |         | STRING |
+ `----title=...`      | Title for table.   |         | STRING |
+ `----include-header` | Default true.      |         |        |
 
 -------------------------------------
 ## `markdown-out`
@@ -1082,6 +1107,7 @@ Aliases: `q`
 Synopsis: Parses records.
 
 Aliases: `-record`
+Inverse: `record-`
 
  Options            | Description       | Default          | Values |
 --------------------|-------------------|------------------|--------|
@@ -1091,15 +1117,17 @@ Aliases: `-record`
 -------------------------------------
 ## `record-out`
 
-`record-out`  *[* `--record-sep=...` `--field-sep=...`  *]* 
+`record-out`  *[* `--record-sep=...` `--field-sep=...` `--record-cont-sep=...`  *]* 
 Synopsis: Generates records.
 
 Aliases: `record-`
+Inverse: `-record`
 
- Options            | Description       | Default          | Values |
---------------------|-------------------|------------------|--------|
- `--record-sep=...` | Record separator. | platform newline |        |
- `--field-sep=...`  | Field separator.  | ""               |        |
+ Options                 | Description                    | Default          | Values |
+-------------------------|--------------------------------|------------------|--------|
+ `--record-sep=...`      | Record separator.              | platform newline |        |
+ `--field-sep=...`       | Field separator.               | ""               |        |
+ `--record-cont-sep=...` | Record continuation separator. |                  |        |
 
 -------------------------------------
 ## `region`
@@ -1679,6 +1707,7 @@ foo,bar,baz,abc
 Synopsis: Parses TSV lines.
 
 Aliases: `-tsv`
+Inverse: `tsv-`
 
 -------------------------------------
 ## `tsv-out`
@@ -1687,6 +1716,7 @@ Aliases: `-tsv`
 Synopsis: Generates TSV lines.
 
 Aliases: `tsv-`
+Inverse: `-tsv`
 
   Examples:
 
@@ -1716,8 +1746,12 @@ Aliases: `-types`, `types`
 -------------------------------------
 ## `uniq`
 
-`uniq` *[* *column-args ...* *]* 
+`uniq`  *[* `--count=...`  *]* *[* *column-args ...* *]* 
 Synopsis: Emit only rows with uniq columns.
+
+ Options       | Description                       | Default | Values |
+---------------|-----------------------------------|---------|--------|
+ `--count=...` | Count uniq rows into column NAME. | "COUNT" |        |
 
   Examples:
 
@@ -1774,16 +1808,31 @@ x,y,z
 
 -------------------------------------
 
+```none
+$ cx in DUPLICATES.csv // -h // uniq z --count   // h-
+x,y,z,COUNT
+1,2,3,3
+4,5,6,1
+```
+
+-------------------------------------
+
+```none
+$ cx in DUPLICATES.csv // -h // uniq z --count=N // h-
+x,y,z,N
+1,2,3,3
+4,5,6,1
+```
+
+-------------------------------------
+
 -------------------------------------
 
 -------------------------------------
 
-# Attribution
-
--------------------------------------
-Copyright 2020 - Kurt Stephens
--------------------------------------
 # Example Data
+
+-------------------------------------
 
 -------------------------------------
 
@@ -2037,7 +2086,9 @@ accounting,b,110
 accounting,b,115
 ```
 
--------------------------------------
+# Attribution
 
+-------------------------------------
+Copyright 2020-2022 - Kurt Stephens
 -------------------------------------
 

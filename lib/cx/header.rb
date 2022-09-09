@@ -5,22 +5,23 @@
 
 require 'cx'
 require 'cx/column'
+require 'cx/meta'
 require 'cx/logging'
 require 'cx/inspect'
 
 module CX
   class Header
-    include Enumerable, Support
+    include Enumerable, Support, Meta::Owner
     # extend Logging
 
-    attr_reader :columns, :meta, :aliases, :version
+    attr_reader :columns, :aliases, :version
 
     def initialize cols = nil
-      @version = 0
       @columns = [ ]
       @to_column = { }
       @aliases = { }
-      @meta = Meta.new
+      @version = 0
+      self.meta = Meta.new(self)
       case cols
       when nil
       when Integer
@@ -33,7 +34,23 @@ module CX
         raise_ TypeError, "unexpected columns : #{columns.class}"
       end
       compact!
-      @version = 0
+      @version = -1
+      inc_version!
+    end
+
+    def inc_version!
+      # @meta.version = 
+      (@version += 1)
+      self
+    end
+
+    def initialize_copy
+      super
+      @columns = @columns.dup
+      @to_column = @to_column.dup
+      @aliases = @aliases.dup
+      self.meta = @meta.dup
+      # @meta.version = @version
     end
 
     def [] k
@@ -73,8 +90,9 @@ module CX
         c._header = self
         c
       end
-      @meta = @meta.dup
-      @version = 0
+      self.meta = @meta.dup
+      @version = -1
+      inc_version!
     end
 
     def each &blk
@@ -88,6 +106,8 @@ module CX
         add_column!(x)
       when Symbol, String
         push Column.new(x)
+      # ??? when Integer
+      #  make_room_at! x
       else
         raise_ TypeError
       end
@@ -108,24 +128,23 @@ module CX
     end
     
     def alias! c, name
-      c = get(c) if Column === c
+      c = get(c) unless Column === c
       @aliases[name.to_sym] = c
-      self
+      inc_version!
     end
 
     def add_column! c
       raise_ ArgumentError, "#{self.inspect} already contains #{c.inspect}" if @columns.include?(c)
-      # raise_ ArgumentError, "#{c.inspect} already belongs to #{c.header.inspect}" if c.header
       c = c.dup if c.header
       c.index ||= (@columns.map(&:to_i).max || -1) + 1
-      c.order ||= @columns.last ? @columns.last.order + 1 : 0
+      c.order ||= (@columns.last ? @columns.last.order + 1 : 0)
       c.name = available_name(c, c.name || :_COL_)
       @to_column[c.name] = c
       make_room_at! c.order
       @columns << c
       compact!
-      @version += 1
       c._header = self
+      inc_version!
       c
     end
 
@@ -138,7 +157,7 @@ module CX
       end
       c._header = nil
       compact!
-      @version += 1
+      inc_version!
       c
     end
 
@@ -161,16 +180,13 @@ module CX
       return name if c.name == name
       raise_ ArgumentError if @to_column[name]
       raise_ ArgumentError unless @columns.include?(c)
-      @to_column.delete(c.name)
-      @aliases.keys do | (a, n) |
-        @aliases.delete(a) if n == c.name
-      end
-      new_name = available_name(c, name)
-      c._name = new_name
-      @to_column[new_name] = c
-      alias! c, c.name_
-      @version += 1
-      new_name
+      aliases = @aliases.select{|a, n| n == c.name}.map(&:first)
+      remove_column! c
+      c._name = name
+      add_column! c
+      aliases.each{|a| alias! c, a}
+      inc_version!
+      c.name
     end
 
     def change_index! c, index
@@ -179,7 +195,7 @@ module CX
       make_room_at! index
       c._index = index
       compact!
-      @version += 1
+      inc_version!
       index
     end
 
@@ -189,7 +205,7 @@ module CX
       make_room_at! order
       c._order = order
       compact!
-      @version += 1
+      inc_version!
       order
     end
 

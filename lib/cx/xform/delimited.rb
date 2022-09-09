@@ -13,6 +13,7 @@ require 'cx/xform/record'
 #   options:
 #     field-sep=:   'Default: ",".'
 #     record-sep=:  'Default: system newline.'
+#     record-cont-sep=:  'Separator for continued records.  Default: NONE.'
 
 # :COMMAND:
 # DelimitedOut:
@@ -25,6 +26,7 @@ require 'cx/xform/record'
 #     field-sep=:   'Default: ",".'
 #     record-sep=:  'Default: system newline.'
 #     multi-sep=:   'Separator for enumerable values.  Default: ";".'
+#     record-cont-sep=:  'Separator for continued records.  Default: NONE.'
 
 module CX
   module Xform

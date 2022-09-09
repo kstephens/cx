@@ -8,6 +8,7 @@ require 'cx/io_buffer'
 require 'builder' # XML https://github.com/jimweirich/builder
 require 'cgi/util'
 
+# TODO: Refactor into CX::XmlMarkup.
 class CX::HtmlMarkup < ::Builder::XmlMarkup
   attr_accessor :indent_enabled, :attrs_enabled, :file_content_path
 

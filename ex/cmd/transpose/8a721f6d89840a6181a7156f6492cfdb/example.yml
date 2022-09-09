@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: transpose
 example: cx in SOME.csv // -h // transpose // h-
+example_md5: 8a721f6d89840a6181a7156f6492cfdb
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb/expected
   actual: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb/actual
   diff: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/transpose/8a721f6d89840a6181a7156f6492cfdb
 dir_name: 8a721f6d89840a6181a7156f6492cfdb

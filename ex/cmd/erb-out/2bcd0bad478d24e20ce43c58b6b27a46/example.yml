@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: erb-out
 example: cx in SOME.csv // -csv // -h // erb SOME.erb
+example_md5: 2bcd0bad478d24e20ce43c58b6b27a46
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,9 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/expected
   actual: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/actual
   diff: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46/diff
+data_files:
+- SOME.csv
+- SOME.erb
 contents: 
 dir: ex/cmd/erb-out/2bcd0bad478d24e20ce43c58b6b27a46
 dir_name: 2bcd0bad478d24e20ce43c58b6b27a46

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: reject
 example: cx in SOME.csv // -h // parse // reject "a > 10" // h-
+example_md5: b0bbe55c4b7d713ac854658904dd5ec4
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/reject/b0bbe55c4b7d713ac854658904dd5ec4/expected
   actual: ex/cmd/reject/b0bbe55c4b7d713ac854658904dd5ec4/actual
   diff: ex/cmd/reject/b0bbe55c4b7d713ac854658904dd5ec4/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/reject/b0bbe55c4b7d713ac854658904dd5ec4
 dir_name: b0bbe55c4b7d713ac854658904dd5ec4

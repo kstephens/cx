@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: meta-set
 example: cx in SOME.csv // -h // -meta // meta= 'c:name=newname;order=-1' // md
+example_md5: 5d3900c18f1b122ede2509df8821a6eb
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/meta-set/5d3900c18f1b122ede2509df8821a6eb/expected
   actual: ex/cmd/meta-set/5d3900c18f1b122ede2509df8821a6eb/actual
   diff: ex/cmd/meta-set/5d3900c18f1b122ede2509df8821a6eb/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/meta-set/5d3900c18f1b122ede2509df8821a6eb
 dir_name: 5d3900c18f1b122ede2509df8821a6eb

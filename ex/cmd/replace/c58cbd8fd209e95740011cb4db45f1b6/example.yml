@@ -2,6 +2,7 @@
 command: replace
 example: cx in RANDOM.csv // -h // region 1..5 // replace --search=1 --replace= --global
   // h-
+example_md5: c58cbd8fd209e95740011cb4db45f1b6
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -10,6 +11,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/replace/c58cbd8fd209e95740011cb4db45f1b6/expected
   actual: ex/cmd/replace/c58cbd8fd209e95740011cb4db45f1b6/actual
   diff: ex/cmd/replace/c58cbd8fd209e95740011cb4db45f1b6/diff
+data_files:
+- RANDOM.csv
 contents: 
 dir: ex/cmd/replace/c58cbd8fd209e95740011cb4db45f1b6
 dir_name: c58cbd8fd209e95740011cb4db45f1b6

@@ -38,7 +38,7 @@ module CX
 
         row_sep = nil
         out << seq_delim[0].to_s
-        fn = row_fn input
+        fn = row_fn(input)
         input.each do | row | # each_shift
           out << row_sep.to_s if row_sep
           out << newline
@@ -62,15 +62,14 @@ module CX
   
       def row_fn input
         if row_mode?
-          fn = proc do | row |
+          proc do | row |
             row.to_a
           end
         else
-          fn = proc do | row |
+          proc do | row |
             row.to_h
           end
         end
-        fn
       end
   
       def content_type ; nil ; end

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: meta-in
 example: cx in SOME.csv // -h // -meta // h-
+example_md5: 1dd8d490334ccea3651c2f5e4bc344d4
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4/expected
   actual: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4/actual
   diff: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/meta-in/1dd8d490334ccea3651c2f5e4bc344d4
 dir_name: 1dd8d490334ccea3651c2f5e4bc344d4

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: replace
 example: cx in RANDOM.csv // -h // region 1..5 // replace "x_:%;" // h-
+example_md5: f5001aac7d56f4f8a4d4afd9a6a9d697
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/replace/f5001aac7d56f4f8a4d4afd9a6a9d697/expected
   actual: ex/cmd/replace/f5001aac7d56f4f8a4d4afd9a6a9d697/actual
   diff: ex/cmd/replace/f5001aac7d56f4f8a4d4afd9a6a9d697/diff
+data_files:
+- RANDOM.csv
 contents: 
 dir: ex/cmd/replace/f5001aac7d56f4f8a4d4afd9a6a9d697
 dir_name: f5001aac7d56f4f8a4d4afd9a6a9d697

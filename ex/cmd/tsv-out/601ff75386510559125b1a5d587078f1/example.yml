@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: tsv-out
 example: cx in SOME.csv // tsv-
+example_md5: 601ff75386510559125b1a5d587078f1
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/expected
   actual: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/actual
   diff: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/tsv-out/601ff75386510559125b1a5d587078f1
 dir_name: 601ff75386510559125b1a5d587078f1

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: jira-out
 example: cx in SOME.csv // -h // jira
+example_md5: e7c9ce901b045ae3826067c1f3c9ec31
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/expected
   actual: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/actual
   diff: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/jira-out/e7c9ce901b045ae3826067c1f3c9ec31
 dir_name: e7c9ce901b045ae3826067c1f3c9ec31

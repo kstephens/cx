@@ -10,15 +10,18 @@ require 'set'
 # Uniq:
 #   aliases: []
 #   synopsis: Emit only rows with uniq columns.
-#   args: []
-#   opts: {}
 #   has_column_args: true
+#   arguments: []
+#   options:
+#     count=: 'Count uniq rows into column NAME.  Default: "COUNT".'
 #   examples:
 #     - 'cx in SOME.csv // -h // uniq d  // h-'
 #     - 'cx in SOME.csv // -h // uniq    // h-'
 #     - 'cx in DUPLICATES.csv // -h // uniq   // h-'
 #     - 'cx in DUPLICATES.csv // -h // uniq x // h-'
 #     - 'cx in DUPLICATES.csv // -h // uniq y // h-'
+#     - 'cx in DUPLICATES.csv // -h // uniq z --count   // h-'
+#     - 'cx in DUPLICATES.csv // -h // uniq z --count=N // h-'
 
 module CX
   module Xform
@@ -28,7 +31,13 @@ module CX
       def call input, env
         column_args!(input).or_all!
         columns = column_args.args.map(&:column)
-        uniq input, env, columns
+        @count = opts.fetch(:count, false);
+        @count = :COUNT if @count == true
+        if @count
+          uniq_count input, env, columns
+        else
+          uniq       input, env, columns
+        end
       end
 
       def uniq input, env, columns
@@ -47,8 +56,10 @@ module CX
       end
     
       def uniq_count input, env, columns
-        output = Table.new(input.header.dup)
-        output.header << :COUNT
+        output = Table.new(nil, input.header.dup)
+        col = Column.new(@count)
+        col.meta.type = col.meta.type_inferred = ::Integer
+        output.header << col
         examples = { }
         counts = Hash.new{|h, k| h[k] = 0}
         input.each do | row |
@@ -58,9 +69,10 @@ module CX
         end
         header = output.header
         examples.each do | k, example |
-          output << (example << counts[k])
+          example[col.to_i] = counts[k]
+          output << example
         end
-        output = MetaIn.new.call(output, env)
+        # output = MetaIn.new.call(output, env)
         output
       end
     end

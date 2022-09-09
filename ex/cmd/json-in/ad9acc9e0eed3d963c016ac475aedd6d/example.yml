@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: json-in
 example: cx in SOME.json // -json // h-
+example_md5: ad9acc9e0eed3d963c016ac475aedd6d
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/expected
   actual: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/actual
   diff: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d/diff
+data_files:
+- SOME.json
 contents: 
 dir: ex/cmd/json-in/ad9acc9e0eed3d963c016ac475aedd6d
 dir_name: ad9acc9e0eed3d963c016ac475aedd6d

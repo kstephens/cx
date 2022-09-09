@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: uniq
 example: cx in SOME.csv // -h // uniq d  // h-
+example_md5: 191b16c0b9121953ea7008a479bebd01
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,8 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/uniq/191b16c0b9121953ea7008a479bebd01/expected
   actual: ex/cmd/uniq/191b16c0b9121953ea7008a479bebd01/actual
   diff: ex/cmd/uniq/191b16c0b9121953ea7008a479bebd01/diff
+data_files:
+- SOME.csv
 contents: 
 dir: ex/cmd/uniq/191b16c0b9121953ea7008a479bebd01
 dir_name: 191b16c0b9121953ea7008a479bebd01

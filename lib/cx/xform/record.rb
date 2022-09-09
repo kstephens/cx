@@ -25,19 +25,29 @@ require 'cx/xform/meta'
 #   options:
 #     record-sep=:  'Record separator.  Default: platform newline.'
 #     field-sep=:   'Field separator.   Default: "".'
+#     record-cont-sep=:   'Record continuation separator.'
 
 module CX
   module Xform
     module RecordBaseInit
       def initialize!
         super
-        @record_sep  , @record_sep_rx   = decode_sep(opts.fetch(:record_sep,  @record_sep_default ||= $/ ))
-        @field_sep   , @field_sep_rx    = decode_sep(opts.fetch(:field_sep,   @field_sep_default  ||= ","))
-        @multi_sep   , @multi_sep_rx    = decode_sep(opts.fetch(:multi_sep,   @@multi_sep         ||= ";"))
+        @record_sep  , @record_sep_rx   = decode_sep(opts.fetch(:record_sep,  @record_sep_default  ||= $/ ))
+        @field_sep   , @field_sep_rx    = decode_sep(opts.fetch(:field_sep,   @field_sep_default   ||= ","))
+        @multi_sep   , @multi_sep_rx    = decode_sep(opts.fetch(:multi_sep,   @multi_sep_default   ||= ";"))
+        @record_cont_sep  , @record_cont_sep_rx   = decode_sep(opts.fetch(:record_cont_sep,  @record_cont_sep_default  ||= nil))
+        @field_cont_sep   , @field_cont_sep_rx    = decode_sep(opts.fetch(:field_cont_sep,   @field_cont_sep_default   ||= nil))
       end
-
+  
       def decode_sep s
-        [s, Regexp.new(s)]
+        case s
+        when nil
+          [ '', nil ]
+        when %r{\A/(.+)/\Z}
+          [ s, Regexp.new($1, Regexp::MULTILINE) ]
+        else
+          [ s, Regexp.new(Regexp.quote(s), Regexp::MULTILINE) ]
+        end
       end
     end
 
@@ -55,15 +65,20 @@ module CX
       include RecordBaseInit, InputFormat, RecordBase
       
       def call input, env
-        raise_ ArgumentError, "expected one input row" unless input.size == 1
-        raise_ ArgumentError, "expected one input col" unless input.first.size == 1
+        raise_ ArgumentError, "expected one input row, has #{input.size}" unless input.size == 1
+        raise_ ArgumentError, "expected one input col, has #{input.first.size}" unless input.first.size == 1
         input_string = input[0][0].to_s
+        input_string.gsub!(@record_cont_sep_rx, '') if @record_cont_sep_rx
         rows = input_string.split(@record_sep_rx, -1)
-        rows.pop if rows[-1].empty?
-        rows = rows.map!{|line| parse_record(line)}
-        header = Header.
-          new(rows.first ? rows.first.size : 0).
-          each{|c| c.meta.type = ::String}
+        input_string = nil # GC
+        rows.pop if rows[-1].empty? # "ROW\n".split(/\n/, -1) => ["ROW", ""]
+        call_with_rows input, env, rows 
+      end
+
+      def call_with_rows input, env, rows
+        rows.map!{|line| parse_record(line)}
+        width = rows.map(&:size).max
+        header = Header.new(width || 0).each{|c| c.meta.type = ::String}
         output = Table.new(rows, header)
         output = MetaIn.new.call(output, env)
         output
@@ -108,12 +123,12 @@ module CX
     end
 
     class RecordOut
-      include RecordOutBase
+      include SelectColumns, RecordOutBase
       def call input, env
-        output = make_record_table([:_RECORD_])
+        cols = column_args!(input).or_all!.columns.sort_by(&:order)
         out = String.new
         input.each do | r |
-          out << input.header.map do | c |
+          out << cols.map do | c |
             r._get(c).to_s # TODO: handle multi values
           end.join(@field_sep)
           out << @record_sep

@@ -1,6 +1,7 @@
 --- !ruby/struct:CX::Example
 command: cat
 example: cx in OTHER.csv // -h // cat {{ in DUPLICATES.csv // -h }} // h-
+example_md5: b8b717f72e993ffbe386264497487a99
 exit_code: 0
 success: true
 files: !ruby/struct:CX::Example::Files
@@ -9,6 +10,9 @@ files: !ruby/struct:CX::Example::Files
   expected: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/expected
   actual: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/actual
   diff: ex/cmd/cat/b8b717f72e993ffbe386264497487a99/diff
+data_files:
+- DUPLICATES.csv
+- OTHER.csv
 contents: 
 dir: ex/cmd/cat/b8b717f72e993ffbe386264497487a99
 dir_name: b8b717f72e993ffbe386264497487a99
