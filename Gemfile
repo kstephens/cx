@@ -7,6 +7,7 @@ gem "builder", "~> 3.2" # XML
 gem 'color' # gnuplot
 gem 'edn'
 gem "terminal-table", "~> 1.8"
+gem 'multi_json'
 
 group :development, :test do
   gem "rake", "~> 13.0"
@@ -17,6 +18,5 @@ group :development, :test do
   gem "awesome_print", "~> 1.9"
   gem "pry-byebug", "~> 3.8"
   gem 'rspec-mocks'
-  gem 'multi_json'
 end
 

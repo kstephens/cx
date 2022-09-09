@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pp'
+require 'multi_json'
 
 module CX
   module PPSafe
@@ -147,6 +148,18 @@ end
     end
 
     Empty_Hash = { }.freeze
+    extend self
+  end
+
+  JSON = ::MultiJson
+
+  module Gems
+    def loaded_gems
+      Gem.loaded_specs.map{|k, v| [k, v.version.to_s]}.sort_by(&:first).to_h
+    end
+    def installed_gems
+      Gem::Specification.map{|g| [ g.name, g.version ]}.group_by(&:first).map{|name, versions| [name, versions.map{|_,v| v.to_s}]}.to_h
+    end
     extend self
   end
 end
