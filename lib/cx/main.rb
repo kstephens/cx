@@ -59,6 +59,8 @@ module CX
           debug: false,
           verbose: false,
           exit_code: 0,
+          RUBY: Object.constants.map(&:to_s).grep(/^RUBY_/).map{|c| [ c.to_s, Object.const_get(c), ]}.to_h,
+          loaded_gems: Gems.loaded_gems,
           #
           started_at: @t0,
           main_started_at: now,
@@ -79,6 +81,7 @@ module CX
           },
         },
       }
+      @env[:main][:RUBY]['RUBYOPT'] = ::ENV['RUBYOPT']
     end
 
     def parse_argv!
@@ -117,9 +120,10 @@ module CX
       end
       log.error msg
       @exit_code = env[:main][:exit_code]
+      env[:main][:error] = exc.inspect
       self
     ensure
-      $stderr.puts pps(env: env) if opts[:show_env]
+      $stderr.puts JSON.dump(env[:main], pretty: true) if opts[:_info__] || opts[:show_env]
       GC.start(full_mark: true, immediate_sweep: true) if @full_gc
     end
 
@@ -153,11 +157,7 @@ module CX
         end
       end
 
-      setup_pipeline!
-      env[:main][:pipeline] = @pipeline
-      # pp(pipeline_argv: @pipeline.pipeline_argv) if debug?
-
-      @pipeline.call(Table.new, env)
+      run_pipeline! unless opts[:_info__]
 
       self
     ensure
@@ -166,7 +166,15 @@ module CX
         update(main_finished_at: now,
                total_elapsed_ms: ((now - @t0) * 1000).to_i,
                main_elapsed_ms:  ((now - h[:main_started_at]) * 1000).to_i,
+               loaded_gems: Gems.loaded_gems,
               )
+    end
+
+    def run_pipeline!
+      setup_pipeline!
+      env[:main][:pipeline] = @pipeline
+      # pp(pipeline_argv: @pipeline.pipeline_argv) if debug?
+      @pipeline.call(Table.new, env)
     end
 
     def setup_pipeline!
