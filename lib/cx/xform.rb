@@ -68,13 +68,10 @@ module CX
       attr_accessor :column_argv, :column_args, :selected_columns
       
       def parse_args!
-        @column_args =
-          ColumnArgs.new.
-          parse!(column_argv || args)
+        @column_args = ColumnArgs.new.parse!(column_argv || args)
       end
       def column_args! input
-          parse_args!.bind!(input.header).
-          wildcards!
+        parse_args!.bind!(input.header).wildcards!
       end
     end
 
